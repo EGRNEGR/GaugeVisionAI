@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>GaugeVision AI — Смартфон как камера</title>
+  <link rel="icon" href="/favicon.ico" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="capture">
+<div class="cap-root">
+  <div class="cap-video-wrap" id="videoWrap">
+    <video id="video" autoplay playsinline muted></video>
+    <div class="cap-guide" aria-hidden="true"></div>
+
+    <div class="cap-top">
+      <div class="title">
+        <b id="camName">GaugeVision AI</b>
+        <small id="camInfo">Смартфон как Wi-Fi камера</small>
+      </div>
+      <span class="badge st-offline" id="connBadge"><span class="dot"></span><span id="connText">Нет связи</span></span>
+    </div>
+
+    <div class="cap-reading" id="reading">—<small id="readingUnit"></small></div>
+    <div class="cap-stats" id="stats">—</div>
+
+    <!-- Сообщения: ошибки, HTTPS, разрешения -->
+    <div class="cap-msg hidden" id="msg">
+      <div class="box">
+        <h2 id="msgTitle">—</h2>
+        <p id="msgText" class="muted"></p>
+        <button class="btn btn-primary hidden" id="msgBtn">Повторить</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="cap-panel">
+    <div class="lens-row" id="lensRow" aria-label="Выбор объектива"></div>
+    <div class="zoom-row">
+      <span class="muted">Зум</span>
+      <input type="range" id="zoom" min="1" max="1" step="0.1" value="1" disabled>
+      <span class="zv" id="zoomVal">1.0×</span>
+      <span class="hint" id="zoomKind"></span>
+    </div>
+    <div class="cap-controls">
+      <button class="btn btn-icon btn-torch" id="btnTorch" title="Фонарик" disabled>🔦</button>
+      <select class="input" id="fps" title="Частота кадров">
+        <option value="3">3 к/с</option>
+        <option value="4" selected>4 к/с</option>
+        <option value="5">5 к/с</option>
+      </select>
+      <select class="input" id="quality" title="Разрешение кадра">
+        <option value="960">960 px</option>
+        <option value="1280" selected>1280 px</option>
+        <option value="1920">1920 px</option>
+      </select>
+      <button class="btn btn-primary btn-stream" id="btnStream">▶ Начать трансляцию</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/capture.js"></script>
+</body>
+</html>

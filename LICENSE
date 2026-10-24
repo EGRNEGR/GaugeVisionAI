@@ -1,0 +1,50 @@
+GaugeVision AI - Proprietary License
+
+Copyright (c) 2026 EGRNEGR. All rights reserved.
+
+This repository, including its source code, trained model weights, documentation,
+images and presentation materials (the "Software"), is the exclusive property of
+the copyright holder.
+
+The Software is published for viewing and evaluation only. No license or right is
+granted, by implication or otherwise, except as expressly stated below.
+
+1. Permitted. You may view the Software on GitHub and, to the extent required by
+   the GitHub Terms of Service, fork it within GitHub.
+
+2. Prohibited without prior written permission of the copyright holder:
+   a) using, running or deploying the Software, in whole or in part, for any
+      purpose, including commercial, industrial, research or educational use;
+   b) copying, reproducing or downloading the Software outside of the rights
+      in section 1;
+   c) modifying, adapting, translating or creating derivative works;
+   d) distributing, publishing, sublicensing, selling, renting or otherwise
+      making the Software available to third parties;
+   e) using the model weights or any part of the Software to train, fine-tune
+      or evaluate other models;
+   f) removing or altering this notice or any copyright notices.
+
+3. Third-party components included in or required by the Software (for example
+   Chart.js, FastAPI, Uvicorn, OpenCV, NumPy, PyTorch, Ultralytics) remain
+   subject to their own licenses. This license does not restrict rights granted
+   by those licenses for the respective components.
+
+4. Permission requests should be sent via https://github.com/EGRNEGR.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES
+OR OTHER LIABILITY ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR ITS
+USE.
+
+---
+
+Лицензия GaugeVision AI (проприетарная)
+
+Copyright (c) 2026 EGRNEGR. Все права защищены.
+
+Репозиторий опубликован только для ознакомления. Использование, запуск,
+копирование, изменение, распространение, коммерческое применение, а также
+использование весов модели для обучения других моделей запрещены без
+предварительного письменного разрешения правообладателя. Сторонние компоненты
+распространяются на условиях их собственных лицензий. При расхождении
+приоритет имеет английский текст выше.
