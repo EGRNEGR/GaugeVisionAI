@@ -1,0 +1,20 @@
+# GaugeVision AI — зависимости (Python 3.12)
+#
+# PyTorch с CUDA ставится ОТДЕЛЬНО и ПЕРВЫМ (иначе pip поставит CPU-сборку):
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130
+# Blackwell (RTX 50xx, sm_120) поддерживается стабильными сборками с CUDA 12.8+;
+# nightly-сборки не нужны. Без NVIDIA GPU: pip install torch torchvision (CPU).
+# Затем: pip install -r requirements.txt
+
+fastapi>=0.110
+uvicorn[standard]>=0.29        # HTTPS-сервер + WebSocket (websockets/httptools)
+opencv-python-headless>=4.9    # конвейер зрения, захват RTSP (CAP_FFMPEG) / HTTP-MJPEG / USB
+numpy>=1.26
+aiosqlite>=0.20                # асинхронный SQLite
+cryptography>=42.0             # самоподписные X.509 сертификаты с SAN
+qrcode>=7.4                    # QR-код «Смартфон как камера» (SVG, без интернета)
+
+# YOLOv8-детекция корпуса прибора: веса в models/gauge_yolov8.pt.
+# Устройство инференса: GAUGEVISION_DEVICE=auto|cuda:0|cpu (по умолчанию auto, FP16 на GPU).
+# Без весов/ultralytics конвейер работает на OpenCV-fallback (CLAHE + эллипс + HoughCircles).
+ultralytics>=8.1

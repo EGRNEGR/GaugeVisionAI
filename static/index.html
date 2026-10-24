@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b1016">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>GaugeVision AI — Мониторинг КИПиА</title>
+  <link rel="icon" href="/favicon.ico" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<!-- ===================== Шапка ===================== -->
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-logo" aria-hidden="true"></div>
+    <div>
+      <h1>Gauge<b>Vision</b> AI</h1>
+      <small id="brandSub">Мультисенсорный мониторинг аналоговых КИПиА</small>
+    </div>
+  </div>
+  <div class="summary">
+    <span class="chip conn-bad" id="connChip" title="Связь с сервером"><span class="dot"></span><span id="connText">Нет связи</span></span>
+    <span class="chip ok" title="Камер в сети"><span class="dot"></span><span id="cntOnline">0</span>&nbsp;в сети</span>
+    <span class="chip warn" title="Предупреждения"><span class="dot"></span><span id="cntWarn">0</span></span>
+    <span class="chip alert" title="Аварии"><span class="dot"></span><span id="cntAlert">0</span></span>
+  </div>
+  <div class="actions">
+    <button class="btn btn-primary" id="btnAdd"><span class="ico">＋</span><span class="lbl">Добавить камеру</span></button>
+    <button class="btn" id="btnDiscover"><span class="ico">⌕</span><span class="lbl">Поиск устройств</span></button>
+    <button class="btn" id="btnPhone"><span class="ico">📱</span><span class="lbl">Подключить смартфон как камеру</span></button>
+    <button class="btn sound-on" id="btnSound" title="Звуковая сигнализация"><span class="ico" id="soundIco">🔇</span><span class="lbl" id="soundLbl">Звук выкл.</span></button>
+  </div>
+</header>
+
+<!-- ===================== Аварийный баннер ===================== -->
+<div class="alarm-banner hidden" id="alarmBanner" role="alert" aria-live="assertive">
+  <span class="siren">🚨</span>
+  <span class="msg" id="alarmMsg">АВАРИЯ</span>
+  <button class="btn btn-danger" id="btnAck">✔ Квитировать аварию</button>
+</div>
+
+<!-- ===================== Подсказка по сертификату ===================== -->
+<div class="notice hidden" id="certNotice">
+  <span>🔒</span>
+  <div>
+    <b>Самоподписный сертификат.</b> На каждом новом устройстве (смартфоне, планшете, ПК) предупреждение браузера
+    нужно принять <b>один раз</b>: Chrome / Android — «Дополнительно» → «Перейти на сайт»; Safari / iOS —
+    «Подробнее» → «посетить этот веб-сайт». Без HTTPS мобильные браузеры запрещают доступ к камере.
+    <span class="muted">Отпечаток SHA-256: <span class="mono" id="certFp">—</span>.</span>
+    <a href="/api/cert.pem" download>Скачать сертификат</a>
+  </div>
+  <button class="btn btn-ghost btn-sm x" id="btnHideNotice">✕</button>
+</div>
+
+<!-- ===================== Сетка приборов ===================== -->
+<main class="grid" id="grid">
+  <div class="empty hidden" id="emptyState">
+    <h2>Приборы ещё не подключены</h2>
+    <div>Добавьте IP-камеру (RTSP / HTTP-MJPEG), найдите устройства в сети или подключите смартфон по QR-коду.</div>
+    <div class="actions">
+      <button class="btn btn-primary" data-action="add">＋ Добавить камеру</button>
+      <button class="btn" data-action="discover">⌕ Поиск устройств</button>
+      <button class="btn" data-action="phone">📱 Смартфон как камера</button>
+    </div>
+  </div>
+</main>
+
+<!-- ===================== Шаблон карточки прибора ===================== -->
+<template id="tplCard">
+  <article class="card level-normal">
+    <div class="card-head">
+      <div class="card-title">
+        <h3 data-f="name">—</h3>
+        <div class="sub" data-f="sub">—</div>
+      </div>
+      <div class="badges">
+        <span class="badge st-offline" data-f="status"><span class="dot"></span><span data-f="statusText">Офлайн</span></span>
+        <span class="badge lv-normal" data-f="level">НОРМА</span>
+      </div>
+    </div>
+    <div class="preview">
+      <img data-f="img" alt="Кадр прибора" decoding="async">
+      <span class="overlay-tag" data-f="tag">—</span>
+      <button class="btn btn-sm btn-icon fs-btn" data-act="full" title="Открыть крупно">⤢</button>
+    </div>
+    <div class="values">
+      <div class="value-main"><span data-f="value">—</span><span class="unit" data-f="unit"></span></div>
+      <div class="value-meta">
+        <div>θ = <span data-f="angle">—</span>°</div>
+        <div>conf <span data-f="conf">—</span></div>
+        <div data-f="ts">—</div>
+      </div>
+    </div>
+    <div class="limits" data-f="limits"></div>
+    <div class="chart-wrap"><canvas data-f="chart"></canvas></div>
+    <div class="card-foot">
+      <div class="seg" data-f="win">
+        <button data-win="30">30</button><button data-win="60">60</button><button data-win="120">120</button>
+      </div>
+      <span class="spacer"></span>
+      <button class="btn btn-sm" data-act="csv" title="Экспорт истории в CSV">⇩ CSV</button>
+      <button class="btn btn-sm hidden" data-act="qr" title="Повторно показать QR-код смартфона">QR</button>
+      <button class="btn btn-sm" data-act="settings" title="Калибровка и уставки">⚙ Настройка</button>
+      <button class="btn btn-sm btn-icon" data-act="restart" title="Переподключить поток">↻</button>
+      <button class="btn btn-sm btn-icon btn-danger" data-act="delete" title="Удалить прибор">🗑</button>
+    </div>
+  </article>
+</template>
+
+<!-- ===================== Модальное окно: прибор (добавление/настройка) ===================== -->
+<div class="modal-backdrop hidden" id="mCamera">
+  <form class="modal wide" id="camForm" autocomplete="off">
+    <div class="modal-head">
+      <h2 id="camFormTitle">Добавить камеру</h2>
+      <button type="button" class="btn btn-ghost btn-icon" data-close>✕</button>
+    </div>
+    <div class="modal-body">
+      <fieldset class="section">
+        <legend>Прибор и источник видеопотока</legend>
+        <div class="grid-2">
+          <label class="field span-2"><span>Наименование прибора</span>
+            <input class="input" name="name" required maxlength="200" placeholder="Манометр питательного узла котла №2">
+          </label>
+          <label class="field"><span>Тип датчика</span>
+            <select class="input" name="gauge_type" id="fGaugeType"></select>
+          </label>
+          <label class="field"><span>Единица измерения</span>
+            <select class="input" name="unit" id="fUnit"></select>
+          </label>
+          <label class="field"><span>Тип источника</span>
+            <select class="input" name="type" id="fType">
+              <option value="rtsp">RTSP — IP-камера / NVR</option>
+              <option value="http_mjpeg">HTTP / MJPEG — веб-камера, IP Webcam, DroidCam, ESP32-CAM</option>
+              <option value="device">Локальная камера сервера (USB / встроенная)</option>
+              <option value="phone_ws">Смартфон (WSS, по QR-коду)</option>
+            </select>
+          </label>
+          <label class="field" id="fUrlWrap"><span id="fUrlLabel">Адрес потока</span>
+            <input class="input mono" name="source_url" id="fUrl" placeholder="rtsp://user:pass@192.168.1.64:554/Streaming/Channels/101">
+          </label>
+        </div>
+        <div class="hint" id="fUrlHint" style="margin-top:8px"></div>
+      </fieldset>
+
+      <fieldset class="section" id="calibSection">
+        <legend>Двухточечная калибровка шкалы</legend>
+        <div class="calib-live" id="calibLive">
+          <div>
+            <img id="calibImg" alt="Живой кадр">
+            <div class="hint">Голубые лучи на кадре — θmin / θmax, цветная дуга — зоны уставок. Углы: 0° — «3 часа», 90° — «6 часов», 180° — «9 часов», 270° — «12 часов».</div>
+          </div>
+          <div>
+            <div class="muted">Текущий угол стрелки θ</div>
+            <div class="angle-readout"><span id="calibAngle">—</span>°</div>
+            <div class="hint" id="calibConf">—</div>
+            <div class="hint" style="margin-top:8px">Установите стрелку (или дождитесь положения) на известную отметку шкалы и нажмите «Взять текущий угол».</div>
+          </div>
+        </div>
+        <div class="grid-4" style="margin-top:12px">
+          <label class="field"><span>V<sub>min</sub> (начало шкалы)</span><input class="input mono" name="v_min" type="number" step="any" value="0"></label>
+          <label class="field"><span>θ<sub>min</sub>, °</span>
+            <div class="input-group"><input class="input mono" name="theta_min" type="number" step="0.1" value="135"><button type="button" class="btn btn-sm" data-take="theta_min" title="Взять текущий угол">◎</button></div>
+          </label>
+          <label class="field"><span>V<sub>max</sub> (конец шкалы)</span><input class="input mono" name="v_max" type="number" step="any" value="10"></label>
+          <label class="field"><span>θ<sub>max</sub>, °</span>
+            <div class="input-group"><input class="input mono" name="theta_max" type="number" step="0.1" value="45"><button type="button" class="btn btn-sm" data-take="theta_max" title="Взять текущий угол">◎</button></div>
+          </label>
+          <label class="field span-2"><span>Направление шкалы</span>
+            <select class="input" name="direction">
+              <option value="cw">По часовой стрелке (CW)</option>
+              <option value="ccw">Против часовой стрелки (CCW)</option>
+            </select>
+          </label>
+          <label class="field span-2"><span>Область циферблата (ROI)</span>
+            <select class="input" name="roi_mode" id="fRoiMode">
+              <option value="auto">Автоматически (YOLO / HoughCircles + эллипс)</option>
+              <option value="manual">Вручную (центр и радиус в долях кадра)</option>
+            </select>
+          </label>
+        </div>
+        <div class="grid-3" id="roiManual" style="margin-top:12px">
+          <label class="field"><span>Центр X (0…1)</span><input class="input mono" name="roi_cx" type="number" min="0" max="1" step="0.01" value="0.5"></label>
+          <label class="field"><span>Центр Y (0…1)</span><input class="input mono" name="roi_cy" type="number" min="0" max="1" step="0.01" value="0.5"></label>
+          <label class="field"><span>Радиус (доля меньшей стороны)</span><input class="input mono" name="roi_r" type="number" min="0.05" max="1" step="0.01" value="0.45"></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="section">
+        <legend>Уставки — пятизонная модель (ISA-18.2 / ГОСТ Р МЭК 62682)</legend>
+        <div class="grid-4">
+          <label class="field"><span style="color:#fca5a5">LL — аварийный нижний</span><input class="input mono" name="ll_alert" type="number" step="any" placeholder="—"></label>
+          <label class="field"><span style="color:#fde68a">L — предупр. нижний</span><input class="input mono" name="l_warn" type="number" step="any" placeholder="—"></label>
+          <label class="field"><span style="color:#fde68a">H — предупр. верхний</span><input class="input mono" name="h_warn" type="number" step="any" placeholder="—"></label>
+          <label class="field"><span style="color:#fca5a5">HH — аварийный верхний</span><input class="input mono" name="hh_alert" type="number" step="any" placeholder="—"></label>
+        </div>
+        <div class="zone-bar" id="zoneBar" style="margin-top:12px" title="Распределение зон по шкале"></div>
+        <div class="hint" style="margin-top:6px">Зелёная зона L…H — доверительный рабочий интервал нормы. Пустое поле — уставка не контролируется.</div>
+      </fieldset>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn btn-ghost hidden" id="btnRedetect">Найти циферблат заново</button>
+      <button type="button" class="btn btn-danger hidden" id="btnClearHist">Очистить историю</button>
+      <span style="flex:1"></span>
+      <button type="button" class="btn" data-close>Отмена</button>
+      <button type="submit" class="btn btn-primary" id="camFormSubmit">Сохранить</button>
+    </div>
+  </form>
+</div>
+
+<!-- ===================== Модальное окно: поиск устройств ===================== -->
+<div class="modal-backdrop hidden" id="mDiscover">
+  <div class="modal wide">
+    <div class="modal-head">
+      <h2>Поиск устройств в сети</h2>
+      <button type="button" class="btn btn-ghost btn-icon" data-close>✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="hint">ONVIF WS-Discovery (мультикаст 239.255.255.250:3702) + асинхронное сканирование подсети /24 по портам 554, 80, 8080, 4747 (DroidCam), 8554.</div>
+      <div class="input-group">
+        <input class="input mono" id="discSubnet" placeholder="IP из подсети, напр. 192.168.1.1 (по умолчанию — подсеть сервера)">
+        <button class="btn btn-primary" id="btnScan">⌕ Сканировать</button>
+      </div>
+      <div id="discStatus" class="muted"></div>
+      <div style="overflow-x:auto">
+        <table class="table hidden" id="discTable">
+          <thead><tr><th>IP-адрес</th><th>Устройство</th><th>Порты</th><th style="min-width:260px">Адрес потока (можно дописать логин/пароль)</th><th></th></tr></thead>
+          <tbody id="discBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== Модальное окно: смартфон как камера ===================== -->
+<div class="modal-backdrop hidden" id="mPhone">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>Смартфон как Wi-Fi камера</h2>
+      <button type="button" class="btn btn-ghost btn-icon" data-close>✕</button>
+    </div>
+    <div class="modal-body">
+      <div id="phoneSetup">
+        <div class="grid-2">
+          <label class="field span-2"><span>Наименование прибора</span><input class="input" id="pName" maxlength="200" placeholder="Напр. «Тягомер топки котла №1»"></label>
+          <label class="field"><span>Тип датчика</span><select class="input" id="pGaugeType"></select></label>
+          <label class="field"><span>Единица измерения</span><select class="input" id="pUnit"></select></label>
+        </div>
+        <div class="hint" style="margin-top:10px">Установка приложений не требуется — используется браузер смартфона (Safari / Chrome).</div>
+      </div>
+      <div id="phoneResult" class="hidden">
+        <div class="qr-box">
+          <div class="qr" id="pQr"></div>
+          <div>
+            <ol class="steps">
+              <li>Смартфон и сервер должны быть в одной сети Wi-Fi / LAN.</li>
+              <li>Отсканируйте QR-код штатной камерой телефона и откройте ссылку.</li>
+              <li>При первом входе примите самоподписный сертификат («Дополнительно» → «Перейти на сайт» / «Подробнее» → «посетить веб-сайт»).</li>
+              <li>Разрешите доступ к камере, выберите объектив и нажмите «Начать трансляцию».</li>
+            </ol>
+            <div class="field" style="margin-top:10px"><span>Ссылка</span><div class="url-box" id="pUrl"></div></div>
+            <div style="margin-top:8px"><button class="btn btn-sm" id="btnCopyUrl">⧉ Копировать ссылку</button></div>
+            <div class="hint" style="margin-top:8px">Ссылка содержит одноразовый токен сессии. После перезапуска сервера сгенерируйте QR заново (кнопка «QR» на карточке).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button type="button" class="btn" data-close>Закрыть</button>
+      <button type="button" class="btn btn-primary" id="btnMakeQr">Сгенерировать QR-код</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== Полноэкранный просмотр ===================== -->
+<div class="modal-backdrop hidden" id="mFull">
+  <div class="modal wide">
+    <div class="modal-head">
+      <h2 id="fullTitle">—</h2>
+      <a class="btn btn-sm" id="fullMjpeg" target="_blank" rel="noopener">MJPEG ↗</a>
+      <button type="button" class="btn btn-ghost btn-icon" data-close>✕</button>
+    </div>
+    <div class="modal-body">
+      <img id="fullImg" alt="" style="width:100%;border-radius:8px;background:#000">
+      <div class="hint mono" id="fullInfo"></div>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script src="/static/js/vendor/chart.umd.min.js"></script>
+<script src="/static/js/app.js"></script>
+</body>
+</html>
