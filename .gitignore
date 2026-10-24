@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv*/
+venv/
+.env
+
+# Runtime data: TLS keys and readings database are generated locally
+certs/
+data/
+*.db
+*.db-journal
+*.pem
+*.key
+
+# Exports and logs
+*.csv
+*.log
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Claude Code
+.claude/

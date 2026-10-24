@@ -7,6 +7,7 @@
 ![YOLOv8n](https://img.shields.io/badge/YOLOv8n-CUDA%20FP16-00FFFF)
 ![OpenCV](https://img.shields.io/badge/OpenCV-4.9%2B-5C3EE8?logo=opencv&logoColor=white)
 ![Offline](https://img.shields.io/badge/работает-без%20интернета-success)
+![License](https://img.shields.io/badge/license-All%20rights%20reserved-red)
 
 > Трек №3 «Умное производство: ИИ-аналитика видеоданных для повышения эффективности»
 
@@ -33,6 +34,7 @@
 - [Масштабирование](#масштабирование)
 - [Roadmap](#roadmap)
 - [Презентация](#презентация)
+- [Лицензия](#лицензия)
 
 ## Проблема
 
@@ -299,7 +301,9 @@ GaugeVisionAI/
 │   └── js/             # app.js, capture.js, Chart.js (локально, без CDN)
 ├── models/
 │   └── gauge_yolov8.pt # YOLOv8n: классы Gauge, Needle
-└── docs/
+├── docs/images/        # скриншоты для README
+├── GuageVision AI.pdf  # презентация
+└── LICENSE
 ```
 
 Каталоги `certs/` и `data/` создаются при первом запуске.
@@ -342,3 +346,7 @@ GaugeVisionAI/
 ## Презентация
 
 Полная презентация проекта: [GuageVision AI.pdf](GuageVision%20AI.pdf).
+
+## Лицензия
+
+© 2026 EGRNEGR. **Все права защищены.** Код, веса модели и материалы опубликованы только для ознакомления. Использование, запуск, копирование, изменение и распространение без письменного разрешения правообладателя запрещены. Сторонние библиотеки распространяются на условиях своих лицензий. Полный текст: [LICENSE](LICENSE).
