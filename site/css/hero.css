@@ -1,0 +1,236 @@
+/*
+ * #hero — ролик на прокрутке (GV.components.scrollVideo) и HUD поверх.
+ * Сцена 280vh, кадр закреплён под шапкой (sticky). Поверх видео только kicker + h1, строка сути
+ * и индикатор прокрутки. JS двигает только transform и opacity (HUD, индикатор, затемнение).
+ * data-static (ошибка видео или «уменьшить движение»): постер, один экран, без закрепления.
+ */
+
+:root {
+  /* Верх закреплённых сцен: под шапкой и полосой телеметрии (на узких экранах остаётся только полоса) */
+  --pin-top: calc(var(--header-h) + var(--telemetry-h));
+}
+
+@media (max-width: 1099px) {
+  :root {
+    --pin-top: var(--telemetry-h);
+  }
+}
+
+.gv-hero {
+  position: relative;
+  height: 280vh;
+}
+
+.gv-hero__stage {
+  position: sticky;
+  top: var(--pin-top);
+  height: calc(100vh - var(--pin-top));
+  height: calc(100svh - var(--pin-top));
+  overflow: hidden;
+  background: var(--bg-canvas);
+  isolation: isolate;
+}
+
+.gv-hero__media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.gv-hero__video,
+.gv-hero__poster {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 42% 50%;
+  background: var(--bg-canvas);
+}
+
+/* Затемнение для читаемости HUD: снизу к фону страницы, слева мягче, сверху под шапкой */
+.gv-hero__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(9, 11, 14, 0.55) 0%, rgba(9, 11, 14, 0) 18%),
+    linear-gradient(0deg, var(--bg-canvas) 0%, rgba(9, 11, 14, 0.82) 22%, rgba(9, 11, 14, 0.25) 52%, rgba(9, 11, 14, 0) 70%),
+    linear-gradient(90deg, rgba(9, 11, 14, 0.72) 0%, rgba(9, 11, 14, 0.38) 38%, rgba(9, 11, 14, 0) 66%);
+}
+
+/* Камера отъехала — кадр уходит в темноту, из неё проявляется прибор следующей сцены */
+.gv-hero__dusk {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: var(--bg-canvas);
+  opacity: 0;
+}
+
+/* ---------- HUD ---------- */
+
+.gv-hero__hud {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "heading scroll"
+    "line .";
+  align-items: end;
+  column-gap: var(--space-7);
+  row-gap: var(--space-5);
+  padding-bottom: clamp(2rem, 1rem + 3vw, 4rem);
+}
+
+.gv-hero__heading {
+  grid-area: heading;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.gv-hero__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Риска перед строкой — деление шкалы, единственный тёплый штрих HUD */
+.gv-hero__kicker::before {
+  content: '';
+  width: 1.5rem;
+  height: 1px;
+  background: var(--accent);
+}
+
+.gv-hero__title {
+  max-width: 15ch;
+  font-size: var(--fs-display);
+  font-weight: 800;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-display);
+  text-wrap: balance;
+  color: var(--text-primary);
+}
+
+.gv-hero__line {
+  grid-area: line;
+  max-width: 40rem;
+  font-size: var(--fs-l);
+  line-height: var(--lh-snug);
+  color: var(--text-muted);
+  text-wrap: pretty;
+}
+
+/* ---------- индикатор прокрутки ---------- */
+
+.gv-hero__scroll {
+  grid-area: scroll;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+}
+
+.gv-hero__scroll-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.gv-hero__scroll-track {
+  position: relative;
+  width: 1px;
+  height: 4.5rem;
+  overflow: hidden;
+  background: var(--border-strong);
+}
+
+.gv-hero__scroll-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+
+/* ---------- без закрепления: постер, один экран ---------- */
+
+.gv-hero[data-static] {
+  height: auto;
+}
+
+.gv-hero[data-static] .gv-hero__stage {
+  position: relative;
+  top: auto;
+  height: calc(100vh - var(--pin-top));
+  height: calc(100svh - var(--pin-top));
+  min-height: 32rem;
+}
+
+.gv-hero[data-static] .gv-hero__scroll,
+.gv-hero[data-static] .gv-hero__dusk {
+  display: none;
+}
+
+/* ---------- узкие экраны ---------- */
+
+@media (max-width: 1099px) {
+  /* Пока шапка не уехала, кадр начинается ниже неё: HUD поднят на её высоту */
+  .gv-hero__hud {
+    padding-bottom: calc(var(--header-rows, 0rem) + var(--space-6));
+  }
+}
+
+@media (max-width: 640px) {
+  .gv-hero__hud {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "heading heading"
+      "line scroll";
+    column-gap: var(--space-5);
+    row-gap: var(--space-4);
+  }
+
+  .gv-hero__scroll-label {
+    display: none;
+  }
+
+  .gv-hero__title {
+    font-size: clamp(2.125rem, 1rem + 5.5vw, 2.75rem);
+  }
+
+  .gv-hero__line {
+    font-size: var(--fs-m);
+  }
+
+  .gv-hero__scroll-track {
+    height: 3.5rem;
+  }
+
+  .gv-hero__video,
+  .gv-hero__poster {
+    object-position: 50% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gv-hero {
+    height: auto;
+  }
+
+  .gv-hero__stage {
+    position: relative;
+    top: auto;
+  }
+}

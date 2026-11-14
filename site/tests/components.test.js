@@ -14,7 +14,8 @@ const path = require('path');
 const vm = require('vm');
 
 const SITE = path.resolve(__dirname, '..');
-const FILES = ['js/content.js', 'js/util.js', 'js/motion.js', 'js/components/kit.js'];
+const FILES = ['js/content.js', 'js/util.js', 'js/motion.js', 'js/components/kit.js',
+  'js/components/scroll-video.js', 'js/components/precision-dial.js'];
 
 function load(box) {
   vm.createContext(box);
@@ -116,6 +117,40 @@ if (!motion || typeof motion.spring !== 'function') {
   eq('spring.set(5) → step()', jump.step(1 / 60), 5);
 }
 
+/* ---------- Сцены hero и «Показание» (тикет 02) ---------- */
+
+const comps = sandbox.GV.components || {};
+const dialApi = comps.precisionDial;
+if (!dialApi || typeof dialApi.clampAngle !== 'function' || typeof dialApi.angleFromPointer !== 'function') {
+  failures.push('нет GV.components.precisionDial.clampAngle / angleFromPointer (site/js/components/precision-dial.js)');
+} else {
+  // Значение сцены: θ 253,4° из reading.theta → 4,39 МПа (спецификация, история 11)
+  const readingTheta = sandbox.GV.content.reading.theta;
+  eq('reading.theta → МПа', r2(kit.angleToValue(dialApi.clampAngle(readingTheta, calib), calib)), 4.39);
+  // Курсор: угол в системе кадра (0° — «3 часа», по часовой, ось Y вниз)
+  eq('курсор вверх → θ', r2(dialApi.angleFromPointer(0, -1)), 270);
+  eq('курсор влево → θ', r2(dialApi.angleFromPointer(-1, 0)), 180);
+  eq('курсор вниз-вправо → θ', r2(dialApi.angleFromPointer(1, 1)), 45);
+  // Внутри шкалы угол не меняется
+  eq('θ 200° внутри шкалы', r2(dialApi.clampAngle(200, calib)), 200);
+  eq('θ 30° внутри шкалы', r2(dialApi.clampAngle(30, calib)), 30);
+  // За шкалой (нижний сектор 45°…135°) угол зажимается к ближнему краю [θmin, θmax]
+  eq('θ 60° за шкалой → θmax', r2(dialApi.clampAngle(60, calib)), 45);
+  eq('θ 120° за шкалой → θmin', r2(dialApi.clampAngle(120, calib)), 135);
+  eq('θ 90° за шкалой → МПа в пределах шкалы', [0, 10].indexOf(r2(kit.angleToValue(dialApi.clampAngle(90, calib), calib))) >= 0, true);
+}
+
+const videoApi = comps.scrollVideo;
+if (!videoApi || typeof videoApi.timeFor !== 'function') {
+  failures.push('нет GV.components.scrollVideo.timeFor (site/js/components/scroll-video.js)');
+} else {
+  // Цель currentTime = прогресс × (длительность − 0,05) — interfaces.md, scrollVideo
+  eq('видео: прогресс 0 → 0 с', videoApi.timeFor(0, 10), 0);
+  eq('видео: прогресс 1 → 9,95 с', r2(videoApi.timeFor(1, 10)), 9.95);
+  eq('видео: прогресс 0,5 → 4,975 с', Math.round(videoApi.timeFor(0.5, 10) * 1000) / 1000, 4.975);
+  eq('видео: длительность неизвестна → 0', videoApi.timeFor(0.5, NaN), 0);
+}
+
 // «Уменьшить движение»: закреплённая секция сразу в конечном состоянии, пружина сразу у цели.
 const reducedBox = { console };
 reducedBox.window = reducedBox;
@@ -137,4 +172,4 @@ if (failures.length) {
   console.log(`\nFAIL: ${failures.length}`);
   process.exit(1);
 }
-console.log('OK: калибровка, бары, зоны уставок, EMA, пружина и reduced motion GV.motion');
+console.log('OK: калибровка, бары, зоны уставок, EMA, пружина и reduced motion GV.motion, угол курсора прибора, время видео hero');

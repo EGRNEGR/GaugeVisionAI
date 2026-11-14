@@ -17,6 +17,8 @@
   var GV = (window.GV = window.GV || {});
 
   var MOUNTS = {
+    hero: 'scrollVideo',
+    reading: 'precisionDial',
     metrics: 'metrics',
     compare: 'compare',
     architecture: 'architecture',
