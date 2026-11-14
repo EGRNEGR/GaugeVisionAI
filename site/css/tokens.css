@@ -1,43 +1,48 @@
 /*
- * GaugeVision AI — токены дизайна.
- * Порядок слоёв: :root (Графит по умолчанию) → [data-bg] (оттенок фона из Tweaks)
- * → [data-variant] (акцент и шрифты варианта) → html[data-font][data-variant] (шрифт из Tweaks).
- * Таблица значений и контраст — в site/design-system.md.
+ * GaugeVision AI — токены одной страницы «Циферблат» на обсидиане.
+ * Порядок слоёв: :root (обсидиан, Onest + IBM Plex Mono) → html[data-font] (шрифт из Tweaks).
+ * Таблица значений, контраст и правила света и движения — в site/design-system.md.
  */
 
 :root {
   color-scheme: dark;
 
-  /* Фон «Графит» */
-  --bg-canvas: #0E1116;
-  --bg-surface: #141820;
-  --bg-elevated: #1A1F29;
-  --border-hairline: rgba(232, 236, 241, 0.08);
-  --border-strong: rgba(232, 236, 241, 0.18);
-  --text-primary: #E8ECF1;
-  --text-muted: #A3ACB9;
-  --text-faint: #8A93A1;
+  /* Обсидиан: фон и поверхности чуть светлее, без чистого #000 */
+  --bg-canvas: #090B0E;
+  --bg-surface: #0E1115;
+  --bg-elevated: #13171C;
+  --border-hairline: rgba(230, 234, 239, 0.07);
+  --border-strong: rgba(230, 234, 239, 0.16);
+  --text-primary: #E6EAEF;
+  --text-muted: #A1A9B4;
+  --text-faint: #868E99;
 
-  /* Акцент по умолчанию (переопределяет вариант) */
-  --accent: #4FD1E8;
-  --accent-contrast: #04161B;
-  --accent-soft: rgba(79, 209, 232, 0.12);
+  /* Единственный тёплый акцент — цвет стрелки */
+  --accent: #FF5A1F;
+  --accent-contrast: #1A0802;
+  --accent-soft: rgba(255, 90, 31, 0.12);
 
-  /* Статусы: норма / предупреждение / авария — как на пульте */
-  --status-ok: #3FCB7E;
-  --status-warn: #F2B33D;
-  --status-alert: #FF6B5E;
+  /* Статусы уставок: норма / предупреждение / авария — приглушённые, без неона */
+  --status-ok: #6DBE8F;
+  --status-warn: #D9A54E;
+  --status-alert: #EE7462;
 
-  /* Шрифты (вариант и Tweaks переопределяют) */
-  --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
-  /* Хром студии (панель вариантов, Tweaks) не меняет шрифт вместе с вариантом */
-  --font-chrome: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  /* Свет: верхний блик 1px на ободке карточек и два направленных пятна низкой непрозрачности */
+  --edge-light: rgba(255, 255, 255, 0.16);
+  --glow-warm: rgba(255, 90, 31, 0.09);
+  --glow-cool: rgba(150, 178, 205, 0.06);
+  --surface-card: linear-gradient(90deg, transparent, var(--edge-light) 50%, transparent) top / 100% 1px no-repeat, var(--bg-surface);
 
-  /* Масштаб из Tweaks: корень html = 100% × --ui-scale */
+  /* Шрифты: Onest + IBM Plex Mono (Tweaks меняет пару) */
+  --font-sans: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  /* Хром панели Tweaks не меняет шрифт вместе со страницей */
+  --font-chrome: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  /* Масштаб из Tweaks: корень html = 100 % × --ui-scale */
   --ui-scale: 1;
-  /* Единица «хрома» (студийная панель, Tweaks): не зависит от масштаба страницы */
+  /* Единица хрома (панель Tweaks): не зависит от масштаба страницы */
   --chrome-u: calc(1rem / var(--ui-scale));
 
   /* Шкала типографики */
@@ -47,10 +52,10 @@
   --fs-m: 1rem;
   --fs-l: 1.125rem;
   --fs-xl: clamp(1.375rem, 1.1rem + 0.9vw, 1.75rem);
-  --fs-2xl: clamp(1.75rem, 1.2rem + 2vw, 2.75rem);
+  --fs-2xl: clamp(1.875rem, 1.2rem + 2.2vw, 3rem);
   --fs-3xl: clamp(2.25rem, 1.3rem + 3.6vw, 4.25rem);
-  --fs-display: clamp(2.5rem, 1.2rem + 5vw, 5.75rem);
-  --lh-tight: 1.05;
+  --fs-display: clamp(2.5rem, 1.1rem + 5.2vw, 6rem);
+  --lh-tight: 1.04;
   --lh-snug: 1.25;
   --lh-body: 1.55;
   --tracking-display: -0.03em;
@@ -65,149 +70,42 @@
   --space-6: 2rem;
   --space-7: 3rem;
   --space-8: 5rem;
+  /* Вертикальный ритм: на десктопе между секциями ≥ 12rem (по 6rem+ с каждой стороны) */
+  --section-pad: clamp(4rem, 1.5rem + 6.5vw, 7rem);
 
   /* Сетка */
   --container: 90rem;
   --gutter: clamp(1rem, 0.5rem + 2.5vw, 3rem);
   --measure: 68ch;
+  --header-h: 4rem;
+  --telemetry-h: 1.75rem;
 
-  /* Радиусы: HUD держит углы почти острыми */
+  /* Радиусы: прибор держит углы почти острыми */
   --radius-s: 0.25rem;
   --radius-m: 0.5rem;
   --radius-l: 0.75rem;
 
-  /* Движение */
+  /* Движение: только transform и opacity */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.22, 1.25, 0.36, 1);
   --dur-fast: 160ms;
   --dur-med: 320ms;
   --dur-slow: 600ms;
 
   /* Хром */
-  --studio-h: calc(2.5 * var(--chrome-u));
   --tap: calc(2.75 * var(--chrome-u));
   --focus-ring: 0 0 0 2px var(--bg-canvas), 0 0 0 4px var(--accent);
 }
 
-/* ---------- Оттенки фона (Tweaks) ---------- */
+/* ---------- Шрифт из Tweaks ---------- */
 
-html[data-bg="graphite"] {
-  --bg-canvas: #0E1116;
-  --bg-surface: #141820;
-  --bg-elevated: #1A1F29;
-  --border-hairline: rgba(232, 236, 241, 0.08);
-  --border-strong: rgba(232, 236, 241, 0.18);
-  --text-primary: #E8ECF1;
-  --text-muted: #A3ACB9;
-  --text-faint: #8A93A1;
-}
-
-html[data-bg="anthracite"] {
-  --bg-canvas: #131313;
-  --bg-surface: #1A1A1B;
-  --bg-elevated: #222224;
-  --border-hairline: rgba(236, 236, 234, 0.08);
-  --border-strong: rgba(236, 236, 234, 0.18);
-  --text-primary: #ECECEA;
-  --text-muted: #A9A9A4;
-  --text-faint: #8F8F8A;
-}
-
-html[data-bg="blue"] {
-  --bg-canvas: #0C1424;
-  --bg-surface: #121C30;
-  --bg-elevated: #18243B;
-  --border-hairline: rgba(230, 237, 247, 0.09);
-  --border-strong: rgba(230, 237, 247, 0.2);
-  --text-primary: #E6EDF7;
-  --text-muted: #9FB0C8;
-  --text-faint: #8798B1;
-}
-
-html[data-bg="paper"] {
-  color-scheme: light;
-  --bg-canvas: #F3F1EA;
-  --bg-surface: #FAF9F4;
-  --bg-elevated: #FFFFFF;
-  --border-hairline: rgba(21, 24, 29, 0.12);
-  --border-strong: rgba(21, 24, 29, 0.28);
-  --text-primary: #15181D;
-  --text-muted: #4A505B;
-  --text-faint: #5C636E;
-  --status-ok: #1C7A45;
-  --status-warn: #8A5300;
-  --status-alert: #B42318;
-}
-
-/* ---------- Варианты: акцент и шрифты по умолчанию ---------- */
-
-[data-variant="a"] {
-  --accent: #4FD1E8;
-  --accent-contrast: #04161B;
-  --accent-soft: rgba(79, 209, 232, 0.12);
+html[data-font="manrope"] {
   --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 }
 
-[data-variant="b"] {
-  --accent: #FF5A1F;
-  --accent-contrast: #1A0802;
-  --accent-soft: rgba(255, 90, 31, 0.12);
-  --font-sans: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
-}
-
-[data-variant="c"] {
-  --accent: #C3CCD8;
-  --accent-contrast: #0E1116;
-  --accent-soft: rgba(195, 204, 216, 0.1);
-  --status-warn: #F2B33D;
+html[data-font="plex"] {
   --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-display: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
-}
-
-/* Акценты на «Бумаге»: затемнены до контраста ≥ 4,5:1 */
-html[data-bg="paper"][data-variant="a"] {
-  --accent: #0A6E82;
-  --accent-contrast: #FFFFFF;
-  --accent-soft: rgba(10, 110, 130, 0.1);
-}
-
-html[data-bg="paper"][data-variant="b"] {
-  --accent: #C2410C;
-  --accent-contrast: #FFFFFF;
-  --accent-soft: rgba(194, 65, 12, 0.1);
-}
-
-html[data-bg="paper"][data-variant="c"] {
-  --accent: #3D4A5C;
-  --accent-contrast: #FFFFFF;
-  --accent-soft: rgba(61, 74, 92, 0.08);
-  --status-warn: #8A5300;
-}
-
-/* ---------- Шрифт из Tweaks: сильнее варианта ---------- */
-
-html[data-font="manrope"],
-html[data-font="manrope"][data-variant] {
-  --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
-}
-
-html[data-font="onest"],
-html[data-font="onest"][data-variant] {
-  --font-sans: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
-}
-
-html[data-font="plex"],
-html[data-font="plex"][data-variant] {
-  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
 }

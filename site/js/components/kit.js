@@ -12,14 +12,13 @@
  * DOM-хелперы (только в браузере):
  *   scope() → { on, add, timeout, interval, frame, observe, destroy }  — всё, что снимается в destroy()
  *   pick(value, allowed) → value из списка или первый элемент
- *   media() → 'shots'|'schematic'          onTweaks(scope, cb(state))
- *   crop(media, className) → кадрированный CSS скриншот
+ *   media() → 'schematic'                  растровых скриншотов на странице нет (бриф: R07)
+ *   onTweaks(scope, cb(state))             событие gv:tweaks (масштаб, шрифт)
  *   dial(opts) → SVG-циферблат шкалы calibration (риски, стрелка, оверлей распознавания, зоны уставок)
- *   icon(name) → SVG-иконка (external, github, arrow)
- *   extLink(attrs, ...children) → <a target="_blank" rel="noopener">
- *   demoLink(label, className) → <a href="#hero-stage">: плавно прокручивает к hero-stage и ставит на него фокус
+ *   icon(name) → SVG-иконка (external, github, arrow, right)
+ *   extLink(attrs, ...children) → <a target="_blank" rel="noopener"> + иконка и скрытое «откроется в новой вкладке»
  *   sectionNav(scope, {container, links, ids, rootMargin, keepLast, onChange}) → { setCurrent }
- *                                          якоря шапки варианта и aria-current текущей секции
+ *                                          якоря шапки и aria-current текущей секции
  */
 (function () {
   'use strict';
@@ -196,49 +195,13 @@
     return allowed.indexOf(value) >= 0 ? value : allowed[0];
   }
 
+  /* Раньше Tweaks переключали скриншоты и схему; теперь страница без растровых скриншотов — всегда схема. */
   function media() {
-    return document.documentElement.getAttribute('data-media') === 'schematic' ? 'schematic' : 'shots';
+    return 'schematic';
   }
 
   function onTweaks(sc, cb) {
     return sc.on(document, 'gv:tweaks', function (e) { cb((e && e.detail) || {}); });
-  }
-
-  /* ---------- Кадрирование скриншота CSS-обёрткой ---------- */
-
-  function pct(v) {
-    return (Math.round(v * 100000) / 1000) + '%';
-  }
-
-  /*
-   * media = { src, alt, crop:{x,y,w,h} } — доли исходника.
-   * Картинка шириной 100%/w сдвигается на −x и −y собственного размера: пропорции не искажаются,
-   * а точное соотношение сторон обёртки ставится по naturalWidth/naturalHeight после загрузки.
-   */
-  function crop(m, className) {
-    var h = GV.util.h;
-    var c = m.crop || { x: 0, y: 0, w: 1, h: 1 };
-    var img = h('img', {
-      src: m.src,
-      alt: m.alt || '',
-      draggable: 'false',
-      class: 'gv-crop__img',
-      style: {
-        width: pct(1 / c.w),
-        transform: 'translate(' + pct(-c.x) + ', ' + pct(-c.y) + ')'
-      }
-    });
-    var box = h('div', { class: ['gv-crop', className], style: { '--crop-ar': String(Math.round((c.w / c.h) * 1000) / 1000) } }, img);
-    function fit() {
-      if (img.naturalWidth && img.naturalHeight) {
-        box.style.setProperty('--crop-ar', String((c.w * img.naturalWidth) / (c.h * img.naturalHeight)));
-        box.classList.add('is-loaded');
-      }
-    }
-    if (img.complete) fit();
-    else img.addEventListener('load', fit, { once: true });
-    img.addEventListener('error', function () { box.classList.add('is-broken'); }, { once: true });
-    return box;
   }
 
   /* ---------- SVG-циферблат ---------- */
@@ -269,8 +232,7 @@
    * opts: { theta, overlay:bool, zones:setpoints|null, title, thetaLabel, valueLabel, roi, className, numbers:true }
    * Рисует шкалу GV.content.calibration (vMin…vMax, θmin → θmax), стрелку под углом θ
    * (система координат кадра: 0° — «3 часа», по часовой). overlay — эллипс ROI, вектор и подпись θ.
-   * numbers:false — только риски, без цифр шкалы: θ из readout относится к прибору со своей
-   * калибровкой (4,74 кПа), и по цифрам 0–10 стрелка читалась бы как другое значение.
+   * numbers:false — только риски, без цифр шкалы (для схем, где цифры спорили бы с подписью значения).
    * Возвращает SVG; стрелка — g.gv-dial__needle (поворачивается setNeedle).
    */
   function dial(opts) {
@@ -372,36 +334,18 @@
       (ICONS[name] || ICONS.right).map(function (d) { return s('path', { d: d }); }));
   }
 
+  /* Ссылка в новой вкладке всегда помечена: иконка «наружу» и визуально скрытый текст для чтения с экрана. */
   function extLink(attrs) {
+    var h = GV.util.h;
+    var note = (GV.content && GV.content.labels && GV.content.labels.newTab) || 'откроется в новой вкладке';
     var a = Object.assign({ target: '_blank', rel: 'noopener' }, attrs || {});
-    var args = ['a', a].concat(Array.prototype.slice.call(arguments, 1));
-    return GV.util.h.apply(null, args);
-  }
-
-  /* «Смотреть демо»: прокрутка к hero-stage и фокус на нём (история 6). */
-  function scrollToStage(id) {
-    var target = document.getElementById(id || 'hero-stage');
-    if (!target) return false;
-    target.scrollIntoView({ behavior: GV.util.prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
-    try { target.focus({ preventScroll: true }); } catch (e) { target.focus(); }
-    return true;
-  }
-
-  function demoLink(label, className) {
-    var target = (GV.content.hero.ctaSecondary && GV.content.hero.ctaSecondary.target) || '#hero-stage';
-    return GV.util.h('a', {
-      href: target,
-      class: className,
-      on: {
-        click: function (e) {
-          if (scrollToStage(target.replace(/^#/, ''))) e.preventDefault();
-        }
-      }
-    }, label || GV.content.hero.ctaSecondary.label, icon('arrow'));
+    var children = Array.prototype.slice.call(arguments, 1);
+    children.push(icon('external'), h('span', { class: 'gv-visually-hidden' }, ' (' + note + ')'));
+    return h.apply(null, ['a', a].concat(children));
   }
 
   /*
-   * Навигация шапки варианта (общая для A, B, C).
+   * Навигация шапки страницы.
    * opts: { container, links:{id: <a>}, ids:[…], rootMargin, keepLast, onChange(id|null) }
    *   — клик по якорю «#id» внутри container: плавная прокрутка к секции и фокус на ней;
    *   — IntersectionObserver: aria-current="true" у ссылки первой из ids, попавшей в полосу rootMargin;
@@ -458,13 +402,10 @@
   kit.pick = pick;
   kit.media = media;
   kit.onTweaks = onTweaks;
-  kit.crop = crop;
   kit.dial = dial;
   kit.setNeedle = setNeedle;
   kit.arcPath = arcPath;
   kit.polar = polar;
   kit.icon = icon;
   kit.extLink = extLink;
-  kit.demoLink = demoLink;
-  kit.scrollToStage = scrollToStage;
 })();

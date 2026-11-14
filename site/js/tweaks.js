@@ -1,9 +1,9 @@
 /*
- * GV.tweaks — плавающая панель настройки внешнего вида (бриф: шрифты, оттенки фона, масштаб, картинки).
- * Состояние { font, bg, scale, media } хранится в localStorage `gv.tweaks` и применяется
- * атрибутами <html>: data-font, data-bg, data-media и переменной --ui-scale.
+ * GV.tweaks — плавающая панель Tweaks: только масштаб и шрифт (фон и картинки больше не настраиваются).
+ * Состояние { font, scale } хранится в localStorage `gv.tweaks` и применяется к <html>:
+ * атрибут data-font и переменная --ui-scale. Лишние ключи старых версий (bg, media) игнорируются.
  * После каждого изменения: document → CustomEvent('gv:tweaks', { detail: state }).
- * Подключается раньше app.js и применяет состояние синхронно, до первого рендера варианта.
+ * Подключается до page.js и применяет состояние синхронно, до первого рендера страницы.
  *
  * API: get() → копия состояния · set(partial) · reset() · open() · close() · defaults · options
  */
@@ -13,54 +13,38 @@
   var GV = (window.GV = window.GV || {});
   var html = document.documentElement;
   var KEY = 'gv.tweaks';
-  var NBSP = '\u00A0';
+  var NBSP = ' ';
 
-  var DEFAULTS = { font: 'auto', bg: 'graphite', scale: 1, media: 'shots' };
+  var DEFAULTS = { font: 'auto', scale: 1 };
+
+  /* 'auto' — шрифт страницы по умолчанию (Onest); в панели он отмечен на чипе Onest. */
+  var VALID = { font: ['auto', 'onest', 'manrope', 'plex'], scale: [0.9, 1, 1.1, 1.25] };
 
   var OPTIONS = {
-    font: [
-      { value: 'auto', label: 'По варианту' },
-      { value: 'manrope', label: 'Manrope', family: "'Manrope', sans-serif" },
-      { value: 'onest', label: 'Onest', family: "'Onest', sans-serif" },
-      { value: 'plex', label: 'Plex', family: "'IBM Plex Sans', sans-serif" }
-    ],
-    bg: [
-      { value: 'graphite', label: 'Графит', swatch: '#0E1116' },
-      { value: 'anthracite', label: 'Антрацит', swatch: '#131313' },
-      { value: 'blue', label: 'Сине-графитовый', swatch: '#0C1424' },
-      { value: 'paper', label: 'Бумага', swatch: '#F3F1EA' }
-    ],
     scale: [
       { value: 0.9, label: '90' + NBSP + '%' },
       { value: 1, label: '100' + NBSP + '%' },
       { value: 1.1, label: '110' + NBSP + '%' },
       { value: 1.25, label: '125' + NBSP + '%' }
     ],
-    media: [
-      { value: 'shots', label: 'Скриншоты' },
-      { value: 'schematic', label: 'Схема' }
+    font: [
+      { value: 'onest', label: 'Onest', family: "'Onest', sans-serif" },
+      { value: 'manrope', label: 'Manrope', family: "'Manrope', sans-serif" },
+      { value: 'plex', label: 'IBM Plex', family: "'IBM Plex Sans', sans-serif" }
     ]
   };
 
   var GROUPS = [
-    { key: 'font', legend: 'Шрифт', cols: 2 },
-    { key: 'bg', legend: 'Фон', cols: 2 },
     { key: 'scale', legend: 'Масштаб', cols: 4 },
-    { key: 'media', legend: 'Изображения', cols: 2 }
+    { key: 'font', legend: 'Шрифт', cols: 3 }
   ];
-
-  var THEME_COLOR = { graphite: '#0E1116', anthracite: '#131313', blue: '#0C1424', paper: '#F3F1EA' };
-
-  function allowed(key, value) {
-    return OPTIONS[key].some(function (o) { return o.value === value; });
-  }
 
   function sanitize(raw) {
     var out = {};
     Object.keys(DEFAULTS).forEach(function (key) {
       var v = raw && raw[key];
       if (key === 'scale' && typeof v === 'string') v = parseFloat(v);
-      out[key] = allowed(key, v) ? v : DEFAULTS[key];
+      out[key] = VALID[key].indexOf(v) >= 0 ? v : DEFAULTS[key];
     });
     return out;
   }
@@ -69,7 +53,7 @@
     try {
       return sanitize(JSON.parse(window.localStorage.getItem(KEY) || '{}'));
     } catch (e) {
-      // localStorage недоступен (приватный режим, file:// с запретом) — работаем на значениях по умолчанию
+      // localStorage недоступен или в нём не JSON — работаем на значениях по умолчанию
       return sanitize({});
     }
   }
@@ -86,16 +70,12 @@
 
   function apply(notify) {
     html.setAttribute('data-font', state.font);
-    html.setAttribute('data-bg', state.bg);
-    html.setAttribute('data-media', state.media);
     html.style.setProperty('--ui-scale', String(state.scale));
-    var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', THEME_COLOR[state.bg]);
     if (notify) document.dispatchEvent(new CustomEvent('gv:tweaks', { detail: get() }));
   }
 
   function get() {
-    return { font: state.font, bg: state.bg, scale: state.scale, media: state.media };
+    return { font: state.font, scale: state.scale };
   }
 
   function set(partial) {
@@ -121,7 +101,12 @@
     return get();
   }
 
-  // Применяем сразу, синхронно: до первого рендера варианта в app.js.
+  function isChecked(key, value) {
+    if (key === 'font' && state.font === 'auto') return value === 'onest';
+    return state[key] === value;
+  }
+
+  // Применяем сразу, синхронно: до первого рендера страницы в page.js.
   apply(true);
 
   /* ---------- Панель ---------- */
@@ -161,11 +146,9 @@
                   name: 'gv-tweaks-' + group.key,
                   value: String(opt.value),
                   class: 'gv-tweaks__radio',
-                  checked: state[group.key] === opt.value
+                  checked: isChecked(group.key, opt.value)
                 }),
-                h('span', { class: 'gv-tweaks__chip', style: opt.family ? { fontFamily: opt.family } : null },
-                  opt.swatch ? h('i', { class: 'gv-tweaks__swatch', style: { background: opt.swatch }, 'aria-hidden': 'true' }) : null,
-                  opt.label));
+                h('span', { class: 'gv-tweaks__chip', style: opt.family ? { fontFamily: opt.family } : null }, opt.label));
             })));
       }),
       h('div', { class: 'gv-tweaks__footer' },
@@ -211,7 +194,7 @@
       var inputs = refs.form.querySelectorAll('input[name="gv-tweaks-' + group.key + '"]');
       Array.prototype.forEach.call(inputs, function (input) {
         var value = group.key === 'scale' ? parseFloat(input.value) : input.value;
-        input.checked = value === state[group.key];
+        input.checked = isChecked(group.key, value);
       });
     });
   }

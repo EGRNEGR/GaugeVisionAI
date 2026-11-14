@@ -1,19 +1,23 @@
 #!/usr/bin/env node
 /*
- * GaugeVision AI — единственная автоматическая проверка лендинга.
+ * GaugeVision AI — автоматическая проверка лендинга (одна страница «Циферблат»).
  * Запуск из корня репозитория: node site/tests/check.js
  * Без зависимостей. Код выхода 0 — всё зелёное; иначе каждое нарушение печатается строкой.
  *
  * Проверки (interfaces.md, «Шов тестов»):
- *   0. Форма GV.content: обязательные поля есть и не пустые.
- *   1. Каждое число в metrics, pipeline[].params, limits, compare, calibration, ema
- *      встречается в README.md, PRODUCT.md, app/config.py или notes.md.
- *   2. Каждый локальный src/href в index.html и content.js (и url() в css/) существует.
- *   3. В site/ (кроме tests/ и design-system.md) нет запрещённых слов; в content.js нет
- *      утверждений, запрещённых правилом 1a.
+ *   0. Форма GV.content: обязательные поля есть и не пустые; 8 секций, 4 карточки конвейера.
+ *   1. Каждое число во всех строках и числовых полях GV.content (кроме служебных ключей
+ *      и screenshotFacts) встречается в README.md, PRODUCT.md, app/config.py или notes.md прошлой сборки.
+ *   2. Локальные src/href в index.html и content.js (и url() в css/) существуют; видео и картинки —
+ *      в бюджете размера; оригинал видео побайтно равен references/; копии для перемотки —
+ *      без звука, moov в начале файла, ключевой кадр не реже каждого 2-го кадра.
+ *   3. Запрещённые слова в site/ (кроме tests/ и design-system.md); «гомограф» — только в roadmap.
  *   4. В js/ нет import/export и type="module".
- *   5. Каждый вариант js/variants/*.js упоминает семь id секций в порядке брифа.
- *   6. Типографика строк content.js: нет « - » вместо тире, дефисных диапазонов и десятичной точки.
+ *   5. Секции идут в порядке брифа; каждый модуль из GV.page.mounts подключён <script> в index.html.
+ *   6. Нет вариантов, роутера и студийной панели.
+ *   7. Ни одна выводимая строка GV.content не длиннее 140 символов; заголовки 3–6 слов;
+ *      ссылки — только GitHub EGRNEGR; 25 камер — замер, 50 и 100 — расчёт.
+ *   8. Типографика строк content.js: нет « - » вместо тире, дефисных диапазонов и десятичной точки.
  */
 'use strict';
 
@@ -23,11 +27,18 @@ const vm = require('vm');
 
 const SITE = path.resolve(__dirname, '..');
 const ROOT = path.resolve(SITE, '..');
-// Папка сборки теряет суффикс --wip при сдаче — ищем notes.md в обоих вариантах.
-const NOTES = ['2026-11-14-gaugevision-landing', '2026-11-14-gaugevision-landing--wip']
-  .map((dir) => path.join(ROOT, '.autopilot', dir, 'notes.md'))
-  .find((p) => fs.existsSync(p)) || path.join(ROOT, '.autopilot', '2026-11-14-gaugevision-landing', 'notes.md');
-const SECTION_IDS = ['hero', 'metrics', 'pipeline', 'compare', 'architecture', 'limits', 'contact'];
+const SECTION_IDS = ['hero', 'reading', 'pipeline', 'metrics', 'compare', 'architecture', 'limits', 'contact'];
+const MAX_TEXT = 140;
+const REPO_PREFIX = 'https://github.com/EGRNEGR';
+
+/* notes.md прошлой сборки: папка теряет суффикс --wip при сдаче, ищем по маске. */
+function findNotes() {
+  const dir = path.join(ROOT, '.autopilot');
+  const dirs = fs.existsSync(dir) ? fs.readdirSync(dir).filter((d) => /gaugevision-landing/.test(d)).sort() : [];
+  const hit = dirs.map((d) => path.join(dir, d, 'notes.md')).find((p) => fs.existsSync(p));
+  return hit || path.join(dir, '2026-11-14-gaugevision-landing', 'notes.md');
+}
+const NOTES = findNotes();
 
 const failures = [];
 const fail = (check, msg) => failures.push(`[${check}] ${msg}`);
@@ -61,8 +72,9 @@ const lastKey = (keyPath) => {
   for (let i = keyPath.length - 1; i >= 0; i--) if (typeof keyPath[i] === 'string') return keyPath[i];
   return '';
 };
+const words = (s) => String(s).split(/\s+/).filter((t) => /[\p{L}\p{N}]/u.test(t));
 
-/* ---------- загрузка content.js ---------- */
+/* ---------- загрузка content.js и page.js ---------- */
 function loadContent() {
   const file = path.join(SITE, 'js', 'content.js');
   const code = readText(file);
@@ -80,22 +92,45 @@ function loadContent() {
   return content;
 }
 
+/* page.js исполняется с заглушкой document: страница не строится, читается только таблица mounts. */
+function loadMounts() {
+  const file = path.join(SITE, 'js', 'page.js');
+  const code = readText(file);
+  if (code === null) { fail(5, `нет файла ${rel(file)}`); return null; }
+  const document = { readyState: 'loading', addEventListener() {}, documentElement: {} };
+  const sandbox = { console: { error() {}, log() {}, warn() {} }, document };
+  sandbox.window = sandbox;
+  sandbox.window.GV = {};
+  try {
+    vm.runInNewContext(code, sandbox, { filename: file });
+  } catch (e) {
+    fail(5, `page.js не загружается без DOM: ${e.message}`);
+    return null;
+  }
+  const page = sandbox.GV.page;
+  if (!page || typeof page.render !== 'function' || !page.mounts) { fail(5, 'page.js не определяет GV.page.render и GV.page.mounts'); return null; }
+  return page.mounts;
+}
+
 /* ---------- 0. форма ---------- */
 const SHAPE = {
-  meta: ['name', 'tagline', 'repoUrl', 'licenseUrl', 'pdfUrl', 'track', 'copyright'],
-  hero: ['eyebrow', 'title', 'lead', 'ctaPrimary', 'ctaSecondary', 'stage'],
-  'hero.stage': ['rawLabel', 'recognizedLabel', 'caption', 'captionSchematic', 'raw', 'recognized', 'readout'],
-  'hero.stage.readout': ['device', 'value', 'unit', 'theta', 'conf', 'roi', 'latencyMs'],
+  meta: ['name', 'tagline', 'repoUrl', 'licenseUrl', 'track', 'trackShort', 'copyright', 'version'],
+  hero: ['kicker', 'title', 'line', 'scrollLabel', 'video'],
+  'hero.video': ['src', 'srcMobile', 'poster', 'label'],
+  reading: ['theta', 'device', 'caption'],
   calibration: ['thetaMin', 'thetaMax', 'vMin', 'vMax', 'unit', 'direction', 'setpoints', 'barPerMpa', 'formula'],
   ema: ['alpha', 'minConfidence', 'caption'],
   compare: ['before', 'after', 'savingNote', 'timeline'],
   architecture: ['nodes', 'edges', 'stack', 'boundaryLabel'],
   untested: ['title', 'text'],
-  contact: ['title', 'text', 'links'],
+  pipelineTotal: ['value', 'unit', 'label'],
+  contact: ['title', 'links', 'backdrop'],
 };
 const ITEM_SHAPE = {
+  sections: ['id', 'index', 'nav'],
   metrics: ['id', 'value', 'unit', 'label', 'condition', 'kind'],
-  pipeline: ['id', 'index', 'title', 'short', 'what', 'params', 'file', 'aspect'],
+  pipeline: ['id', 'index', 'title', 'short', 'params', 'file', 'aspect'],
+  pipelineCards: ['id', 'index', 'title', 'formula', 'params'],
   tradeoffs: ['id', 'chose', 'cost', 'why', 'source'],
   limits: ['id', 'condition', 'risk', 'response', 'status'],
   roadmap: ['index', 'title', 'items', 'status'],
@@ -120,7 +155,6 @@ function checkShape(c) {
       }
     });
   }
-  if (!c.screenshotFacts || typeof c.screenshotFacts !== 'object') fail(0, 'нет объекта content.screenshotFacts');
   if (Array.isArray(c.metrics)) {
     if (c.metrics.length < 5) fail(0, `метрик ${c.metrics.length}, нужно не меньше 5`);
     c.metrics.forEach((m, i) => {
@@ -131,12 +165,23 @@ function checkShape(c) {
     const idx = c.pipeline.map((s) => s.index).join(',');
     if (idx !== '00,01,02,03,04,05,06,07,08') fail(0, `этапы конвейера должны идти 00–08, сейчас: ${idx}`);
     c.pipeline.forEach((s, i) => {
-      if (!Array.isArray(s.params) || s.params.length === 0) fail(0, `pipeline[${i}].params пуст`);
-      else s.params.forEach((p, j) => ['name', 'value'].forEach((k) => {
+      if (Array.isArray(s.params)) s.params.forEach((p, j) => ['name', 'value'].forEach((k) => {
         if (isEmpty(p[k])) fail(0, `пустое поле pipeline[${i}].params[${j}].${k}`);
       }));
     });
   }
+  if (Array.isArray(c.pipelineCards)) {
+    const ids = c.pipelineCards.map((s) => s.id).join(',');
+    if (ids !== 'locate,normalize,needle,stabilize') fail(0, `карточки конвейера: нужно locate, normalize, needle, stabilize, сейчас: ${ids}`);
+    const idx = c.pipelineCards.map((s) => s.index).join(',');
+    if (idx !== '01,02,03,04') fail(0, `индексы карточек конвейера 01–04, сейчас: ${idx}`);
+    c.pipelineCards.forEach((card, i) => {
+      if (!Array.isArray(card.formula)) fail(0, `pipelineCards[${i}].formula должен быть массивом строк`);
+      if (!('latency' in card)) fail(0, `pipelineCards[${i}] без поля latency (объект или null)`);
+      else if (card.latency !== null && ['value', 'unit'].some((k) => isEmpty(card.latency[k]))) fail(0, `pipelineCards[${i}].latency без value/unit`);
+    });
+  }
+  if (c.reading && typeof c.reading.theta !== 'number') fail(0, 'content.reading.theta должен быть числом');
   if (Array.isArray(c.tradeoffs) && c.tradeoffs.length < 5) fail(0, `компромиссов ${c.tradeoffs.length}, нужно не меньше 5`);
   if (Array.isArray(c.limits)) {
     if (c.limits.length !== 5) fail(0, `ограничений ${c.limits.length}, нужно 5`);
@@ -175,6 +220,10 @@ function variantsOf(token) {
 }
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+/* Ключи без фактов: идентификаторы, порядковые номера, пути, ссылки, точность вывода. */
+const NUMBER_SKIP = new Set(['id', 'kind', 'status', 'index', 'digits', 'version', 'group', 'src', 'srcMobile', 'poster',
+  'backdrop', 'href', 'file', 'source', 'roi', 'repoUrl', 'licenseUrl']);
+
 function checkNumbers(c) {
   const sources = [path.join(ROOT, 'README.md'), path.join(ROOT, 'PRODUCT.md'), path.join(ROOT, 'app', 'config.py'), NOTES];
   let corpus = '';
@@ -190,27 +239,18 @@ function checkNumbers(c) {
     found.set(token, ok);
     return ok;
   };
-  const scope = {
-    metrics: c.metrics,
-    'pipeline[].params': (c.pipeline || []).map((s) => s.params),
-    limits: c.limits,
-    compare: c.compare,
-    calibration: c.calibration,
-    ema: c.ema,
-  };
-  const skipKeys = new Set(['id', 'kind', 'status', 'index']);
-  for (const [name, value] of Object.entries(scope)) {
-    walk(value, (v, kp) => {
-      if (skipKeys.has(lastKey(kp))) return;
-      if (typeof v !== 'string' && typeof v !== 'number') return;
-      for (const token of numberTokens(typeof v === 'number' ? String(v) : v)) {
-        if (!has(token)) fail(1, `число ${token} из ${name}.${kp.join('.')} не найдено в README.md, PRODUCT.md, app/config.py, notes.md`);
-      }
-    });
-  }
+  walk(c, (v, kp) => {
+    if (kp[0] === 'screenshotFacts' || NUMBER_SKIP.has(lastKey(kp))) return;
+    // hero.stage.readout — копия screenshotFacts.calibrationWindow для пары в compare.js (значения со скриншота)
+    if (kp[0] === 'hero' && kp[1] === 'stage') return;
+    if (typeof v !== 'string' && typeof v !== 'number') return;
+    for (const token of numberTokens(typeof v === 'number' ? String(v) : v)) {
+      if (!has(token)) fail(1, `число ${token} из content.${kp.join('.')} не найдено в README.md, PRODUCT.md, app/config.py, notes.md`);
+    }
+  });
 }
 
-/* ---------- 2. локальные пути ---------- */
+/* ---------- 2. локальные пути и медиа ---------- */
 const isLocal = (u) => u && !/^(https?:|mailto:|tel:|data:|javascript:|#|\/\/)/i.test(u);
 function checkLocalPath(u, from) {
   const clean = decodeURI(u.split('#')[0].split('?')[0]);
@@ -244,6 +284,73 @@ function checkPaths(c) {
   }
 }
 
+/* Минимальный разбор MP4: дорожки (тип обработчика, число кадров, ключевые кадры) и порядок moov/mdat. */
+function parseMp4(buf) {
+  const CONTAINERS = new Set(['moov', 'trak', 'mdia', 'minf', 'stbl']);
+  const top = [];
+  const tracks = [];
+  let track = null;
+  function boxes(start, end, depth) {
+    let pos = start;
+    while (pos + 8 <= end) {
+      let size = buf.readUInt32BE(pos);
+      const type = buf.toString('latin1', pos + 4, pos + 8);
+      let header = 8;
+      if (size === 1) { size = Number(buf.readBigUInt64BE(pos + 8)); header = 16; } else if (size === 0) size = end - pos;
+      if (size < header || pos + size > end) break;
+      if (depth === 0) top.push(type);
+      if (type === 'trak') { track = { handler: '', samples: 0, sync: null }; tracks.push(track); }
+      const body = pos + header;
+      if (CONTAINERS.has(type)) boxes(body, pos + size, depth + 1);
+      else if (track && type === 'hdlr') track.handler = buf.toString('latin1', body + 8, body + 12);
+      else if (track && type === 'stsz') track.samples = buf.readUInt32BE(body + 8);
+      else if (track && type === 'stss') {
+        const n = buf.readUInt32BE(body + 4);
+        track.sync = [];
+        for (let i = 0; i < n; i++) track.sync.push(buf.readUInt32BE(body + 8 + i * 4));
+      }
+      pos += size;
+    }
+  }
+  boxes(0, buf.length, 0);
+  return { top, tracks };
+}
+
+const MEDIA = [
+  { file: 'assets/video/gauge_pullback.scrub.mp4', max: 14 * 1024 * 1024, scrub: true },
+  { file: 'assets/video/gauge_pullback.scrub-m.mp4', max: 6 * 1024 * 1024, scrub: true },
+  { file: 'assets/img/poster.jpg', max: 250 * 1024 },
+  { file: 'assets/img/boiler-hall.jpg', max: 350 * 1024 },
+];
+function checkMedia() {
+  const original = path.join(SITE, 'assets', 'video', 'gauge_pullback.mp4');
+  const reference = path.join(ROOT, 'references', 'gauge_pullback.mp4');
+  if (!fs.existsSync(original)) fail(2, 'нет оригинала site/assets/video/gauge_pullback.mp4');
+  else if (fs.existsSync(reference) && !fs.readFileSync(original).equals(fs.readFileSync(reference))) {
+    fail(2, 'site/assets/video/gauge_pullback.mp4 не совпадает побайтно с references/gauge_pullback.mp4');
+  }
+  for (const m of MEDIA) {
+    const p = path.join(SITE, m.file);
+    if (!fs.existsSync(p)) { fail(2, `нет файла site/${m.file}`); continue; }
+    const size = fs.statSync(p).size;
+    if (size > m.max) fail(2, `site/${m.file}: ${(size / 1048576).toFixed(2)} МБ больше бюджета ${(m.max / 1048576).toFixed(2)} МБ`);
+    if (!m.scrub) continue;
+    const { top, tracks } = parseMp4(fs.readFileSync(p));
+    if (top.indexOf('moov') < 0 || top.indexOf('mdat') < 0 || top.indexOf('moov') > top.indexOf('mdat')) fail(2, `site/${m.file}: moov не перед mdat (нужен +faststart)`);
+    if (tracks.some((t) => t.handler === 'soun')) fail(2, `site/${m.file}: есть звуковая дорожка`);
+    const video = tracks.find((t) => t.handler === 'vide');
+    if (!video) { fail(2, `site/${m.file}: нет видеодорожки`); continue; }
+    if (video.sync) {
+      const marks = video.sync.concat([video.samples + 1]);
+      let prev = 0;
+      for (const s of marks) {
+        if (s - prev > 2) { fail(2, `site/${m.file}: между ключевыми кадрами ${s - prev} кадров, нужно ≤ 2`); break; }
+        prev = s;
+      }
+    }
+  }
+}
+
 /* ---------- 3. запрещённые слова и утверждения ---------- */
 const BANNED = [
   [/open[\s-]?source/i, 'open source'],
@@ -252,7 +359,9 @@ const BANNED = [
   [/\bTODO\b/i, 'TODO'],
   [/\bFIXME\b/i, 'FIXME'],
   [/бесплатн/i, 'бесплатно'],
+  [/субпиксел/i, 'субпиксельный'],
 ];
+const HOMOGRAPHY = /гомограф/i;
 const BANNED_CLAIMS = [
   [/34\s*(e2e|провер)/i, '«34 проверки e2e» (тестов в репозитории нет)'],
   [/18\s*(браузерн|провер)/i, '«18 браузерных проверок» (тестов в репозитории нет)'],
@@ -261,20 +370,26 @@ const BANNED_CLAIMS = [
   [/GuageVision/, 'опечатка «GuageVision» в тексте'],
 ];
 const TEXT_EXT = new Set(['.html', '.css', '.js', '.md', '.svg', '.json', '.txt']);
-function checkBanned(c) {
-  const files = walkFiles(SITE).filter((f) => {
+function siteTextFiles() {
+  return walkFiles(SITE).filter((f) => {
     const r = path.relative(SITE, f).split(path.sep).join('/');
     return TEXT_EXT.has(path.extname(f)) && !r.startsWith('tests/') && r !== 'design-system.md';
   });
-  for (const f of files) {
+}
+function checkBanned(c) {
+  const contentFile = path.join(SITE, 'js', 'content.js');
+  for (const f of siteTextFiles()) {
     const lines = readText(f).split(/\r?\n/);
     lines.forEach((line, i) => {
       for (const [re, word] of BANNED) if (re.test(line)) fail(3, `«${word}» в ${rel(f)}:${i + 1}`);
+      // в content.js «гомография» допустима только в roadmap — это проверяется по данным ниже
+      if (f !== contentFile && HOMOGRAPHY.test(line)) fail(3, `«гомография» вне roadmap в ${rel(f)}:${i + 1}`);
     });
   }
   if (c) walk(c, (v, kp) => {
     if (typeof v !== 'string') return;
     const k = lastKey(kp);
+    if (HOMOGRAPHY.test(v) && kp[0] !== 'roadmap') fail(3, `«гомография» вне roadmap: content.${kp.join('.')}`);
     for (const [re, what] of BANNED_CLAIMS) {
       if (what.startsWith('опечатка') && (k === 'href' || /Url$/.test(k))) continue;
       if (re.test(v)) fail(3, `${what}: content.${kp.join('.')}`);
@@ -296,61 +411,123 @@ function checkModules() {
   if (index && /type\s*=\s*["']module["']/.test(index)) fail(4, 'type="module" в site/index.html');
 }
 
-/* ---------- 5. порядок секций в вариантах ---------- */
-function firstMention(code, id) {
-  const re = new RegExp(`(['"\`])#?${id}\\1|id\\s*=\\s*\\\\?["']${id}\\\\?["']`);
-  const m = re.exec(code);
-  return m ? m.index : -1;
-}
-function checkVariants() {
-  const dir = path.join(SITE, 'js', 'variants');
-  const files = walkFiles(dir).filter((f) => f.endsWith('.js'));
-  for (const f of files) {
-    const code = readText(f);
-    let prev = -1;
-    let prevId = null;
-    for (const id of SECTION_IDS) {
-      const pos = firstMention(code, id);
-      if (pos < 0) { fail(5, `${rel(f)} не упоминает секцию «${id}»`); continue; }
-      if (pos < prev) fail(5, `${rel(f)}: секция «${id}» упомянута раньше «${prevId}»`);
-      prev = pos; prevId = id;
-    }
+/* ---------- 5. секции и модули страницы ---------- */
+function checkSections(c, mounts) {
+  if (c && Array.isArray(c.sections)) {
+    const ids = c.sections.map((s) => s.id).join(',');
+    if (ids !== SECTION_IDS.join(',')) fail(5, `секции должны идти ${SECTION_IDS.join(', ')}, сейчас: ${ids}`);
   }
-  return files.length;
+  if (!mounts) return;
+  const index = readText(path.join(SITE, 'index.html')) || '';
+  const scripts = [];
+  const re = /<script\b[^>]*\bsrc\s*=\s*["']([^"']+)["']/g;
+  let m;
+  while ((m = re.exec(index))) scripts.push(m[1]);
+  for (const [sectionId, name] of Object.entries(mounts)) {
+    if (SECTION_IDS.indexOf(sectionId) < 0) fail(5, `GV.page.mounts: неизвестная секция «${sectionId}»`);
+    const defines = new RegExp(`GV\\.components\\.${escapeRe(String(name))}\\s*=`);
+    const ok = scripts.some((src) => isLocal(src) && defines.test(readText(path.join(SITE, src)) || ''));
+    if (!ok) fail(5, `модуль «${name}» для секции «${sectionId}» не подключён <script> в index.html`);
+  }
+  const page = scripts.indexOf('js/page.js');
+  if (page < 0) fail(5, 'js/page.js не подключён в index.html');
+  else if (page !== scripts.length - 1) fail(5, 'js/page.js должен подключаться последним');
 }
 
-/* ---------- 6. типографика content.js ---------- */
+/* ---------- 6. нет вариантов, роутера и студии ---------- */
+const LEGACY = [
+  [/gv-studio/, '#gv-studio'],
+  [/gv\.variant/, 'gv.variant'],
+  [/GV\.variants|GV\.app\b/, 'GV.variants / GV.app'],
+  [/data-variant|data-bg/, 'атрибуты вариантов и фона старых Tweaks'],
+];
+/* Компонент heroStage: в скриптах и разметке его нет (стили-остатки в components.css — не код компонента). */
+const HERO_STAGE = /heroStage|hero-stage\.js/;
+function checkLegacy() {
+  if (fs.existsSync(path.join(SITE, 'js', 'variants'))) fail(6, 'папка site/js/variants/ должна уйти в archive/');
+  if (fs.existsSync(path.join(SITE, 'js', 'app.js'))) fail(6, 'site/js/app.js (роутер вариантов) должен уйти в archive/');
+  if (fs.existsSync(path.join(SITE, 'js', 'components', 'hero-stage.js'))) fail(6, 'site/js/components/hero-stage.js должен уйти в archive/');
+  for (const f of siteTextFiles()) {
+    const markup = /\.(js|html)$/.test(f);
+    readText(f).split(/\r?\n/).forEach((line, i) => {
+      for (const [re, what] of LEGACY) if (re.test(line)) fail(6, `${what} в ${rel(f)}:${i + 1}`);
+      if (markup && HERO_STAGE.test(line)) fail(6, `heroStage в ${rel(f)}:${i + 1}`);
+    });
+  }
+}
+
+/* ---------- 7. минимум текста, ссылки, метки замер/расчёт ---------- */
+/* Ключи, которые не выводятся на страницу текстом: ARIA-описания, пути, ссылки, данные скриншотов. */
+const TEXT_SKIP = new Set(['alt', 'id', 'src', 'srcMobile', 'poster', 'backdrop', 'href', 'repoUrl', 'licenseUrl']);
+function checkText(c) {
+  walk(c, (v, kp) => {
+    if (typeof v !== 'string' || kp[0] === 'screenshotFacts' || TEXT_SKIP.has(lastKey(kp))) return;
+    if (kp.join('.') === 'hero.video.label') return; // aria-описание видео
+    if (v.length > MAX_TEXT) fail(7, `строка длиннее ${MAX_TEXT} символов (${v.length}): content.${kp.join('.')}`);
+  });
+  (c.sections || []).forEach((s, i) => {
+    if (s.id !== 'hero' && isEmpty(s.title)) fail(7, `у секции «${s.id}» нет заголовка`);
+    if (s.title !== undefined) {
+      const n = words(s.title).length;
+      if (n < 3 || n > 6) fail(7, `заголовок секции «${s.id}» — ${n} слов, нужно 3–6: «${s.title}»`);
+    }
+    if (s.lead !== undefined) fail(7, `у секции «${s.id}» остался lead — абзацев на странице нет`);
+  });
+  if (c.hero) {
+    const n = words(c.hero.title || '').length;
+    if (n < 3 || n > 6) fail(7, `hero.title — ${n} слов, нужно 3–6`);
+    if (String(c.hero.line || '').length > 90) fail(7, `hero.line длиннее 90 символов (${String(c.hero.line).length})`);
+  }
+  walk(c, (v, kp) => {
+    if (typeof v !== 'string' || !/^https?:/.test(v)) return;
+    if (v !== REPO_PREFIX && v.indexOf(REPO_PREFIX + '/') !== 0) fail(7, `ссылка не на GitHub EGRNEGR: content.${kp.join('.')} = ${v}`);
+  });
+  const primary = ((c.contact && c.contact.links) || []).filter((l) => l.primary);
+  if (primary.length !== 1 || primary[0].href !== c.meta.repoUrl) fail(7, 'в финале должна быть ровно одна главная ссылка — на репозиторий');
+  const cams = { '25': 'measured', '50': 'calculated', '100': 'calculated' };
+  Object.keys(cams).forEach((n) => {
+    const m = (c.metrics || []).find((x) => new RegExp(`(^|\\D)${n}\\s*камер`).test(x.label || ''));
+    if (!m) fail(7, `нет метрики «${n} камер»`);
+    else if (m.kind !== cams[n]) fail(7, `«${n} камер» должна быть «${cams[n] === 'measured' ? 'замер' : 'расчёт'}», сейчас kind = ${m.kind}`);
+  });
+}
+
+/* ---------- 8. типографика content.js ---------- */
 function checkTypography(c) {
-  const skip = new Set(['id', 'file', 'source', 'src', 'href', 'version', 'formula', 'repoUrl', 'licenseUrl', 'pdfUrl', 'authorUrl', 'roi', 'code']);
+  const skip = new Set(['id', 'file', 'source', 'src', 'srcMobile', 'poster', 'backdrop', 'href', 'version', 'formula', 'repoUrl', 'licenseUrl', 'roi', 'code']);
   walk(c, (v, kp) => {
     if (typeof v !== 'string' || kp[0] === 'screenshotFacts') return;
     const where = `content.${kp.join('.')}`;
     const k = lastKey(kp);
-    if (/ - /.test(v)) fail(6, `дефис вместо тире « — » в ${where}`);
-    if (/--/.test(v)) fail(6, `«--» вместо тире в ${where}`);
+    if (/ - /.test(v)) fail(8, `дефис вместо тире « — » в ${where}`);
+    if (/--/.test(v)) fail(8, `«--» вместо тире в ${where}`);
     if (skip.has(k)) return;
-    if (/(^|[^\w.-])\d+-\d+(?![\w.])/.test(v)) fail(6, `диапазон через дефис (нужно «–») в ${where}: «${v}»`);
+    if (/(^|[^\w.-])\d+-\d+(?![\w.])/.test(v)) fail(8, `диапазон через дефис (нужно «–») в ${where}: «${v}»`);
     const decimals = v.match(/(^|[^\w.≥\-])\d+\.\d+(?![\w.])/g);
-    if (decimals) fail(6, `десятичная точка (нужна запятая) в ${where}: «${decimals.join(', ').trim()}»`);
+    if (decimals) fail(8, `десятичная точка (нужна запятая) в ${where}: «${decimals.join(', ').trim()}»`);
   });
 }
 
 /* ---------- запуск ---------- */
 const content = loadContent();
+const mounts = loadMounts();
 if (content) {
   checkShape(content);
   checkNumbers(content);
+  checkText(content);
   checkTypography(content);
 }
 checkPaths(content);
+checkMedia();
 checkBanned(content);
 checkModules();
-const variantCount = checkVariants();
+checkSections(content, mounts);
+checkLegacy();
 
 if (failures.length) {
   console.log(failures.join('\n'));
   console.log(`\nFAIL: нарушений ${failures.length}`);
   process.exit(1);
 }
-console.log(`OK: факты, пути, запрещённые слова, модули, типографика; вариантов проверено: ${variantCount}`);
+console.log(`OK: факты, пути и медиа, запрещённые слова, модули, 8 секций и ${Object.keys(mounts || {}).length} модулей, без вариантов, минимум текста, типографика`);
 process.exit(0);

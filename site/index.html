@@ -1,36 +1,31 @@
 <!doctype html>
-<html lang="ru" data-font="auto" data-bg="graphite" data-media="shots" data-variant="a">
+<html lang="ru" data-font="auto">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GaugeVision AI — показания стрелочных приборов ТЭЦ на пульте оператора</title>
-  <meta name="description" content="GaugeVision AI оцифровывает показания стрелочных приборов КИПиА обычной камерой: без врезки в трубопроводы, кабельных трасс и останова оборудования. YOLOv8n и OpenCV в локальном контуре, без интернета.">
-  <meta name="theme-color" content="#0E1116">
-  <meta name="color-scheme" content="dark light">
+  <title>GaugeVision AI — стрелочные приборы ТЭЦ на пульте оператора</title>
+  <meta name="description" content="GaugeVision AI снимает показания стрелочных приборов КИПиА камерой: без врезки, кабелей и останова. YOLOv8n и OpenCV в локальном контуре.">
+  <meta name="theme-color" content="#090B0E">
+  <meta name="color-scheme" content="dark">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 
+  <!-- Порядок стилей: шрифты → токены → база → движение → компоненты → страница → Tweaks -->
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
-  <!-- Порядок стилей: base.css → components.css → variant-a/b/c.css → tweaks.css -->
+  <link rel="stylesheet" href="css/motion.css">
   <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/variant-a.css">
-  <link rel="stylesheet" href="css/variant-b.css">
-  <link rel="stylesheet" href="css/variant-c.css">
+  <link rel="stylesheet" href="css/page.css">
   <link rel="stylesheet" href="css/tweaks.css">
 
   <script>
-    /* Ранняя установка атрибутов Tweaks и варианта до первой отрисовки: нет вспышки графита при сохранённой «Бумаге».
-       Полная логика и валидация — в js/tweaks.js и js/app.js. */
+    /* Масштаб и шрифт из Tweaks — до первой отрисовки, без скачка вёрстки. Полная логика — js/tweaks.js. */
     (function () {
       var d = document.documentElement;
       try {
         var t = JSON.parse(localStorage.getItem('gv.tweaks') || '{}');
-        var ok = { font: ['auto', 'manrope', 'onest', 'plex'], bg: ['graphite', 'anthracite', 'blue', 'paper'], media: ['shots', 'schematic'] };
-        Object.keys(ok).forEach(function (k) { if (ok[k].indexOf(t[k]) >= 0) d.setAttribute('data-' + k, t[k]); });
+        if (['auto', 'onest', 'manrope', 'plex'].indexOf(t.font) >= 0) d.setAttribute('data-font', t.font);
         if ([0.9, 1, 1.1, 1.25].indexOf(t.scale) >= 0) d.style.setProperty('--ui-scale', String(t.scale));
-        var v = new URLSearchParams(location.search).get('v') || localStorage.getItem('gv.variant');
-        if (/^[a-z]$/.test(v || '')) d.setAttribute('data-variant', v);
       } catch (e) {
         d.setAttribute('data-boot', 'defaults');
       }
@@ -38,37 +33,31 @@
   </script>
 </head>
 <body>
-  <a class="gv-skip" href="#gv-root">К содержанию</a>
+  <a class="gv-skip" href="#gv-main">К содержанию</a>
 
-  <nav id="gv-studio" aria-label="Студия: варианты страницы"></nav>
-
-  <main id="gv-root" tabindex="-1"></main>
+  <div id="gv-root"></div>
 
   <noscript>
     <div class="gv-noscript">
       <p class="gv-noscript__meta">Трек №3 · Умное производство</p>
       <h1 class="gv-noscript__title">GaugeVision AI</h1>
-      <p>Камера снимает показания стрелочных приборов КИПиА на ТЭЦ и передаёт их на пульт оператора&nbsp;— без врезки в трубопроводы, кабельных трасс и останова оборудования.</p>
+      <p>Камера снимает показания стрелочных приборов КИПиА и передаёт их на пульт оператора&nbsp;— без врезки, кабелей и останова.</p>
       <a class="gv-button" href="https://github.com/EGRNEGR/GaugeVisionAI">Код на GitHub</a>
     </div>
   </noscript>
 
   <aside id="gv-tweaks" aria-label="Настройки внешнего вида"></aside>
 
+  <!-- Порядок скриптов: content → util → motion → components/kit → components/* → tweaks → page (последним) -->
   <script src="js/content.js"></script>
   <script src="js/util.js"></script>
-  <!-- Порядок скриптов: content.js → util.js → components/*.js → variants/*.js → tweaks.js → app.js -->
+  <script src="js/motion.js"></script>
   <script src="js/components/kit.js"></script>
-  <script src="js/components/hero-stage.js"></script>
   <script src="js/components/metrics.js"></script>
-  <script src="js/components/pipeline.js"></script>
   <script src="js/components/compare.js"></script>
   <script src="js/components/architecture.js"></script>
   <script src="js/components/limits.js"></script>
-  <script src="js/variants/a.js"></script>
-  <script src="js/variants/b.js"></script>
-  <script src="js/variants/c.js"></script>
   <script src="js/tweaks.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/page.js"></script>
 </body>
 </html>

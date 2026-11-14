@@ -1,7 +1,7 @@
 /*
- * GaugeVision AI — база: reset, типографика, поверхности браузера, утилиты,
- * студийная панель #gv-studio, запасная страница и noscript.
+ * GaugeVision AI — база: reset, типографика, поверхности браузера, утилиты, noscript.
  * Только токены из tokens.css; размеры в rem (px — только линии 1px и медиазапросы).
+ * Переходы — только transform и opacity: цвет при наведении меняется сразу.
  */
 
 *,
@@ -17,6 +17,7 @@ html {
   background: var(--bg-canvas);
   color: var(--text-primary);
   scrollbar-color: var(--border-strong) var(--bg-canvas);
+  scroll-padding-top: calc(var(--header-h) + var(--telemetry-h) + var(--space-4));
 }
 
 body {
@@ -32,7 +33,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: clip;
-  transition: background-color var(--dur-med) var(--ease-out), color var(--dur-med) var(--ease-out);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -81,7 +81,6 @@ a {
   text-decoration-thickness: 1px;
   text-underline-offset: 0.2em;
   text-decoration-color: var(--border-strong);
-  transition: color var(--dur-fast) var(--ease-out), text-decoration-color var(--dur-fast) var(--ease-out);
 }
 
 a:hover {
@@ -199,99 +198,8 @@ input[type="range"] {
   transform: none;
 }
 
-/* Секции не прячутся под студийной панелью при переходе по якорю */
-#gv-root section[id],
-#gv-root [id="hero-stage"] {
-  scroll-margin-top: calc(var(--studio-h) + var(--space-4));
-}
+/* ---------- noscript ---------- */
 
-/* ---------- Студийная панель ---------- */
-
-#gv-studio {
-  position: sticky;
-  top: 0;
-  z-index: 60;
-  height: var(--studio-h);
-  display: flex;
-  align-items: center;
-  gap: calc(0.75 * var(--chrome-u));
-  padding-inline: calc(1 * var(--chrome-u));
-  background: var(--bg-canvas);
-  border-bottom: 1px solid var(--border-hairline);
-  font-family: var(--font-chrome);
-  font-size: calc(0.75 * var(--chrome-u));
-  line-height: 1;
-  color: var(--text-muted);
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-}
-
-#gv-studio::-webkit-scrollbar {
-  display: none;
-}
-
-.gv-studio__label {
-  flex: none;
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-  color: var(--text-faint);
-  white-space: nowrap;
-}
-
-.gv-studio__list {
-  display: flex;
-  flex: none;
-  gap: 1px;
-  margin: 0;
-  padding: 1px;
-  list-style: none;
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-s);
-}
-
-.gv-studio__btn {
-  min-height: calc(1.75 * var(--chrome-u));
-  padding: 0 calc(0.75 * var(--chrome-u));
-  border: 0;
-  border-radius: calc(0.125 * var(--chrome-u));
-  background: transparent;
-  color: var(--text-muted);
-  font-family: inherit;
-  font-size: inherit;
-  white-space: nowrap;
-  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
-}
-
-.gv-studio__btn:hover {
-  color: var(--text-primary);
-  background: var(--bg-elevated);
-}
-
-.gv-studio__btn[aria-pressed="true"] {
-  background: var(--accent);
-  color: var(--accent-contrast);
-}
-
-.gv-studio__key {
-  font-weight: 700;
-}
-
-.gv-studio__empty {
-  flex: none;
-  white-space: nowrap;
-}
-
-.gv-studio__note {
-  margin-left: auto;
-  flex: none;
-  color: var(--text-faint);
-  white-space: nowrap;
-}
-
-/* ---------- Запасная страница (вариантов нет) и noscript ---------- */
-
-.gv-shell,
 .gv-noscript {
   max-width: 52rem;
   margin: 0 auto;
@@ -300,7 +208,6 @@ input[type="range"] {
   gap: var(--space-5);
 }
 
-.gv-shell__meta,
 .gv-noscript__meta {
   font-family: var(--font-mono);
   font-size: var(--fs-xs);
@@ -309,7 +216,6 @@ input[type="range"] {
   color: var(--text-muted);
 }
 
-.gv-shell__title,
 .gv-noscript__title {
   font-size: var(--fs-3xl);
   line-height: var(--lh-tight);
@@ -317,53 +223,10 @@ input[type="range"] {
   font-weight: 800;
 }
 
-.gv-shell__lead,
 .gv-noscript p {
   max-width: var(--measure);
   font-size: var(--fs-l);
   color: var(--text-muted);
-}
-
-.gv-shell__metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
-  border-top: 1px solid var(--border-hairline);
-  border-bottom: 1px solid var(--border-hairline);
-}
-
-.gv-shell__metric {
-  padding: var(--space-4) var(--space-4) var(--space-4) 0;
-}
-
-.gv-shell__metric + .gv-shell__metric {
-  padding-left: var(--space-4);
-  border-left: 1px solid var(--border-hairline);
-}
-
-.gv-shell__value {
-  white-space: nowrap;
-  font-family: var(--font-mono);
-  font-variant-numeric: tabular-nums;
-  font-size: var(--fs-2xl);
-  line-height: 1.1;
-  color: var(--text-primary);
-}
-
-.gv-shell__value small {
-  margin-left: 0.25em;
-  font-size: var(--fs-s);
-  color: var(--text-muted);
-}
-
-.gv-shell__cond {
-  font-size: var(--fs-s);
-  color: var(--text-muted);
-}
-
-.gv-shell__note {
-  font-family: var(--font-mono);
-  font-size: var(--fs-s);
-  color: var(--text-faint);
 }
 
 .gv-button {
@@ -380,52 +243,6 @@ input[type="range"] {
   font-weight: 700;
   text-decoration: none;
   justify-self: start;
-  transition: transform var(--dur-fast) var(--ease-out), opacity var(--dur-fast) var(--ease-out);
-}
-
-.gv-button:hover {
-  opacity: 0.9;
-}
-
-.gv-button:active {
-  transform: translateY(1px);
-}
-
-/* ---------- Узкий экран ---------- */
-
-@media (max-width: 640px) {
-  :root {
-    --studio-h: calc(3 * var(--chrome-u));
-  }
-
-  .gv-studio__label,
-  .gv-studio__note {
-    display: none;
-  }
-
-  #gv-studio {
-    padding-inline: calc(0.5 * var(--chrome-u));
-  }
-
-  .gv-studio__list {
-    flex: 1 1 auto;
-  }
-
-  .gv-studio__item {
-    flex: 1 1 0;
-  }
-
-  .gv-studio__btn {
-    width: 100%;
-    min-height: var(--tap);
-    padding: 0 calc(0.5 * var(--chrome-u));
-  }
-
-  .gv-shell__metric + .gv-shell__metric {
-    padding-left: 0;
-    border-left: 0;
-    border-top: 1px solid var(--border-hairline);
-  }
 }
 
 /* ---------- Без анимации ---------- */

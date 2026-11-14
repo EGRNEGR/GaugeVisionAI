@@ -1,0 +1,688 @@
+/*
+ * Страница «Циферблат» (бывший вариант B, теперь без префиксов вариантов) на обсидиане.
+ * Шапка с навигацией и телеметрией, ритм секций, заголовки с контурным номером, финал, футер,
+ * и поверхности компонентов: 1px-граница с верхним бликом, направленные пятна света.
+ * Раскладки компонентов — components.css; сцены hero, reading, pipeline — hero.css, dial.css, track.css.
+ * Переходы — только transform и opacity.
+ */
+
+/* ---------- каркас ---------- */
+
+.gv-page {
+  position: relative;
+  min-height: 100vh;
+}
+
+.gv-main:focus {
+  outline: none;
+}
+
+.gv-main section[id]:focus {
+  outline: none;
+}
+
+/* ---------- шапка: бренд · навигация · GitHub ---------- */
+
+.gv-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg-canvas);
+}
+
+.gv-header__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-areas: "brand nav github";
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--header-h);
+}
+
+.gv-brand {
+  grid-area: brand;
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  font-weight: 800;
+  font-size: var(--fs-l);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+.gv-brand__mark {
+  width: 1.625rem;
+  height: 1.625rem;
+  fill: none;
+}
+
+.gv-brand__arc {
+  stroke: var(--text-faint);
+  stroke-width: 1.4;
+  stroke-dasharray: 1.2 1.6;
+}
+
+.gv-brand__needle {
+  stroke: var(--accent);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.gv-brand__hub {
+  fill: var(--accent);
+}
+
+.gv-nav {
+  grid-area: nav;
+  min-width: 0;
+}
+
+.gv-nav__list {
+  display: flex;
+  gap: var(--space-1);
+  margin: 0;
+}
+
+.gv-nav__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  font-size: var(--fs-s);
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Текущий раздел отмечен риской сверху, как деление на шкале */
+.gv-nav__link::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 0.5rem;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform var(--dur-med) var(--ease-out);
+}
+
+.gv-nav__link:hover,
+.gv-nav__link[aria-current="true"] {
+  color: var(--text-primary);
+}
+
+.gv-nav__link[aria-current="true"]::before {
+  transform: scaleY(1);
+}
+
+.gv-header__github {
+  grid-area: github;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-s);
+  font-size: var(--fs-s);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.gv-header__github:hover {
+  border-color: var(--accent);
+}
+
+.gv-header__github .gv-icon:not(.gv-icon--fill) {
+  width: 0.875rem;
+  height: 0.875rem;
+  color: var(--text-faint);
+}
+
+/* ---------- секции и ритм ---------- */
+
+/* overflow-x: clip держит пятна света в ширине экрана и не ломает position: sticky у сцен */
+.gv-section {
+  position: relative;
+  padding-block: var(--section-pad);
+  overflow-x: clip;
+}
+
+.gv-section + .gv-section {
+  border-top: 1px solid var(--border-hairline);
+}
+
+.gv-section__head,
+.gv-section__body {
+  position: relative;
+  z-index: 1;
+}
+
+.gv-section--hero {
+  padding-block: 0;
+}
+
+/* Заголовок секции: крупный контурный номер за названием (мотив ref4) */
+.gv-head {
+  display: grid;
+  justify-items: center;
+  margin-bottom: clamp(3rem, 1.5rem + 4vw, 6rem);
+  text-align: center;
+}
+
+.gv-head__index {
+  grid-area: 1 / 1;
+  align-self: center;
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 3.5rem + 7vw, 11rem);
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--border-hairline);
+  user-select: none;
+}
+
+@supports (-webkit-text-stroke: 1px currentColor) {
+  .gv-head__index {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--border-strong);
+  }
+}
+
+.gv-head__title {
+  grid-area: 1 / 1;
+  align-self: center;
+  position: relative;
+  max-width: 20ch;
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+/* ---------- свет: направленные пятна низкой непрозрачности (статичные) ---------- */
+
+.gv-glow {
+  position: absolute;
+  z-index: 0;
+  width: min(70rem, 120vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.gv-glow--warm {
+  top: -20rem;
+  left: -24rem;
+  background: radial-gradient(closest-side, var(--glow-warm), transparent);
+}
+
+.gv-glow--cool {
+  top: -10rem;
+  right: -30rem;
+  background: radial-gradient(closest-side, var(--glow-cool), transparent);
+}
+
+.gv-section--limits .gv-glow,
+.gv-contact .gv-glow {
+  top: auto;
+  bottom: -32rem;
+}
+
+/* ---------- hero без модуля: постер, kicker, h1, строка ---------- */
+
+.gv-hero-static {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: min(100svh, 60rem);
+  overflow: hidden;
+}
+
+.gv-hero-static__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.55;
+}
+
+.gv-hero-static::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(9, 11, 14, 0.2) 0%, rgba(9, 11, 14, 0.35) 45%, var(--bg-canvas) 100%);
+}
+
+.gv-hero-static__hud {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-4);
+  padding-block: var(--space-8);
+}
+
+.gv-hero-static__kicker {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.gv-hero-static__title {
+  max-width: 16ch;
+  font-size: var(--fs-display);
+  font-weight: 800;
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-display);
+}
+
+.gv-hero-static__line {
+  max-width: 44rem;
+  font-size: var(--fs-l);
+  color: var(--text-muted);
+}
+
+/* ---------- поверхности компонентов: 1px-граница и верхний блик ---------- */
+
+.gv-metrics--dial .gv-metrics__item,
+.gv-compare__col,
+.gv-architecture__caption,
+.gv-limits--cards .gv-limits__item {
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-l);
+  background: var(--surface-card);
+}
+
+.gv-compare__col--after {
+  border-color: rgba(255, 90, 31, 0.45);
+}
+
+/* Метрики: крупные контурные цифры на карточках */
+.gv-metrics--dial .gv-metrics__list {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: var(--space-4);
+}
+
+.gv-metrics--dial .gv-metrics__item {
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-4) var(--space-6);
+  text-align: center;
+}
+
+.gv-metrics--dial .gv-metrics__meta {
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.gv-metrics--dial .gv-metrics__figure {
+  justify-content: center;
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+.gv-metrics--dial .gv-metrics__digits {
+  font-size: clamp(3rem, 1.6rem + 3vw, 4.75rem);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-primary);
+}
+
+.gv-metrics--dial .gv-metrics__digits--long {
+  font-size: clamp(2rem, 1.2rem + 2vw, 3rem);
+}
+
+@supports (-webkit-text-stroke: 1px currentColor) {
+  .gv-metrics--dial .gv-metrics__digits {
+    color: transparent;
+    -webkit-text-stroke: 1.25px var(--text-primary);
+  }
+
+  .gv-metrics--dial .gv-metrics__item:hover .gv-metrics__digits {
+    color: var(--text-primary);
+  }
+}
+
+.gv-metrics--dial .gv-metrics__unit {
+  font-family: var(--font-mono);
+}
+
+.gv-metrics--dial .gv-metrics__label {
+  font-size: var(--fs-m);
+}
+
+.gv-metrics--dial .gv-metrics__condition {
+  max-width: 30ch;
+  font-size: var(--fs-s);
+}
+
+.gv-metrics__note {
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* Сравнение: общий переключатель по центру */
+.gv-compare--toggle .gv-compare__mode {
+  min-height: 3rem;
+  padding: 0 var(--space-6);
+  font-size: var(--fs-m);
+}
+
+.gv-compare__title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+.gv-compare__cost-value {
+  font-family: var(--font-display);
+  font-size: var(--fs-3xl);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  word-spacing: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+@supports (-webkit-text-stroke: 1px currentColor) {
+  .gv-compare__cost-value {
+    color: transparent;
+    -webkit-text-stroke: 1.25px var(--text-primary);
+  }
+}
+
+.gv-compare__saving-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  word-spacing: normal;
+}
+
+/* Архитектура */
+.gv-architecture__node {
+  border-radius: var(--radius-m);
+}
+
+/* Ограничения */
+.gv-limits--cards .gv-limits__list {
+  gap: var(--space-4);
+}
+
+.gv-limits__condition {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+.gv-limits__block-title {
+  font-weight: 800;
+}
+
+/* ---------- финал: GitHub на приглушённом кадре котельной ---------- */
+
+.gv-contact {
+  overflow: hidden;
+  padding-bottom: clamp(6rem, 3rem + 8vw, 11rem);
+}
+
+.gv-contact__backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.gv-contact__backdrop img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 40% 40%;
+  opacity: 0.32;
+}
+
+.gv-contact__backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, var(--bg-canvas) 0%, rgba(9, 11, 14, 0.55) 30%, rgba(9, 11, 14, 0.55) 70%, var(--bg-canvas) 100%),
+    radial-gradient(60% 70% at 50% 55%, transparent, rgba(9, 11, 14, 0.7));
+}
+
+.gv-contact .gv-section__head,
+.gv-contact__inner {
+  position: relative;
+  z-index: 1;
+}
+
+.gv-contact .gv-head {
+  margin-bottom: var(--space-7);
+}
+
+.gv-contact__inner {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-5);
+  text-align: center;
+}
+
+.gv-contact__repo {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2) var(--space-4);
+  min-height: 4.5rem;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-s);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  text-decoration: none;
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+
+.gv-contact__repo:hover {
+  transform: translateY(-2px);
+}
+
+.gv-contact__repo:active {
+  transform: translateY(1px);
+}
+
+.gv-contact__repo .gv-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.gv-contact__repo .gv-icon:not(.gv-icon--fill) {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.gv-contact__repo-label {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.gv-contact__repo-url {
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  overflow-wrap: anywhere;
+}
+
+.gv-contact__meta {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* ---------- футер ---------- */
+
+/* Снизу запас под плавающую кнопку Tweaks: в конце страницы она не закрывает ссылку на лицензию */
+.gv-footer {
+  border-top: 1px solid var(--border-hairline);
+  padding-block: var(--space-5) calc(var(--space-7) + 3.5rem);
+}
+
+.gv-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-5);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+.gv-footer__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--space-4);
+}
+
+.gv-footer__license {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 2.75rem;
+  color: var(--text-muted);
+}
+
+.gv-footer__license:hover {
+  color: var(--text-primary);
+}
+
+/* ---------- адаптив ---------- */
+
+@media (max-width: 1240px) {
+  .gv-nav__link {
+    padding: 0 var(--space-2);
+  }
+}
+
+/* Навигация второй строкой: прокрутка внутри полосы с маской по краям, страница не шире экрана */
+@media (max-width: 1099px) {
+  :root {
+    --header-rows: 5.75rem;
+  }
+
+  /* Шапка уезжает вверх целиком, у верха экрана остаётся полоса телеметрии */
+  .gv-header {
+    top: calc(-1 * var(--header-rows));
+  }
+
+  .gv-header__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "brand brand"
+      "nav github";
+    column-gap: var(--space-2);
+    row-gap: 0;
+    min-height: 0;
+  }
+
+  .gv-brand {
+    min-height: 3rem;
+  }
+
+  .gv-nav {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+    mask-image: linear-gradient(90deg, #000 85%, transparent);
+  }
+
+  .gv-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gv-nav__list {
+    width: max-content;
+    padding-right: var(--space-6);
+  }
+
+  .gv-nav__list li:first-child .gv-nav__link {
+    padding-left: 0;
+  }
+
+  .gv-header__github {
+    padding: 0 var(--space-2);
+  }
+
+  html {
+    scroll-padding-top: calc(var(--telemetry-h) + var(--space-4));
+  }
+}
+
+@media (max-width: 640px) {
+  .gv-brand {
+    font-size: var(--fs-m);
+  }
+
+  .gv-head {
+    margin-bottom: var(--space-7);
+  }
+
+  .gv-metrics--dial .gv-metrics__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+  }
+
+  .gv-metrics--dial .gv-metrics__item {
+    padding: var(--space-4) var(--space-2) var(--space-5);
+  }
+
+  .gv-metrics--dial .gv-metrics__digits {
+    font-size: 2.25rem;
+  }
+
+  .gv-metrics--dial .gv-metrics__digits--long {
+    font-size: var(--fs-l);
+  }
+
+  .gv-metrics--dial .gv-metrics__label,
+  .gv-metrics--dial .gv-metrics__condition {
+    font-size: var(--fs-xs);
+  }
+
+  .gv-compare--toggle .gv-compare__mode {
+    padding: 0 var(--space-5);
+  }
+
+  .gv-contact__repo {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .gv-contact__repo-label {
+    font-size: var(--fs-l);
+  }
+
+  .gv-footer__inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gv-nav__link::before,
+  .gv-contact__repo {
+    transition: none;
+  }
+}
