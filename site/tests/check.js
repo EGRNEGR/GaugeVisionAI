@@ -18,6 +18,8 @@
  *   7. Ни одна выводимая строка GV.content не длиннее 140 символов; заголовки 3–6 слов;
  *      ссылки — только GitHub EGRNEGR; 25 камер — замер, 50 и 100 — расчёт.
  *   8. Типографика строк content.js: нет « - » вместо тире, дефисных диапазонов и десятичной точки.
+ *   9. Движение: в css/ transition и @keyframes трогают только transform и opacity; карточки конвейера —
+ *      четыре этапа по брифу с замеренной задержкой; hero.stage и старый pipeline.js удалены.
  */
 'use strict';
 
@@ -175,7 +177,16 @@ function checkShape(c) {
     if (ids !== 'locate,normalize,needle,stabilize') fail(0, `карточки конвейера: нужно locate, normalize, needle, stabilize, сейчас: ${ids}`);
     const idx = c.pipelineCards.map((s) => s.index).join(',');
     if (idx !== '01,02,03,04') fail(0, `индексы карточек конвейера 01–04, сейчас: ${idx}`);
+    const titles = c.pipelineCards.map((x) => String(x.title).replace(/\u00A0/g, ' ')).join(' | ');
+    const brief = 'Локализация: CLAHE + YOLOv8n | Эллипс → круг: аффинная коррекция | Угол θ: радиальный момент + HoughLinesP | Сглаживание EMA α = 0,25';
+    if (titles !== brief) fail(0, `заголовки карточек конвейера не по брифу: ${titles}`);
     c.pipelineCards.forEach((card, i) => {
+      const lat = card.latency;
+      const want = [['7,2', 'GPU'], null, null, ['≈ 90 %', 'скачка за 8 кадров']][i];
+      if (want === null && lat !== null) fail(0, `pipelineCards[${i}]: у этапа нет отдельного замера, latency должен быть null (показывается «в составе» итога)`);
+      if (want && (!lat || String(lat.value).replace(/\u00A0/g, ' ') !== want[0] || String(lat.unit).replace(/\u00A0/g, ' ').indexOf(want[1]) < 0)) {
+        fail(0, `pipelineCards[${i}].latency должен быть «${want[0]}» … «${want[1]}»`);
+      }
       if (!Array.isArray(card.formula)) fail(0, `pipelineCards[${i}].formula должен быть массивом строк`);
       if (!('latency' in card)) fail(0, `pipelineCards[${i}] без поля latency (объект или null)`);
       else if (card.latency !== null && ['value', 'unit'].some((k) => isEmpty(card.latency[k]))) fail(0, `pipelineCards[${i}].latency без value/unit`);
@@ -241,8 +252,6 @@ function checkNumbers(c) {
   };
   walk(c, (v, kp) => {
     if (kp[0] === 'screenshotFacts' || NUMBER_SKIP.has(lastKey(kp))) return;
-    // hero.stage.readout — копия screenshotFacts.calibrationWindow для пары в compare.js (значения со скриншота)
-    if (kp[0] === 'hero' && kp[1] === 'stage') return;
     if (typeof v !== 'string' && typeof v !== 'number') return;
     for (const token of numberTokens(typeof v === 'number' ? String(v) : v)) {
       if (!has(token)) fail(1, `число ${token} из content.${kp.join('.')} не найдено в README.md, PRODUCT.md, app/config.py, notes.md`);
@@ -508,6 +517,57 @@ function checkTypography(c) {
   });
 }
 
+/* ---------- 9. движение: только transform и opacity ---------- */
+const MOTION_OK = new Set(['transform', 'opacity', 'none']);
+function topLevelSplit(value) {
+  const parts = [];
+  let depth = 0;
+  let cur = '';
+  for (const ch of value) {
+    if (ch === '(') depth++;
+    if (ch === ')') depth--;
+    if (ch === ',' && depth === 0) { parts.push(cur); cur = ''; } else cur += ch;
+  }
+  if (cur.trim()) parts.push(cur);
+  return parts.map((p) => p.trim()).filter(Boolean);
+}
+function keyframeBodies(css) {
+  const out = [];
+  const re = /@keyframes\s+([\w-]+)\s*\{/g;
+  let m;
+  while ((m = re.exec(css))) {
+    let depth = 1;
+    let i = re.lastIndex;
+    while (i < css.length && depth > 0) { if (css[i] === '{') depth++; else if (css[i] === '}') depth--; i++; }
+    out.push({ name: m[1], body: css.slice(re.lastIndex, i - 1) });
+  }
+  return out;
+}
+function checkMotionCss() {
+  const files = walkFiles(path.join(SITE, 'css')).filter((f) => f.endsWith('.css'));
+  for (const f of files) {
+    const css = (readText(f) || '').replace(/\/\*[\s\S]*?\*\//g, '');
+    const re = /(^|[\s;{])(transition-property|transition)\s*:\s*([^;}]+)/g;
+    let m;
+    while ((m = re.exec(css))) {
+      const names = m[2] === 'transition'
+        ? topLevelSplit(m[3]).map((part) => part.split(/\s+/)[0])
+        : topLevelSplit(m[3]);
+      for (const name of names) {
+        if (!MOTION_OK.has(name)) fail(9, `transition по «${name}» в ${rel(f)} (разрешены transform и opacity)`);
+      }
+    }
+    for (const { name, body } of keyframeBodies(css)) {
+      const decl = /([\w-]+)\s*:/g;
+      let d;
+      while ((d = decl.exec(body))) {
+        if (!MOTION_OK.has(d[1]) && d[1] !== 'animation-timing-function') fail(9, `@keyframes ${name} трогает «${d[1]}» в ${rel(f)} (разрешены transform и opacity)`);
+      }
+    }
+  }
+  if (fs.existsSync(path.join(SITE, 'js', 'components', 'pipeline.js'))) fail(9, 'site/js/components/pipeline.js (старый конвейер на 9 этапов) должен быть удалён');
+}
+
 /* ---------- запуск ---------- */
 const content = loadContent();
 const mounts = loadMounts();
@@ -523,6 +583,7 @@ checkBanned(content);
 checkModules();
 checkSections(content, mounts);
 checkLegacy();
+checkMotionCss();
 
 if (failures.length) {
   console.log(failures.join('\n'));

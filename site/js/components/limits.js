@@ -1,10 +1,9 @@
 /*
  * GV.components.limits — инженерные компромиссы и ограничения среды цеха.
- * mount(el, { layout: 'cards'|'rows' }) → { destroy() }
- *   cards — карточки ограничений в сетке (вариант A);
- *   rows  — строки протокола с волосяными линиями.
+ * mount(el) → { destroy() }
  * Состав: «Компромиссы» (выбрали → платим; клик раскрывает «почему так» и источник в коде),
- * «Ограничения» (5 условий со статусом и фильтром по статусу), «Не проверено в поле», Roadmap.
+ * «Ограничения» (5 карточек со статусом и фильтром по статусу; ободок карточки ловит свет курсора —
+ * GV.motion.spotlight), «Не проверено в поле», Roadmap.
  */
 (function () {
   'use strict';
@@ -12,7 +11,6 @@
   var GV = (window.GV = window.GV || {});
   GV.components = GV.components || {};
 
-  var LAYOUTS = ['cards', 'rows'];
   var T = {
     filter: 'Фильтр по статусу',
     shown: function (n, total) { return 'Показано ограничений: ' + n + ' из ' + total; },
@@ -20,13 +18,12 @@
     note: 'Оговорка'
   };
 
-  function mount(el, options) {
-    options = options || {};
-    var u = GV.util, kit = GV.kit, h = u.h;
+  function mount(el) {
+    var u = GV.util, kit = GV.kit, motion = GV.motion, h = u.h;
     var c = GV.content;
     var L = c.labels;
-    var layout = kit.pick(options.layout, LAYOUTS);
     var sc = kit.scope();
+    var offs = [];
 
     /* ---------- компромиссы ---------- */
 
@@ -128,19 +125,22 @@
           h('ul', { class: 'gv-limits__stage-items', role: 'list' }, r.items.map(function (it) { return h('li', null, it); })));
       })));
 
-    var rootEl = h('div', { class: ['gv-limits', 'gv-limits--' + layout] },
+    var rootEl = h('div', { class: 'gv-limits gv-limits--cards' },
       trades,
       limitsBlock,
       h('div', { class: 'gv-limits__after' }, untested, roadmap));
     el.appendChild(rootEl);
 
+    offs.push(motion.spotlight(limitsList, '.gv-limits__item'));
+
     return {
       destroy: function () {
         sc.destroy();
+        offs.forEach(function (off) { off(); });
         if (rootEl.parentNode) rootEl.parentNode.removeChild(rootEl);
       }
     };
   }
 
-  GV.components.limits = { mount: mount, layouts: LAYOUTS.slice() };
+  GV.components.limits = { mount: mount };
 })();

@@ -19,6 +19,7 @@
   var MOUNTS = {
     hero: 'scrollVideo',
     reading: 'precisionDial',
+    pipeline: 'pipelineTrack',
     metrics: 'metrics',
     compare: 'compare',
     architecture: 'architecture',

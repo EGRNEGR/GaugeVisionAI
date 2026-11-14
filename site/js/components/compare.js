@@ -1,11 +1,9 @@
 /*
  * GV.components.compare — «Было (обход раз в смену) → Стало (GaugeVision AI)».
- * mount(el, { layout: 'split'|'toggle' }) → { destroy() }
- *   split  — две колонки рядом, шкала смены со своим переключателем (вариант A);
- *   toggle — одна колонка, общий переключатель «Было / Стало» управляет и колонкой, и шкалой.
- * Состав: колонки с пунктами и стоимостью точки (оценка команды), итог −89 %,
- * пара «сырой кадр → распознанное значение» (скриншоты или SVG при data-media="schematic"),
- * интерактивная шкала смены 12 ч с подписью «Иллюстративный сценарий».
+ * mount(el) → { destroy() }
+ * Одна колонка и переключатель «Было / Стало»: он же управляет шкалой смены 12 ч. В колонке несколько
+ * коротких пунктов и стоимость точки (оценка команды), ниже — итог −89 % и шкала смены с подписью
+ * «Иллюстративный сценарий». Стартует с «Было».
  */
 (function () {
   'use strict';
@@ -13,26 +11,19 @@
   var GV = (window.GV = window.GV || {});
   GV.components = GV.components || {};
 
-  var LAYOUTS = ['split', 'toggle'];
   var T = {
     modeGroup: 'Сценарий',
     timelineTitle: 'Смена',
     detected: 'Обнаружено',
-    hourUnit: 'ч',
-    perPoint: 'на точку'
+    hourUnit: 'ч'
   };
 
-  function mount(el, options) {
-    options = options || {};
-    var u = GV.util, kit = GV.kit, h = u.h, s = u.svg, fmt = u.formatNumber, NBSP = kit.NBSP;
+  function mount(el) {
+    var u = GV.util, kit = GV.kit, h = u.h, fmt = u.formatNumber, NBSP = kit.NBSP;
     var c = GV.content;
     var cmp = c.compare;
     var tl = cmp.timeline;
-    var stage = c.hero.stage;
-    var layout = kit.pick(options.layout, LAYOUTS);
     var sc = kit.scope();
-    var mode = layout === 'toggle' ? 'before' : 'after';
-    var mediaMode = null;
 
     /* ---------- колонки ---------- */
 
@@ -56,35 +47,6 @@
         h('span', { class: 'gv-compare__saving-num' }, cmp.saving.value),
         h('span', { class: 'gv-compare__saving-label' }, cmp.saving.label)) : null,
       h('p', { class: 'gv-compare__saving-note' }, cmp.savingNote));
-
-    /* ---------- пара «сырой кадр → распознанное значение» ---------- */
-
-    var pairRaw = h('div', { class: 'gv-compare__pair-media' });
-    var pairRec = h('div', { class: 'gv-compare__pair-media' });
-    var pair = h('div', { class: 'gv-compare__pair' },
-      h('figure', { class: 'gv-compare__pair-item' }, pairRaw, h('figcaption', null, cmp.pair.rawLabel)),
-      h('span', { class: 'gv-compare__pair-arrow', 'aria-hidden': 'true' }, kit.icon('right')),
-      h('figure', { class: 'gv-compare__pair-item' }, pairRec, h('figcaption', null, cmp.pair.recognizedLabel)));
-
-    function renderMedia() {
-      var m = kit.media();
-      if (m === mediaMode) return;
-      mediaMode = m;
-      pairRaw.textContent = '';
-      pairRec.textContent = '';
-      var ro = stage.readout;
-      if (m === 'shots') {
-        pairRaw.appendChild(kit.crop(stage.raw, 'gv-compare__shot'));
-        pairRec.appendChild(kit.crop(stage.recognized, 'gv-compare__shot'));
-      } else {
-        pairRaw.appendChild(kit.dial({ theta: ro.theta, numbers: false, className: 'gv-compare__svg', title: cmp.pair.rawLabel }));
-        pairRec.appendChild(kit.dial({
-          theta: ro.theta, numbers: false, overlay: true, className: 'gv-compare__svg',
-          valueLabel: fmt(ro.value, 2) + NBSP + ro.unit,
-          title: cmp.pair.recognizedLabel + ': ' + fmt(ro.value, 2) + NBSP + ro.unit
-        }));
-      }
-    }
 
     /* ---------- шкала смены ---------- */
 
@@ -122,42 +84,33 @@
     var timeline = h('div', { class: 'gv-compare__timeline' },
       h('div', { class: 'gv-compare__timeline-head' },
         h('h3', { class: 'gv-compare__timeline-title' }, T.timelineTitle + ' ' + fmt(hours) + NBSP + T.hourUnit),
-        layout === 'split' ? modes : null,
         h('p', { class: 'gv-compare__illustrative' }, tl.caption)),
       scaleEl,
       tlText);
 
-    var rootEl = h('div', { class: ['gv-compare', 'gv-compare--' + layout] },
-      layout === 'toggle' ? h('div', { class: 'gv-compare__switch' }, modes) : null,
-      h('div', { class: 'gv-compare__cols' }, colBefore,
-        h('span', { class: 'gv-compare__arrow', 'aria-hidden': 'true' }, kit.icon('right')),
-        colAfter),
-      h('div', { class: 'gv-compare__extra' }, saving, pair),
+    var rootEl = h('div', { class: 'gv-compare gv-compare--toggle' },
+      h('div', { class: 'gv-compare__switch' }, modes),
+      h('div', { class: 'gv-compare__cols' }, colBefore, colAfter),
+      saving,
       timeline);
     el.appendChild(rootEl);
 
     function apply(next) {
-      mode = next;
       rootEl.setAttribute('data-mode', next);
       var before = next === 'before';
       detect.style.setProperty('--pos', pos(before ? nextRound : tl.deviationHour));
       tlText.textContent = before ? tl.beforeText : tl.afterText;
-      if (layout === 'toggle') {
-        colBefore.hidden = !before;
-        colAfter.hidden = before;
-      }
+      colBefore.hidden = !before;
+      colAfter.hidden = before;
     }
 
     var roving = u.rovingTabs(modes, {
       selector: '.gv-compare__mode',
       attr: 'aria-pressed',
-      initial: mode === 'before' ? 0 : 1,
+      initial: 0,
       onSelect: function (i) { apply(i === 0 ? 'before' : 'after'); }
     });
     sc.add(roving.destroy);
-
-    renderMedia();
-    kit.onTweaks(sc, renderMedia);
 
     return {
       destroy: function () {
@@ -167,5 +120,5 @@
     };
   }
 
-  GV.components.compare = { mount: mount, layouts: LAYOUTS.slice() };
+  GV.components.compare = { mount: mount };
 })();

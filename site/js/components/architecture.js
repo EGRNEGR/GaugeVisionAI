@@ -3,9 +3,12 @@
  * mount(el, options) → { destroy() }   (раскладка выбирается сама по ширине контейнера)
  *   ≥ 62rem — горизонтальная: источники → streamer → vision → main → пульт и архив, служебные модули снизу;
  *   уже     — вертикальная в две дорожки: цепочка данных слева, служебные модули справа.
- * Связи и граница «локальный контур» — инлайн-SVG; узлы — нативные <button> поверх него
- * (фокусируемы, aria-pressed закрепляет подсветку). Наведение или фокус подсвечивает связи узла
- * и показывает подпись (aria-live). Перекладка — по ResizeObserver и событию gv:tweaks (масштаб).
+ * Связи (ломаные из прямых отрезков) и граница «локальный контур» — инлайн-SVG; узлы — нативные <button>
+ * поверх него (фокусируемы, aria-pressed закрепляет подсветку). Наведение или фокус подсвечивает связи узла
+ * и показывает подпись (aria-live). По связям бегут импульсы: точки двигаются только transform вдоль
+ * отрезков, пока схема на экране; при «уменьшить движение» их нет. Перекладка — по ResizeObserver и
+ * событию gv:tweaks (масштаб). На узкой раскладке порядок кнопок в DOM (Tab) = порядок, в котором узлы
+ * нарисованы: сверху вниз, слева направо.
  */
 (function () {
   'use strict';
@@ -16,8 +19,11 @@
   var NODE_W = 10.5;   // rem
   var NODE_H = 3.25;
   var WIDE_MIN = 62;
+  var PULSE_SPEED = 5;    // rem/с
+  var PULSE_GAP = 7;      // rem паузы между пробегами
+  var PULSE_FADE = 1;     // rem появления и затухания на концах
   var T = {
-    hint: 'Наведите курсор на узел или перейдите к нему клавишей Tab — подсветятся его связи.',
+    hint: 'Наведите на узел или перейдите к нему клавишей Tab — подсветятся связи.',
     diagram: 'Схема архитектуры GaugeVision AI',
     incoming: 'Получает',
     outgoing: 'Передаёт',
@@ -25,7 +31,7 @@
   };
 
   function mount(el) {
-    var u = GV.util, kit = GV.kit, h = u.h, s = u.svg;
+    var u = GV.util, kit = GV.kit, motion = GV.motion, h = u.h, s = u.svg;
     var c = GV.content;
     var arch = c.architecture;
     var sc = kit.scope();
@@ -90,11 +96,11 @@
         if (byId[e.to].group === 'server') {
           var edgeX = a.col === 0 ? 0.6 : W - 0.6;
           var sx = a.col === 0 ? a.x : a.x + a.w;
-          return 'M' + sx + ' ' + mid + ' H' + edgeX + ' V' + busY + ' H' + bx + ' V' + b.y;
+          return [[sx, mid], [edgeX, mid], [edgeX, busY], [bx, busY], [bx, b.y]];
         }
         var fromX = a.col === 0 ? a.x + a.w : a.x;
         var toX = b.x > gutter ? b.x : b.x + b.w;
-        return 'M' + fromX + ' ' + mid + ' H' + gutter + ' V' + (b.y + NODE_H / 2) + ' H' + toX;
+        return [[fromX, mid], [gutter, mid], [gutter, b.y + NODE_H / 2], [toX, b.y + NODE_H / 2]];
       };
       var chainStep = NODE_H + 1.5;
       server.forEach(function (n, i) { pos[n.id] = { x: xL, y: y + i * chainStep, w: lane }; });
@@ -108,7 +114,10 @@
       return { pos: pos, W: W, H: y + 0.5, route: route };
     }
 
-    /* Точки входа и выхода связи: по горизонтали — боковые стороны, по вертикали — верх и низ. */
+    /*
+     * Связь — ломаная из горизонтальных и вертикальных отрезков (точки в rem).
+     * По горизонтали — боковые стороны узлов, по вертикали — верх и низ.
+     */
     function anchors(a, b) {
       var ax = a.x + a.w / 2, ay = a.y + NODE_H / 2;
       var bx = b.x + b.w / 2, by = b.y + NODE_H / 2;
@@ -117,13 +126,19 @@
       if (horizontal) {
         var sx = dx > 0 ? a.x + a.w : a.x;
         var ex = dx > 0 ? b.x : b.x + b.w;
-        var k = (ex - sx) * 0.5;
-        return 'M' + sx + ' ' + ay + ' C' + (sx + k) + ' ' + ay + ' ' + (ex - k) + ' ' + by + ' ' + ex + ' ' + by;
+        if (Math.abs(ay - by) < 0.01) return [[sx, ay], [ex, by]];
+        var mx = (sx + ex) / 2;
+        return [[sx, ay], [mx, ay], [mx, by], [ex, by]];
       }
       var sy = dy > 0 ? a.y + NODE_H : a.y;
       var ey = dy > 0 ? b.y : b.y + NODE_H;
-      var m = (ey - sy) * 0.5;
-      return 'M' + ax + ' ' + sy + ' C' + ax + ' ' + (sy + m) + ' ' + bx + ' ' + (ey - m) + ' ' + bx + ' ' + ey;
+      if (Math.abs(ax - bx) < 0.01) return [[ax, sy], [bx, ey]];
+      var my = (sy + ey) / 2;
+      return [[ax, sy], [ax, my], [bx, my], [bx, ey]];
+    }
+
+    function pathOf(pts) {
+      return 'M' + pts.map(function (p) { return Math.round(p[0] * 1000) / 1000 + ' ' + Math.round(p[1] * 1000) / 1000; }).join(' L');
     }
 
     /* ---------- разметка ---------- */
@@ -150,8 +165,12 @@
       return b;
     });
 
+    var logicalOrder = nodeButtons.slice();
+    var pulseEls = edges.map(function () {
+      return h('span', { class: 'gv-architecture__pulse', 'aria-hidden': 'true' });
+    });
     var boundaryLabel = h('p', { class: 'gv-architecture__boundary-label' }, arch.boundaryLabel);
-    var canvas = h('div', { class: 'gv-architecture__canvas', role: 'group', 'aria-label': T.diagram }, svgEl, boundaryLabel, nodeButtons);
+    var canvas = h('div', { class: 'gv-architecture__canvas', role: 'group', 'aria-label': T.diagram }, svgEl, boundaryLabel, pulseEls, nodeButtons);
     var caption = h('div', { class: 'gv-architecture__caption', id: captionId, 'aria-live': 'polite' });
     var stack = h('div', { class: 'gv-architecture__stack' },
       h('h3', { class: 'gv-architecture__stack-title' }, c.labels.stackTitle),
@@ -284,8 +303,65 @@
       });
       edges.forEach(function (e, i) {
         var a = L.pos[e.from], b = L.pos[e.to];
-        if (a && b) edgeEls[i].setAttribute('d', (L.route && L.route(e)) || anchors(a, b));
+        var pts = a && b ? ((L.route && L.route(e)) || anchors(a, b)) : null;
+        if (pts) edgeEls[i].setAttribute('d', pathOf(pts));
+        setRoute(i, pts);
       });
+      orderDom(isWide ? null : L.pos);
+    }
+
+    /* На узкой раскладке кнопки в DOM идут в порядке рисунка: по строкам сверху вниз, в строке слева направо. */
+    function orderDom(pos) {
+      var list = logicalOrder.slice();
+      if (pos) {
+        list.sort(function (a, b) {
+          var pa = pos[a.getAttribute('data-id')], pb = pos[b.getAttribute('data-id')];
+          if (!pa || !pb) return 0;
+          return (Math.round(pa.y * 4) - Math.round(pb.y * 4)) || (pa.x - pb.x);
+        });
+      }
+      var current = Array.prototype.filter.call(canvas.children, function (n) { return n.classList.contains('gv-architecture__node'); });
+      var same = list.every(function (b, i) { return current[i] === b; });
+      if (same) return;
+      var focused = document.activeElement;
+      var keep = focused && canvas.contains(focused) ? focused : null;
+      list.forEach(function (b) { canvas.appendChild(b); });
+      if (keep && document.activeElement !== keep) keep.focus({ preventScroll: true });
+    }
+
+    /* ---------- импульсы по связям ---------- */
+
+    var routes = [];      // { pts, cum: [накопленная длина], len } для каждой связи или null
+
+    function setRoute(i, pts) {
+      if (!pts) { routes[i] = null; return; }
+      var cum = [0];
+      for (var k = 1; k < pts.length; k++) {
+        cum.push(cum[k - 1] + Math.abs(pts[k][0] - pts[k - 1][0]) + Math.abs(pts[k][1] - pts[k - 1][1]));
+      }
+      routes[i] = { pts: pts, cum: cum, len: cum[cum.length - 1] };
+    }
+
+    function pulseFrame(dt, now) {
+      var t = now / 1000;
+      for (var i = 0; i < pulseEls.length; i++) {
+        var r = routes[i];
+        var el = pulseEls[i];
+        if (!r || r.len <= 0) { el.style.opacity = '0'; continue; }
+        var cycle = r.len + PULSE_GAP;
+        var d = (t * PULSE_SPEED + i * 2.9) % cycle;
+        if (d > r.len) { el.style.opacity = '0'; continue; }
+        var k = 1;
+        while (k < r.cum.length - 1 && r.cum[k] < d) k++;
+        var seg = r.cum[k] - r.cum[k - 1] || 1;
+        var u1 = (d - r.cum[k - 1]) / seg;
+        var x = r.pts[k - 1][0] + (r.pts[k][0] - r.pts[k - 1][0]) * u1;
+        var y = r.pts[k - 1][1] + (r.pts[k][1] - r.pts[k - 1][1]) * u1;
+        var fade = Math.min(1, d / PULSE_FADE, (r.len - d) / PULSE_FADE);
+        var on = !active || edges[i].from === active || edges[i].to === active;
+        el.style.transform = 'translate3d(' + x.toFixed(3) + 'rem,' + y.toFixed(3) + 'rem,0)';
+        el.style.opacity = (Math.max(0, fade) * (on ? 1 : 0.18)).toFixed(3);
+      }
     }
 
     layout();
@@ -298,6 +374,21 @@
       sc.on(window, 'resize', layout);
     }
     kit.onTweaks(sc, function () { lastLayout = ''; layout(); });
+
+    /* Импульсы идут, пока схема на экране; без движения (reduced) их нет вовсе. */
+    var offPulse = null;
+    function stopPulse() {
+      if (offPulse) { offPulse(); offPulse = null; }
+    }
+    if (motion.reduced()) {
+      pulseEls.forEach(function (p) { p.hidden = true; });
+    } else {
+      sc.add(u.onVisible(rootEl, function (visible) {
+        if (visible && !offPulse) offPulse = motion.onFrame(pulseFrame);
+        else if (!visible) stopPulse();
+      }, { threshold: 0, rootMargin: '10% 0px' }));
+      sc.add(stopPulse);
+    }
 
     return {
       destroy: function () {
