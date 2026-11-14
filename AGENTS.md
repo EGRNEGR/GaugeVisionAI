@@ -1,16 +1,52 @@
 <!-- autopilot:start -->
 # GaugeVision AI
 
-Офлайн-сервис компьютерного зрения, который оцифровывает стрелочные приборы КИПиА на ТЭЦ обычными камерами, и его продуктовый лендинг в `site/` для жюри хакатона, заказчиков и работодателей.
-
-Продуктовый контекст — `PRODUCT.md`: метрики только с условиями замера, ограничения наравне с возможностями, никаких выдуманных фактов.
+Офлайн-сервис оцифровки стрелочных приборов КИПиА (FastAPI + YOLOv8n/OpenCV) и статический лендинг в `site/`.
 
 ## Команды
 
-| Команда | Что делает |
-|---------|------------|
-| `py -3.12 -m venv .venv`, затем `.\.venv\Scripts\pip install -r requirements.txt` | Установить зависимости сервиса (PyTorch ставится первым, см. README) |
-| `.\.venv\Scripts\python run.py` | Запустить сервис: пульт оператора на `https://localhost:8443` |
+Сервис (нужны PyTorch и желательно GPU; в проверках не запускать):
+- `py -3.12 -m venv .venv`
+- `.\.venv\Scripts\pip install torch torchvision --index-url https://download.pytorch.org/whl/cu130` — PyTorch строго первым (без GPU: без `--index-url`)
+- `.\.venv\Scripts\pip install -r requirements.txt`
+- `.\.venv\Scripts\python run.py` — пульт на `https://localhost:8443`; флаги `--host --port --lan-ip --log-level`
+
+Лендинг (сборки и зависимостей нет; из корня репозитория):
+- `node site/tests/check.js` — факты, пути, запрещённые слова, модули, типографика, 3 варианта
+- `node site/tests/components.test.js` — калибровка, бары, зоны уставок, EMA
+- открыть `site/index.html` двойным кликом (file://); варианты `site/index.html?v=a|b|c`
+- `python -m http.server 8765 --directory site` — `http://localhost:8765/?v=a` (порт бывает занят)
+
+## Где что
+
+- `app/main.py` — REST/WebSocket и оркестрация камер; `app/vision.py` — CV-конвейер; `app/config.py` — константы, типы приборов, env-переменные
+- `static/` — пульт оператора сервиса (отдельно от лендинга)
+- `site/js/content.js` — `GV.content`, единственный источник фактов лендинга
+- `site/js/components/`, `site/js/variants/{a,b,c}.js`, `site/css/variant-*.css` — компоненты и три варианта страницы
+- `site/tests/` — единственные автотесты репозитория (сервис без тестов)
+- `PRODUCT.md` — аудитория и тон; `README.md` — факты и метрики; `docs/adr/` — почему так; `CONTEXT.md` — словарь
+- Архитектура лендинга (поток данных, `GV.app`/`GV.tweaks`, токены, правила) — `docs/architecture.md`
+
+## Подводные камни
+
+- `python3` на этой машине — заглушка Microsoft Store: используй `python` или `node`
+- ES-модули запрещены (не грузятся по file://); новый скрипт подключай в `site/index.html` с учётом порядка
+- Размеры только в `rem` (масштаб Tweaks); `px` лишь для линий 1px и медиазапросов
+- Каждое число в `site/js/content.js` сверяет `check.js` с `README.md`, `PRODUCT.md`, `app/config.py`: новое число без источника уронит проверку
+- README расходится с кодом (стрелка, CLAHE, таймауты смартфона 6 с / 30 с, выход за шкалу ±5 %): прав код, см. `docs/adr/0003-kod-glavnee-readme.md`
+- Не публиковать «34 проверки e2e / 18 браузерных» и «ответ сервера 3–37 мс»; лицензия проприетарная, без «open source», «MIT», «бесплатно»
+- Playwright MCP блокирует file:// и открывает страницу в масштабе 67 %: для визуальной проверки сайта брать `playwright-core` из кэша npx с установленным chromium или http-сервер выше
+- `GV.app` до первого `render()` не определён: в `render` вариант берут из `document.documentElement.dataset.variant`
+
+## Окружение
+
+Обязательных переменных нет, все с умолчаниями (`app/config.py`):
+- `GAUGEVISION_DB` — путь к базе SQLite
+- `GAUGEVISION_YOLO` — веса детектора; нет файла или `ultralytics` — резервный конвейер OpenCV
+- `GAUGEVISION_DEVICE` — `auto`, `cuda:0` или `cpu`
+- `GAUGEVISION_KEEP_DAYS` — срок хранения истории
+- `GAUGEVISION_HOST`, `GAUGEVISION_PORT` — адрес и порт HTTPS
+- `GAUGEVISION_LAN_IP` — LAN IP для ссылок и QR-кода (`--lan-ip` в `run.py` задаёт её же)
 
 ## Как здесь работает Autopilot
 

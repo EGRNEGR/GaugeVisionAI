@@ -152,4 +152,32 @@ GV.content = {
 
 ## Что построили
 
-(пусто — заполняется по мере тикетов)
+### 01 — Фундамент
+
+- `GV.content` — по форме выше, плюс: `meta.authorUrl/author/trackShort/version`; `sections[{id,index,nav,title,lead?}]` (заголовки и навигация семи секций — бери отсюда); `hero.chain{before,after}`; `hero.stage.labels`; `coverage{classes,units,types[],sources[]}`; `metricsNote`; `labels{status,kind,level,…}`.
+- `metrics[]` добавлены: `valueTo?` (конец диапазона), `digits`, `display` (готовая русская строка, напр. `'30–100'` — показывай её), `group`; `value` — число для счётчика; `unit` может быть `''`.
+- `pipeline[]`: `formula`; `params[].note`. `limits[]`: `note?`. `calibration`: `span, clamp, zones[{id,label,status,text}], sliderLabel, caption`. `ema`: `formula, toggleLabel, legendRaw, legendEma`. `compare`: `saving, pair{rawLabel,recognizedLabel}, timeline{shiftHours:12, rounds, deviationHour, …}`. `architecture.groups`. Все строки прошли типограф (NBSP перед единицами и « — »).
+- `GV.util`: `formatNumber(n,digits)`, `prefersReducedMotion()`, `onVisible(el, cb(isVisible, entry), {once,threshold,rootMargin}) → unsubscribe`, `h/svg(tag, attrs{class,on,html,text,style,dataset}, ...children)`, `rovingTabs(list, {onSelect(i,el), selector, attr:'aria-selected'|'aria-pressed', orientation, initial}) → {select,index,destroy}`, `uid(prefix)`.
+- `GV.tweaks`: `get / set(partial) / reset / open / close / defaults / options`. `GV.app`: `current / switchTo(id) / ids`; событие `document` `'gv:variant'` `{id}`. `label` варианта — `'Пульт'`, префикс «A · » добавляет app.
+- Токены сверх обязательных: `--accent-soft --font-chrome --chrome-u --studio-h --tap --fs-* --lh-* --dur-* --container --gutter --measure --radius-l`.
+- `index.html` содержит комментарии-места для подключения `components.css`, `variant-*.css`, `components/*.js`, `variants/*.js`. Inline-скрипт в `<head>` ставит атрибуты Tweaks и `data-variant` до первой отрисовки.
+- `check.js` проверяет сверх пяти пунктов: 0 — форма content, 6 — типографика, `url()` в CSS, утверждения правила 1a. Числовая сверка ловит выдуманные числа, но не проверяет контекст мелких чисел.
+### 02 — Компоненты и вариант A
+
+- Проверка теперь двумя командами: `node site/tests/check.js && node site/tests/components.test.js` (21 проверка: калибровка, бары, зоны, EMA).
+- Подключение: `components.css` и `variant-*.css` после `base.css`; `components/kit.js` грузится первым среди `components/*.js`.
+- `GV.components.{heroStage,metrics,pipeline,compare,limits}.mount(el, {layout}) → {destroy}`; у каждого `.layouts` — список поддерживаемых. `architecture.mount(el) → {destroy}` (wide/narrow — сам по ширине). `pipeline.mount(el, {layout, initial:id})` → `{destroy, select(id)}`. `heroStage` → `{destroy, setState('raw'|'recognized')}`; корень получает `id="hero-stage"` и `tabindex=-1`. `metrics.mount(el, {layout, ids:[…], note:bool})`.
+- `GV.kit` (общий для компонентов и вариантов): `angleToValue(θ,calib) · valueToAngle · fraction · toBar · zoneOf(V,sp) → LL|L|NORMA|H|HH · levelOf · emaStep · scope() → {on,add,timeout,interval,frame,observe,destroy}` (используй `scope()` в вариантах для слушателей — cleanup одной строкой) `· pick · media() · onTweaks(sc,cb) · crop(media,cls) · dial({theta,overlay,zones,thetaLabel,valueLabel,roi,title,className}) · setNeedle · arcPath · polar · icon(external|github|arrow|right) · extLink · demoLink(label,cls) · scrollToStage(id)`.
+- `GV.variants.a = {id:'a', label:'Пульт', render(root) → cleanup}`; классы варианта — префикс `gva-*` (B — `gvb-*`, C — `gvc-*`).
+- hero-stage сам переключается на «Распознавание» через 1,6 с после первого появления в зоне видимости, если пользователь не кликал и reduced motion выключен.
+- Раскладки `dial/sheet/arc/timeline/table/toggle/rows` прошли только дымовую проверку (монтируются, без ошибок, без переполнения на 390) — финальные размеры и цвета делает вариант, который их использует.
+- Подписи интерфейса (заголовки столбцов, кнопки) лежат в локальных объектах `T` внутри компонентов; факты — только из `GV.content`.
+
+### 03 — Варианты B и C
+
+- `GV.variants.b = {id:'b', label:'Циферблат', render(root) → cleanup}`, `GV.variants.c = {id:'c', label:'Протокол', render(root) → cleanup}`; классы `gvb-*`, `gvc-*`.
+- B: `.gvb-arc[data-state="raw"|"recognized"]` зеркалит `data-state` hero-stage; переменные `--gvb-face`, `--gvb-arc-room`; геометрию дуги в px считает `b.js` по фактическому окну кадра (ResizeObserver). C: `--gvc-index-w`.
+- `components.css` в T03 не менялся; вариант A попиксельно совпадает с состоянием после T02.
+
+- Поведение, которое надо учитывать: `GV.util.rovingTabs` вызывает `onSelect` синхронно в конструкторе (для начального элемента) — до того, как вернётся `{select,index,destroy}`; не обращайся к возвращаемому объекту из первого `onSelect`. `GV.app` определяется только после первого `render()` — внутри `render` и в обработчиках старта `GV.app.current()` ещё `undefined`, используй `document.documentElement.dataset.variant`.
+- Playwright MCP может быть занят другой сессией; запасной путь — `playwright-core` из кэша npx с установленным chromium (так проверял T01).
