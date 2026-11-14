@@ -76,15 +76,16 @@
   position: relative;
   height: var(--telemetry-h);
   border-top: 1px solid var(--border-hairline);
-  overflow: hidden;
 }
 
+/* Полоса лежит поверх верхней линии рамки (top: -1px), поэтому у .gv-telemetry нет overflow: hidden */
 .gv-telemetry__track {
   position: absolute;
   left: 0;
   right: 0;
   top: -1px;
   height: 1px;
+  overflow: hidden;
 }
 
 .gv-telemetry__bar {
@@ -109,6 +110,7 @@
   text-transform: uppercase;
   color: var(--text-faint);
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .gv-telemetry__label {

@@ -325,13 +325,10 @@
       var card = e.target && e.target.closest ? e.target.closest(selector) : null;
       if (!card || !rootEl.contains(card)) { dim(); return; }
       if (card !== lit) { dim(); lit = card; card.classList.add('is-lit'); }
-      var box = measure(card);
-      var left = geometry.get(card).left;
-      if (left === undefined) {
-        left = card.getBoundingClientRect().left + (root.pageXOffset || 0);
-        geometry.get(card).left = left;
-      }
-      pending = { card: card, x: e.pageX - left, y: e.pageY - box.top };
+      // Положение карточки читается в событии, а не из кэша measure: карточка может ехать transform
+      // (трек конвейера) без resize, и документные координаты из кэша устаревают.
+      var box = card.getBoundingClientRect();
+      pending = { card: card, x: e.clientX - box.left, y: e.clientY - box.top };
       if (!offFrame) offFrame = onFrame(paint);
     }
     rootEl.addEventListener('pointermove', onMove, { passive: true });
