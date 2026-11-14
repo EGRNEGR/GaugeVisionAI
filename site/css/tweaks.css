@@ -1,0 +1,266 @@
+/*
+ * Панель Tweaks: плавающая кнопка в правом нижнем углу и панель настроек.
+ * Размеры в --chrome-u: панель не масштабируется вместе со страницей, цвета — из токенов фона.
+ */
+
+#gv-tweaks {
+  font-family: var(--font-chrome);
+  font-size: calc(0.8125 * var(--chrome-u));
+  line-height: 1.3;
+}
+
+.gv-tweaks__toggle {
+  position: fixed;
+  right: calc(1 * var(--chrome-u));
+  bottom: calc(1 * var(--chrome-u));
+  z-index: 70;
+  display: inline-flex;
+  align-items: center;
+  gap: calc(0.5 * var(--chrome-u));
+  min-height: var(--tap);
+  padding: 0 calc(1 * var(--chrome-u)) 0 calc(0.75 * var(--chrome-u));
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-m);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: inherit;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  box-shadow: 0 calc(0.5 * var(--chrome-u)) calc(1.5 * var(--chrome-u)) calc(-0.5 * var(--chrome-u)) rgba(0, 0, 0, 0.45);
+  transition: border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+.gv-tweaks__toggle:hover {
+  border-color: var(--accent);
+}
+
+.gv-tweaks__toggle:active {
+  transform: translateY(1px);
+}
+
+.gv-tweaks__toggle[aria-expanded="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.gv-tweaks__icon {
+  flex: none;
+  width: calc(1.25 * var(--chrome-u));
+  height: calc(1.25 * var(--chrome-u));
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.gv-tweaks__panel {
+  position: fixed;
+  right: calc(1 * var(--chrome-u));
+  bottom: calc(4.25 * var(--chrome-u));
+  z-index: 70;
+  width: min(calc(22 * var(--chrome-u)), calc(100vw - 2 * var(--chrome-u)));
+  max-height: calc(100vh - var(--studio-h) - 6 * var(--chrome-u));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: calc(1 * var(--chrome-u));
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-m);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  box-shadow: 0 calc(0.75 * var(--chrome-u)) calc(2 * var(--chrome-u)) calc(-0.75 * var(--chrome-u)) rgba(0, 0, 0, 0.5);
+  transform-origin: 100% 100%;
+  animation: gv-tweaks-in var(--dur-med) var(--ease-out);
+}
+
+.gv-tweaks__panel[hidden] {
+  display: none;
+}
+
+@keyframes gv-tweaks-in {
+  from {
+    opacity: 0;
+    transform: translateY(calc(0.5 * var(--chrome-u))) scale(0.98);
+  }
+}
+
+.gv-tweaks__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: calc(0.5 * var(--chrome-u));
+}
+
+.gv-tweaks__title {
+  font-family: inherit;
+  font-size: calc(0.8125 * var(--chrome-u));
+  font-weight: 700;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+}
+
+.gv-tweaks__close {
+  display: inline-grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  margin: calc(-0.5 * var(--chrome-u)) calc(-0.5 * var(--chrome-u)) calc(-0.5 * var(--chrome-u)) 0;
+  border: 0;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.gv-tweaks__close:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface);
+}
+
+.gv-tweaks__form {
+  display: grid;
+  gap: calc(0.875 * var(--chrome-u));
+}
+
+.gv-tweaks__group {
+  margin: 0;
+  padding: calc(0.75 * var(--chrome-u)) 0 0;
+  border: 0;
+  border-top: 1px solid var(--border-hairline);
+  min-width: 0;
+}
+
+.gv-tweaks__legend {
+  float: left;
+  width: 100%;
+  margin-bottom: calc(0.5 * var(--chrome-u));
+  padding: 0;
+  font-size: calc(0.6875 * var(--chrome-u));
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.gv-tweaks__options {
+  clear: both;
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
+  gap: 1px;
+  padding: 1px;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-s);
+  background: var(--border-hairline);
+}
+
+.gv-tweaks__opt {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+
+.gv-tweaks__radio {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.gv-tweaks__chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(0.375 * var(--chrome-u));
+  min-height: var(--tap);
+  padding: 0 calc(0.5 * var(--chrome-u));
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  font-size: calc(0.8125 * var(--chrome-u));
+  text-align: center;
+  line-height: 1.15;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  pointer-events: none;
+}
+
+.gv-tweaks__opt:hover .gv-tweaks__chip {
+  color: var(--text-primary);
+  background: var(--bg-surface);
+}
+
+.gv-tweaks__radio:checked + .gv-tweaks__chip {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  font-weight: 700;
+}
+
+.gv-tweaks__radio:focus-visible + .gv-tweaks__chip {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  box-shadow: inset 0 0 0 4px var(--bg-elevated);
+}
+
+.gv-tweaks__swatch {
+  flex: none;
+  width: calc(0.75 * var(--chrome-u));
+  height: calc(0.75 * var(--chrome-u));
+  border: 1px solid var(--border-strong);
+  border-radius: 50%;
+}
+
+.gv-tweaks__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(0.75 * var(--chrome-u));
+  padding-top: calc(0.75 * var(--chrome-u));
+  border-top: 1px solid var(--border-hairline);
+}
+
+.gv-tweaks__reset {
+  min-height: var(--tap);
+  padding: 0 calc(1 * var(--chrome-u));
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.gv-tweaks__reset:hover {
+  border-color: var(--accent);
+}
+
+.gv-tweaks__hint {
+  color: var(--text-faint);
+  font-size: calc(0.6875 * var(--chrome-u));
+}
+
+@media (max-width: 640px) {
+  body {
+    padding-bottom: calc(4.5 * var(--chrome-u));
+  }
+
+  .gv-tweaks__toggle {
+    right: calc(0.75 * var(--chrome-u));
+    bottom: calc(0.75 * var(--chrome-u));
+  }
+
+  .gv-tweaks__panel {
+    right: calc(0.5 * var(--chrome-u));
+    left: calc(0.5 * var(--chrome-u));
+    bottom: calc(4 * var(--chrome-u));
+    width: auto;
+  }
+
+  .gv-tweaks__hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gv-tweaks__panel {
+    animation: none;
+  }
+}
