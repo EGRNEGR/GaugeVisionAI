@@ -192,8 +192,10 @@
           h('span', { class: 'gv-architecture__caption-group' }, arch.groups[n.group] || '')),
         h('p', { class: 'gv-architecture__caption-sub' }, n.sub),
         n.file ? h('p', { class: 'gv-architecture__caption-file' }, h('span', null, T.file), h('code', null, n.file)) : null));
-      caption.appendChild(list(T.incoming, ins, 'from'));
-      caption.appendChild(list(T.outgoing, outs, 'to'));
+      /* У источников нет входящих связей, у пульта — исходящих: пустой список не выводим. */
+      [list(T.incoming, ins, 'from'), list(T.outgoing, outs, 'to')].forEach(function (part) {
+        if (part) caption.appendChild(part);
+      });
     }
 
     function highlight(id) {
@@ -214,19 +216,35 @@
       if ((id || '') !== lastKey) { lastKey = id || ''; renderCaption(id); }
     }
 
+    function pin(id) {
+      pinned = id;
+      nodeButtons.forEach(function (o) { o.setAttribute('aria-pressed', o.getAttribute('data-id') === pinned ? 'true' : 'false'); });
+    }
+
+    /* Узел, к которому схема возвращается, когда курсор уходит: закреплённый, иначе узел с фокусом. */
+    function resting() {
+      var f = document.activeElement;
+      return pinned || (f && canvas.contains(f) && f.getAttribute('data-id')) || null;
+    }
+
+    /*
+     * Подсвечен всегда один узел. Закреплённый кликом узел наведение не перебивает (иначе после клика
+     * и прокрутки под неподвижным курсором подпись уезжала на соседа). Фокус на другом узле снимает
+     * закрепление — подсветка и подпись переходят к нему.
+     */
     nodeButtons.forEach(function (b) {
       var id = b.getAttribute('data-id');
-      sc.on(b, 'mouseenter', function () { highlight(id); });
-      sc.on(b, 'focus', function () { highlight(id); });
+      sc.on(b, 'mouseenter', function () { if (!pinned) highlight(id); });
+      sc.on(b, 'focus', function () {
+        if (pinned && pinned !== id) pin(null);
+        highlight(id);
+      });
       sc.on(b, 'click', function () {
-        pinned = pinned === id ? null : id;
-        nodeButtons.forEach(function (o) { o.setAttribute('aria-pressed', o.getAttribute('data-id') === pinned ? 'true' : 'false'); });
-        highlight(pinned || id);
+        pin(pinned === id ? null : id);
+        highlight(id);
       });
     });
-    sc.on(canvas, 'mouseleave', function () {
-      if (!canvas.contains(document.activeElement)) highlight(pinned);
-    });
+    sc.on(canvas, 'mouseleave', function () { highlight(resting()); });
     sc.on(canvas, 'focusout', function (e) {
       if (!e.relatedTarget || !canvas.contains(e.relatedTarget)) highlight(pinned);
     });

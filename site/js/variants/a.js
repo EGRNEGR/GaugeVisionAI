@@ -170,7 +170,11 @@
 
     /* ---------- навигация: плавный переход и подсветка текущего раздела ---------- */
 
-    kit.sectionNav(sc, { container: header, links: navLinks, ids: ORDER, rootMargin: '-35% 0px -55% 0px' });
+    /* Отметка «Суть» ставится сразу, как в C: первый ответ наблюдателя приходит только с кадром
+       отрисовки, и до него меню было без текущего раздела. Если страница открыта не сверху,
+       наблюдатель переставит отметку в том же кадре. */
+    kit.sectionNav(sc, { container: header, links: navLinks, ids: ORDER, rootMargin: '-35% 0px -55% 0px' })
+      .setCurrent('hero');
 
     return function cleanup() {
       sc.destroy();
