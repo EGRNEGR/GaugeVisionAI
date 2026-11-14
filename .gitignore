@@ -23,3 +23,9 @@ data/
 .DS_Store
 Thumbs.db
 
+
+# Secrets and JS deps
+.env.*
+!.env.example
+node_modules/
+.autopilot/serve.*
