@@ -137,8 +137,9 @@
         s('path', { class: 'gv-architecture__arrowhead', d: 'M0 0 L10 5 L0 10 z' }))),
       boundary, edgeEls);
 
+    /* Кнопки узлов в DOM — в порядке раскладки, чтобы Tab шёл так же, как читается схема. */
     var nodeEls = {};
-    var nodeButtons = nodes.map(function (n) {
+    var nodeButtons = sources.concat(server, sinks, services).map(function (n) {
       var b = h('button', {
         type: 'button', class: 'gv-architecture__node', 'data-id': n.id, 'data-group': n.group,
         'aria-pressed': 'false', 'aria-describedby': captionId
@@ -255,6 +256,7 @@
       nodes.forEach(function (n) {
         var p = L.pos[n.id];
         var b = nodeEls[n.id];
+        if (!b) return;
         if (!p) { b.hidden = true; return; }
         b.hidden = false;
         b.style.left = p.x + 'rem';

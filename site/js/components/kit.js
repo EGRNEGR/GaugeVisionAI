@@ -18,6 +18,8 @@
  *   icon(name) → SVG-иконка (external, github, arrow)
  *   extLink(attrs, ...children) → <a target="_blank" rel="noopener">
  *   demoLink(label, className) → <a href="#hero-stage">: плавно прокручивает к hero-stage и ставит на него фокус
+ *   sectionNav(scope, {container, links, ids, rootMargin, keepLast, onChange}) → { setCurrent }
+ *                                          якоря шапки варианта и aria-current текущей секции
  */
 (function () {
   'use strict';
@@ -264,9 +266,11 @@
   }
 
   /*
-   * opts: { theta, overlay:bool, zones:setpoints|null, title, value, unit, roi, className, ticks:true }
+   * opts: { theta, overlay:bool, zones:setpoints|null, title, thetaLabel, valueLabel, roi, className, numbers:true }
    * Рисует шкалу GV.content.calibration (vMin…vMax, θmin → θmax), стрелку под углом θ
    * (система координат кадра: 0° — «3 часа», по часовой). overlay — эллипс ROI, вектор и подпись θ.
+   * numbers:false — только риски, без цифр шкалы: θ из readout относится к прибору со своей
+   * калибровкой (4,74 кПа), и по цифрам 0–10 стрелка читалась бы как другое значение.
    * Возвращает SVG; стрелка — g.gv-dial__needle (поворачивается setNeedle).
    */
   function dial(opts) {
@@ -299,6 +303,7 @@
 
     var range = cp.vMax - cp.vMin;
     var steps = 20;
+    var showNumbers = opts.numbers !== false;
     for (var k = 0; k <= steps; k++) {
       var v = cp.vMin + (range * k) / steps;
       var a = valueToAngle(v, calib);
@@ -306,7 +311,7 @@
       var p0 = polar(C, C, R - 2, a);
       var p1 = polar(C, C, R - (major ? 12 : 7), a);
       children.push(s('line', { class: major ? 'gv-dial__tick gv-dial__tick--major' : 'gv-dial__tick', x1: fx(p0[0]), y1: fx(p0[1]), x2: fx(p1[0]), y2: fx(p1[1]) }));
-      if (k % 4 === 0) {
+      if (showNumbers && k % 4 === 0) {
         var pt = polar(C, C, R - 22, a);
         children.push(s('text', { class: 'gv-dial__num', x: fx(pt[0]), y: fx(pt[1]), 'text-anchor': 'middle', 'dominant-baseline': 'central' }, fmt(v)));
       }
@@ -395,7 +400,61 @@
     }, label || GV.content.hero.ctaSecondary.label, icon('arrow'));
   }
 
+  /*
+   * Навигация шапки варианта (общая для A, B, C).
+   * opts: { container, links:{id: <a>}, ids:[…], rootMargin, keepLast, onChange(id|null) }
+   *   — клик по якорю «#id» внутри container: плавная прокрутка к секции и фокус на ней;
+   *   — IntersectionObserver: aria-current="true" у ссылки первой из ids, попавшей в полосу rootMargin;
+   *     keepLast — если в полосе нет ни одной секции, отметка остаётся на прежней (иначе снимается).
+   * Слушатели и наблюдатель снимаются через sc.destroy(). → { setCurrent(id|null) }
+   */
+  function sectionNav(sc, opts) {
+    var links = opts.links || {};
+    var ids = opts.ids || Object.keys(links);
+    var currentId;
+
+    sc.on(opts.container, 'click', function (e) {
+      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      if (!a) return;
+      var target = document.getElementById(a.getAttribute('href').slice(1));
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({ behavior: GV.util.prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+      if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+      try { target.focus({ preventScroll: true }); } catch (err) { target.focus(); }
+    });
+
+    function setCurrent(id) {
+      if (id === currentId) return;
+      currentId = id;
+      ids.forEach(function (key) {
+        if (!links[key]) return;
+        if (key === id) links[key].setAttribute('aria-current', 'true');
+        else links[key].removeAttribute('aria-current');
+      });
+      if (opts.onChange) opts.onChange(id);
+    }
+
+    if ('IntersectionObserver' in window) {
+      var visible = {};
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (en) { visible[en.target.id] = en.isIntersecting; });
+        var current = null;
+        ids.forEach(function (id) { if (!current && visible[id]) current = id; });
+        if (current || !opts.keepLast) setCurrent(current);
+      }, { rootMargin: opts.rootMargin || '-35% 0px -55% 0px' });
+      ids.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) io.observe(el);
+      });
+      sc.add(function () { io.disconnect(); });
+    }
+
+    return { setCurrent: setCurrent };
+  }
+
   kit.scope = scope;
+  kit.sectionNav = sectionNav;
   kit.pick = pick;
   kit.media = media;
   kit.onTweaks = onTweaks;

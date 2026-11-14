@@ -591,6 +591,7 @@ html[data-bg="paper"][data-variant="a"] .gva-section--metrics .gv-metrics__item:
 
   [data-variant="a"] .gva-header__cta {
     margin-left: auto;
+    min-height: 2.75rem; /* цель касания ≥ 44 px, как у B */
   }
 
   [data-variant="a"] .gva-nav {

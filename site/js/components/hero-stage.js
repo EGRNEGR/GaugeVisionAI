@@ -114,11 +114,13 @@
         layerRaw.appendChild(kit.dial({
           className: 'gv-hero-stage__svg',
           theta: ro.theta,
+          numbers: false,
           title: ro.device + ': ' + stage.rawLabel.toLowerCase()
         }));
         layerRec.appendChild(kit.dial({
           className: 'gv-hero-stage__svg',
           theta: ro.theta,
+          numbers: false,
           overlay: true,
           roi: 'ROI: ' + ro.roi,
           thetaLabel: thetaText,

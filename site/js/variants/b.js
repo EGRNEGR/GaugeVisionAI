@@ -236,14 +236,9 @@
           class: isMajor ? 'gvb-arc__tick gvb-arc__tick--major' : 'gvb-arc__tick',
           x1: p0[0].toFixed(1), y1: p0[1].toFixed(1), x2: p1[0].toFixed(1), y2: p1[1].toFixed(1)
         }));
-        if (isMajor && k % 10 === 0) {
-          var pt = kit.polar(0, 0, R - inset - major - 0.9 * rem, a);
-          scaleG.appendChild(s('text', {
-            class: 'gvb-arc__num', x: pt[0].toFixed(1), y: pt[1].toFixed(1),
-            'text-anchor': 'middle', 'dominant-baseline': 'central'
-          }, fmt(v)));
-        }
       }
+      /* Цифр шкалы нет: θ из readout снят на приборе со своей калибровкой (4,74 кПа),
+         и по цифрам 0–10 стрелка читалась бы как другое значение. Только риски. */
       arcScale.appendChild(scaleG);
 
       var tipR = R - inset - major - 0.25 * rem;
@@ -286,35 +281,7 @@
 
     /* ---------- навигация: плавный переход и подсветка текущего раздела ---------- */
 
-    sc.on(header, 'click', function (e) {
-      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
-      if (!a) return;
-      var id = a.getAttribute('href').slice(1);
-      var target = document.getElementById(id);
-      if (!target) return;
-      e.preventDefault();
-      target.scrollIntoView({ behavior: u.prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
-      if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
-      try { target.focus({ preventScroll: true }); } catch (err) { target.focus(); }
-    });
-
-    if ('IntersectionObserver' in window) {
-      var visible = {};
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) { visible[en.target.id] = en.isIntersecting; });
-        var current = null;
-        ORDER.forEach(function (id) { if (!current && visible[id]) current = id; });
-        ORDER.forEach(function (id) {
-          if (id === current) navLinks[id].setAttribute('aria-current', 'true');
-          else navLinks[id].removeAttribute('aria-current');
-        });
-      }, { rootMargin: '-35% 0px -55% 0px' });
-      ORDER.forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) io.observe(el);
-      });
-      sc.add(function () { io.disconnect(); });
-    }
+    kit.sectionNav(sc, { container: header, links: navLinks, ids: ORDER, rootMargin: '-35% 0px -55% 0px' });
 
     return function cleanup() {
       sc.destroy();

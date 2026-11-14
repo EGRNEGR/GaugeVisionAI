@@ -160,50 +160,20 @@
 
     /* ---------- индекс: переход и подсветка текущей секции ---------- */
 
-    sc.on(header, 'click', function (e) {
-      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
-      if (!a) return;
-      var id = a.getAttribute('href').slice(1);
-      var target = document.getElementById(id);
-      if (!target) return;
-      e.preventDefault();
-      target.scrollIntoView({ behavior: u.prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
-      if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
-      try { target.focus({ preventScroll: true }); } catch (err) { target.focus(); }
-    });
-
-    var currentId = null;
-    function setCurrent(id) {
-      if (id === currentId) return;
-      currentId = id;
-      ORDER.forEach(function (key) {
-        if (key === id) navLinks[key].setAttribute('aria-current', 'true');
-        else navLinks[key].removeAttribute('aria-current');
-      });
-      /* На узком экране индекс — горизонтальная строка: держим текущий пункт в зоне видимости. */
-      var list = navLinks[id] && navLinks[id].closest('.gvc-index');
+    /* На узком экране индекс — горизонтальная строка: держим текущий пункт в зоне видимости. */
+    function revealCurrent(id) {
+      var link = navLinks[id];
+      var list = link && link.closest('.gvc-index');
       if (list && list.scrollWidth > list.clientWidth + 1) {
-        var link = navLinks[id];
         var left = link.offsetLeft - (list.clientWidth - link.offsetWidth) / 2;
         list.scrollTo({ left: Math.max(0, left), behavior: u.prefersReducedMotion() ? 'auto' : 'smooth' });
       }
     }
 
-    if ('IntersectionObserver' in window) {
-      var visible = {};
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) { visible[en.target.id] = en.isIntersecting; });
-        var current = null;
-        ORDER.forEach(function (id) { if (!current && visible[id]) current = id; });
-        if (current) setCurrent(current);
-      }, { rootMargin: '-30% 0px -60% 0px' });
-      ORDER.forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) io.observe(el);
-      });
-      sc.add(function () { io.disconnect(); });
-    }
-    setCurrent('hero');
+    kit.sectionNav(sc, {
+      container: header, links: navLinks, ids: ORDER,
+      rootMargin: '-30% 0px -60% 0px', keepLast: true, onChange: revealCurrent
+    }).setCurrent('hero');
 
     return function cleanup() {
       sc.destroy();

@@ -2279,7 +2279,7 @@
 .gv-limits__filter-count {
   font-family: var(--font-mono);
   font-size: var(--fs-2xs);
-  opacity: 0.8;
+  /* Без opacity: цвет кнопки целиком, иначе на «Бумаге» контраст падал ниже 4,5:1. */
 }
 
 .gv-limits__list {

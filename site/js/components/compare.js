@@ -77,9 +77,9 @@
         pairRaw.appendChild(kit.crop(stage.raw, 'gv-compare__shot'));
         pairRec.appendChild(kit.crop(stage.recognized, 'gv-compare__shot'));
       } else {
-        pairRaw.appendChild(kit.dial({ theta: ro.theta, className: 'gv-compare__svg', title: cmp.pair.rawLabel }));
+        pairRaw.appendChild(kit.dial({ theta: ro.theta, numbers: false, className: 'gv-compare__svg', title: cmp.pair.rawLabel }));
         pairRec.appendChild(kit.dial({
-          theta: ro.theta, overlay: true, className: 'gv-compare__svg',
+          theta: ro.theta, numbers: false, overlay: true, className: 'gv-compare__svg',
           valueLabel: fmt(ro.value, 2) + NBSP + ro.unit,
           title: cmp.pair.recognizedLabel + ': ' + fmt(ro.value, 2) + NBSP + ro.unit
         }));

@@ -170,35 +170,7 @@
 
     /* ---------- навигация: плавный переход и подсветка текущего раздела ---------- */
 
-    sc.on(header, 'click', function (e) {
-      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
-      if (!a) return;
-      var id = a.getAttribute('href').slice(1);
-      var target = document.getElementById(id);
-      if (!target) return;
-      e.preventDefault();
-      target.scrollIntoView({ behavior: u.prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
-      if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
-      try { target.focus({ preventScroll: true }); } catch (err) { target.focus(); }
-    });
-
-    if ('IntersectionObserver' in window) {
-      var visible = {};
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) { visible[en.target.id] = en.isIntersecting; });
-        var current = null;
-        ORDER.forEach(function (id) { if (!current && visible[id]) current = id; });
-        ORDER.forEach(function (id) {
-          if (id === current) navLinks[id].setAttribute('aria-current', 'true');
-          else navLinks[id].removeAttribute('aria-current');
-        });
-      }, { rootMargin: '-35% 0px -55% 0px' });
-      ORDER.forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) io.observe(el);
-      });
-      sc.add(function () { io.disconnect(); });
-    }
+    kit.sectionNav(sc, { container: header, links: navLinks, ids: ORDER, rootMargin: '-35% 0px -55% 0px' });
 
     return function cleanup() {
       sc.destroy();
