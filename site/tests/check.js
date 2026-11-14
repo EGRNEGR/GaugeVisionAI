@@ -23,7 +23,10 @@ const vm = require('vm');
 
 const SITE = path.resolve(__dirname, '..');
 const ROOT = path.resolve(SITE, '..');
-const NOTES = path.join(ROOT, '.autopilot', '2026-11-14-gaugevision-landing--wip', 'notes.md');
+// Папка сборки теряет суффикс --wip при сдаче — ищем notes.md в обоих вариантах.
+const NOTES = ['2026-11-14-gaugevision-landing', '2026-11-14-gaugevision-landing--wip']
+  .map((dir) => path.join(ROOT, '.autopilot', dir, 'notes.md'))
+  .find((p) => fs.existsSync(p)) || path.join(ROOT, '.autopilot', '2026-11-14-gaugevision-landing', 'notes.md');
 const SECTION_IDS = ['hero', 'metrics', 'pipeline', 'compare', 'architecture', 'limits', 'contact'];
 
 const failures = [];
