@@ -1,0 +1,646 @@
+/*
+ * Вариант A · «Пульт» — HUD-пульт оператора.
+ * Асимметричная сетка 12 колонок, рамка hero-stage с угловыми метками, телеметрическая полоса /01,
+ * горизонтальная лента этапов. Акцент — холодный циан (tokens.css), Manrope + JetBrains Mono.
+ * Все селекторы — под [data-variant="a"]; раскладки компонентов — в components.css.
+ */
+
+[data-variant="a"] {
+  --gva-header-h: 3.5rem;
+}
+
+[data-variant="a"] #gv-root section[id],
+[data-variant="a"] #gv-root [id="hero-stage"] {
+  scroll-margin-top: calc(var(--studio-h) + var(--gva-header-h) + var(--space-4));
+}
+
+[data-variant="a"] #gv-root section[id]:focus {
+  outline: none;
+}
+
+/* ---------- кнопки ---------- */
+
+[data-variant="a"] .gva-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 3rem;
+  padding: 0 var(--space-5);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-s);
+  font-weight: 700;
+  font-size: var(--fs-m);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+[data-variant="a"] .gva-button:active {
+  transform: translateY(1px);
+}
+
+[data-variant="a"] .gva-button--primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+[data-variant="a"] .gva-button--primary:hover {
+  background: var(--text-primary);
+  border-color: var(--text-primary);
+  color: var(--bg-canvas);
+}
+
+[data-variant="a"] .gva-button--ghost {
+  background: transparent;
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+[data-variant="a"] .gva-button--ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- header ---------- */
+
+[data-variant="a"] .gva-header {
+  position: sticky;
+  top: var(--studio-h);
+  z-index: 50;
+  background: var(--bg-canvas);
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+[data-variant="a"] .gva-header__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  min-height: var(--gva-header-h);
+}
+
+[data-variant="a"] .gva-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  flex: none;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+}
+
+[data-variant="a"] .gva-brand__mark {
+  width: 1.5rem;
+  height: 1.5rem;
+  fill: none;
+}
+
+[data-variant="a"] .gva-brand__arc {
+  stroke: var(--text-muted);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+[data-variant="a"] .gva-brand__needle {
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+[data-variant="a"] .gva-brand__hub {
+  fill: var(--accent);
+}
+
+[data-variant="a"] .gva-nav {
+  margin-left: auto;
+  min-width: 0;
+}
+
+[data-variant="a"] .gva-nav__list {
+  display: flex;
+  gap: var(--space-1);
+  margin: 0;
+}
+
+[data-variant="a"] .gva-nav__link {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4em;
+  min-height: 2.75rem;
+  padding: 0.85rem var(--space-2) 0;
+  font-size: var(--fs-s);
+  color: var(--text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+[data-variant="a"] .gva-nav__link::after {
+  content: '';
+  position: absolute;
+  left: var(--space-2);
+  right: var(--space-2);
+  bottom: 0.45rem;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-med) var(--ease-out);
+}
+
+[data-variant="a"] .gva-nav__link:hover {
+  color: var(--text-primary);
+}
+
+[data-variant="a"] .gva-nav__link[aria-current="true"] {
+  color: var(--text-primary);
+}
+
+[data-variant="a"] .gva-nav__link[aria-current="true"]::after {
+  transform: scaleX(1);
+}
+
+[data-variant="a"] .gva-nav__index {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--text-faint);
+}
+
+[data-variant="a"] .gva-nav__link[aria-current="true"] .gva-nav__index {
+  color: var(--accent);
+}
+
+[data-variant="a"] .gva-header__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.25rem;
+  padding: 0 var(--space-3);
+  flex: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-s);
+  font-size: var(--fs-s);
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+[data-variant="a"] .gva-header__cta:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- 01 hero ---------- */
+
+[data-variant="a"] .gva-hero {
+  padding-block: var(--space-7) var(--space-8);
+}
+
+[data-variant="a"] .gva-hero__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--space-6);
+  align-items: center;
+}
+
+[data-variant="a"] .gva-hero__copy {
+  grid-column: 1 / span 5;
+  display: grid;
+  gap: var(--space-5);
+  align-content: center;
+}
+
+[data-variant="a"] .gva-hero__stage {
+  grid-column: 6 / span 7;
+  min-width: 0;
+}
+
+[data-variant="a"] .gva-hero__title {
+  font-size: clamp(2.25rem, 1.2rem + 2.6vw, 4rem);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: var(--tracking-display);
+}
+
+[data-variant="a"] .gva-hero__lead {
+  max-width: 36rem;
+  font-size: var(--fs-l);
+  line-height: var(--lh-body);
+  color: var(--text-muted);
+}
+
+[data-variant="a"] .gva-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+[data-variant="a"] .gva-hero__chains {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-hairline);
+}
+
+[data-variant="a"] .gva-chain {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-3);
+  font-size: var(--fs-s);
+}
+
+[data-variant="a"] .gva-chain__label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+[data-variant="a"] .gva-chain__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
+}
+
+[data-variant="a"] .gva-chain__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+[data-variant="a"] .gva-chain__sep {
+  display: inline-flex;
+  color: var(--text-faint);
+}
+
+[data-variant="a"] .gva-chain--before .gva-chain__item {
+  color: var(--text-faint);
+}
+
+[data-variant="a"] .gva-chain--after .gva-chain__item {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+[data-variant="a"] .gva-chain--after .gva-chain__sep {
+  color: var(--accent);
+}
+
+[data-variant="a"] .gva-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+/* Рамка hero-stage: угловые метки акцентом, телеметрия справа */
+[data-variant="a"] .gv-hero-stage--framed {
+  border-color: var(--border-hairline);
+  background: var(--bg-surface);
+  border-radius: var(--radius-m);
+}
+
+[data-variant="a"] .gv-hero-stage--framed .gv-hero-stage__corner {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* ---------- секции ---------- */
+
+[data-variant="a"] .gva-section {
+  padding-block: var(--space-8);
+  border-top: 1px solid var(--border-hairline);
+}
+
+[data-variant="a"] .gva-section__head {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--space-6);
+  row-gap: var(--space-3);
+  align-items: end;
+  margin-bottom: var(--space-6);
+}
+
+[data-variant="a"] .gva-section__title {
+  grid-column: 1 / span 6;
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+[data-variant="a"] .gva-index {
+  display: block;
+  margin-bottom: var(--space-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--accent);
+}
+
+[data-variant="a"] .gva-section__lead {
+  grid-column: 8 / span 5;
+  max-width: 36rem;
+  font-size: var(--fs-m);
+  color: var(--text-muted);
+}
+
+/* Метрики: полоса на всю ширину, ячейки как приборы на пульте */
+[data-variant="a"] .gva-section--metrics .gv-metrics__item {
+  background: var(--bg-canvas);
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+[data-variant="a"] .gva-section--metrics .gv-metrics__item:hover {
+  background: var(--bg-surface);
+}
+
+[data-variant="a"] .gva-section--metrics .gv-metrics__item[data-kind="measured"] .gv-metrics__digits {
+  color: var(--text-primary);
+}
+
+[data-variant="a"] .gva-section--metrics .gv-metrics__note {
+  margin-top: var(--space-2);
+}
+
+/* Архитектура и ограничения: поверхности чуть темнее, чтобы схема читалась */
+[data-variant="a"] .gva-section--architecture .gv-architecture__node {
+  background: var(--bg-surface);
+}
+
+[data-variant="a"] .gva-section--architecture .gv-architecture__node[data-group="server"] {
+  background: var(--bg-elevated);
+}
+
+/* ---------- 07 финал ---------- */
+
+[data-variant="a"] .gva-contact {
+  padding-block: var(--space-8);
+  border-top: 1px solid var(--border-hairline);
+}
+
+[data-variant="a"] .gva-contact__grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--space-6);
+  row-gap: var(--space-6);
+  align-items: start;
+}
+
+[data-variant="a"] .gva-contact__copy {
+  grid-column: 1 / span 6;
+  display: grid;
+  gap: var(--space-5);
+}
+
+[data-variant="a"] .gva-contact__title {
+  grid-column: auto;
+  font-size: var(--fs-2xl);
+}
+
+[data-variant="a"] .gva-contact__text {
+  max-width: 36rem;
+  color: var(--text-muted);
+}
+
+[data-variant="a"] .gva-contact__meta {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-hairline);
+}
+
+[data-variant="a"] .gva-contact__meta dt {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+[data-variant="a"] .gva-contact__meta dd {
+  margin: 0;
+  font-size: var(--fs-s);
+  color: var(--text-muted);
+}
+
+[data-variant="a"] .gva-contact__links {
+  grid-column: 8 / span 5;
+  display: grid;
+  gap: var(--space-4);
+}
+
+[data-variant="a"] .gva-contact__repo {
+  position: relative;
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-5);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-m);
+  background: var(--accent-soft);
+  text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease-out);
+}
+
+[data-variant="a"] .gva-contact__repo:hover {
+  background: var(--bg-surface);
+}
+
+[data-variant="a"] .gva-contact__repo-top {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+[data-variant="a"] .gva-contact__repo-url {
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+
+[data-variant="a"] .gva-contact__repo-arrow {
+  position: absolute;
+  top: var(--space-5);
+  right: var(--space-5);
+  color: var(--accent);
+  font-size: var(--fs-xl);
+}
+
+[data-variant="a"] .gva-contact__list {
+  margin: 0;
+  border-top: 1px solid var(--border-hairline);
+}
+
+[data-variant="a"] .gva-contact__list li {
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+[data-variant="a"] .gva-contact__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 3rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+
+[data-variant="a"] .gva-contact__link .gv-icon {
+  color: var(--text-faint);
+}
+
+[data-variant="a"] .gva-contact__link:hover,
+[data-variant="a"] .gva-contact__link:hover .gv-icon {
+  color: var(--accent);
+}
+
+/* ---------- футер ---------- */
+
+[data-variant="a"] .gva-footer {
+  border-top: 1px solid var(--border-hairline);
+  padding-block: var(--space-5) var(--space-8);
+}
+
+[data-variant="a"] .gva-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-5);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+[data-variant="a"] .gva-footer__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+}
+
+/* ---------- «Бумага»: скриншоты остаются тёмными — в рамке ---------- */
+
+html[data-bg="paper"][data-variant="a"] .gv-hero-stage__viewport,
+html[data-bg="paper"][data-variant="a"] .gv-compare__pair-media {
+  border-color: var(--border-strong);
+}
+
+html[data-bg="paper"][data-variant="a"] .gva-section--metrics .gv-metrics__item {
+  background: var(--bg-surface);
+}
+
+html[data-bg="paper"][data-variant="a"] .gva-section--metrics .gv-metrics__item:hover {
+  background: var(--bg-elevated);
+}
+
+/* ---------- адаптив ---------- */
+
+@media (max-width: 1180px) {
+  [data-variant="a"] .gva-nav__index {
+    display: none;
+  }
+}
+
+@media (max-width: 1099px) {
+  [data-variant="a"] .gva-hero__copy {
+    grid-column: 1 / -1;
+  }
+
+  [data-variant="a"] .gva-hero__stage {
+    grid-column: 1 / -1;
+    margin-top: var(--space-6);
+  }
+
+  [data-variant="a"] .gva-hero__title {
+    max-width: 18ch;
+  }
+
+  [data-variant="a"] .gva-section__title,
+  [data-variant="a"] .gva-section__lead,
+  [data-variant="a"] .gva-contact__copy,
+  [data-variant="a"] .gva-contact__links {
+    grid-column: 1 / -1;
+  }
+
+  [data-variant="a"] .gva-header {
+    position: static;
+  }
+
+  [data-variant="a"] #gv-root section[id],
+  [data-variant="a"] #gv-root [id="hero-stage"] {
+    scroll-margin-top: calc(var(--studio-h) + var(--space-4));
+  }
+
+  [data-variant="a"] .gva-header__inner {
+    flex-wrap: wrap;
+    column-gap: var(--space-3);
+    row-gap: 0;
+  }
+
+  [data-variant="a"] .gva-header__cta {
+    margin-left: auto;
+  }
+
+  [data-variant="a"] .gva-nav {
+    order: 3;
+    flex: 1 0 100%;
+    margin: 0 calc(-1 * var(--gutter));
+    padding: 0 var(--gutter);
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-top: 1px solid var(--border-hairline);
+  }
+
+  [data-variant="a"] .gva-nav::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  [data-variant="a"] .gva-hero {
+    padding-block: var(--space-5) var(--space-7);
+  }
+
+  [data-variant="a"] .gva-hero__copy {
+    gap: var(--space-4);
+  }
+
+  [data-variant="a"] .gva-hero__title {
+    font-size: 2.125rem;
+  }
+
+  [data-variant="a"] .gva-hero__lead {
+    font-size: var(--fs-m);
+    line-height: 1.5;
+  }
+
+  [data-variant="a"] .gva-hero__actions .gva-button {
+    flex: 1 1 auto;
+    padding: 0 var(--space-4);
+  }
+
+  [data-variant="a"] .gva-section,
+  [data-variant="a"] .gva-contact {
+    padding-block: var(--space-7);
+  }
+
+  [data-variant="a"] .gva-section__head {
+    margin-bottom: var(--space-5);
+  }
+
+  [data-variant="a"] .gva-contact__repo-top {
+    font-size: var(--fs-l);
+  }
+}
