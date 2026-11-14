@@ -1,0 +1,951 @@
+/*
+ * Вариант B · «Циферблат» — прибор как сцена (ref3–5 в тёмном).
+ * Центрированная композиция: окно кадра в раскладке dial, вокруг него дуга шкалы с рисками,
+ * оранжевая стрелка — единственный акцент. Контурные цифры метрик и номеров секций, этапы
+ * конвейера — риски на дуге. Onest + IBM Plex Mono (tokens.css).
+ * Все селекторы — под [data-variant="b"]; раскладки компонентов — в components.css.
+ */
+
+[data-variant="b"] {
+  --gvb-header-h: 4rem;
+  --gvb-face: 18rem;
+  --gvb-arc-room: 12.5rem;
+}
+
+[data-variant="b"] #gv-root section[id],
+[data-variant="b"] #gv-root [id="hero-stage"] {
+  scroll-margin-top: calc(var(--studio-h) + var(--gvb-header-h) + var(--space-4));
+}
+
+[data-variant="b"] #gv-root section[id]:focus {
+  outline: none;
+}
+
+/* ---------- кнопки ---------- */
+
+[data-variant="b"] .gvb-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 3rem;
+  padding: 0 var(--space-5);
+  border: 1px solid transparent;
+  border-radius: var(--radius-s);
+  font-size: var(--fs-m);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
+}
+
+[data-variant="b"] .gvb-button:active {
+  transform: translateY(1px);
+}
+
+[data-variant="b"] .gvb-button--primary {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+[data-variant="b"] .gvb-button--primary:hover {
+  background: var(--text-primary);
+  color: var(--bg-canvas);
+}
+
+[data-variant="b"] .gvb-button--ghost {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+[data-variant="b"] .gvb-button--ghost:hover {
+  border-color: var(--text-primary);
+}
+
+/* ---------- header: бренд · навигация по центру · GitHub ---------- */
+
+[data-variant="b"] .gvb-header {
+  position: sticky;
+  top: var(--studio-h);
+  z-index: 50;
+  background: var(--bg-canvas);
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+[data-variant="b"] .gvb-header__inner {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--gvb-header-h);
+}
+
+[data-variant="b"] .gvb-brand {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  font-weight: 800;
+  font-size: var(--fs-l);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+}
+
+[data-variant="b"] .gvb-brand__mark {
+  width: 1.625rem;
+  height: 1.625rem;
+  fill: none;
+}
+
+[data-variant="b"] .gvb-brand__arc {
+  stroke: var(--text-faint);
+  stroke-width: 1.4;
+  stroke-dasharray: 1.2 1.6;
+}
+
+[data-variant="b"] .gvb-brand__needle {
+  stroke: var(--accent);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+[data-variant="b"] .gvb-brand__hub {
+  fill: var(--accent);
+}
+
+[data-variant="b"] .gvb-nav__list {
+  display: flex;
+  gap: var(--space-1);
+  margin: 0;
+}
+
+[data-variant="b"] .gvb-nav__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  font-size: var(--fs-s);
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* Текущий раздел отмечен риской, как деление на шкале */
+[data-variant="b"] .gvb-nav__link::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 0.5rem;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform var(--dur-med) var(--ease-out);
+}
+
+[data-variant="b"] .gvb-nav__link:hover,
+[data-variant="b"] .gvb-nav__link[aria-current="true"] {
+  color: var(--text-primary);
+}
+
+[data-variant="b"] .gvb-nav__link[aria-current="true"]::before {
+  transform: scaleY(1);
+}
+
+[data-variant="b"] .gvb-header__cta {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  padding: 0 var(--space-3);
+  font-size: var(--fs-s);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+[data-variant="b"] .gvb-header__cta:hover {
+  color: var(--accent);
+}
+
+/* ---------- 01 hero: дуга шкалы и окно кадра ---------- */
+
+[data-variant="b"] .gvb-hero {
+  position: relative;
+  padding-block: var(--space-3) var(--space-6);
+  overflow: clip;
+}
+
+[data-variant="b"] .gvb-hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 36rem) minmax(0, 1fr);
+  column-gap: var(--space-6);
+  align-items: end;
+}
+
+[data-variant="b"] .gvb-hero__gauge {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  padding-top: var(--gvb-arc-room);
+  min-width: 0;
+}
+
+[data-variant="b"] .gvb-hero__title-col {
+  grid-column: 1;
+  grid-row: 1;
+  position: relative;
+  z-index: 1;
+  padding-bottom: var(--space-7);
+}
+
+[data-variant="b"] .gvb-hero__copy {
+  grid-column: 3;
+  grid-row: 1;
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: var(--space-5);
+  padding-bottom: var(--space-7);
+}
+
+[data-variant="b"] .gvb-hero__title {
+  font-size: clamp(2.375rem, 1.3rem + 2vw, 3.625rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: var(--tracking-display);
+}
+
+[data-variant="b"] .gvb-hero__lead {
+  font-size: var(--fs-m);
+  line-height: var(--lh-body);
+  color: var(--text-muted);
+}
+
+[data-variant="b"] .gvb-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+[data-variant="b"] .gvb-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+/* Дуга шкалы: геометрию считает b.js по фактическому окну кадра */
+[data-variant="b"] .gvb-arc {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+[data-variant="b"] .gvb-arc.is-hidden {
+  display: none;
+}
+
+[data-variant="b"] .gvb-arc__line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+[data-variant="b"] .gvb-arc__tick {
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+[data-variant="b"] .gvb-arc__tick--major {
+  stroke: var(--text-faint);
+  stroke-width: 2;
+}
+
+[data-variant="b"] .gvb-arc__num {
+  fill: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+[data-variant="b"] .gvb-arc.is-compact .gvb-arc__num {
+  font-size: var(--fs-2xs);
+}
+
+[data-variant="b"] .gvb-arc__ring {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+[data-variant="b"] .gvb-arc__needle {
+  transition: transform 900ms var(--ease-out);
+}
+
+[data-variant="b"] .gvb-arc__needle-line {
+  stroke: var(--accent);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+[data-variant="b"] .gvb-arc__needle-tail {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+[data-variant="b"] .gvb-arc__theta {
+  fill: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  opacity: 0;
+  transition: opacity var(--dur-med) var(--ease-out);
+}
+
+[data-variant="b"] .gvb-arc[data-state="recognized"] .gvb-arc__theta {
+  opacity: 1;
+  transition-delay: 600ms;
+}
+
+[data-variant="b"] .gvb-hero__stage {
+  position: relative;
+  z-index: 1;
+}
+
+/* hero-stage dial: окно кадра сверху, затем телеметрия, переключатель и подпись */
+[data-variant="b"] .gvb-hero .gv-hero-stage--dial {
+  gap: var(--space-4);
+}
+
+[data-variant="b"] .gvb-hero .gv-hero-stage--dial .gv-hero-stage__body {
+  order: 1;
+  gap: var(--space-4);
+}
+
+[data-variant="b"] .gvb-hero .gv-hero-stage--dial .gv-hero-stage__bar {
+  order: 2;
+  gap: var(--space-2);
+}
+
+[data-variant="b"] .gvb-hero .gv-hero-stage--dial .gv-hero-stage__caption {
+  order: 3;
+  max-width: 34rem;
+}
+
+[data-variant="b"] .gvb-hero .gv-hero-stage--dial .gv-hero-stage__viewport {
+  width: var(--gvb-face);
+  border-color: var(--border-hairline);
+}
+
+/* Значение — отдельной строкой, остальные четыре поля — узким рядом между концами дуги */
+[data-variant="b"] .gvb-hero .gv-hero-stage--dial .gv-hero-stage__readout {
+  grid-template-columns: repeat(4, auto);
+  gap: var(--space-2) var(--space-4);
+}
+
+[data-variant="b"] .gvb-hero .gv-hero-stage--dial .gv-hero-stage__row {
+  padding: 0;
+  gap: 0.125rem;
+}
+
+[data-variant="b"] .gvb-hero .gv-hero-stage--dial .gv-hero-stage__row--main {
+  grid-column: 1 / -1;
+  flex-direction: row;
+  justify-content: center;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+[data-variant="b"] .gvb-hero .gv-hero-stage--dial .gv-hero-stage__row--main .gv-hero-stage__val {
+  font-size: var(--fs-2xl);
+}
+
+[data-variant="b"] .gvb-hero .gv-hero-stage--dial .gv-hero-stage__val {
+  font-size: var(--fs-xs);
+}
+
+[data-variant="b"] .gvb-hero .gv-hero-stage--dial .gv-hero-stage__key {
+  font-size: var(--fs-2xs);
+  white-space: nowrap;
+}
+
+/* Источник ROI уже есть в телеметрии; в круглом окне подпись в углу схемы обрезалась бы */
+[data-variant="b"] .gvb-hero .gv-dial__label--roi {
+  display: none;
+}
+
+[data-variant="b"] .gvb-hero .gv-hero-stage--dial .gv-hero-stage__device {
+  text-align: center;
+}
+
+/* ---------- секции: номер секции крупной контурной цифрой за заголовком ---------- */
+
+[data-variant="b"] .gvb-section {
+  padding-block: var(--space-8);
+  border-top: 1px solid var(--border-hairline);
+}
+
+[data-variant="b"] .gvb-head {
+  display: grid;
+  justify-items: center;
+  row-gap: var(--space-4);
+  margin-bottom: var(--space-7);
+  text-align: center;
+}
+
+[data-variant="b"] .gvb-head__index {
+  grid-area: 1 / 1;
+  align-self: center;
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 3.5rem + 7vw, 11rem);
+  font-weight: 800;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  color: var(--border-hairline);
+  user-select: none;
+}
+
+@supports (-webkit-text-stroke: 1px currentColor) {
+  [data-variant="b"] .gvb-head__index {
+    color: transparent;
+    -webkit-text-stroke: 1px var(--border-strong);
+  }
+}
+
+[data-variant="b"] .gvb-head__title {
+  grid-area: 1 / 1;
+  align-self: center;
+  position: relative;
+  max-width: 22ch;
+  font-size: var(--fs-2xl);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+}
+
+[data-variant="b"] .gvb-head__lead {
+  max-width: 40rem;
+  font-size: var(--fs-m);
+  color: var(--text-muted);
+}
+
+/* Метрики: крупные контурные цифры, как «26» на ref4 */
+[data-variant="b"] .gv-metrics--dial .gv-metrics__list {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: 0;
+  border-top: 1px solid var(--border-hairline);
+}
+
+[data-variant="b"] .gv-metrics--dial .gv-metrics__item {
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5) var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--border-hairline);
+  text-align: center;
+}
+
+[data-variant="b"] .gv-metrics--dial .gv-metrics__meta {
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+[data-variant="b"] .gv-metrics--dial .gv-metrics__figure {
+  justify-content: center;
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+[data-variant="b"] .gv-metrics--dial .gv-metrics__digits {
+  font-size: clamp(3rem, 1.6rem + 3vw, 4.75rem);
+  line-height: 1;
+  color: var(--text-primary);
+  transition: color var(--dur-med) var(--ease-out);
+}
+
+[data-variant="b"] .gv-metrics--dial .gv-metrics__digits--long {
+  font-size: clamp(2rem, 1.2rem + 2vw, 3rem);
+}
+
+@supports (-webkit-text-stroke: 1px currentColor) {
+  [data-variant="b"] .gv-metrics--dial .gv-metrics__digits {
+    color: transparent;
+    -webkit-text-stroke: 1.25px var(--text-primary);
+  }
+
+  [data-variant="b"] .gv-metrics--dial .gv-metrics__item:hover .gv-metrics__digits {
+    color: var(--text-primary);
+  }
+}
+
+[data-variant="b"] .gv-metrics--dial .gv-metrics__unit {
+  font-family: var(--font-mono);
+}
+
+[data-variant="b"] .gv-metrics--dial .gv-metrics__label {
+  font-size: var(--fs-m);
+}
+
+[data-variant="b"] .gv-metrics--dial .gv-metrics__condition {
+  max-width: 30ch;
+  font-size: var(--fs-s);
+}
+
+[data-variant="b"] .gv-metrics__note {
+  margin-inline: auto;
+  text-align: center;
+}
+
+/* Конвейер: риски на дуге слева, панель деталей справа */
+[data-variant="b"] .gv-pipeline--arc .gv-pipeline__arc-scale {
+  stroke: var(--accent);
+  stroke-width: 0.5;
+}
+
+[data-variant="b"] .gv-pipeline--arc .gv-pipeline__arc-tick {
+  stroke: var(--border-strong);
+}
+
+[data-variant="b"] .gv-pipeline--arc .gv-pipeline__arc-tick--major {
+  stroke: var(--text-faint);
+}
+
+[data-variant="b"] .gv-pipeline--arc .gv-pipeline__arc-needle line {
+  stroke-width: 2.4;
+}
+
+[data-variant="b"] .gv-pipeline--arc .gv-pipeline__tab {
+  color: var(--text-muted);
+}
+
+[data-variant="b"] .gv-pipeline--arc .gv-pipeline__tab[aria-selected="true"] {
+  background: transparent;
+  box-shadow: none;
+  color: var(--text-primary);
+}
+
+[data-variant="b"] .gv-pipeline--arc .gv-pipeline__tab[aria-selected="true"] .gv-pipeline__tab-title {
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.3em;
+}
+
+[data-variant="b"] .gv-pipeline--arc .gv-pipeline__tab-index {
+  font-size: var(--fs-s);
+}
+
+[data-variant="b"] .gv-pipeline__panel {
+  background: transparent;
+  border-color: var(--border-strong);
+  border-radius: var(--radius-l);
+}
+
+/* Сравнение: общий переключатель по центру */
+[data-variant="b"] .gv-compare--toggle .gv-compare__mode {
+  min-height: 3rem;
+  padding: 0 var(--space-6);
+  font-size: var(--fs-m);
+}
+
+[data-variant="b"] .gv-compare__col {
+  background: transparent;
+  border-color: var(--border-strong);
+  border-radius: var(--radius-l);
+}
+
+[data-variant="b"] .gv-compare__col--after {
+  border-color: var(--accent);
+}
+
+[data-variant="b"] .gv-compare__title {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+[data-variant="b"] .gv-compare__cost-value {
+  font-family: var(--font-display);
+  font-size: var(--fs-3xl);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  word-spacing: normal;
+}
+
+@supports (-webkit-text-stroke: 1px currentColor) {
+  [data-variant="b"] .gv-compare__cost-value {
+    color: transparent;
+    -webkit-text-stroke: 1.25px var(--text-primary);
+  }
+}
+
+[data-variant="b"] .gv-compare__saving-num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  word-spacing: normal;
+}
+
+/* Архитектура: скруглённые узлы, связи подсвечиваются стрелкой-акцентом */
+[data-variant="b"] .gv-architecture__node {
+  border-radius: var(--radius-m);
+}
+
+[data-variant="b"] .gv-architecture__caption {
+  background: transparent;
+  border-color: var(--border-strong);
+  border-radius: var(--radius-l);
+}
+
+/* Ограничения: карточки без плашек, деление линией сверху */
+[data-variant="b"] .gv-limits--cards .gv-limits__item {
+  padding: var(--space-5) 0 0;
+  border: 0;
+  border-top: 1px solid var(--border-strong);
+  border-radius: 0;
+  background: transparent;
+}
+
+[data-variant="b"] .gv-limits--cards .gv-limits__list {
+  gap: var(--space-6) var(--space-5);
+}
+
+[data-variant="b"] .gv-limits__condition {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+[data-variant="b"] .gv-limits__block-title {
+  font-weight: 800;
+}
+
+/* ---------- 07 финал ---------- */
+
+[data-variant="b"] .gvb-contact {
+  padding-block: var(--space-8);
+  border-top: 1px solid var(--border-hairline);
+}
+
+[data-variant="b"] .gvb-contact__inner {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-5);
+  text-align: center;
+}
+
+[data-variant="b"] .gvb-contact__inner .gvb-head {
+  margin-bottom: 0;
+}
+
+[data-variant="b"] .gvb-contact__text {
+  max-width: 44rem;
+  color: var(--text-muted);
+}
+
+[data-variant="b"] .gvb-contact__repo {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2) var(--space-4);
+  min-height: 4.5rem;
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-s);
+  background: var(--accent);
+  color: var(--accent-contrast);
+  text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+
+[data-variant="b"] .gvb-contact__repo:hover {
+  background: var(--text-primary);
+  color: var(--bg-canvas);
+}
+
+[data-variant="b"] .gvb-contact__repo .gv-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+[data-variant="b"] .gvb-contact__repo-label {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+[data-variant="b"] .gvb-contact__repo-url {
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  overflow-wrap: anywhere;
+}
+
+[data-variant="b"] .gvb-contact__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-1) var(--space-5);
+  margin: 0;
+}
+
+[data-variant="b"] .gvb-contact__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.75rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--border-strong);
+}
+
+[data-variant="b"] .gvb-contact__link .gv-icon {
+  color: var(--text-faint);
+}
+
+[data-variant="b"] .gvb-contact__link:hover,
+[data-variant="b"] .gvb-contact__link:hover .gv-icon {
+  color: var(--accent);
+}
+
+[data-variant="b"] .gvb-contact__meta {
+  display: grid;
+  gap: var(--space-3);
+  max-width: 44rem;
+  margin: var(--space-4) 0 0;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--border-hairline);
+}
+
+[data-variant="b"] .gvb-contact__meta dt {
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+[data-variant="b"] .gvb-contact__meta dd {
+  margin: 0;
+  font-size: var(--fs-s);
+  color: var(--text-muted);
+}
+
+/* ---------- футер ---------- */
+
+[data-variant="b"] .gvb-footer {
+  border-top: 1px solid var(--border-hairline);
+  padding-block: var(--space-5) var(--space-8);
+}
+
+[data-variant="b"] .gvb-footer__inner {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+  text-align: center;
+}
+
+[data-variant="b"] .gvb-footer__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0 var(--space-4);
+}
+
+[data-variant="b"] .gvb-footer__meta a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+/* ---------- «Бумага»: скриншоты остаются тёмными — в рамке ---------- */
+
+html[data-bg="paper"][data-variant="b"] .gv-hero-stage__viewport,
+html[data-bg="paper"][data-variant="b"] .gv-compare__pair-media {
+  border-color: var(--border-strong);
+}
+
+/* ---------- адаптив ---------- */
+
+@media (min-width: 1100px) {
+  [data-variant="b"] .gv-pipeline--arc {
+    grid-template-columns: minmax(0, 34rem) minmax(0, 1fr);
+    align-items: center;
+    column-gap: var(--space-7);
+  }
+}
+
+@media (max-width: 1240px) {
+  [data-variant="b"] .gvb-nav__link {
+    padding: 0 var(--space-2);
+  }
+}
+
+@media (max-width: 1099px) {
+  [data-variant="b"] .gvb-header {
+    position: static;
+  }
+
+  [data-variant="b"] #gv-root section[id],
+  [data-variant="b"] #gv-root [id="hero-stage"] {
+    scroll-margin-top: calc(var(--studio-h) + var(--space-4));
+  }
+
+  [data-variant="b"] .gvb-header__inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 0;
+  }
+
+  [data-variant="b"] .gvb-nav {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    margin: 0 calc(-1 * var(--gutter));
+    padding: 0 var(--gutter);
+    overflow-x: auto;
+    scrollbar-width: none;
+    border-top: 1px solid var(--border-hairline);
+  }
+
+  [data-variant="b"] .gvb-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  [data-variant="b"] .gvb-hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--space-6);
+    align-items: start;
+  }
+
+  [data-variant="b"] .gvb-hero__title-col {
+    grid-column: 1;
+    grid-row: 1;
+    padding: var(--space-5) 0 0;
+  }
+
+  [data-variant="b"] .gvb-hero__copy {
+    grid-column: 2;
+    grid-row: 1;
+    padding: var(--space-5) 0 0;
+  }
+
+  [data-variant="b"] .gvb-hero__gauge {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: center;
+    width: min(100%, 36rem);
+  }
+}
+
+@media (max-width: 760px) {
+  [data-variant="b"] {
+    --gvb-face: 14rem;
+    --gvb-arc-room: 6.5rem;
+  }
+
+  [data-variant="b"] .gvb-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  [data-variant="b"] .gvb-hero__copy {
+    grid-column: 1;
+    grid-row: 2;
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+  }
+
+  [data-variant="b"] .gvb-hero__gauge {
+    grid-row: 3;
+    margin-top: var(--space-4);
+  }
+
+  [data-variant="b"] .gvb-hero .gv-hero-stage--dial .gv-hero-stage__readout {
+    grid-template-columns: repeat(2, minmax(0, auto));
+    column-gap: var(--space-6);
+  }
+}
+
+@media (max-width: 640px) {
+  [data-variant="b"] .gvb-brand {
+    font-size: var(--fs-m);
+  }
+
+  [data-variant="b"] .gvb-hero {
+    padding-bottom: var(--space-7);
+  }
+
+  [data-variant="b"] .gvb-hero__title {
+    font-size: 2.25rem;
+  }
+
+  [data-variant="b"] .gvb-hero__actions .gvb-button {
+    flex: 1 1 auto;
+    padding: 0 var(--space-4);
+  }
+
+  [data-variant="b"] .gvb-section,
+  [data-variant="b"] .gvb-contact {
+    padding-block: var(--space-7);
+  }
+
+  [data-variant="b"] .gvb-head {
+    margin-bottom: var(--space-6);
+  }
+
+  [data-variant="b"] .gv-metrics--dial .gv-metrics__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  [data-variant="b"] .gv-metrics--dial .gv-metrics__item {
+    padding: var(--space-4) var(--space-2) var(--space-5);
+  }
+
+  [data-variant="b"] .gv-metrics--dial .gv-metrics__digits {
+    font-size: 2.25rem;
+  }
+
+  [data-variant="b"] .gv-metrics--dial .gv-metrics__digits--long {
+    font-size: var(--fs-l);
+  }
+
+  [data-variant="b"] .gv-metrics--dial .gv-metrics__label,
+  [data-variant="b"] .gv-metrics--dial .gv-metrics__condition {
+    font-size: var(--fs-xs);
+  }
+
+  [data-variant="b"] .gv-compare--toggle .gv-compare__mode {
+    padding: 0 var(--space-5);
+  }
+
+  [data-variant="b"] .gvb-contact__repo {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  [data-variant="b"] .gvb-contact__repo-label {
+    font-size: var(--fs-l);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-variant="b"] .gvb-arc__needle,
+  [data-variant="b"] .gvb-arc__theta,
+  [data-variant="b"] .gvb-nav__link::before,
+  [data-variant="b"] .gv-metrics--dial .gv-metrics__digits {
+    transition: none;
+  }
+}
