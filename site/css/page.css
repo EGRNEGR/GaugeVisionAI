@@ -104,9 +104,9 @@
   position: absolute;
   left: 50%;
   top: 0;
-  width: 2px;
+  width: 0.125rem;
   height: 0.5rem;
-  margin-left: -1px;
+  margin-left: -0.0625rem;
   border-radius: 1px;
   background: var(--accent);
   transform: scaleY(0);
@@ -349,7 +349,7 @@
 @supports (-webkit-text-stroke: 1px currentColor) {
   .gv-metrics--dial .gv-metrics__digits {
     color: transparent;
-    -webkit-text-stroke: 1.25px var(--text-primary);
+    -webkit-text-stroke: 0.078125rem var(--text-primary);
   }
 
   .gv-metrics--dial .gv-metrics__item:hover .gv-metrics__digits {
@@ -399,7 +399,7 @@
 @supports (-webkit-text-stroke: 1px currentColor) {
   .gv-compare__cost-value {
     color: transparent;
-    -webkit-text-stroke: 1.25px var(--text-primary);
+    -webkit-text-stroke: 0.078125rem var(--text-primary);
   }
 }
 
@@ -492,7 +492,7 @@
 }
 
 .gv-contact__repo:hover {
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
 }
 
 .gv-contact__repo:active {

@@ -20,6 +20,8 @@
  *   8. Типографика строк content.js: нет « - » вместо тире, дефисных диапазонов и десятичной точки.
  *   9. Движение: в css/ transition и @keyframes трогают только transform и opacity; карточки конвейера —
  *      четыре этапа по брифу с замеренной задержкой; hero.stage и старый pipeline.js удалены.
+ *  10. Размеры в css/ (кроме fonts.css) — в rem: px только у линий ±1px, центровки -0.5px и в условиях @media.
+ *  11. Каждый экспорт GV.kit используется в site/js или в тестах компонентов.
  */
 'use strict';
 
@@ -568,6 +570,47 @@ function checkMotionCss() {
   if (fs.existsSync(path.join(SITE, 'js', 'components', 'pipeline.js'))) fail(9, 'site/js/components/pipeline.js (старый конвейер на 9 этапов) должен быть удалён');
 }
 
+/* ---------- 10. размеры в rem: px только у линий 1px и в условиях @media ---------- */
+// ±1px — линия и её смещение на толщину линии, -0.5px — центровка линии 1px. fonts.css — вне правила.
+const PX_OK = new Set(['1px', '-1px', '-0.5px']);
+function checkPxCss() {
+  const files = walkFiles(path.join(SITE, 'css')).filter((f) => f.endsWith('.css') && path.basename(f) !== 'fonts.css');
+  for (const f of files) {
+    const lines = (readText(f) || '')
+      .replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' '))
+      .replace(/@media[^{]*/g, (m) => m.replace(/[^\n]/g, ' '))
+      .split('\n');
+    lines.forEach((line, i) => {
+      const re = /(^|[^\w.-])(-?(?:\d+\.?\d*|\.\d+))px\b/g;
+      let m;
+      while ((m = re.exec(line))) {
+        const token = m[2] + 'px';
+        if (!PX_OK.has(token)) fail(10, `${token} в ${rel(f)}:${i + 1} — размеры в rem (масштаб Tweaks), px только у линий 1px`);
+      }
+    });
+  }
+}
+
+/* ---------- 11. GV.kit без мёртвых экспортов ---------- */
+// Каждый экспорт kit.js вызывается где-то ещё в site/js или в тестах компонентов.
+function checkKitExports() {
+  const file = path.join(SITE, 'js', 'components', 'kit.js');
+  const code = readText(file);
+  if (code === null) { fail(11, `нет файла ${rel(file)}`); return; }
+  // Экспорты читаются из текста: DOM-часть kit.js без браузера не выполняется.
+  const literal = (code.match(/var kit = \{([\s\S]*?)\};/) || [null, ''])[1];
+  const names = new Set();
+  literal.replace(/(\w+)\s*:/g, (m, n) => names.add(n));
+  code.replace(/\bkit\.(\w+)\s*=/g, (m, n) => names.add(n));
+  if (!names.size) { fail(11, 'kit.js: не найдены экспорты GV.kit (var kit = {…}, kit.name = …)'); return; }
+  const users = walkFiles(path.join(SITE, 'js')).filter((f) => f.endsWith('.js') && f !== file)
+    .concat([path.join(SITE, 'tests', 'components.test.js')])
+    .map((f) => readText(f) || '').join('\n');
+  for (const name of names) {
+    if (!new RegExp('\\.' + escapeRe(name) + '\\b').test(users)) fail(11, `GV.kit.${name} нигде не используется — удалить из kit.js`);
+  }
+}
+
 /* ---------- запуск ---------- */
 const content = loadContent();
 const mounts = loadMounts();
@@ -584,6 +627,8 @@ checkModules();
 checkSections(content, mounts);
 checkLegacy();
 checkMotionCss();
+checkPxCss();
+checkKitExports();
 
 if (failures.length) {
   console.log(failures.join('\n'));

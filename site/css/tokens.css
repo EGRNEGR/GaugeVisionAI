@@ -95,7 +95,7 @@
 
   /* Хром */
   --tap: calc(2.75 * var(--chrome-u));
-  --focus-ring: 0 0 0 2px var(--bg-canvas), 0 0 0 4px var(--accent);
+  --focus-ring: 0 0 0 0.125rem var(--bg-canvas), 0 0 0 0.25rem var(--accent);
 }
 
 /* ---------- Шрифт из Tweaks ---------- */

@@ -7,8 +7,9 @@
  * поверх него (фокусируемы, aria-pressed закрепляет подсветку). Наведение или фокус подсвечивает связи узла
  * и показывает подпись (aria-live). По связям бегут импульсы: точки двигаются только transform вдоль
  * отрезков, пока схема на экране; при «уменьшить движение» их нет. Перекладка — по ResizeObserver и
- * событию gv:tweaks (масштаб). На узкой раскладке порядок кнопок в DOM (Tab) = порядок, в котором узлы
- * нарисованы: сверху вниз, слева направо.
+ * событию gv:tweaks (масштаб). Порядок кнопок в DOM (Tab) = порядок, в котором узлы нарисованы:
+ * на широкой — по колонкам слева направо, в колонке сверху вниз; на узкой — по строкам сверху вниз,
+ * в строке слева направо.
  */
 (function () {
   'use strict';
@@ -307,19 +308,23 @@
         if (pts) edgeEls[i].setAttribute('d', pathOf(pts));
         setRoute(i, pts);
       });
-      orderDom(isWide ? null : L.pos);
+      orderDom(L.pos, isWide);
     }
 
-    /* На узкой раскладке кнопки в DOM идут в порядке рисунка: по строкам сверху вниз, в строке слева направо. */
-    function orderDom(pos) {
+    /*
+     * Кнопки в DOM идут в порядке рисунка. Широкая схема читается колонками (поток данных слева направо):
+     * колонка за колонкой, в колонке сверху вниз. Узкая — строками: сверху вниз, в строке слева направо.
+     */
+    function orderDom(pos, byColumn) {
       var list = logicalOrder.slice();
-      if (pos) {
-        list.sort(function (a, b) {
-          var pa = pos[a.getAttribute('data-id')], pb = pos[b.getAttribute('data-id')];
-          if (!pa || !pb) return 0;
-          return (Math.round(pa.y * 4) - Math.round(pb.y * 4)) || (pa.x - pb.x);
-        });
-      }
+      var q = function (v) { return Math.round(v * 4); };
+      list.sort(function (a, b) {
+        var pa = pos[a.getAttribute('data-id')], pb = pos[b.getAttribute('data-id')];
+        if (!pa || !pb) return 0;
+        return byColumn
+          ? (q(pa.x) - q(pb.x)) || (pa.y - pb.y)
+          : (q(pa.y) - q(pb.y)) || (pa.x - pb.x);
+      });
       var current = Array.prototype.filter.call(canvas.children, function (n) { return n.classList.contains('gv-architecture__node'); });
       var same = list.every(function (b, i) { return current[i] === b; });
       if (same) return;
@@ -398,5 +403,5 @@
     };
   }
 
-  GV.components.architecture = { mount: mount, layouts: ['auto'] };
+  GV.components.architecture = { mount: mount };
 })();

@@ -95,15 +95,23 @@
   var scrollY = root.pageYOffset || 0;
   var listening = false;
 
+  // Ошибка одного подписчика не должна останавливать цикл всей страницы:
+  // она уходит в консоль, остальные подписчики кадра выполняются, следующий кадр планируется.
+  function each(list, a, b) {
+    list.slice().forEach(function (fn) {
+      try { fn(a, b); } catch (err) { root.console.error('GV.motion: подписчик упал', err); }
+    });
+  }
+
   function tick(now) {
     var dt = last ? Math.min((now - last) / 1000, MAX_DT) : 1 / 60;
     last = now;
     if (scrollDirty) {
       scrollDirty = false;
       scrollY = root.pageYOffset || 0;
-      scrollSubs.slice().forEach(function (fn) { fn(scrollY); });
+      each(scrollSubs, scrollY);
     }
-    frameSubs.slice().forEach(function (fn) { fn(dt, now); });
+    each(frameSubs, dt, now);
     if (frameSubs.length || scrollDirty) {
       root.requestAnimationFrame(tick);
     } else {

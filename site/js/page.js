@@ -26,13 +26,6 @@
     limits: 'limits'
   };
 
-  /* Раскладки бывшего варианта B, пока у компонентов их несколько. */
-  var OPTIONS = {
-    metrics: { layout: 'dial' },
-    compare: { layout: 'toggle' },
-    limits: { layout: 'cards' }
-  };
-
   /* Сцены во всю ширину экрана: модуль сам задаёт сетку и закрепление. */
   var FULL_BLEED = { hero: true, reading: true, pipeline: true };
 
@@ -128,7 +121,7 @@
         return false;
       }
       try {
-        instances.push(comp.mount(body, OPTIONS[id] || {}));
+        instances.push(comp.mount(body));
         return true;
       } catch (e) {
         console.error('GV.page: модуль ' + name + ' не смонтировался в #' + id, e);

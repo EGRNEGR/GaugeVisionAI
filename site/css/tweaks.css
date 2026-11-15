@@ -195,9 +195,9 @@
 }
 
 .gv-tweaks__radio:focus-visible + .gv-tweaks__chip {
-  outline: 2px solid var(--accent);
-  outline-offset: -2px;
-  box-shadow: inset 0 0 0 4px var(--bg-elevated);
+  outline: calc(0.125 * var(--chrome-u)) solid var(--accent);
+  outline-offset: calc(-0.125 * var(--chrome-u));
+  box-shadow: inset 0 0 0 calc(0.25 * var(--chrome-u)) var(--bg-elevated);
 }
 
 

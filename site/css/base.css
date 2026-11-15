@@ -110,8 +110,8 @@ hr {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: 0.125rem solid var(--accent);
+  outline-offset: 0.125rem;
   border-radius: var(--radius-s);
 }
 
@@ -126,7 +126,7 @@ hr {
 
 ::-webkit-scrollbar-thumb {
   background: var(--border-strong);
-  border: 2px solid var(--bg-canvas);
+  border: 0.125rem solid var(--bg-canvas);
   border-radius: var(--radius-m);
 }
 

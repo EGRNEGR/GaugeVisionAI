@@ -167,6 +167,49 @@ if (!rm || typeof rm.pinProgress !== 'function') {
   eq('spring.step при reduced motion → цель', s.step(1 / 60), 253.4);
 }
 
+// Цикл кадра переживает ошибку подписчика: исключение уходит в console.error,
+// остальные подписчики этого кадра вызваны, следующий кадр запланирован (ревью ветки, F1).
+{
+  const queue = [];
+  const errors = [];
+  const loopBox = {
+    console: { log() {}, warn() {}, error: (...args) => errors.push(args) },
+    requestAnimationFrame: (fn) => { queue.push(fn); return queue.length; },
+    addEventListener() {},
+    pageYOffset: 0,
+    innerHeight: 900,
+    document: { addEventListener() {}, documentElement: { clientWidth: 1440 } }
+  };
+  loopBox.window = loopBox;
+  vm.createContext(loopBox);
+  const motionFile = path.join(SITE, 'js/motion.js');
+  vm.runInContext(fs.readFileSync(motionFile, 'utf8'), loopBox, { filename: motionFile });
+  const lm = loopBox.GV && loopBox.GV.motion;
+  if (!lm || typeof lm.onFrame !== 'function' || typeof lm.onScroll !== 'function') {
+    failures.push('нет GV.motion.onFrame / onScroll (site/js/motion.js)');
+  } else {
+    let frameCalls = 0;
+    let scrollCalls = 0;
+    lm.onScroll(() => { throw new Error('подписчик прокрутки упал'); });
+    lm.onScroll(() => { scrollCalls += 1; });
+    lm.onFrame(() => { throw new Error('подписчик кадра упал'); });
+    lm.onFrame(() => { frameCalls += 1; });
+    const run = (now) => {
+      const fn = queue.shift();
+      if (!fn) return false;
+      try { fn(now); } catch (e) { failures.push(`цикл кадра выбросил наружу: ${e.message}`); }
+      return true;
+    };
+    run(16);
+    eq('второй подписчик прокрутки вызван после ошибки первого', scrollCalls, 1);
+    eq('второй подписчик кадра вызван после ошибки первого', frameCalls, 1);
+    eq('следующий кадр запланирован после ошибки', queue.length, 1);
+    eq('ошибки подписчиков ушли в console.error', errors.length, 2);
+    run(32);
+    eq('цикл жив: второй кадр вызвал подписчика', frameCalls, 2);
+  }
+}
+
 if (failures.length) {
   console.log(failures.join('\n'));
   console.log(`\nFAIL: ${failures.length}`);

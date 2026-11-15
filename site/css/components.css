@@ -449,8 +449,8 @@
 
 .gv-compare__mark--deviation::before {
   background: var(--status-alert);
-  width: 2px;
-  left: -1px;
+  width: 0.125rem;
+  left: -0.0625rem;
 }
 
 .gv-compare__mark--deviation .gv-compare__mark-label {
@@ -468,9 +468,9 @@
 }
 
 .gv-compare__mark--detect::before {
-  left: -1px;
+  left: -0.0625rem;
   top: 1.5rem;
-  width: 2px;
+  width: 0.125rem;
   bottom: 0;
   height: auto;
   background: var(--accent);
@@ -567,7 +567,7 @@
 
 .gv-architecture__edge.is-active {
   stroke: var(--accent);
-  stroke-width: 2px;
+  stroke-width: 0.125rem;
 }
 
 .gv-architecture[data-active] .gv-architecture__edge:not(.is-active) {
@@ -624,8 +624,8 @@
 }
 
 .gv-architecture__node:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: 0.125rem solid var(--accent);
+  outline-offset: 0.125rem;
 }
 
 .gv-architecture[data-active] .gv-architecture__node:not(.is-linked) {
@@ -974,7 +974,7 @@
   flex: none;
   padding: 0.0625rem 0.5rem;
   border: 1px solid currentColor;
-  border-radius: 999px;
+  border-radius: 62.5rem;
   font-family: var(--font-mono);
   font-size: var(--fs-2xs);
   letter-spacing: 0.04em;

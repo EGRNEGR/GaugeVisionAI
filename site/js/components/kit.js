@@ -11,10 +11,9 @@
  *
  * DOM-хелперы (только в браузере):
  *   scope() → { on, add, timeout, interval, frame, observe, destroy }  — всё, что снимается в destroy()
- *   pick(value, allowed) → value из списка или первый элемент
- *   media() → 'schematic'                  растровых скриншотов на странице нет (бриф: R07)
  *   onTweaks(scope, cb(state))             событие gv:tweaks (масштаб, шрифт)
- *   dial(opts) → SVG-циферблат шкалы calibration (риски, стрелка, оверлей распознавания, зоны уставок)
+ *   polar(cx, cy, r, θ) → [x, y]           точка на окружности (0° — «3 часа», по часовой)
+ *   arcPath(cx, cy, r, θ0, θ1) → d          SVG-дуга по часовой от θ0 до θ1
  *   icon(name) → SVG-иконка (external, github, arrow, right)
  *   extLink(attrs, ...children) → <a target="_blank" rel="noopener"> + иконка и скрытое «откроется в новой вкладке»
  *   sectionNav(scope, {container, links, ids, rootMargin, keepLast, onChange}) → { setCurrent }
@@ -72,12 +71,6 @@
     return mod(c.thetaMin - frac * (mod(c.thetaMin - c.thetaMax, 360) || 360), 360);
   }
 
-  /* Доля шкалы без ограничения: < 0 или > 1 — стрелка за пределами шкалы. */
-  function fraction(value, calib) {
-    var c = calibParts(calib);
-    return (value - c.vMin) / (c.vMax - c.vMin);
-  }
-
   function toBar(value, calib) {
     return value * calibParts(calib).barPerMpa;
   }
@@ -111,12 +104,10 @@
   var kit = {
     angleToValue: angleToValue,
     valueToAngle: valueToAngle,
-    fraction: fraction,
     toBar: toBar,
     zoneOf: zoneOf,
     levelOf: levelOf,
     emaStep: emaStep,
-    mod: mod,
     NBSP: NBSP
   };
   GV.kit = kit;
@@ -191,20 +182,11 @@
     return { on: on, add: add, timeout: timeout, interval: interval, frame: frame, observe: observe, destroy: destroy };
   }
 
-  function pick(value, allowed) {
-    return allowed.indexOf(value) >= 0 ? value : allowed[0];
-  }
-
-  /* Раньше Tweaks переключали скриншоты и схему; теперь страница без растровых скриншотов — всегда схема. */
-  function media() {
-    return 'schematic';
-  }
-
   function onTweaks(sc, cb) {
     return sc.on(document, 'gv:tweaks', function (e) { cb((e && e.detail) || {}); });
   }
 
-  /* ---------- SVG-циферблат ---------- */
+  /* ---------- SVG-геометрия ---------- */
 
   function polar(cx, cy, r, deg) {
     var a = (deg * Math.PI) / 180;
@@ -220,100 +202,6 @@
     var p0 = polar(cx, cy, r, a0);
     var p1 = polar(cx, cy, r, a0 + sweep);
     return 'M' + fx(p0[0]) + ' ' + fx(p0[1]) + ' A' + r + ' ' + r + ' 0 ' + (sweep > 180 ? 1 : 0) + ' 1 ' + fx(p1[0]) + ' ' + fx(p1[1]);
-  }
-  /* Дуга шкалы между двумя значениями с учётом направления калибровки. */
-  function valueArc(cx, cy, r, v0, v1, calib) {
-    var a0 = valueToAngle(v0, calib);
-    var a1 = valueToAngle(v1, calib);
-    return calibParts(calib).ccw ? arcPath(cx, cy, r, a1, a0) : arcPath(cx, cy, r, a0, a1);
-  }
-
-  /*
-   * opts: { theta, overlay:bool, zones:setpoints|null, title, thetaLabel, valueLabel, roi, className, numbers:true }
-   * Рисует шкалу GV.content.calibration (vMin…vMax, θmin → θmax), стрелку под углом θ
-   * (система координат кадра: 0° — «3 часа», по часовой). overlay — эллипс ROI, вектор и подпись θ.
-   * numbers:false — только риски, без цифр шкалы (для схем, где цифры спорили бы с подписью значения).
-   * Возвращает SVG; стрелка — g.gv-dial__needle (поворачивается setNeedle).
-   */
-  function dial(opts) {
-    opts = opts || {};
-    var s = GV.util.svg;
-    var fmt = GV.util.formatNumber;
-    var calib = opts.calib || GV.content.calibration;
-    var cp = calibParts(calib);
-    var C = 100;
-    var R = 72;
-    var children = [];
-    var titleId = GV.util.uid('gv-dial');
-
-    children.push(s('title', { id: titleId }, opts.title || ''));
-    children.push(s('circle', { class: 'gv-dial__bezel', cx: C, cy: C, r: R + 8 }));
-    children.push(s('circle', { class: 'gv-dial__face', cx: C, cy: C, r: R }));
-
-    if (opts.zones) {
-      var z = opts.zones;
-      var edges = [cp.vMin, z.LL, z.L, z.H, z.HH, cp.vMax];
-      var levels = ['alert', 'warning', 'normal', 'warning', 'alert'];
-      for (var i = 0; i < 5; i++) {
-        if (edges[i + 1] > edges[i]) {
-          children.push(s('path', { class: 'gv-dial__zone gv-dial__zone--' + levels[i], d: valueArc(C, C, R - 6, edges[i], edges[i + 1], calib) }));
-        }
-      }
-    }
-
-    children.push(s('path', { class: 'gv-dial__scale', d: valueArc(C, C, R - 2, cp.vMin, cp.vMax, calib) }));
-
-    var range = cp.vMax - cp.vMin;
-    var steps = 20;
-    var showNumbers = opts.numbers !== false;
-    for (var k = 0; k <= steps; k++) {
-      var v = cp.vMin + (range * k) / steps;
-      var a = valueToAngle(v, calib);
-      var major = k % 2 === 0;
-      var p0 = polar(C, C, R - 2, a);
-      var p1 = polar(C, C, R - (major ? 12 : 7), a);
-      children.push(s('line', { class: major ? 'gv-dial__tick gv-dial__tick--major' : 'gv-dial__tick', x1: fx(p0[0]), y1: fx(p0[1]), x2: fx(p1[0]), y2: fx(p1[1]) }));
-      if (showNumbers && k % 4 === 0) {
-        var pt = polar(C, C, R - 22, a);
-        children.push(s('text', { class: 'gv-dial__num', x: fx(pt[0]), y: fx(pt[1]), 'text-anchor': 'middle', 'dominant-baseline': 'central' }, fmt(v)));
-      }
-    }
-
-    var theta = typeof opts.theta === 'number' ? opts.theta : cp.thetaMin;
-    var needle = s('g', { class: 'gv-dial__needle', transform: 'rotate(' + fx(theta) + ' ' + C + ' ' + C + ')' },
-      s('line', { class: 'gv-dial__needle-tail', x1: C - 12, y1: C, x2: C, y2: C }),
-      s('line', { class: 'gv-dial__needle-body', x1: C, y1: C, x2: C + R - 10, y2: C }));
-    children.push(needle);
-    children.push(s('circle', { class: 'gv-dial__hub', cx: C, cy: C, r: 4.5 }));
-
-    if (opts.overlay) {
-      var tip = polar(C, C, R - 6, theta);
-      var head1 = polar(tip[0], tip[1], 7, theta + 155);
-      var head2 = polar(tip[0], tip[1], 7, theta - 155);
-      var ref = polar(C, C, 34, 0);
-      children.push(s('g', { class: 'gv-dial__overlay' },
-        s('ellipse', { class: 'gv-dial__roi', cx: C, cy: C, rx: R + 13, ry: R + 11 }),
-        s('line', { class: 'gv-dial__ref', x1: C, y1: C, x2: fx(ref[0]), y2: fx(ref[1]) }),
-        s('path', { class: 'gv-dial__theta', d: arcPath(C, C, 18, 0, theta) }),
-        s('line', { class: 'gv-dial__vector', x1: C, y1: C, x2: fx(tip[0]), y2: fx(tip[1]) }),
-        s('path', { class: 'gv-dial__arrow', d: 'M' + fx(tip[0]) + ' ' + fx(tip[1]) + ' L' + fx(head1[0]) + ' ' + fx(head1[1]) + ' L' + fx(head2[0]) + ' ' + fx(head2[1]) + ' Z' }),
-        opts.thetaLabel ? s('text', { class: 'gv-dial__label', x: C, y: C + 30, 'text-anchor': 'middle' }, opts.thetaLabel) : null,
-        opts.roi ? s('text', { class: 'gv-dial__label gv-dial__label--roi', x: 8, y: 12 }, opts.roi) : null,
-        opts.valueLabel ? s('text', { class: 'gv-dial__value', x: C, y: C + 60, 'text-anchor': 'middle' }, opts.valueLabel) : null));
-    }
-
-    return s('svg', {
-      class: ['gv-dial', opts.className],
-      viewBox: '0 0 200 200',
-      role: 'img',
-      'aria-labelledby': titleId,
-      focusable: 'false'
-    }, children);
-  }
-
-  function setNeedle(svgEl, theta) {
-    var needle = svgEl && svgEl.querySelector('.gv-dial__needle');
-    if (needle) needle.setAttribute('transform', 'rotate(' + fx(theta) + ' 100 100)');
   }
 
   /* ---------- Иконки (свои SVG, одна толщина линии) ---------- */
@@ -399,11 +287,7 @@
 
   kit.scope = scope;
   kit.sectionNav = sectionNav;
-  kit.pick = pick;
-  kit.media = media;
   kit.onTweaks = onTweaks;
-  kit.dial = dial;
-  kit.setNeedle = setNeedle;
   kit.arcPath = arcPath;
   kit.polar = polar;
   kit.icon = icon;
