@@ -7,7 +7,9 @@
  * timeFor(pinProgress, duration) с инерцией cur += (target − cur) × 0,12 за кадр 60 к/с;
  * запись — только когда !video.seeking и разница > 1/60 с. Цикл кадра спит, когда сцена вне экрана
  * или видео догнало цель.
- * Поверх — ровно три элемента: kicker + h1, одна строка сути, индикатор прокрутки (scaleY).
+ * Поверх — ровно три элемента: h1, одна строка сути и индикатор прокрутки (подпись + шкала прогресса).
+ * Прогресс индикатора — CSS-переменная --hero-p (0..1) на .gv-hero__scroll: шкала заливается
+ * transform: scaleY на широких экранах и scaleX на телефоне (там индикатор — строка под текстом).
  * Ближе к концу HUD гаснет, кадр уходит в темноту — из неё проявляется прибор сцены «Показание».
  * Ошибка видео или prefers-reduced-motion — только постер, секция data-static (100vh, без закрепления).
  * Движение — только transform и opacity.
@@ -51,9 +53,7 @@
     var offs = [];
 
     var fill = h('span', { class: 'gv-hero__scroll-fill' });
-    var heading = h('div', { class: 'gv-hero__heading' },
-      h('p', { class: 'gv-hero__kicker' }, hero.kicker),
-      h('h1', { class: 'gv-hero__title', id: 'gv-hero-title' }, hero.title));
+    var heading = h('h1', { class: 'gv-hero__title', id: 'gv-hero-title' }, hero.title);
     var line = h('p', { class: 'gv-hero__line' }, hero.line);
     var indicator = h('div', { class: 'gv-hero__scroll', 'aria-hidden': 'true' },
       h('span', { class: 'gv-hero__scroll-label' }, hero.scrollLabel),
@@ -84,7 +84,7 @@
       heading.style.opacity = line.style.opacity = '';
       heading.style.transform = line.style.transform = '';
       dusk.style.opacity = '';
-      fill.style.transform = '';
+      indicator.style.removeProperty('--hero-p');
     }
 
     /* Снять подписки и отпустить декодер: src убирается, load() сбрасывает буфер. */
@@ -150,7 +150,7 @@
     }
 
     function paint(p) {
-      fill.style.transform = 'scaleY(' + p.toFixed(4) + ')';
+      indicator.style.setProperty('--hero-p', p.toFixed(4));
       var out = smooth(0.55, 0.82, p);
       var hudOpacity = (1 - out).toFixed(3);
       heading.style.opacity = hudOpacity;

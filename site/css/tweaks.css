@@ -2,7 +2,19 @@
  * Панель Tweaks: плавающая кнопка в правом нижнем углу и панель настроек.
  * Размеры в --chrome-u: панель не масштабируется вместе со страницей, цвета — из токенов.
  * Переходы — только transform и opacity.
+ * --tweaks-clearance — высота угла, который занимает кнопка (отступ + кнопка + зазор): по ней
+ * HUD hero и низ страницы не заходят под кнопку.
  */
+
+:root {
+  --tweaks-clearance: calc(var(--tap) + 2.5 * var(--chrome-u));
+}
+
+@media (max-width: 640px) {
+  :root {
+    --tweaks-clearance: calc(var(--tap) + 1.5 * var(--chrome-u));
+  }
+}
 
 #gv-tweaks {
   font-family: var(--font-chrome);
@@ -232,7 +244,7 @@
 
 @media (max-width: 640px) {
   body {
-    padding-bottom: calc(4.5 * var(--chrome-u));
+    padding-bottom: var(--tweaks-clearance);
   }
 
   .gv-tweaks__toggle {

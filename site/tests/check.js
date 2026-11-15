@@ -16,6 +16,7 @@
  *   5. Секции идут в порядке брифа; каждый модуль из GV.page.mounts подключён <script> в index.html.
  *   6. Нет вариантов, роутера и студийной панели.
  *   7. Ни одна выводимая строка GV.content не длиннее 140 символов; заголовки 3–6 слов;
+ *      в hero нет надзаголовка (kicker), строка сути — одно предложение;
  *      ссылки — только GitHub EGRNEGR; 25 камер — замер, 50 и 100 — расчёт.
  *   8. Типографика строк content.js: нет « - » вместо тире, дефисных диапазонов и десятичной точки.
  *   9. Движение: в css/ transition и @keyframes трогают только transform и opacity; карточки конвейера —
@@ -119,7 +120,7 @@ function loadMounts() {
 /* ---------- 0. форма ---------- */
 const SHAPE = {
   meta: ['name', 'tagline', 'repoUrl', 'licenseUrl', 'track', 'trackShort', 'copyright', 'version'],
-  hero: ['kicker', 'title', 'line', 'scrollLabel', 'video'],
+  hero: ['title', 'line', 'scrollLabel', 'video'],
   'hero.video': ['src', 'srcMobile', 'poster', 'label'],
   reading: ['theta', 'device', 'caption'],
   calibration: ['thetaMin', 'thetaMax', 'vMin', 'vMax', 'unit', 'direction', 'setpoints', 'barPerMpa', 'formula'],
@@ -488,6 +489,16 @@ function checkText(c) {
     const n = words(c.hero.title || '').length;
     if (n < 3 || n > 6) fail(7, `hero.title — ${n} слов, нужно 3–6`);
     if (String(c.hero.line || '').length > 90) fail(7, `hero.line длиннее 90 символов (${String(c.hero.line).length})`);
+    // Поверх видео — только h1, одна строка сути и индикатор прокрутки (R13): надзаголовка нет
+    if (c.hero.kicker !== undefined) fail(7, 'content.hero.kicker: поверх видео нет надзаголовка — только h1, строка сути и индикатор');
+    // Строка сути — одно предложение: внутри нет конца предложения
+    if (/[.!?…]\s+\S/.test(String(c.hero.line || ''))) fail(7, `hero.line — больше одного предложения: «${c.hero.line}»`);
+  }
+  // Разметка HUD hero (компонент и его стили) тоже без надзаголовка
+  for (const f of [path.join(SITE, 'js', 'components', 'scroll-video.js'), path.join(SITE, 'css', 'hero.css')]) {
+    (readText(f) || '').split(/\r?\n/).forEach((line, i) => {
+      if (/kicker/.test(line)) fail(7, `надзаголовок (kicker) в HUD hero: ${rel(f)}:${i + 1}`);
+    });
   }
   walk(c, (v, kp) => {
     if (typeof v !== 'string' || !/^https?:/.test(v)) return;
