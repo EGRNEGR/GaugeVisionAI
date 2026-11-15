@@ -29,3 +29,7 @@ Thumbs.db
 !.env.example
 node_modules/
 .autopilot/serve.*
+
+# Локальные материалы: референсы и исходники видео — вне git
+references/
+desktop.ini

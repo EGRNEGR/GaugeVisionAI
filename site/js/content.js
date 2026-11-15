@@ -2,7 +2,7 @@
  * GV.content — единственный источник фактов лендинга GaugeVision AI.
  * Чистые данные, без DOM. Источники: README.md, PRODUCT.md, код в app/ и notes.md
  * (где README и код расходятся, текст написан по коду — interfaces.md, правило 1a).
- * Все числа во всех строках (кроме screenshotFacts и служебных ключей) сверяются с источниками
+ * Все числа во всех строках (кроме служебных ключей) сверяются с источниками
  * командой `node site/tests/check.js`; там же — длина выводимых строк (≤ 140 символов)
  * и заголовки секций в 3–6 слов: на странице нет абзацев, только заголовки, цифры и формулы.
  * В конце файла строки проходят типограф: неразрывный пробел между числом и единицей
@@ -19,11 +19,8 @@
   var content = {
     meta: {
       name: 'GaugeVision AI',
-      tagline: 'Компьютерное зрение для аналогового контура ТЭЦ',
       repoUrl: REPO,
       licenseUrl: REPO + '/blob/main/LICENSE',
-      author: 'EGRNEGR',
-      track: 'Трек №3 «Умное производство: ИИ-аналитика видеоданных для повышения эффективности»',
       trackShort: 'Трек №3 · Умное производство',
       copyright: '© 2026 EGRNEGR. Все права защищены. Код опубликован только для ознакомления',
       version: '1.0.0'
@@ -61,20 +58,6 @@
       caption: 'Калибровка по двум точкам: θmin 135° → 0, θmax 45° → 10 МПа, по часовой',
       zones: { normal: 'НОРМА', warning: 'ПРЕДУПРЕЖДЕНИЕ', alert: 'CRITICAL' },
       sliderLabel: 'Показание прибора, МПа'
-    },
-
-    coverage: {
-      classes: 6,
-      units: 17,
-      types: [
-        { id: 'pressure', label: 'Давление', devices: 'манометр, вакуумметр, мановакуумметр', units: 'МПа, бар, кгс/см², кПа' },
-        { id: 'temperature', label: 'Температура', devices: 'манометрический и биметаллический термометр', units: '°C' },
-        { id: 'draft', label: 'Тяга и разрежение', devices: 'тягомер, напоромер, тягонапоромер', units: 'кПа, Па, кгс/м²' },
-        { id: 'level', label: 'Уровень', devices: 'стрелочный уровнемер', units: '%, мм, м' },
-        { id: 'electrical', label: 'Электрические щитовые', devices: 'амперметр, вольтметр, ваттметр', units: 'А, кА, В, кВ, МВт' },
-        { id: 'flow', label: 'Расход', devices: 'дифманометр-расходомер', units: 'т/ч, м³/ч' }
-      ],
-      sources: ['IP-камеры RTSP и NVR', 'ONVIF', 'HTTP / MJPEG', 'USB-камеры', 'смартфон по QR-коду без установки приложения']
     },
 
     /* value — число для счётчика, display — итоговая запись (русская нотация). */
@@ -267,26 +250,7 @@
       clamp: 0.05,
       setpoints: { LL: 1, L: 2, H: 8, HH: 9 },
       barPerMpa: 10,
-      formula: 'V = Vmin + ((θ − θmin) mod 360) / span · (Vmax − Vmin)',
-      zones: [
-        { id: 'LL', label: 'LL', status: 'alert', text: 'Авария: V ≤ LL' },
-        { id: 'L', label: 'L', status: 'warning', text: 'Предупреждение: V ≤ L' },
-        { id: 'NORMA', label: 'НОРМА', status: 'normal', text: 'Норма: L < V < H' },
-        { id: 'H', label: 'H', status: 'warning', text: 'Предупреждение: V ≥ H' },
-        { id: 'HH', label: 'HH', status: 'alert', text: 'Авария: V ≥ HH' }
-      ],
-      sliderLabel: 'Угол стрелки θ',
-      caption: 'Формула из app/vision.py: шкала 0–10 МПа, θmin = 135°, θmax = 45°, по часовой'
-    },
-
-    ema: {
-      alpha: 0.25,
-      minConfidence: 0.25,
-      formula: 'V̄ₜ = α · Vₜ + (1 − α) · V̄ₜ₋₁',
-      caption: 'Симуляция формулы, не запись с объекта',
-      toggleLabel: 'Вибрация',
-      legendRaw: 'Сырой отсчёт',
-      legendEma: 'EMA, α = 0,25'
+      formula: 'V = Vmin + ((θ − θmin) mod 360) / span · (Vmax − Vmin)'
     },
 
     compare: {
@@ -502,7 +466,6 @@
     labels: {
       status: { done: 'реализовано', partial: 'частично', planned: 'в плане' },
       kind: { measured: 'замер', calculated: 'расчёт' },
-      level: { normal: 'Норма', warning: 'Предупреждение', alert: 'Авария' },
       filterAll: 'Все',
       tradeoffsTitle: 'Компромиссы',
       tradeoffsLead: 'Выбрали → платим',
@@ -511,31 +474,11 @@
       cost: 'Платим',
       why: 'Почему так',
       source: 'Где в коде',
-      condition: 'Условие',
       risk: 'Риск',
       response: 'Ответ в коде',
-      params: 'Параметры',
-      formula: 'Формула',
-      file: 'Файл',
-      aspect: 'Аспект',
       roadmapTitle: 'Roadmap',
       stackTitle: 'Стек',
-      units: { mpa: 'МПа', bar: 'бар' },
       newTab: 'откроется в новой вкладке'
-    },
-
-    /*
-     * Значения, видимые только на скриншоте окна калибровки (docs/images/calibration.png), — не замеры.
-     * check.js их не сверяет с README.
-     */
-    screenshotFacts: {
-      calibrationWindow: {
-        source: 'Смартфон (WSS, по QR-коду)',
-        vMin: 0, thetaMin: 135.0, vMax: 10, thetaMax: 45.0, direction: 'CW',
-        theta: 253.4, conf: 0.92,
-        computedValue: 4.39,
-        computedNote: 'по формуле калибровки: θ = 253,4° → 4,39 МПа на шкале 0–10'
-      }
     }
   };
 

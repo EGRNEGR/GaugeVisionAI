@@ -25,13 +25,12 @@
 ## Известные баги
 
 - Телефон, трек конвейера: при смене шага подсвеченная карточка ≈ 0,3 с стоит за правым краем, пока трек догоняет её (`site/js/components/pipeline-track.js`, пружина `shift`)
-- Запасной показ hero (модуль видео не загрузился) вставляет пустой абзац — `page.js` heroFallback и `page.css` `.gv-hero-static__kicker` ещё ссылаются на удалённый `hero.kicker`
 - Заголовок сцены «Показание» стоит над закреплённой сценой, а не внутри неё
 - `components.test.js` не проверяет формулу `pinProgress` 0..1 (проверка reduced идёт на Node-заглушке)
-- В `content.js` остались невыводимые поля (`coverage`, `ema`, `calibration.zones`/`caption`/`sliderLabel`, часть `labels` и `meta`)
 - В `site/design-system.md` нет раздела о горизонтальном треке конвейера
 - `site/assets/video/README.md` ссылается на исходники вне git (`references/gauge_pullback.mp4`, `docs/gemini_art/…`) и путь к ffmpeg этой машины
 
 ## Правки без автопилота
 
 <!-- дата — что — почему; пишет обычная сессия, следующая сборка разбирает -->
+- 2026-11-15 — убран мусор из git: файл `test`, референсы `references/*.png` (остались на диске, `references/` в `.gitignore`), невыводимые поля `content.js`, хвосты `hero.kicker`, мёртвые утилиты `base.css` — пользователь попросил убрать неиспользуемое

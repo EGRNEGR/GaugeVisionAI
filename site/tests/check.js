@@ -119,12 +119,11 @@ function loadMounts() {
 
 /* ---------- 0. форма ---------- */
 const SHAPE = {
-  meta: ['name', 'tagline', 'repoUrl', 'licenseUrl', 'track', 'trackShort', 'copyright', 'version'],
+  meta: ['name', 'repoUrl', 'licenseUrl', 'trackShort', 'copyright', 'version'],
   hero: ['title', 'line', 'scrollLabel', 'video'],
   'hero.video': ['src', 'srcMobile', 'poster', 'label'],
   reading: ['theta', 'device', 'caption'],
   calibration: ['thetaMin', 'thetaMax', 'vMin', 'vMax', 'unit', 'direction', 'setpoints', 'barPerMpa', 'formula'],
-  ema: ['alpha', 'minConfidence', 'caption'],
   compare: ['before', 'after', 'savingNote', 'timeline'],
   architecture: ['nodes', 'edges', 'stack', 'boundaryLabel'],
   untested: ['title', 'text'],

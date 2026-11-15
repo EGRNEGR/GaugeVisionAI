@@ -9,7 +9,7 @@
  *   GV.page.render(root) → cleanup()
  *
  * Модуля из mounts нет или mount бросил — console.error, секция остаётся с заголовком
- * (у hero — kicker, h1 и строка на постере). Это ошибка сборки, а не режим работы.
+ * (у hero — h1 и строка на постере). Это ошибка сборки, а не режим работы.
  */
 (function () {
   'use strict';
@@ -107,7 +107,6 @@
       return h('div', { class: 'gv-hero-static' },
         h('img', { class: 'gv-hero-static__poster', src: hero.video.poster, alt: '', decoding: 'async' }),
         h('div', { class: 'gv-container gv-hero-static__hud' },
-          h('p', { class: 'gv-hero-static__kicker' }, hero.kicker),
           h('h1', { class: 'gv-hero-static__title', id: 'gv-hero-title' }, hero.title),
           h('p', { class: 'gv-hero-static__line' }, hero.line)));
     }
