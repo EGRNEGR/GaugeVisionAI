@@ -98,7 +98,7 @@ sections: [ // ровно 8, в этом порядке; title 3–6 слов
   { id:'pipeline', index:'03', nav:'Конвейер', title }, { id:'metrics', index:'04', nav:'Замеры', title },
   { id:'compare', index:'05', nav:'Было → Стало', title }, { id:'architecture', index:'06', nav:'Архитектура', title },
   { id:'limits', index:'07', nav:'Ограничения', title }, { id:'contact', index:'08', nav:'GitHub', title } ],
-hero: { kicker, title, line, scrollLabel,           // title 3–6 слов, line ≤ 90 символов
+hero: { title, line, scrollLabel,           // title 3–6 слов, line ≤ 90 символов
         video:{ src:'assets/video/gauge_pullback.scrub.mp4', srcMobile:'assets/video/gauge_pullback.scrub-m.mp4',
                 poster:'assets/img/poster.jpg', label } },   // label — aria-описание видео
 reading: { theta:253.4, device, caption },           // 4,39 МПа считается из theta по calibration, не хранится строкой
@@ -130,7 +130,7 @@ GV.motion = {
 
 ### Компоненты: `GV.components.<name>.mount(el, options) → { destroy() }`
 
-- `scrollVideo` — `#hero`: ставит `<video muted playsinline preload="auto" disablepictureinpicture>`, источник по `matchMedia('(max-width: 768px)')`, постер; HUD (`kicker`, `h1` = `hero.title`, `line`, индикатор прокрутки с `transform: scaleY` прогресса). Цель `currentTime = pinProgress × (duration − 0,05)`, инерция: `cur += (target − cur) × 0.12`, запись `currentTime`, только если `!video.seeking` и разница > 1/60 с. Ошибка видео или `reduced()` → только постер, секция `data-static`. Цикл спит вне экрана. `options` нет.
+- `scrollVideo` — `#hero`: ставит `<video muted playsinline preload="auto" disablepictureinpicture>`, источник по `matchMedia('(max-width: 768px)')`, постер; HUD (`h1` = `hero.title`, `line`, индикатор прокрутки: подпись `scrollLabel` + шкала, прогресс через `--hero-p` → `transform: scaleY`/`scaleX`). Цель `currentTime = pinProgress × (duration − 0,05)`, инерция: `cur += (target − cur) × 0.12`, запись `currentTime`, только если `!video.seeking` и разница > 1/60 с. Ошибка видео или `reduced()` → только постер, секция `data-static`. Цикл спит вне экрана. `options` нет.
 - `precisionDial` — `#reading`: SVG прибора (шкала 0–10 МПа из `calibration`, риски 100/20/11, зоны из `setpoints`, ободок-металл, стеклянный блик), стрелка на `GV.motion.spring`. Цель: `pinProgress` → θ от `thetaMin` до `reading.theta`; наведение → угол курсора, зажатый в шкалу; клавиши ←/→ (шаг 0,1 МПа), Home/End на фокусированном приборе (`role="slider"`, `aria-valuemin/max/now/text`). Выводит `value` МПа, бар (`kit.toBar`), θ, зону (`kit.zoneOf`, подписи «НОРМА / ПРЕДУПРЕЖДЕНИЕ / CRITICAL»), всё `tabular-nums`. Опции `{ interactive = true }`. Возврат `{ destroy, setValue(v) }`.
 - `pipelineTrack` — `#pipeline`: 4 карточки `pipelineCards`, сцена sticky, трек `translateX`, активный шаг по прогрессу (индикатор `01 02 03 04` — кнопки, клик прокручивает к шагу), связь между карточками растёт `scaleX`, итог `pipelineTotal`. Телефон: карточки 85vw. `reduced()`: вертикальный список. Возврат `{ destroy }`.
 - `metrics`, `compare`, `architecture`, `limits` — существующие (контракт из `notes.md` §2.4), оставить по одной раскладке (B: `dial`, `toggle`, `auto`, `cards`), лишние layout-ветки удалить; тексты сжать по правилу 11; движение — через `GV.motion` (счётчики, spotlight, импульсы по рёбрам архитектуры через `transform`).
@@ -164,3 +164,9 @@ GV.motion = {
 ## Что построили
 
 <!-- исполнители дописывают сюда после тикета: файл — что экспортирует — заметка -->
+- **T01 (a57855f)** — `GV.motion = { reduced, onFrame, onScroll, measure, viewport, pinProgress, spring, reveal, counter(+from, format), spotlight }`; `GV.page = { mounts:{ metrics, compare, architecture, limits }, render(root) → cleanup }` — модуль монтируется в `section > div.gv-section__body` (hero/reading/pipeline — во всю ширину); нет модуля или он бросил — hero показывает статичный h1 на постере; `aria-labelledby` секции — на первый h1/h2 внутри. Таск 02/03 добавляет свою строку в `GV.page.mounts` и `<script>`/`<link>` в `index.html`.
+- `GV.content` добавлено: `hero{title,line,scrollLabel,video{src,srcMobile,poster,label}}`, `reading{theta,device,caption,zones,sliderLabel}`, `pipelineCards[4]`, `pipelineTotal`, `contact{title,backdrop,links[repo,license]}`, `labels.newTab`. `hero.stage` пока остался (только `readout`, θ 253,4 → 4,39 МПа) — его читает `compare.js`; `check.js` не сверяет числа `hero.stage`.
+- `GV.kit.extLink` сам ставит иконку и скрытое «(откроется в новой вкладке)»; `kit.media()` всегда `'schematic'`; `crop`, `demoLink`, `scrollToStage` удалены.
+- Видео: `scrub.mp4` 8,1 МБ и `scrub-m.mp4` 4,2 МБ, keyint 1 (каждый кадр ключевой), без звука.
+- **T02 (0a87898)** — `GV.components.scrollVideo = { mount(el) → {destroy}, timeFor(progress, duration) → s }`; `GV.components.precisionDial = { mount(el, {interactive=true}) → {destroy, setValue(v)}, angleFromPointer(dx, dy) → θ°, clampAngle(θ, calib) → θ° }`. CSS-переменная `--pin-top` (верх закреплённых сцен, задана в `hero.css`, её же берёт `dial.css`). Атрибут `data-static` на `#hero`/`.gv-hero`; классы `.gv-hero*`, `.gv-pd*`.
+- Видео перематывается только по file:// или на сервере с Range; `python -m http.server` Range не умеет — там видео стоит на кадре 0.

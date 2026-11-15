@@ -34,3 +34,9 @@
 - [ ] Компоненты metrics/compare/architecture/limits оставлены с одной раскладкой; ни одного отрисованного текста длиннее 140 символов; старый `pipeline.js` и неиспользуемые раскладки в `components.css` удалены
 - [ ] Во всём `site/css` и `site/js` анимируются только `transform` и `opacity` (`check.js` ищет `transition`/`@keyframes` по другим свойствам)
 - [ ] `node site/tests/check.js && node site/tests/components.test.js` — зелёные
+
+## Передано из таска 01
+
+- [ ] `compare.js` читает `GV.content.hero.stage` — переведи на `reading`/`calibration` и удали `hero.stage` из `content.js` и исключение для него в `check.js`
+- [ ] `components.css`: убрать остатки `heroStage`, `--studio-h`, переходы цвета/фона (только transform/opacity); `check.js` ищет `transition`/`@keyframes` по другим свойствам во всём `site/css`
+- [ ] Баг прошлой сборки №9 — порядок Tab в схеме архитектуры на телефоне (в `architecture.js`)

@@ -1,48 +1,53 @@
 # Архитектура лендинга (`site/`)
 
-Статика без сборки: классические `<script src>`, глобальный объект `window.GV`, работает по `file://`. Почему так — `docs/adr/`.
+Одна страница из восьми секций. Статика без сборки: классические `<script src>`, глобальный объект `window.GV`, работает по `file://`. Почему так — `docs/adr/`. Варианты A и C убраны в `archive/site-variants-a-c/` (там README «как вернуть»); роутера и переключателя вариантов нет.
 
 ## Поток данных
 
-`GV.content` (данные) → `GV.components.*` (рендер блоков) → `GV.variants.{a,b,c}` (страница из семи секций) → `GV.app` (выбор варианта).
+`GV.content` (данные) → `GV.page` (шапка, секции, телеметрия) → `GV.components.*` (содержимое секций) → `GV.motion` (кадр, прокрутка, пружина).
 
-- `site/js/content.js` — `GV.content`, единственный источник фактов, без DOM. Поля можно добавлять, переименовывать нельзя. Числа сверяет `site/tests/check.js` с `README.md`, `PRODUCT.md`, `app/config.py`; `screenshotFacts` не сверяется.
-- Порядок скриптов задан в `site/index.html`: `content.js`, `util.js`, `components/kit.js` (первым среди компонентов), остальные `components/*.js`, `variants/*.js`, `tweaks.js`, `app.js` (последним). Каждый файл — IIFE с `window.GV = window.GV || {}`.
-- Inline-скрипт в `<head>` `index.html` до первой отрисовки ставит `data-variant` и атрибуты Tweaks.
+- `site/js/content.js` — `GV.content`, единственный источник фактов, без DOM. Существующие поля не переименовывать: на них опирается `check.js`. `sections` — ровно 8 записей `hero, reading, pipeline, metrics, compare, architecture, limits, contact`.
+- `site/js/page.js` — `GV.page = { mounts, render(root) → cleanup }`; сам вызывается на `DOMContentLoaded`, рисует в `#gv-root`. Для каждой записи `sections` строит `<section id>` с eyebrow, заголовком `title` и монтирует модуль из `GV.page.mounts` (`hero:scrollVideo`, `reading:precisionDial`, `pipeline:pipelineTrack`, `metrics`, `compare`, `architecture`, `limits`). `contact` и футер рисует сам.
+- Модуля нет или `mount` бросил — `console.error`, секция остаётся с заголовком; hero показывает статичный h1 на постере. Битый `location.hash` страницу не роняет.
+- Inline-скрипт в `<head>` `index.html` до первой отрисовки ставит `data-font` и `--ui-scale` из localStorage `gv.tweaks`.
 
-## Компоненты
+## Порядок скриптов (`site/index.html`)
 
-- Контракт: `GV.components.<name>.mount(el, options) → { destroy() }`; имена — `heroStage, metrics, pipeline, compare, architecture, limits`; BEM-классы `gv-<name>__*`.
-- `options.layout` выбирает вариант страницы; допустимые значения — в `.layouts` компонента; неизвестное значение → первое из списка. Данные компонент берёт из `GV.content`, вариант их не передаёт.
-- `destroy()` снимает слушатели, observers, таймеры, rAF. Для этого есть `GV.kit.scope()` (`on/add/timeout/interval/frame/observe/destroy`), используй его и в вариантах.
-- Компонент слушает `document`-событие `gv:tweaks` (смена `data-media`) и перерисовывает медиа (`GV.kit.onTweaks`).
-- Раскладочный CSS компонентов — `site/css/components.css`; цвета и шрифты только через токены.
-- `GV.kit` (`site/js/components/kit.js`) — общая математика калибровки (`angleToValue`, `zoneOf`, `emaStep`) и SVG-циферблат (`dial`); `GV.util` (`site/js/util.js`) — `h`, `svg`, `formatNumber` (запятая), `onVisible`, `rovingTabs`, `prefersReducedMotion`.
-- Подписи интерфейса (заголовки столбцов, кнопки) живут в локальных объектах `T` внутри компонентов; факты — только из `GV.content`.
+`content.js` → `util.js` → `motion.js` → `components/kit.js` → `components/{scroll-video,precision-dial,pipeline-track,metrics,compare,architecture,limits}.js` → `tweaks.js` → `page.js` (последним). Каждый файл — IIFE, дописывает в `window.GV`. Новый компонент: файл, `<script>` до `tweaks.js`, строка в `GV.page.mounts`, `<link>` на его CSS.
 
-## Варианты
+## Модули
 
-- `GV.variants.<a|b|c> = { id, label, render(root) → cleanup }`: «Пульт», «Циферблат», «Протокол»; префиксы классов `gva-*`, `gvb-*`, `gvc-*`.
-- `render` строит header, семь секций с `id` `hero, metrics, pipeline, compare, architecture, limits, contact` в этом порядке, футер; монтирует компоненты и возвращает cleanup. Заголовки и навигация секций — `GV.content.sections`.
-- Стили варианта — `site/css/variant-<id>.css` только под `[data-variant="<id>"]`. Вариант задаёт `--accent`, `--accent-contrast`, шрифты по умолчанию; новых фактов не добавляет.
+- `GV.motion` (`js/motion.js`) — `reduced`, `onFrame(fn(dt, now)) → off`, `onScroll`, `measure`, `viewport`, `pinProgress(sectionEl)` 0..1, `spring`, `reveal`, `counter`, `spotlight`. Единственный rAF-цикл: спит, когда подписчиков нет; `dt` ≤ 1/20 с. Чистые `reduced` и `spring` работают и без DOM (на них тест).
+- `GV.components.<name>.mount(el, options) → { destroy() }`; BEM-классы `gv-<name>__*`. Данные берёт из `GV.content`, страница их не передаёт.
+- `scrollVideo` (`#hero`) — видео перематывается по `pinProgress`: `currentTime` догоняет цель с инерцией, пишется только если `!video.seeking`. Источник по `max-width: 768px`. Ошибка видео или reduced motion — постер, `data-static` на секции. Экспорт `timeFor(progress, duration)`.
+- `precisionDial` (`#reading`) — SVG-прибор, стрелка на `spring`; цель — прогресс прокрутки, затем курсор (`angleFromPointer`, `clampAngle`) или клавиши ←/→/Home/End (`role="slider"`). Возврат `{ destroy, setValue(v) }`.
+- `pipelineTrack` (`#pipeline`) — 4 карточки `pipelineCards`, sticky-сцена, трек сдвигается `translateX`, индикатор шагов — кнопки. Reduced motion — вертикальный список.
+- `metrics`, `compare`, `architecture`, `limits` — по одной раскладке; движение через `GV.motion` (счётчики, spotlight, импульсы по рёбрам).
+- `GV.kit` (`components/kit.js`) — чистая математика калибровки (`angleToValue`, `valueToAngle`, `toBar`, `zoneOf`, `levelOf`, `emaStep`, `NBSP`; повторяет `app/vision.py`) и DOM-хелперы: `scope()` (`on/add/timeout/interval/frame/observe/destroy`, всё снимается в `destroy`), `onTweaks`, `polar`, `arcPath`, `icon`, `extLink`, `sectionNav`. Неиспользуемый экспорт `kit` валит `check.js`.
+- `GV.util` (`js/util.js`) — `h`, `svg`, `formatNumber` (запятая), `onVisible`, `rovingTabs`, `prefersReducedMotion`. `rovingTabs` вызывает `onSelect` синхронно в конструкторе, до возврата.
+- `GV.tweaks` (`js/tweaks.js`) — `{ font: auto|manrope|onest|plex, scale: 0.9|1|1.1|1.25 }` в localStorage `gv.tweaks`; применяет `html[data-font]` и `--ui-scale`, шлёт `document`-событие `gv:tweaks`. API `get / set / reset / open / close`. Панель — в `#gv-tweaks`.
 
-## GV.app и GV.tweaks
+## CSS
 
-- `site/js/app.js`: вариант выбирается по `?v=` → localStorage `gv.variant` → `a`. Студийная панель `#gv-studio` вне `#gv-root`. Переключение: cleanup старого → render нового → `history.replaceState` → прокрутка к той же секции. Событие `gv:variant`.
-- `GV.app` определяется только после первого `render()`: внутри `render` брать вариант из `document.documentElement.dataset.variant`.
-- `GV.util.rovingTabs` вызывает `onSelect` синхронно в конструкторе, до возврата `{select,index,destroy}`.
-- `site/js/tweaks.js`: состояние `{font, bg, scale, media}` в localStorage `gv.tweaks`, применяется синхронно при загрузке (`html[data-font|data-bg|data-media]`, `--ui-scale`) и рассылается событием `gv:tweaks`. API: `get / set / reset / open / close`.
+Порядок в `index.html`: `fonts` → `tokens` → `base` → `motion` → `components` → `hero` → `dial` → `track` → `page` → `tweaks`. `components.css` — раскладки metrics/compare/architecture/limits; `motion.css` — общие `.gv-reveal`, `.gv-spot`, `.gv-telemetry`. Верх закреплённых сцен — `--pin-top` (задан в `hero.css`, читает `dial.css`).
 
-## Токены
-
-`site/css/tokens.css`: `--bg-*`, `--border-*`, `--text-*`, `--accent`, `--status-ok|warn|alert`, `--font-*`, `--ui-scale`, `--space-*`, `--radius-*`, `--fs-*`, `--dur-*`. `[data-bg]` переопределяет фон и текст; `html[data-font][data-variant]` перебивает шрифты варианта. Все размеры в `rem`, `px` только для линий 1px и медиазапросов.
+Токены (`tokens.css`): `--bg-canvas` (#090B0E, обсидиан), `--bg-surface|elevated`, `--border-hairline|strong`, `--text-primary|muted|faint`, `--accent` (#FF5A1F, цвет стрелки), `--status-ok|warn|alert`, `--font-sans|display|mono`, `--ui-scale`, `--space-*`, `--radius-*`, `--ease-out|spring`, `--edge-light`, `--glow-warm|cool`. Только тёмная тема.
 
 ## Правила
 
-- Факты только из `README.md`, `PRODUCT.md`, `app/`; при расхождении README и кода верен код (`docs/adr/0003-kod-glavnee-readme.md`).
-- Метрики публикуются с условиями замера; не публиковать «34 проверки e2e / 18 браузерных» и «ответ сервера 3–37 мс».
-- Лицензия проприетарная: слова «open source», «MIT», «бесплатно» запрещены.
-- Русская типографика: « — » с пробелами, диапазоны через «–», десятичная запятая, неразрывный пробел перед единицей.
-- Нет `import`/`export`, `type="module"`, CDN; пути только относительные.
-- Интерактивное — нативные `<button>/<a>/<input>` с видимым `:focus-visible`; `prefers-reduced-motion` отключает необязательную анимацию; анимируются только `transform`/`opacity`; мёртвых кнопок и ссылок нет.
-- Проверка: `node site/tests/check.js && node site/tests/components.test.js` (запускать из корня).
+- Движение только `transform` и `opacity`: никаких `clip-path`, `stroke-dashoffset`, `width/height/top/left`, `filter`, `background-position` в анимациях и переходах. Пятна света двигаются `transform`.
+- Один rAF-цикл (`GV.motion`); scroll-слушатели пассивные; геометрия кэшируется на resize (`measure`), в кадре не читается.
+- Размеры в `rem` (масштаб Tweaks через `--ui-scale`); `px` только для линий 1px, медиазапросов и `fonts.css`; `vh/svh` допустимы для высот закреплённых сцен.
+- `prefers-reduced-motion: reduce`: нет закреплений, инерции, reveal и счётчиков; всё сразу в конечном состоянии; видео заменено постером; стрелка сразу на значении.
+- Без ES-модулей (`import`/`export`, `type="module"`), CDN, npm и `fetch` локальных файлов; пути относительные.
+- Интерактив — нативные `<button>/<a>/<input>` или ARIA-роль с клавиатурой; видимый `:focus-visible`; ссылка в новой вкладке — через `GV.kit.extLink`. Мёртвых кнопок и заглушек нет.
+- Минимум текста: заголовки секций 3–6 слов, ни одной выводимой строки длиннее 140 символов.
+- Факты только из `README.md`, `PRODUCT.md`, `app/`; при расхождении верен код (`docs/adr/0003-kod-glavnee-readme.md`). Каждое число из `content.js` сверяет `check.js`.
+- Типографика: « — » с пробелами, диапазоны «30–100», десятичная запятая, неразрывный пробел перед единицей (его ставит `typo()` в `content.js`).
+- Лицензия проприетарная: «open source», «MIT», «бесплатно» запрещены; не публиковать «34 проверки e2e / 18 браузерных» и «ответ сервера 3–37 мс».
+
+## Проверки и медиа
+
+- `node site/tests/check.js` — факты, пути и медиа, запрещённые слова, модули в `index.html`, 8 секций, отсутствие вариантов, длина строк, типографика, px, анимации не по transform/opacity.
+- `node site/tests/components.test.js` — калибровка, зоны, EMA, `spring` и reduced motion, угол курсора прибора, время видео hero.
+- Видео hero: `site/assets/video/` (оригинал + две копии для перемотки, каждый кадр ключевой) — команды ffmpeg в `site/assets/video/README.md`. Без Range-запросов (`python -m http.server`) видео стоит на кадре 0.
