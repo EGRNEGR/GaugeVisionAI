@@ -57,7 +57,9 @@
       device: 'Манометр, шкала 0–10 МПа',
       caption: 'Калибровка по двум точкам: θmin 135° → 0, θmax 45° → 10 МПа, по часовой',
       zones: { normal: 'НОРМА', warning: 'ПРЕДУПРЕЖДЕНИЕ', alert: 'CRITICAL' },
-      sliderLabel: 'Показание прибора, МПа'
+      sliderLabel: 'Показание прибора, МПа',
+      hint: 'Ведите курсором по шкале; клик фиксирует, ← → двигают',
+      hintTouch: 'Коснитесь шкалы — стрелка встанет в точку касания'
     },
 
     /* value — число для счётчика, display — итоговая запись (русская нотация). */
@@ -219,19 +221,19 @@
      * они входят в pipelineTotal).
      */
     pipelineCards: [
-      { id: 'locate', index: '01', title: 'Локализация: CLAHE + YOLOv8n',
+      { id: 'locate', index: '01', step: 'Локализация', title: 'Локализация: CLAHE + YOLOv8n',
         formula: ['CLAHE clip 3,0 · 8×8', 'ROI = YOLOv8n(кадр)'],
         params: [{ name: 'YOLO_IMGSZ', value: '640' }, { name: 'YOLO_CONF', value: '0,35' }, { name: 'Устройство', value: 'CUDA FP16 или CPU' }],
         latency: { value: '7,2', unit: 'мс/кадр GPU', note: '29 мс/кадр CPU' } },
-      { id: 'normalize', index: '02', title: 'Эллипс → круг: аффинная коррекция',
+      { id: 'normalize', index: '02', step: 'Эллипс → круг', title: 'Эллипс → круг: аффинная коррекция',
         formula: ['M = T(S/2)·R(φ)·diag(R/a, R/b)·R(−φ)·T(−c)'],
         params: [{ name: 'DIAL_SIZE', value: '640 px' }, { name: 'Интерполяция', value: 'INTER_LINEAR' }, { name: 'Наклон на стенде', value: 'до ≈ 41°' }],
         latency: null },
-      { id: 'needle', index: '03', title: 'Угол θ: радиальный момент + HoughLinesP',
+      { id: 'needle', index: '03', step: 'Угол θ', title: 'Угол θ: радиальный момент + HoughLinesP',
         formula: ['θ = atan2(y₁−y₀, x₁−x₀)', 'V = Vmin + ((θ−θmin) mod 360)/Δθ·(Vmax−Vmin)'],
         params: [{ name: 'Гистограмма', value: 'шаг 1°, ± 4°' }, { name: 'Маски', value: 'Black-Hat / Top-Hat 31×31' }, { name: 'Hough ↔ момент', value: '≤ 12°' }],
         latency: null },
-      { id: 'stabilize', index: '04', title: 'Сглаживание EMA α = 0,25',
+      { id: 'stabilize', index: '04', step: 'Сглаживание', title: 'Сглаживание EMA α = 0,25',
         formula: ['V̄ₜ = α·Vₜ + (1−α)·V̄ₜ₋₁'],
         params: [{ name: 'EMA_ALPHA', value: '0,25' }, { name: 'MIN_NEEDLE_CONFIDENCE', value: '0,25' }],
         latency: { value: '≈ 90 %', unit: 'скачка за 8 кадров', note: 'оценка по формуле, не замер' } }
@@ -466,6 +468,7 @@
     labels: {
       status: { done: 'реализовано', partial: 'частично', planned: 'в плане' },
       kind: { measured: 'замер', calculated: 'расчёт' },
+      metricGroups: { quality: 'Точность', speed: 'Скорость', scale: 'Масштаб' },
       filterAll: 'Все',
       tradeoffsTitle: 'Компромиссы',
       tradeoffsLead: 'Выбрали → платим',

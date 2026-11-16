@@ -8,6 +8,8 @@
  *   GV.page.mounts = { <id секции>: <имя в GV.components> }   таски 02 и 03 дописывают hero, reading, pipeline
  *   GV.page.render(root) → cleanup()
  *
+ * Закреплённые сцены (PIN_HEAD) получают заголовок в mount(body, { head }) и ставят его внутрь
+ * sticky-сцены: иначе при закреплении заголовок уезжает и сцена остаётся без подписи.
  * Модуля из mounts нет или mount бросил — console.error, секция остаётся с заголовком
  * (у hero — h1 и строка на постере). Это ошибка сборки, а не режим работы.
  */
@@ -28,6 +30,9 @@
 
   /* Сцены во всю ширину экрана: модуль сам задаёт сетку и закрепление. */
   var FULL_BLEED = { hero: true, reading: true, pipeline: true };
+
+  /* Закреплённые сцены: заголовок живёт внутри sticky-сцены модуля. */
+  var PIN_HEAD = { reading: true, pipeline: true };
 
   /* Направленные пятна света: где и какое (статичные, низкая непрозрачность). */
   var GLOWS = { metrics: 'warm', architecture: 'cool', limits: 'warm', contact: 'warm' };
@@ -94,12 +99,15 @@
 
     /* ---------- секции ---------- */
 
+    function headCore(sec, pinned) {
+      return h('header', { class: ['gv-head', pinned ? 'gv-head--pinned' : null] },
+        h('span', { class: 'gv-head__index', 'aria-hidden': 'true' }, sec.index),
+        h('h2', { class: 'gv-head__title', id: 'gv-' + sec.id + '-title', 'data-reveal': 'words' }, sec.title));
+    }
+
     function head(sec) {
       if (!sec.title) return null;
-      return h('div', { class: 'gv-container gv-section__head' },
-        h('header', { class: 'gv-head' },
-          h('span', { class: 'gv-head__index', 'aria-hidden': 'true' }, sec.index),
-          h('h2', { class: 'gv-head__title', id: 'gv-' + sec.id + '-title', 'data-reveal': 'words' }, sec.title)));
+      return h('div', { class: 'gv-container gv-section__head' }, headCore(sec, false));
     }
 
     function heroFallback() {
@@ -111,7 +119,7 @@
           h('p', { class: 'gv-hero-static__line' }, hero.line)));
     }
 
-    function mountModule(id, body) {
+    function mountModule(id, body, options) {
       var name = MOUNTS[id];
       if (!name) return false;
       var comp = GV.components && GV.components[name];
@@ -120,7 +128,7 @@
         return false;
       }
       try {
-        instances.push(comp.mount(body));
+        instances.push(comp.mount(body, options));
         return true;
       } catch (e) {
         console.error('GV.page: модуль ' + name + ' не смонтировался в #' + id, e);
@@ -135,13 +143,16 @@
     sections.forEach(function (sec) {
       if (sec.id === 'contact') return;
       var body = h('div', { class: ['gv-section__body', FULL_BLEED[sec.id] ? null : 'gv-container'] });
+      var pinnedHead = PIN_HEAD[sec.id] && sec.title ? headCore(sec, true) : null;
       var el = h('section', { id: sec.id, class: ['gv-section', 'gv-section--' + sec.id], 'data-module': MOUNTS[sec.id] || null },
         GLOWS[sec.id] ? h('span', { class: 'gv-glow gv-glow--' + GLOWS[sec.id], 'aria-hidden': 'true' }) : null,
-        head(sec),
+        pinnedHead ? null : head(sec),
         body);
       main.appendChild(el);
       sectionEls.push(el);
-      var mounted = mountModule(sec.id, body);
+      var mounted = mountModule(sec.id, body, pinnedHead ? { head: pinnedHead } : undefined);
+      // Модуль не встал — заголовок возвращается над телом секции
+      if (pinnedHead && (!mounted || !pinnedHead.parentNode)) el.insertBefore(head(sec), body);
       if (!mounted && sec.id === 'hero') body.appendChild(heroFallback());
       var heading = el.querySelector('h1, h2');
       if (heading) {

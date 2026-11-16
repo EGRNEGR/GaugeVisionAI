@@ -212,6 +212,37 @@
   letter-spacing: -0.025em;
 }
 
+/* Заголовок внутри закреплённой сцены (прибор, конвейер): слева, номер — моноширинная метка над названием */
+.gv-head--pinned {
+  justify-items: start;
+  gap: var(--space-2);
+  margin-bottom: 0;
+  text-align: left;
+}
+
+.gv-head--pinned .gv-head__index {
+  grid-area: auto;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: var(--tracking-caps);
+  color: var(--accent);
+  -webkit-text-stroke: 0;
+}
+
+.gv-head--pinned .gv-head__title {
+  grid-area: auto;
+  max-width: 18ch;
+}
+
+@media (max-width: 640px) {
+  .gv-head--pinned .gv-head__title {
+    max-width: none;
+    font-size: var(--fs-xl);
+  }
+}
+
 /* ---------- свет: направленные пятна низкой непрозрачности (статичные) ---------- */
 
 .gv-glow {
@@ -300,71 +331,8 @@
   background: var(--surface-card);
 }
 
-.gv-compare__col--after {
-  border-color: rgba(255, 90, 31, 0.45);
-}
-
-/* Метрики: крупные контурные цифры на карточках */
-.gv-metrics--dial .gv-metrics__list {
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
-  gap: var(--space-4);
-}
-
-.gv-metrics--dial .gv-metrics__item {
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-5) var(--space-4) var(--space-6);
-  text-align: center;
-}
-
-.gv-metrics--dial .gv-metrics__meta {
-  justify-content: center;
-  gap: var(--space-3);
-}
-
-.gv-metrics--dial .gv-metrics__figure {
-  justify-content: center;
-  margin: var(--space-2) 0 var(--space-1);
-}
-
-.gv-metrics--dial .gv-metrics__digits {
-  font-size: clamp(3rem, 1.6rem + 3vw, 4.75rem);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  color: var(--text-primary);
-}
-
-.gv-metrics--dial .gv-metrics__digits--long {
-  font-size: clamp(2rem, 1.2rem + 2vw, 3rem);
-}
-
-@supports (-webkit-text-stroke: 1px currentColor) {
-  .gv-metrics--dial .gv-metrics__digits {
-    color: transparent;
-    -webkit-text-stroke: 0.078125rem var(--text-primary);
-  }
-
-  .gv-metrics--dial .gv-metrics__item:hover .gv-metrics__digits {
-    color: var(--text-primary);
-  }
-}
-
-.gv-metrics--dial .gv-metrics__unit {
-  font-family: var(--font-mono);
-}
-
-.gv-metrics--dial .gv-metrics__label {
-  font-size: var(--fs-m);
-}
-
-.gv-metrics--dial .gv-metrics__condition {
-  max-width: 30ch;
-  font-size: var(--fs-s);
-}
-
-.gv-metrics__note {
-  margin-inline: auto;
-  text-align: center;
+.gv-compare__col.is-active {
+  border-color: rgba(255, 90, 31, 0.6);
 }
 
 /* Сравнение: общий переключатель по центру */
@@ -380,19 +348,7 @@
 }
 
 .gv-compare__cost-value {
-  font-family: var(--font-display);
   font-size: var(--fs-3xl);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  word-spacing: normal;
-  font-variant-numeric: tabular-nums;
-}
-
-@supports (-webkit-text-stroke: 1px currentColor) {
-  .gv-compare__cost-value {
-    color: transparent;
-    -webkit-text-stroke: 0.078125rem var(--text-primary);
-  }
 }
 
 .gv-compare__saving-num {
@@ -412,8 +368,8 @@
 }
 
 .gv-limits__condition {
-  font-size: var(--fs-xl);
-  font-weight: 800;
+  font-size: var(--fs-l);
+  font-weight: 700;
 }
 
 .gv-limits__block-title {
@@ -629,28 +585,6 @@
 
   .gv-head {
     margin-bottom: var(--space-7);
-  }
-
-  .gv-metrics--dial .gv-metrics__list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-2);
-  }
-
-  .gv-metrics--dial .gv-metrics__item {
-    padding: var(--space-4) var(--space-2) var(--space-5);
-  }
-
-  .gv-metrics--dial .gv-metrics__digits {
-    font-size: 2.25rem;
-  }
-
-  .gv-metrics--dial .gv-metrics__digits--long {
-    font-size: var(--fs-l);
-  }
-
-  .gv-metrics--dial .gv-metrics__label,
-  .gv-metrics--dial .gv-metrics__condition {
-    font-size: var(--fs-xs);
   }
 
   .gv-compare--toggle .gv-compare__mode {

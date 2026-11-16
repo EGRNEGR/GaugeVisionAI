@@ -1,22 +1,26 @@
 /*
  * GV.components.pipelineTrack — #pipeline: четыре карточки математики конвейера на закреплённом
- * горизонтальном треке. mount(el) → { destroy() }
+ * горизонтальном треке. mount(el, { head }) → { destroy() }
  *
- * Сцена .gv-track высотой (N + 1) × 100vh, внутри sticky-сцена. Прогресс GV.motion.pinProgress
- * превращается в «шаг» s = p × (N − 1), который идёт за прокруткой на пружине. По s:
- *   · трек едет translateX так, что точка s трека стоит в центре кадра (на шаге i — карточка i по центру),
- *     но не дальше, чем позволяет активная карточка: она всегда целиком в кадре. Где две карточки
- *     в кадр не помещаются (телефон, 85vw), трек перескакивает к новой активной — сдвиг идёт на своей
- *     пружине, поэтому перескок плавный;
+ * Сцена .gv-track высотой (N + 1) × 100vh, внутри sticky-сцена: сверху заголовок секции (head от GV.page)
+ * и шаги 01–04 с именами, по центру трек, снизу итог конвейера. Прогресс GV.motion.pinProgress
+ * округляется до шага, «шаг» s догоняет его на пружине. По s:
+ *   · трек едет translateX так, что точка s трека стоит в центре кадра: в покое активная карточка
+ *     ровно по центру, при смене шага трек плавно переезжает к следующей (без рывка на телефоне);
  *   · карточка i входит (opacity + translateX) на отрезке s ∈ [i − 1, i], первая видна сразу;
- *   · «фокус» карточки f = 1 − |s − i|: яркий ободок (opacity) и полная яркость у активной;
+ *   · «фокус» карточки f = 1 − |s − i|: яркий ободок (opacity), полная яркость и схема шага;
+ *   · схема шага (SVG) показывает, что делает шаг с кадром, и доигрывает к f = 1:
+ *       01 — рамка детектора сжимается на корпусе прибора, циферблат проявляется (CLAHE);
+ *       02 — эллипс циферблата аффинно выпрямляется в круг;
+ *       03 — стрелка доходит до θ, линия HoughLinesP сходится с ней из 12°;
+ *       04 — шумные отсчёты Vₜ и кривая EMA V̄ₜ, рассчитанная kit.emaStep с α из карточки;
  *   · связь между карточками i и i + 1 растёт scaleX вместе со входом карточки i + 1;
- *   · линия под индикатором 01–04 растёт scaleX, кнопка активного шага подсвечена.
- * Кнопки 01–04 — нативные <button>: клик прокручивает страницу к шагу.
+ *   · линия под шагами растёт scaleX, кнопка активного шага подсвечена.
+ * Кнопки шагов — нативные <button>: клик прокручивает страницу к шагу.
  * Подписи и формулы — GV.content.pipelineCards, итог — pipelineTotal. Ничего не выдумано:
  * задержка только замеренная, у карточек 02 и 03 — «в составе» общего итога.
  * Двигаются только transform и opacity; геометрия кэшируется на resize (ResizeObserver).
- * reduced motion: вертикальный список без закрепления и индикатора, всё видно сразу.
+ * reduced motion: вертикальный список без закрепления и шагов, схемы в конечном состоянии.
  */
 (function () {
   'use strict';
@@ -25,12 +29,13 @@
   GV.components = GV.components || {};
 
   var ENTER_REM = 3;      // с какого смещения карточка выезжает
-  var EDGE_REM = 0.5;     // наименьший зазор активной карточки до края кадра
-  var DIM = 0.42;         // яркость карточки вне фокуса
+  var DIM = 0.85;         // яркость карточки вне фокуса: текст в ней держит контраст ≥ 4,5 : 1
+  var HOUGH_SPREAD = 12;  // из скольких градусов линия Hough сходится со стрелкой (согласование ≤ 12°)
   var T = {
     steps: 'Шаги конвейера',
     step: 'Шаг',
-    within: 'в составе'
+    within: 'в составе',
+    tag: 'gauge'
   };
 
   function clamp01(v) {
@@ -41,7 +46,159 @@
     return 1 - Math.pow(1 - t, 3);
   }
 
-  function mount(el) {
+  /* ---------- схемы шагов: SVG 200 × 200, центр 100, обновление update(f), f ∈ [0, 1] ---------- */
+
+  function figures() {
+    var u = GV.util;
+    var s = u.svg;
+    var kit = GV.kit;
+    var c = GV.content;
+    var calib = c.calibration;
+    var C = 100;
+
+    function r2(v) { return Math.round(v * 100) / 100; }
+    function pt(r, deg) { var p = kit.polar(C, C, r, deg); return r2(p[0]) + ' ' + r2(p[1]); }
+
+    /* Циферблат: дуга шкалы и риски по калибровке, без цифр */
+    function face(r, extra) {
+      var span = calib.span || 270;
+      var ticks = [];
+      for (var i = 0; i <= 10; i++) {
+        var a = calib.thetaMin + (span * i) / 10;
+        ticks.push('M' + pt(r - 2, a) + ' L' + pt(r - (i % 5 === 0 ? 11 : 6), a));
+      }
+      return s('g', { class: 'gv-fig__face' },
+        s('circle', { class: 'gv-fig__rim', cx: C, cy: C, r: r }),
+        s('path', { class: 'gv-fig__tick', d: ticks.join(' ') }),
+        extra || null);
+    }
+
+    function spin(el, deg) {
+      el.style.transform = 'rotate(' + deg.toFixed(2) + 'deg)';
+    }
+
+    function svgRoot(kind, children) {
+      return s('svg', { class: 'gv-fig gv-fig--' + kind, viewBox: '0 0 200 200', 'aria-hidden': 'true', focusable: 'false' }, children);
+    }
+
+    var theta = Number(c.reading.theta);
+
+    var build = {
+      /* 01: кадр камеры, корпус прибора, рамка YOLOv8n с меткой класса */
+      locate: function () {
+        var gauge = s('g', { class: 'gv-fig__pivot gv-fig__gauge' },
+          face(40, s('path', { class: 'gv-fig__needle-muted', d: 'M' + pt(0, theta) + ' L' + pt(30, theta) })));
+        var box = s('g', { class: 'gv-fig__box' },
+          s('rect', { class: 'gv-fig__bbox', x: 50, y: 50, width: 100, height: 100 }),
+          s('path', { class: 'gv-fig__corners', d: 'M50 64 V50 H64 M136 50 H150 V64 M150 136 V150 H136 M64 150 H50 V136' }),
+          s('rect', { class: 'gv-fig__tag', x: 50, y: 38, width: 40, height: 12 }),
+          s('text', { class: 'gv-fig__tag-text', x: 54, y: 47, 'font-size': 8 }, T.tag));
+        var el = svgRoot('locate', [
+          s('rect', { class: 'gv-fig__frame', x: 8, y: 22, width: 184, height: 156, rx: 2 }),
+          s('path', { class: 'gv-fig__pipe', d: 'M8 158 H58 M142 158 H192 M100 140 V178 M8 46 H40' }),
+          gauge, box]);
+        return {
+          el: el,
+          update: function (f) {
+            var e = ease(f);
+            gauge.style.opacity = (0.35 + 0.65 * e).toFixed(3);
+            box.style.opacity = e.toFixed(3);
+            box.style.transform = 'scale(' + (1.35 - 0.35 * e).toFixed(4) + ')';
+          }
+        };
+      },
+
+      /* 02: эллипс циферблата (наклон камеры) выпрямляется в круг; пунктир — целевой круг */
+      normalize: function () {
+        var PHI = -28;
+        var ellipse = s('g', { class: 'gv-fig__pivot' },
+          face(64, [
+            s('path', { class: 'gv-fig__axis', d: 'M36 100 H164 M100 36 V164' }),
+            s('path', { class: 'gv-fig__needle-muted', d: 'M' + pt(0, theta) + ' L' + pt(50, theta) })
+          ]));
+        var el = svgRoot('normalize', [
+          s('circle', { class: 'gv-fig__target', cx: C, cy: C, r: 64 }),
+          ellipse]);
+        return {
+          el: el,
+          update: function (f) {
+            var sx = 0.56 + 0.44 * ease(f);
+            ellipse.style.transform = 'rotate(' + PHI + 'deg) scale(' + sx.toFixed(4) + ',1) rotate(' + (-PHI) + 'deg)';
+          }
+        };
+      },
+
+      /* 03: стрелка доходит от θmin до θ, линия HoughLinesP сходится с ней из HOUGH_SPREAD° */
+      needle: function () {
+        var needle = s('g', { class: 'gv-fig__pivot' },
+          s('path', { class: 'gv-fig__needle', d: 'M' + pt(0, 0) + ' L' + pt(62, 0) }));
+        var hough = s('g', { class: 'gv-fig__pivot' },
+          s('path', { class: 'gv-fig__hough', d: 'M' + pt(8, 0) + ' L' + pt(70, 0) }));
+        var el = svgRoot('needle', [
+          face(76),
+          s('text', { class: 'gv-fig__label', x: 112, y: 132, 'font-size': 13 }, 'θ'),
+          hough, needle,
+          s('circle', { class: 'gv-fig__hub', cx: C, cy: C, r: 4 })]);
+        var from = Number(calib.thetaMin);
+        var to = from + ((theta - from) % 360 + 360) % 360;
+        return {
+          el: el,
+          update: function (f) {
+            var e = ease(f);
+            var a = from + (to - from) * e;
+            spin(needle, a);
+            spin(hough, a + HOUGH_SPREAD * (1 - e));
+            hough.style.opacity = (0.3 + 0.7 * e).toFixed(3);
+          }
+        };
+      },
+
+      /* 04: скачок показания: шумные отсчёты Vₜ и сглаженная кривая V̄ₜ; кривая проявляется слева направо */
+      stabilize: function () {
+        var card = c.pipelineCards.filter(function (k) { return k.id === 'stabilize'; })[0];
+        var alphaParam = card && card.params.filter(function (p) { return p.name === 'EMA_ALPHA'; })[0];
+        var alpha = alphaParam ? parseFloat(String(alphaParam.value).replace(',', '.')) : 0.25;
+        var N = 24;
+        var X0 = 26;
+        var DX = 7;
+        function y(v) { return r2(166 - v * 16); }
+        var dots = [];
+        var line = [];
+        var ema = null;
+        for (var i = 0; i < N; i++) {
+          var level = i < 8 ? 2.5 : 6.5;
+          var noise = ((((i * 37) % 11) - 5) / 5) * 0.9;
+          var v = level + noise;
+          ema = kit.emaStep(ema, v, alpha);
+          dots.push(s('circle', { class: 'gv-fig__dot', cx: X0 + i * DX, cy: y(v), r: 2 }));
+          line.push((X0 + i * DX) + ',' + y(ema));
+        }
+        var clipId = u.uid('gv-fig-clip');
+        var wipe = s('rect', { class: 'gv-fig__wipe', x: 18, y: 10, width: 176, height: 170 });
+        var el = svgRoot('stabilize', [
+          s('defs', null, s('clipPath', { id: clipId }, wipe)),
+          s('path', { class: 'gv-fig__axis', d: 'M18 22 V176 H192' }),
+          s('path', { class: 'gv-fig__level', d: 'M18 ' + y(6.5) + ' H192' }),
+          dots,
+          s('polyline', { class: 'gv-fig__ema', points: line.join(' '), 'clip-path': 'url(#' + clipId + ')' }),
+          s('text', { class: 'gv-fig__label gv-fig__label--muted', x: 170, y: 34, 'font-size': 11 }, 'Vₜ'),
+          s('text', { class: 'gv-fig__label gv-fig__label--accent', x: 170, y: 100, 'font-size': 11 }, 'V̄ₜ')]);
+        return {
+          el: el,
+          update: function (f) {
+            wipe.style.transform = 'scaleX(' + (0.08 + 0.92 * ease(f)).toFixed(4) + ')';
+          }
+        };
+      }
+    };
+
+    return function (id) {
+      return build[id] ? build[id]() : null;
+    };
+  }
+
+  function mount(el, options) {
+    options = options || {};
     var u = GV.util;
     var kit = GV.kit;
     var motion = GV.motion;
@@ -54,6 +211,7 @@
     var NBSP = kit.NBSP;
     var sc = kit.scope();
     var offs = [];
+    var figureOf = figures();
 
     /* ---------- разметка ---------- */
 
@@ -73,26 +231,31 @@
     var rims = [];
     var cardEls = [];
     var linkEls = [];
+    var figs = [];
     var items = cards.map(function (card, i) {
       var rim = h('span', { class: 'gv-track__rim', 'aria-hidden': 'true' });
-      var article = h('article', { class: 'gv-track__card', 'data-id': card.id },
+      var fig = figureOf(card.id);
+      var article = h('article', { class: ['gv-track__card', fig ? 'gv-track__card--fig' : null], 'data-id': card.id },
         rim,
-        h('header', { class: 'gv-track__head' },
-          h('span', { class: 'gv-track__index' }, card.index),
-          h('h3', { class: 'gv-track__title' }, card.title)),
-        h('div', { class: 'gv-track__formula' }, card.formula.map(function (line) {
-          return h('code', { class: 'gv-track__code' }, line);
-        })),
-        h('dl', { class: 'gv-track__params' }, card.params.map(function (p) {
-          return h('div', { class: 'gv-track__param' },
-            h('dt', null, p.name),
-            h('dd', null, p.value));
-        })),
-        latency(card));
+        fig ? h('div', { class: 'gv-track__fig' }, fig.el) : null,
+        h('div', { class: 'gv-track__body' },
+          h('header', { class: 'gv-track__head' },
+            h('span', { class: 'gv-track__index' }, card.index),
+            h('h3', { class: 'gv-track__title' }, card.title)),
+          h('div', { class: 'gv-track__formula' }, card.formula.map(function (line) {
+            return h('code', { class: 'gv-track__code' }, line);
+          })),
+          h('dl', { class: 'gv-track__params' }, card.params.map(function (p) {
+            return h('div', { class: 'gv-track__param' },
+              h('dt', null, p.name),
+              h('dd', null, p.value));
+          })),
+          latency(card)));
       var link = i < N - 1 ? h('span', { class: 'gv-track__link', 'aria-hidden': 'true' }) : null;
       rims.push(rim);
       cardEls.push(article);
       linkEls.push(link);
+      figs.push(fig);
       return h('li', { class: 'gv-track__item' }, article, link);
     });
 
@@ -107,7 +270,9 @@
         var b = h('button', {
           type: 'button', class: 'gv-track__step',
           'aria-label': T.step + NBSP + (i + 1) + ': ' + card.title
-        }, card.index);
+        },
+        h('span', { class: 'gv-track__step-index' }, card.index),
+        card.step ? h('span', { class: 'gv-track__step-name' }, card.step) : null);
         stepButtons.push(b);
         return b;
       }));
@@ -117,9 +282,13 @@
       h('span', { class: 'gv-track__total-value' }, total.value),
       h('span', { class: 'gv-track__total-unit' }, total.unit));
 
+    var top = options.head || steps
+      ? h('div', { class: 'gv-container gv-track__top' }, options.head || null, steps)
+      : null;
+
     var rootEl = h('div', { class: ['gv-track', flat ? 'is-flat' : null], style: { '--steps': String(N) } },
       h('div', { class: 'gv-track__stage' },
-        steps ? h('div', { class: 'gv-container gv-track__top' }, steps) : null,
+        top,
         viewport,
         h('div', { class: 'gv-container gv-track__foot' }, totalEl)));
     el.appendChild(rootEl);
@@ -127,6 +296,7 @@
     offs.push(motion.spotlight(rail, '.gv-track__card'));
 
     if (flat) {
+      figs.forEach(function (f) { if (f) f.update(1); });
       return {
         destroy: function () {
           sc.destroy();
@@ -139,7 +309,6 @@
     /* ---------- геометрия: считается на resize, не в кадре ---------- */
 
     var enterPx = 0;
-    var edgePx = 0;
     var frameW = 0;     // ширина кадра (окна трека)
     var cardW = 0;      // ширина карточки
     var firstLeft = 0;  // левый край первой карточки на треке без сдвига
@@ -148,7 +317,6 @@
     function measure() {
       var rem = parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
       enterPx = ENTER_REM * rem;
-      edgePx = EDGE_REM * rem;
       frameW = viewport.clientWidth;
       // Разность прямоугольников не зависит от текущего сдвига трека: он у обоих одинаковый.
       var railBox = rail.getBoundingClientRect();
@@ -163,6 +331,7 @@
 
     var lastActive = -1;
     var last = N - 1;
+    var lastFocus = [];
 
     function activeOf(s) {
       return Math.round(clamp01(s / last) * last);
@@ -172,27 +341,14 @@
       return i === 0 ? 1 : clamp01(s - (i - 1));
     }
 
-    /* Сдвиг трека для шага s: точка s — в центре кадра, но активная карточка a целиком в кадре. */
+    /* Точка s трека — в центре кадра: на целом шаге активная карточка ровно по центру. */
     function shiftFor(s) {
-      var a = activeOf(s);
-      var centered = firstLeft + s * pitch + cardW / 2 - frameW / 2;
-      var left = firstLeft + a * pitch;
-      var entering = (1 - ease(enterOf(a, s))) * enterPx;
-      var edge = Math.min(edgePx, Math.max(0, (frameW - cardW - entering) / 2));
-      var lo = left + cardW + entering - (frameW - edge);   // правый край не дальше края кадра
-      var hi = left - edge;                                  // левый край не левее края кадра
-      if (lo > hi) return (lo + hi) / 2;
-      return Math.min(Math.max(centered, lo), hi);
+      return firstLeft + s * pitch + cardW / 2 - frameW / 2;
     }
 
-    /* dt не задан — сдвиг ставится сразу (первый кадр, resize), иначе догоняет цель на пружине. */
-    function render(s, dt) {
+    function render(s) {
       paint(s);
-      var goal = shiftFor(s);
-      var x;
-      if (dt === undefined) { shift.set(goal); x = goal; }
-      else { shift.target(goal); x = shift.step(dt); }
-      rail.style.transform = 'translate3d(' + (-x).toFixed(2) + 'px,0,0)';
+      rail.style.transform = 'translate3d(' + (-shiftFor(s)).toFixed(2) + 'px,0,0)';
     }
 
     function paint(s) {
@@ -205,6 +361,10 @@
         cardEls[i].style.transform = 'translate3d(' + ((1 - ease(enter)) * enterPx).toFixed(2) + 'px,0,0)';
         rims[i].style.opacity = focus.toFixed(3);
         if (linkEls[i]) linkEls[i].style.transform = 'scaleX(' + clamp01(s - i).toFixed(4) + ')';
+        if (figs[i] && Math.abs(focus - (lastFocus[i] === undefined ? -1 : lastFocus[i])) > 1e-4) {
+          figs[i].update(focus);
+          lastFocus[i] = focus;
+        }
       }
       var active = activeOf(s);
       if (active !== lastActive) {
@@ -217,24 +377,22 @@
       }
     }
 
-    /* ---------- пружина за прокруткой ---------- */
+    /* ---------- пружина за прокруткой: цель — ближайший целый шаг ---------- */
 
     var spring = motion.spring({ stiffness: 120, damping: 22, precision: 0.0008, value: 0 });
-    // Сдвиг трека в px: критическое демпфирование, без перелёта; плавно проводит перескок к новой карточке.
-    var shift = motion.spring({ stiffness: 260, damping: 32, precision: 0.3, value: 0 });
     var offFrame = null;
     var first = true;
 
     function tick(dt) {
-      render(spring.step(dt), dt);
-      if (spring.settled() && shift.settled() && offFrame) {
+      render(spring.step(dt));
+      if (spring.settled() && offFrame) {
         offFrame();
         offFrame = null;
       }
     }
 
     offs.push(motion.onScroll(function () {
-      var target = motion.pinProgress(rootEl) * last;
+      var target = Math.round(motion.pinProgress(rootEl) * last);
       if (first) {
         first = false;
         spring.set(target);
@@ -242,11 +400,11 @@
         return;
       }
       spring.target(target);
-      if (!offFrame && (!spring.settled() || !shift.settled())) offFrame = motion.onFrame(tick);
+      if (!offFrame && !spring.settled()) offFrame = motion.onFrame(tick);
     }));
     offs.push(function () { if (offFrame) { offFrame(); offFrame = null; } });
 
-    /* ---------- клик по индикатору ---------- */
+    /* ---------- клик по шагу ---------- */
 
     stepButtons.forEach(function (b, i) {
       sc.on(b, 'click', function () {

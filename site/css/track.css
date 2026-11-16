@@ -1,15 +1,16 @@
 /*
  * #pipeline — закреплённый горизонтальный трек (GV.components.pipelineTrack).
- * Сцена (N + 1) × 100vh, внутри sticky-сцена: индикатор шагов 01–04, окно с треком, итог конвейера.
- * JS двигает только transform (трек, вход карточки, связь, линия индикатора) и opacity (яркость карточки,
- * ободок активного шага). Цвет у состояний меняется сразу, без перехода.
+ * Сцена (N + 1) × 100vh, внутри sticky-сцена: заголовок секции и шаги 01–04 с именами, окно с треком,
+ * итог конвейера. Карточка — схема шага (SVG) слева и текст справа; на телефоне схема сверху.
+ * JS двигает только transform (трек, вход карточки, связь, линия шагов, детали схемы) и opacity (яркость
+ * карточки, ободок активного шага, проявление схемы). Цвет у состояний меняется сразу, без перехода.
  * Размеры в rem; px — линии 1px и медиазапросы. Без JS и при «уменьшить движение» (.is-flat) —
  * обычный вертикальный список без закрепления, всё видно сразу.
  */
 
 .gv-track {
   --track-gap: 3rem;
-  --card-w: min(31rem, 80vw);
+  --card-w: min(50rem, 78vw);
   position: relative;
   height: calc((var(--steps, 4) + 1) * 100vh);
 }
@@ -25,16 +26,21 @@
   height: calc(100svh - var(--pin-top));
 }
 
-/* ---------- индикатор шагов ---------- */
+/* ---------- заголовок и шаги ---------- */
 
 .gv-track__top {
   align-self: start;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: var(--space-4) var(--space-6);
+  padding-top: var(--space-5);
 }
 
 .gv-track__steps {
   position: relative;
   display: flex;
-  gap: var(--space-2);
+  gap: var(--space-1);
   padding-bottom: 1px;
 }
 
@@ -59,6 +65,9 @@
 
 .gv-track__step {
   position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
   min-width: 3rem;
   min-height: 2.75rem;
   padding: 0 var(--space-3);
@@ -67,9 +76,17 @@
   font-family: var(--font-mono);
   font-size: var(--fs-s);
   font-variant-numeric: tabular-nums;
-  letter-spacing: var(--tracking-caps);
-  color: var(--text-faint);
+  color: var(--text-muted);
   cursor: pointer;
+}
+
+.gv-track__step-index {
+  letter-spacing: var(--tracking-caps);
+}
+
+.gv-track__step-name {
+  font-family: var(--font-sans);
+  font-size: var(--fs-xs);
 }
 
 .gv-track__step::after {
@@ -129,9 +146,9 @@
 
 .gv-track__card {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
   height: 100%;
   padding: var(--space-5);
   border: 1px solid var(--border-hairline);
@@ -139,6 +156,111 @@
   background: var(--surface-card);
   will-change: transform, opacity;
 }
+
+.gv-track__card--fig {
+  grid-template-columns: minmax(10rem, 17rem) minmax(0, 1fr);
+  align-items: center;
+}
+
+.gv-track__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+  height: 100%;
+}
+
+/* ---------- схема шага ---------- */
+
+.gv-track__fig {
+  position: relative;
+  aspect-ratio: 1;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-s);
+  background:
+    radial-gradient(closest-side, rgba(255, 90, 31, 0.06), transparent),
+    rgba(0, 0, 0, 0.28);
+}
+
+.gv-fig {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.gv-fig__pivot,
+.gv-fig__box {
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+}
+
+.gv-fig__wipe {
+  transform-box: fill-box;
+  transform-origin: 0 50%;
+}
+
+.gv-fig__frame,
+.gv-fig__rim,
+.gv-fig__tick,
+.gv-fig__pipe,
+.gv-fig__axis,
+.gv-fig__target,
+.gv-fig__level,
+.gv-fig__bbox,
+.gv-fig__corners,
+.gv-fig__needle,
+.gv-fig__needle-muted,
+.gv-fig__hough,
+.gv-fig__ema {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1px;
+}
+
+.gv-fig__frame { stroke: var(--border-strong); stroke-dasharray: 3 3; }
+.gv-fig__pipe { stroke: rgba(230, 234, 239, 0.12); }
+.gv-fig__rim { stroke: rgba(230, 234, 239, 0.55); }
+.gv-fig__tick { stroke: rgba(230, 234, 239, 0.55); }
+.gv-fig__axis { stroke: rgba(230, 234, 239, 0.22); }
+.gv-fig__target { stroke: var(--accent); stroke-dasharray: 2 4; opacity: 0.7; }
+.gv-fig__level { stroke: rgba(230, 234, 239, 0.22); stroke-dasharray: 2 4; }
+.gv-fig__needle-muted { stroke: var(--text-muted); }
+.gv-fig__bbox { stroke: var(--accent); opacity: 0.5; }
+.gv-fig__corners { stroke: var(--accent); stroke-width: 0.125rem; }
+.gv-fig__tag { fill: var(--accent); }
+
+.gv-fig__needle {
+  stroke: var(--accent);
+  stroke-width: 0.125rem;
+  stroke-linecap: round;
+}
+
+.gv-fig__hough {
+  stroke: var(--text-primary);
+  stroke-dasharray: 4 3;
+}
+
+.gv-fig__hub { fill: var(--accent); }
+
+.gv-fig__ema {
+  stroke: var(--accent);
+  stroke-width: 0.125rem;
+  stroke-linejoin: round;
+}
+
+.gv-fig__dot { fill: var(--text-muted); }
+
+.gv-fig__tag-text,
+.gv-fig__label {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+.gv-fig__tag-text { fill: var(--accent-contrast); }
+.gv-fig__label { fill: var(--text-primary); }
+.gv-fig__label--muted { fill: var(--text-muted); }
+.gv-fig__label--accent { fill: var(--accent); }
 
 /* Яркий ободок активного шага: сам слой всегда на месте, меняется только opacity */
 .gv-track__rim {
@@ -248,7 +370,7 @@
 .gv-track__lat-note {
   flex-basis: 100%;
   font-size: var(--fs-xs);
-  color: var(--text-faint);
+  color: var(--text-muted);
 }
 
 /* ---------- связь между карточками: растёт scaleX ---------- */
@@ -329,7 +451,7 @@
 
 .is-flat .gv-track__item {
   width: 100%;
-  max-width: 44rem;
+  max-width: 56rem;
 }
 
 .is-flat .gv-track__card {
@@ -345,15 +467,47 @@
   margin-top: var(--space-6);
 }
 
+@media (max-width: 1099px) {
+  .gv-track__top {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+}
+
 @media (max-width: 768px) {
   .gv-track {
     --card-w: 85vw;
     --track-gap: 1.5rem;
   }
 
-  .gv-track__card {
+  .gv-track__top {
+    padding-top: var(--space-3);
+  }
+
+  .gv-track__card,
+  .gv-track__card--fig {
+    grid-template-columns: minmax(0, 1fr);
     padding: var(--space-4);
     gap: var(--space-3);
+  }
+
+  .gv-track__body {
+    gap: var(--space-3);
+  }
+
+  /* Схема — полосой над текстом: квадрат по центру */
+  .gv-track__fig {
+    aspect-ratio: auto;
+    height: 7.5rem;
+  }
+
+  /* Имя шага видно у активного; остальные — номером, подпись есть в карточке */
+  .gv-track__step-name {
+    display: none;
+  }
+
+  .gv-track__step[aria-current="step"] .gv-track__step-name {
+    display: inline;
   }
 
   /* Над плавающей кнопкой Tweaks */

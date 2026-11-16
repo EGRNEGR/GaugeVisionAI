@@ -30,12 +30,33 @@
   height: calc(100svh - var(--pin-top));
 }
 
+/* Прибор слева на две строки, справа — заголовок сцены и показания под ним */
 .gv-pd__layout {
   display: grid;
   grid-template-columns: var(--pd-size) minmax(0, 30rem);
+  grid-template-areas:
+    "dial head"
+    "dial readout";
+  grid-template-rows: auto auto;
   justify-content: center;
-  align-items: center;
-  gap: clamp(2.5rem, 1rem + 5vw, 7rem);
+  align-content: center;
+  column-gap: clamp(2.5rem, 1rem + 5vw, 7rem);
+  row-gap: var(--space-6);
+}
+
+.gv-pd__head {
+  grid-area: head;
+  align-self: end;
+}
+
+.gv-pd__instrument {
+  grid-area: dial;
+  align-self: center;
+}
+
+.gv-pd__readout {
+  grid-area: readout;
+  align-self: start;
 }
 
 /* ---------- прибор ---------- */
@@ -303,29 +324,80 @@
   background: var(--pd-level);
 }
 
-.gv-pd__formula {
+/* Формула и та же формула с подставленными числами: результат — цветом зоны */
+.gv-pd__proof {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-s);
+  background: rgba(0, 0, 0, 0.28);
   font-family: var(--font-mono);
-  font-size: var(--fs-s);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.gv-pd__formula {
   color: var(--text-muted);
+}
+
+.gv-pd__live {
+  color: var(--text-primary);
+}
+
+.gv-pd__live-result {
+  font-weight: 600;
+  color: var(--pd-level);
+  white-space: nowrap;
 }
 
 .gv-pd__caption {
   font-size: var(--fs-s);
   line-height: var(--lh-snug);
-  color: var(--text-faint);
+  color: var(--text-muted);
 }
+
+/* Подсказка управления: риска акцентом слева, без иконки */
+.gv-pd__hint {
+  position: relative;
+  padding-left: var(--space-4);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.gv-pd__hint::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 0.5rem;
+  height: 1px;
+  background: var(--accent);
+}
+
 
 /* ---------- узкие экраны: прибор сверху, показания под ним ---------- */
 
 @media (max-width: 900px) {
   .gv-pd {
-    --pd-size: min(100%, 26rem, calc(100svh - var(--pin-top) - 19rem));
+    --pd-size: min(100%, 20rem, calc(100svh - var(--pin-top) - 27rem));
   }
 
   .gv-pd__layout {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "head"
+      "dial"
+      "readout";
     justify-items: center;
-    gap: var(--space-5);
+    gap: var(--space-4);
+  }
+
+  .gv-pd__head {
+    width: 100%;
+    max-width: 28rem;
   }
 
   .gv-pd__instrument {
@@ -354,13 +426,21 @@
     font-size: var(--fs-m);
   }
 
-  .gv-pd__formula {
+  .gv-pd__proof {
+    padding: var(--space-2) var(--space-3);
     font-size: var(--fs-2xs);
   }
 
+  /* Подпись калибровки остаётся описанием слайдера; на экране её числа уже в подстановке */
   .gv-pd__caption {
-    font-size: var(--fs-xs);
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
+
 }
 
 @media (max-width: 380px) {

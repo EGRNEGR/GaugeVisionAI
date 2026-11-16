@@ -1,9 +1,10 @@
 /*
  * GV.components.compare — «Было (обход раз в смену) → Стало (GaugeVision AI)».
  * mount(el) → { destroy() }
- * Одна колонка и переключатель «Было / Стало»: он же управляет шкалой смены 12 ч. В колонке несколько
- * коротких пунктов и стоимость точки (оценка команды), ниже — итог −89 % и шкала смены с подписью
- * «Иллюстративный сценарий». Стартует с «Было».
+ * Две колонки «Было» и «Стало» рядом (на телефоне — одна) и переключатель «Было / Стало»: он подсвечивает
+ * колонку (на телефоне — показывает её) и ведёт шкалу смены 12 ч. В колонке несколько коротких пунктов
+ * и стоимость точки (оценка команды), ниже — итог −89 % и шкала смены с подписью «Иллюстративный
+ * сценарий». Стартует с «Было». Какая колонка видна на телефоне, решает css по data-mode.
  */
 (function () {
   'use strict';
@@ -100,8 +101,8 @@
       var before = next === 'before';
       detect.style.setProperty('--pos', pos(before ? nextRound : tl.deviationHour));
       tlText.textContent = before ? tl.beforeText : tl.afterText;
-      colBefore.hidden = !before;
-      colAfter.hidden = before;
+      colBefore.classList.toggle('is-active', before);
+      colAfter.classList.toggle('is-active', !before);
     }
 
     var roving = u.rovingTabs(modes, {

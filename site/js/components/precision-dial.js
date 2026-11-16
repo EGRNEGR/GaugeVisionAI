@@ -1,13 +1,16 @@
 /*
  * GV.components.precisionDial — #reading: прецизионный манометр по GV.content.calibration.
- * mount(el, { interactive = true }) → { destroy(), setValue(v) }
+ * mount(el, { interactive = true, head }) → { destroy(), setValue(v) }
+ * head — заголовок секции от GV.page: встаёт в сетку закреплённой сцены (над показаниями, на телефоне — над прибором).
  *
  * Сцена .gv-pd закреплена на ≈ 200vh. На входе прибор проявляется из темноты (opacity + scale),
  * стрелка на пружине GV.motion.spring (жёсткость 170, демпфирование 18) идёт за прокруткой
  * от θmin к reading.theta (4,39 МПа), при наведении — к углу курсора, зажатому в шкалу;
  * ушёл курсор — возвращается. Прибор — role="slider": ←/→ (↓/↑) шаг 0,1 МПа, PageUp/PageDown — 1 МПа,
- * Home/End — край шкалы. Значение МПа, бары, θ и зона пересчитываются из угла стрелки на каждом
- * кадре (GV.kit.angleToValue, toBar, zoneOf, levelOf), цифры tabular-nums.
+ * Home/End — край шкалы; клик или касание шкалы ставит стрелку в эту точку (до следующей прокрутки).
+ * Значение МПа, бары, θ и зона пересчитываются из угла стрелки на каждом кадре (GV.kit.angleToValue,
+ * toBar, zoneOf, levelOf), цифры tabular-nums. Под формулой — та же формула с подставленными θ,
+ * θmin, span и диапазоном шкалы: доказательство, что число на экране получено из угла.
  * Шкала: 0–10 МПа на 270°, 100 мелких делений (0,1), 20 средних (0,5), 11 главных рисок с цифрами;
  * риски 1px (vector-effect: non-scaling-stroke). Ободок — два металлических кольца и стеклянный блик.
  * Движение — только transform (поворот стрелки, масштаб входа) и opacity (вход, подсветка зоны).
@@ -245,6 +248,10 @@
     var zoneDot = h('span', { class: 'gv-pd__dot', 'aria-hidden': 'true' });
     var zoneText = h('span', null);
     var captionId = u.uid('gv-pd-caption');
+    var liveExpr = h('span', { class: 'gv-pd__live-expr' });
+    var liveResult = h('span', { class: 'gv-pd__live-result' });
+    var fine = interactive && typeof root.matchMedia === 'function' ? root.matchMedia(FINE) : null;
+    var hint = interactive ? (fine && !fine.matches ? reading.hintTouch : reading.hint) : null;
 
     var readout = h('div', { class: 'gv-pd__readout' },
       h('p', { class: 'gv-pd__device' }, reading.device),
@@ -253,8 +260,11 @@
         h('div', { class: 'gv-pd__cell' }, h('dt', { class: 'gv-pd__cell-label' }, T.bar), barEl),
         h('div', { class: 'gv-pd__cell' }, h('dt', { class: 'gv-pd__cell-label' }, T.theta), thetaEl),
         h('div', { class: 'gv-pd__cell gv-pd__cell--zone' }, h('dt', { class: 'gv-pd__cell-label' }, T.zone), h('dd', { class: 'gv-pd__cell-value' }, zoneDot, zoneText))),
-      h('p', { class: 'gv-pd__formula' }, calib.formula),
-      h('p', { class: 'gv-pd__caption', id: captionId }, reading.caption));
+      h('div', { class: 'gv-pd__proof' },
+        h('p', { class: 'gv-pd__formula' }, calib.formula),
+        h('p', { class: 'gv-pd__live', 'aria-hidden': 'true' }, liveExpr, liveResult)),
+      h('p', { class: 'gv-pd__caption', id: captionId }, reading.caption),
+      hint ? h('p', { class: 'gv-pd__hint' }, hint) : null);
 
     var dialEl = h('div', {
       class: 'gv-pd__dial',
@@ -270,7 +280,9 @@
       h('span', { class: 'gv-pd__glow', 'aria-hidden': 'true' }),
       dialEl);
     var stage = h('div', { class: 'gv-pd__stage' },
-      h('div', { class: 'gv-container gv-pd__layout' }, instrument, readout));
+      h('div', { class: 'gv-container gv-pd__layout' },
+        options.head ? h('div', { class: 'gv-pd__head' }, options.head) : null,
+        instrument, readout));
     var scene = h('div', { class: 'gv-pd', 'data-level': 'normal' }, stage);
     el.appendChild(scene);
 
@@ -281,7 +293,7 @@
     var scrollOffset = motion.reduced() ? readingOffset : 0;
     var hoverOffset = null;
     var manualValue = null;
-    var shown = { num: '', bar: '', theta: '', zone: '', level: '' };
+    var shown = { num: '', bar: '', theta: '', zone: '', level: '', live: '' };
 
     function valueAt(offset) {
       return kit.angleToValue(mod(angleOf(offset, calib), 360), calib);
@@ -290,6 +302,14 @@
       if (hoverOffset !== null) return hoverOffset;
       if (manualValue !== null) return offsetOfValue(manualValue);
       return scrollOffset;
+    }
+
+    /* Подстановка в формулу: ((θ − θmin) mod 360) / span · (Vmax − Vmin), для CCW — (θmin − θ) */
+    var liveHead = vMin !== 0 ? fmt(vMin) + ' + ' : '';
+    var liveTail = ') mod 360) / ' + fmt(cp.span) + ' · ' + (vMin !== 0 ? '(' + fmt(vMax) + ' − ' + fmt(vMin) + ')' : fmt(vMax));
+    function liveText(thetaText) {
+      var tMin = fmt(cp.thetaMin) + '°';
+      return liveHead + '((' + (cp.ccw ? tMin + ' − ' + thetaText : thetaText + ' − ' + tMin) + liveTail;
     }
 
     function render(offset) {
@@ -303,7 +323,12 @@
       var bar = fmt(kit.toBar(v, calib), 1);
       if (bar !== shown.bar) { barEl.textContent = bar; shown.bar = bar; }
       var th = fmt(mod(theta, 360), 1) + '°';
-      if (th !== shown.theta) { thetaEl.textContent = th; shown.theta = th; }
+      if (th !== shown.theta) {
+        thetaEl.textContent = th;
+        liveExpr.textContent = liveText(th);
+        shown.theta = th;
+      }
+      if (num !== shown.live) { liveResult.textContent = ' = ' + num; shown.live = num; }
       var zone = kit.zoneOf(v, sp);
       if (zone !== shown.zone) {
         if (zoneEls[shown.zone]) zoneEls[shown.zone].classList.remove('is-active');
@@ -398,15 +423,26 @@
       syncAria();
     }
 
+    /* Угол точки экрана относительно центра прибора; null — слишком близко к оси */
+    function offsetAt(x, y, rect) {
+      var dx = x - (rect.left + rect.width / 2);
+      var dy = y - (rect.top + rect.height / 2);
+      if (Math.sqrt(dx * dx + dy * dy) < rect.width * 0.06) return null;
+      return offsetOf(angleFromPointer(dx, dy), calib);
+    }
+
     if (interactive) {
-      var fine = typeof root.matchMedia === 'function' ? root.matchMedia(FINE) : null;
+      sc.on(dialEl, 'click', function (e) {
+        var off = offsetAt(e.clientX, e.clientY, dialEl.getBoundingClientRect());
+        if (off === null) return;
+        setValue(valueAt(off));
+      });
       sc.on(dialEl, 'pointermove', function (e) {
         if (e.pointerType === 'touch' || (fine && !fine.matches)) return;
         if (!dialRect) dialRect = dialEl.getBoundingClientRect();
-        var dx = e.clientX - (dialRect.left + dialRect.width / 2);
-        var dy = e.clientY - (dialRect.top + dialRect.height / 2);
-        if (Math.sqrt(dx * dx + dy * dy) < dialRect.width * 0.06) return;
-        hoverOffset = offsetOf(angleFromPointer(dx, dy), calib);
+        var off = offsetAt(e.clientX, e.clientY, dialRect);
+        if (off === null) return;
+        hoverOffset = off;
         retarget();
       }, { passive: true });
       sc.on(dialEl, 'pointerleave', function () {
