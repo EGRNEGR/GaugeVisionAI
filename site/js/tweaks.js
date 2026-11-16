@@ -132,7 +132,7 @@
       'aria-expanded': 'false',
       'aria-controls': panelId,
       on: { click: function () { if (refs.panel.hidden) open(); else close(); } }
-    }, icon(['M3 6h8', 'M15 6h2', 'M3 14h2', 'M9 14h8', 'M13 4v4', 'M7 12v4']), h('span', null, 'Tweaks'));
+    }, icon(['M3 6h8', 'M15 6h2', 'M3 14h2', 'M9 14h8', 'M13 4v4', 'M7 12v4']), h('span', { class: 'gv-tweaks__toggle-label' }, 'Tweaks'));
 
     refs.form = h('form', { class: 'gv-tweaks__form', on: { change: onChange, submit: function (e) { e.preventDefault(); } } },
       GROUPS.map(function (group) {

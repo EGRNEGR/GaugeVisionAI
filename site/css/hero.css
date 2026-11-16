@@ -58,7 +58,7 @@
   background:
     linear-gradient(180deg, rgba(9, 11, 14, 0.55) 0%, rgba(9, 11, 14, 0) 18%),
     linear-gradient(0deg, var(--bg-canvas) 0%, rgba(9, 11, 14, 0.82) 22%, rgba(9, 11, 14, 0.25) 52%, rgba(9, 11, 14, 0) 70%),
-    linear-gradient(90deg, rgba(9, 11, 14, 0.72) 0%, rgba(9, 11, 14, 0.38) 38%, rgba(9, 11, 14, 0) 66%);
+    linear-gradient(90deg, rgba(9, 11, 14, 0.8) 0%, rgba(9, 11, 14, 0.5) 40%, rgba(9, 11, 14, 0) 70%);
 }
 
 /* Камера отъехала — кадр уходит в темноту, из неё проявляется прибор следующей сцены */
@@ -103,7 +103,7 @@
   grid-area: line;
   max-width: 50rem;
   font-size: var(--fs-l);
-  line-height: var(--lh-snug);
+  line-height: 1.35;
   color: var(--text-muted);
   text-wrap: pretty;
 }

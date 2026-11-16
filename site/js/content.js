@@ -230,7 +230,7 @@
         params: [{ name: 'DIAL_SIZE', value: '640 px' }, { name: 'Интерполяция', value: 'INTER_LINEAR' }, { name: 'Наклон на стенде', value: 'до ≈ 41°' }],
         latency: null },
       { id: 'needle', index: '03', step: 'Угол θ', title: 'Угол θ: радиальный момент + HoughLinesP',
-        formula: ['θ = atan2(y₁−y₀, x₁−x₀)', 'V = Vmin + ((θ−θmin) mod 360)/Δθ·(Vmax−Vmin)'],
+        formula: ['θ = atan2(y₁−y₀, x₁−x₀)', 'V = Vmin + ((θ−θmin) mod 360)/span·(Vmax−Vmin)'],
         params: [{ name: 'Гистограмма', value: 'шаг 1°, ± 4°' }, { name: 'Маски', value: 'Black-Hat / Top-Hat 31×31' }, { name: 'Hough ↔ момент', value: '≤ 12°' }],
         latency: null },
       { id: 'stabilize', index: '04', step: 'Сглаживание', title: 'Сглаживание EMA α = 0,25',
@@ -342,7 +342,9 @@
         { name: 'Chart.js', version: 'локально, без CDN' },
         { name: 'HTML / CSS / JS', version: 'без фреймворков' }
       ],
-      boundaryLabel: 'Локальный контур: HTTPS / WSS, без исходящих запросов в интернет'
+      boundaryLabel: 'Локальный контур: HTTPS / WSS, без исходящих запросов в интернет',
+      hint: 'Наведите на узел или перейдите к нему клавишей Tab — подсветятся связи',
+      hintTouch: 'Коснитесь узла — подсветятся его связи'
     },
 
     /* «Выбрали → платим», источник — константа или файл из notes.md. */

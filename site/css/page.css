@@ -30,9 +30,11 @@
   background: var(--bg-canvas);
 }
 
+/* Бренд и GitHub — по содержимому, навигация — в остатке: при крупном масштабе Tweaks она прокручивается
+   внутри своей полосы, а не наезжает на бренд (точка перелома в px не знает про --ui-scale) */
 .gv-header__inner {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas: "brand nav github";
   align-items: center;
   gap: var(--space-4);
@@ -48,11 +50,13 @@
   min-height: 2.75rem;
   font-weight: 800;
   font-size: var(--fs-l);
+  white-space: nowrap;
   letter-spacing: -0.02em;
   text-decoration: none;
 }
 
 .gv-brand__mark {
+  flex: none;
   width: 1.625rem;
   height: 1.625rem;
   fill: none;
@@ -76,12 +80,21 @@
 
 .gv-nav {
   grid-area: nav;
+  justify-self: center;
+  max-width: 100%;
   min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.gv-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .gv-nav__list {
   display: flex;
   gap: var(--space-1);
+  width: max-content;
   margin: 0;
 }
 
@@ -212,23 +225,11 @@
   letter-spacing: -0.025em;
 }
 
-/* Заголовок внутри закреплённой сцены (прибор, конвейер): слева, номер — моноширинная метка над названием */
+/* Заголовок внутри закреплённой сцены (прибор, конвейер): слева, без номера — он уже в телеметрии */
 .gv-head--pinned {
   justify-items: start;
-  gap: var(--space-2);
   margin-bottom: 0;
   text-align: left;
-}
-
-.gv-head--pinned .gv-head__index {
-  grid-area: auto;
-  font-family: var(--font-mono);
-  font-size: var(--fs-xs);
-  font-weight: 500;
-  line-height: 1;
-  letter-spacing: var(--tracking-caps);
-  color: var(--accent);
-  -webkit-text-stroke: 0;
 }
 
 .gv-head--pinned .gv-head__title {
@@ -266,7 +267,7 @@
   background: radial-gradient(closest-side, var(--glow-cool), transparent);
 }
 
-.gv-section--limits .gv-glow,
+/* У ограничений пятно сверху: снизу его обрезал бы фон финала жёсткой полосой */
 .gv-contact .gv-glow {
   top: auto;
   bottom: -32rem;
@@ -331,15 +332,10 @@
   background: var(--surface-card);
 }
 
-.gv-compare__col.is-active {
-  border-color: rgba(255, 90, 31, 0.6);
-}
 
-/* Сравнение: общий переключатель по центру */
-.gv-compare--toggle .gv-compare__mode {
-  min-height: 3rem;
-  padding: 0 var(--space-6);
-  font-size: var(--fs-m);
+/* Сравнение: переключатель в шапке шкалы смены — он ведёт шкалу и подсвечивает колонку */
+.gv-compare__timeline-head .gv-compare__modes {
+  margin-left: auto;
 }
 
 .gv-compare__title {
@@ -585,10 +581,6 @@
 
   .gv-head {
     margin-bottom: var(--space-7);
-  }
-
-  .gv-compare--toggle .gv-compare__mode {
-    padding: 0 var(--space-5);
   }
 
   .gv-contact__repo {

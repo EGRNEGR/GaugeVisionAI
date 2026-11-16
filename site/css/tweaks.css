@@ -247,9 +247,22 @@
     padding-bottom: var(--tweaks-clearance);
   }
 
+  /* Телефон: квадратная кнопка-значок 44 × 44 меньше перекрывает текст при прокрутке; подпись — для чтения с экрана */
   .gv-tweaks__toggle {
     right: calc(0.75 * var(--chrome-u));
     bottom: calc(0.75 * var(--chrome-u));
+    justify-content: center;
+    width: var(--tap);
+    padding: 0;
+  }
+
+  .gv-tweaks__toggle-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .gv-tweaks__panel {

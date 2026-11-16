@@ -53,7 +53,7 @@ ul[role="list"], ol[role="list"] {
   list-style: none;
 }
 
-p {
+p, li, dd {
   text-wrap: pretty;
 }
 

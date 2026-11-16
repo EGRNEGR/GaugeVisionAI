@@ -1,10 +1,9 @@
 /*
  * GV.components.compare — «Было (обход раз в смену) → Стало (GaugeVision AI)».
  * mount(el) → { destroy() }
- * Две колонки «Было» и «Стало» рядом (на телефоне — одна) и переключатель «Было / Стало»: он подсвечивает
- * колонку (на телефоне — показывает её) и ведёт шкалу смены 12 ч. В колонке несколько коротких пунктов
- * и стоимость точки (оценка команды), ниже — итог −89 % и шкала смены с подписью «Иллюстративный
- * сценарий». Стартует с «Было». Какая колонка видна на телефоне, решает css по data-mode.
+ * Две колонки «Было» и «Стало» всегда видны (на телефоне — стопкой): пункты и стоимость точки (оценка
+ * команды), ниже — итог −89 %. Под ним шкала смены 12 ч с подписью «Иллюстративный сценарий»; переключатель
+ * «Было / Стало» стоит в шапке шкалы: ведёт отметку «Обнаружено» и подсвечивает свою колонку. Стартует с «Было».
  */
 (function () {
   'use strict';
@@ -85,12 +84,12 @@
     var timeline = h('div', { class: 'gv-compare__timeline' },
       h('div', { class: 'gv-compare__timeline-head' },
         h('h3', { class: 'gv-compare__timeline-title' }, T.timelineTitle + ' ' + fmt(hours) + NBSP + T.hourUnit),
-        h('p', { class: 'gv-compare__illustrative' }, tl.caption)),
+        h('p', { class: 'gv-compare__illustrative' }, tl.caption),
+        modes),
       scaleEl,
       tlText);
 
     var rootEl = h('div', { class: 'gv-compare gv-compare--toggle' },
-      h('div', { class: 'gv-compare__switch' }, modes),
       h('div', { class: 'gv-compare__cols' }, colBefore, colAfter),
       saving,
       timeline);

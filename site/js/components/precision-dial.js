@@ -3,7 +3,7 @@
  * mount(el, { interactive = true, head }) → { destroy(), setValue(v) }
  * head — заголовок секции от GV.page: встаёт в сетку закреплённой сцены (над показаниями, на телефоне — над прибором).
  *
- * Сцена .gv-pd закреплена на ≈ 200vh. На входе прибор проявляется из темноты (opacity + scale),
+ * Сцена .gv-pd закреплена на ≈ 170vh. На входе прибор проявляется из темноты (opacity + scale),
  * стрелка на пружине GV.motion.spring (жёсткость 170, демпфирование 18) идёт за прокруткой
  * от θmin к reading.theta (4,39 МПа), при наведении — к углу курсора, зажатому в шкалу;
  * ушёл курсор — возвращается. Прибор — role="slider": ←/→ (↓/↑) шаг 0,1 МПа, PageUp/PageDown — 1 МПа,
@@ -27,7 +27,7 @@
   GV.components = GV.components || {};
 
   var SPRING = { stiffness: 170, damping: 18, precision: 0.02 };
-  var ARRIVE = 0.6;          // доля закрепления, за которую стрелка доходит до показания
+  var ARRIVE = 0.7;          // доля закрепления, за которую стрелка доходит до показания
   var STEP = 0.1;            // шаг клавиш ←/→, МПа
   var PAGE_STEP = 1;         // PageUp/PageDown, МПа
   var FINE = '(hover: hover) and (pointer: fine)';

@@ -9,7 +9,7 @@
 .gv-pd {
   --pd-size: min(40rem, calc(100svh - var(--pin-top) - 8rem), 46vw);
   position: relative;
-  height: 200vh;
+  height: 170vh;
   --pd-level: var(--status-ok);
 }
 
@@ -353,7 +353,7 @@
 
 .gv-pd__caption {
   font-size: var(--fs-s);
-  line-height: var(--lh-snug);
+  line-height: 1.45;
   color: var(--text-muted);
 }
 

@@ -1,6 +1,6 @@
 /*
  * #pipeline — закреплённый горизонтальный трек (GV.components.pipelineTrack).
- * Сцена (N + 1) × 100vh, внутри sticky-сцена: заголовок секции и шаги 01–04 с именами, окно с треком,
+ * Сцена (N + 0,5) × 75vh, внутри sticky-сцена: заголовок секции и шаги 01–04 с именами, окно с треком,
  * итог конвейера. Карточка — схема шага (SVG) слева и текст справа; на телефоне схема сверху.
  * JS двигает только transform (трек, вход карточки, связь, линия шагов, детали схемы) и opacity (яркость
  * карточки, ободок активного шага, проявление схемы). Цвет у состояний меняется сразу, без перехода.
@@ -12,7 +12,7 @@
   --track-gap: 3rem;
   --card-w: min(50rem, 78vw);
   position: relative;
-  height: calc((var(--steps, 4) + 1) * 100vh);
+  height: calc((var(--steps, 4) + 0.5) * 75vh);
 }
 
 .gv-track__stage {
@@ -269,7 +269,6 @@
   z-index: 1;
   border: 1px solid var(--accent);
   border-radius: inherit;
-  box-shadow: 0 0 2.5rem -0.75rem var(--glow-warm);
   pointer-events: none;
   opacity: 0;
 }
@@ -356,10 +355,6 @@
   font-weight: 500;
   line-height: 1.1;
   color: var(--text-primary);
-}
-
-.gv-track__lat-value--small {
-  font-size: var(--fs-l);
 }
 
 .gv-track__lat-unit {
@@ -465,6 +460,47 @@
 
 .is-flat .gv-track__foot {
   margin-top: var(--space-6);
+}
+
+/* Низкое окно ноутбука или проектора (1366 × 657): заголовок в строку, схема уже, отступы плотнее */
+@media (max-height: 760px) and (min-width: 769px) {
+  .gv-track__top {
+    padding-top: var(--space-3);
+  }
+
+  .gv-track__top .gv-head__title {
+    max-width: none;
+    font-size: var(--fs-xl);
+  }
+
+  .gv-track__viewport {
+    padding-block: var(--space-2);
+  }
+
+  .gv-track__card {
+    padding: var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .gv-track__card--fig {
+    grid-template-columns: minmax(7rem, 12rem) minmax(0, 1fr);
+  }
+
+  .gv-track__body {
+    gap: var(--space-3);
+  }
+
+  .gv-track__param {
+    padding-block: 0.3125rem;
+  }
+
+  .gv-track__foot {
+    padding-bottom: var(--space-3);
+  }
+
+  .gv-track__total-value {
+    font-size: var(--fs-xl);
+  }
 }
 
 @media (max-width: 1099px) {

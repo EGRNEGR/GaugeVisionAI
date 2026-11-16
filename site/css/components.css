@@ -102,9 +102,15 @@
   gap: var(--space-2);
 }
 
+/* Колонки по ширине самой группы (container query в rem — учитывает масштаб Tweaks):
+   точность — 3 в ряд, скорость — 4 в ряд, уже — по две */
+.gv-metrics__group {
+  container-type: inline-size;
+}
+
 .gv-metrics__list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-4);
   margin: 0;
 }
@@ -265,11 +271,6 @@
   gap: var(--space-6);
 }
 
-.gv-compare__switch {
-  display: flex;
-  justify-content: center;
-}
-
 /* Две колонки рядом; активная (переключатель) — с акцентным ободком */
 .gv-compare__cols {
   display: grid;
@@ -294,15 +295,10 @@
   border-color: var(--accent);
 }
 
-/* Телефон: видна только колонка, выбранная переключателем */
+/* Телефон: колонки стопкой, обе цены видны рядом с итогом */
 @media (max-width: 760px) {
   .gv-compare__cols {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .gv-compare[data-mode="before"] .gv-compare__col--after,
-  .gv-compare[data-mode="after"] .gv-compare__col--before {
-    display: none;
   }
 }
 
@@ -436,7 +432,6 @@
 }
 
 .gv-compare__illustrative {
-  margin-left: auto;
   padding: 0.125rem 0.5rem;
   border: 1px dashed var(--border-strong);
   border-radius: var(--radius-s);
@@ -681,7 +676,6 @@
   margin: -0.25rem 0 0 -0.25rem;
   border-radius: 50%;
   background: var(--accent);
-  box-shadow: 0 0 0.75rem 0.0625rem rgba(255, 90, 31, 0.55);
   opacity: 0;
   pointer-events: none;
   will-change: transform, opacity;
@@ -700,7 +694,6 @@
   color: var(--text-primary);
   text-align: left;
   overflow: hidden;
-  transition: opacity var(--dur-fast) var(--ease-out);
 }
 
 .gv-architecture__node[data-group="server"] {
@@ -725,15 +718,20 @@
   outline-offset: 0.125rem;
 }
 
+/* Несвязанные узлы гаснут рамкой и фоном, текст держит контраст >= 4,5 : 1 (без opacity) */
 .gv-architecture[data-active] .gv-architecture__node:not(.is-linked) {
-  opacity: 0.45;
+  border-color: var(--border-hairline);
+  background: var(--bg-canvas);
+}
+
+.gv-architecture[data-active] .gv-architecture__node:not(.is-linked) .gv-architecture__label {
+  color: var(--text-muted);
 }
 
 .gv-architecture__group {
   font-family: var(--font-mono);
   font-size: var(--fs-2xs);
   line-height: 1.2;
-  letter-spacing: 0.04em;
   color: var(--text-faint);
   white-space: nowrap;
   overflow: hidden;
@@ -747,6 +745,15 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Узкая раскладка: узел уже, отступы плотнее — подписи не уходят в многоточие при масштабе 125 % */
+.gv-architecture[data-layout="narrow"] .gv-architecture__node {
+  padding: 0 var(--space-2);
+}
+
+.gv-architecture[data-layout="narrow"] .gv-architecture__label {
+  letter-spacing: -0.01em;
 }
 
 .gv-architecture__node[data-group="server"] .gv-architecture__label,
@@ -1200,6 +1207,25 @@
    Адаптив
    ====================================================================== */
 
+@container (min-width: 52rem) {
+  .gv-metrics__group--quality .gv-metrics__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@container (min-width: 72rem) {
+  .gv-metrics__group--speed .gv-metrics__list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* По две в ряд: нечётная последняя карточка — на всю строку, без «сироты» */
+@container (max-width: 51.99rem) {
+  .gv-metrics__list > .gv-metrics__item:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
 /* Широкий экран: «выбрали → платим» подписаны в шапке блока, в строках метки только для чтения с экрана */
 @media (min-width: 761px) {
   .gv-limits__trade-btn .gv-limits__trade-key {
@@ -1304,11 +1330,6 @@
 
   .gv-metrics__item {
     padding: var(--space-4) var(--space-3);
-  }
-
-  /* Нечётная последняя карточка — на всю строку, без «сироты» в половину ширины */
-  .gv-metrics__list > .gv-metrics__item:last-child:nth-child(odd) {
-    grid-column: 1 / -1;
   }
 
   .gv-metrics__digits {

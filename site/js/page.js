@@ -100,8 +100,9 @@
     /* ---------- секции ---------- */
 
     function headCore(sec, pinned) {
+      // В закреплённой сцене номер не ставится: надзаголовок над h2 — шум, номер раздела уже в телеметрии
       return h('header', { class: ['gv-head', pinned ? 'gv-head--pinned' : null] },
-        h('span', { class: 'gv-head__index', 'aria-hidden': 'true' }, sec.index),
+        pinned ? null : h('span', { class: 'gv-head__index', 'aria-hidden': 'true' }, sec.index),
         h('h2', { class: 'gv-head__title', id: 'gv-' + sec.id + '-title', 'data-reveal': 'words' }, sec.title));
     }
 

@@ -2,7 +2,7 @@
  * GV.components.pipelineTrack — #pipeline: четыре карточки математики конвейера на закреплённом
  * горизонтальном треке. mount(el, { head }) → { destroy() }
  *
- * Сцена .gv-track высотой (N + 1) × 100vh, внутри sticky-сцена: сверху заголовок секции (head от GV.page)
+ * Сцена .gv-track высотой (N + 0,5) × 75vh, внутри sticky-сцена: сверху заголовок секции (head от GV.page)
  * и шаги 01–04 с именами, по центру трек, снизу итог конвейера. Прогресс GV.motion.pinProgress
  * округляется до шага, «шаг» s догоняет его на пружине. По s:
  *   · трек едет translateX так, что точка s трека стоит в центре кадра: в покое активная карточка
@@ -18,7 +18,7 @@
  *   · линия под шагами растёт scaleX, кнопка активного шага подсвечена.
  * Кнопки шагов — нативные <button>: клик прокручивает страницу к шагу.
  * Подписи и формулы — GV.content.pipelineCards, итог — pipelineTotal. Ничего не выдумано:
- * задержка только замеренная, у карточек 02 и 03 — «в составе» общего итога.
+ * задержка только замеренная; у карточек 02 и 03 своего замера нет — они входят в итог внизу сцены.
  * Двигаются только transform и opacity; геометрия кэшируется на resize (ResizeObserver).
  * reduced motion: вертикальный список без закрепления и шагов, схемы в конечном состоянии.
  */
@@ -34,7 +34,6 @@
   var T = {
     steps: 'Шаги конвейера',
     step: 'Шаг',
-    within: 'в составе',
     tag: 'gauge'
   };
 
@@ -216,16 +215,11 @@
     /* ---------- разметка ---------- */
 
     function latency(card) {
-      if (card.latency) {
-        return h('p', { class: 'gv-track__latency' },
-          h('span', { class: 'gv-track__lat-value' }, card.latency.value),
-          h('span', { class: 'gv-track__lat-unit' }, card.latency.unit),
-          h('span', { class: 'gv-track__lat-note' }, card.latency.note));
-      }
-      return h('p', { class: 'gv-track__latency gv-track__latency--shared' },
-        h('span', { class: 'gv-track__lat-unit' }, T.within),
-        h('span', { class: 'gv-track__lat-value gv-track__lat-value--small' }, total.value),
-        h('span', { class: 'gv-track__lat-unit' }, total.unit));
+      if (!card.latency) return null;
+      return h('p', { class: 'gv-track__latency' },
+        h('span', { class: 'gv-track__lat-value' }, card.latency.value),
+        h('span', { class: 'gv-track__lat-unit' }, card.latency.unit),
+        h('span', { class: 'gv-track__lat-note' }, card.latency.note));
     }
 
     var rims = [];

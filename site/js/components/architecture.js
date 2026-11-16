@@ -24,7 +24,6 @@
   var PULSE_GAP = 7;      // rem паузы между пробегами
   var PULSE_FADE = 1;     // rem появления и затухания на концах
   var T = {
-    hint: 'Наведите на узел или перейдите к нему клавишей Tab — подсветятся связи.',
     diagram: 'Схема архитектуры GaugeVision AI',
     incoming: 'Получает',
     outgoing: 'Передаёт',
@@ -41,6 +40,8 @@
     var byId = {};
     nodes.forEach(function (n) { byId[n.id] = n; });
     var captionId = u.uid('gv-arch-caption');
+    // Касание без наведения: подсказка говорит о касании, а не о курсоре и Tab
+    var coarse = typeof window.matchMedia === 'function' && !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
     var markerId = u.uid('gv-arch-arrow');
     var active = null;
     var pinned = null;
@@ -192,7 +193,7 @@
     function renderCaption(id) {
       caption.textContent = '';
       if (!id) {
-        caption.appendChild(h('p', { class: 'gv-architecture__hint' }, T.hint));
+        caption.appendChild(h('p', { class: 'gv-architecture__hint' }, coarse ? arch.hintTouch : arch.hint));
         return;
       }
       var n = byId[id];
