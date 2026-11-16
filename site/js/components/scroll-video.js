@@ -10,7 +10,7 @@
  * Поверх — ровно три элемента: h1, одна строка сути и индикатор прокрутки (подпись + шкала прогресса).
  * Прогресс индикатора — CSS-переменная --hero-p (0..1) на .gv-hero__scroll: шкала заливается
  * transform: scaleY на широких экранах и scaleX на телефоне (там индикатор — строка под текстом).
- * Ближе к концу HUD гаснет, кадр уходит в темноту — из неё проявляется прибор сцены «Показание».
+ * Ближе к концу HUD гаснет, кадр и затемнение тают в фон страницы — из него проявляется прибор сцены «Показание».
  * Ошибка видео или prefers-reduced-motion — только постер, секция data-static (100vh, без закрепления).
  * Движение — только transform и opacity.
  *
@@ -58,13 +58,12 @@
     var indicator = h('div', { class: 'gv-hero__scroll', 'aria-hidden': 'true' },
       h('span', { class: 'gv-hero__scroll-label' }, hero.scrollLabel),
       h('span', { class: 'gv-hero__scroll-track' }, fill));
-    var dusk = h('div', { class: 'gv-hero__dusk', 'aria-hidden': 'true' });
     var media = h('div', { class: 'gv-hero__media' });
+    var scrim = h('div', { class: 'gv-hero__scrim', 'aria-hidden': 'true' });
     var stage = h('div', { class: 'gv-hero__stage' },
       media,
-      h('div', { class: 'gv-hero__scrim', 'aria-hidden': 'true' }),
-      h('div', { class: 'gv-container gv-hero__hud' }, heading, line, indicator),
-      dusk);
+      scrim,
+      h('div', { class: 'gv-container gv-hero__hud' }, heading, line, indicator));
     var scene = h('div', { class: 'gv-hero' }, stage);
     el.appendChild(scene);
 
@@ -83,7 +82,7 @@
       if (section) section.setAttribute('data-static', '');
       heading.style.opacity = line.style.opacity = '';
       heading.style.transform = line.style.transform = '';
-      dusk.style.opacity = '';
+      media.style.opacity = scrim.style.opacity = '';
       indicator.style.removeProperty('--hero-p');
     }
 
@@ -158,7 +157,9 @@
       var lift = 'translate3d(0,' + (-out * 2).toFixed(3) + 'rem,0)';
       heading.style.transform = lift;
       line.style.transform = lift;
-      dusk.style.opacity = smooth(0.8, 1, p).toFixed(3);
+      var frame = (1 - smooth(0.8, 1, p)).toFixed(3);
+      media.style.opacity = frame;
+      scrim.style.opacity = frame;
     }
 
     offs.push(motion.onScroll(function () {

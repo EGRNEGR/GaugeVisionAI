@@ -14,6 +14,7 @@
  *   reveal(rootEl, selector = '[data-reveal]') → off       каскад по словам или элементам, шаг 60 мс, один раз
  *   counter(el, { to, from, digits, display, duration, format }) → off   докрутка до display при появлении
  *   spotlight(rootEl, selector) → off             пятно света по ободку карточки за курсором (transform)
+ *   cursorLight(lightEl) → off                    светлое пятно фона за курсором (transform), только мышь
  *
  * При reduced(): pinProgress → 1, spring.step → цель, reveal и counter сразу ставят конечное состояние.
  */
@@ -349,6 +350,64 @@
     };
   }
 
+  /* ---------- Свет фона за курсором ---------- */
+
+  /*
+   * lightEl лежит в неподвижном слое на весь экран, поэтому координаты — прямо clientX/clientY.
+   * Пятно догоняет курсор с коротким затуханием (при reduced() — встаёт сразу); слой получает is-lit,
+   * пока мышь над окном. Палец и стилус без наведения пятна не зажигают.
+   */
+  function cursorLight(lightEl) {
+    var host = lightEl && lightEl.parentNode;
+    if (!host || (finePointer && !finePointer.matches)) return function () {};
+    var x = 0;
+    var y = 0;
+    var tx = 0;
+    var ty = 0;
+    var placed = false;
+    var offFrame = null;
+
+    function place() {
+      lightEl.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+    }
+    function paint(dt) {
+      var k = reduced() ? 1 : 1 - Math.exp(-dt * 14);
+      x += (tx - x) * k;
+      y += (ty - y) * k;
+      if (Math.abs(tx - x) < 0.5 && Math.abs(ty - y) < 0.5) {
+        x = tx;
+        y = ty;
+        if (offFrame) { offFrame(); offFrame = null; }
+      }
+      place();
+    }
+    function onMove(e) {
+      if (e.pointerType === 'touch') return;
+      tx = e.clientX;
+      ty = e.clientY;
+      if (!placed) { x = tx; y = ty; placed = true; place(); }
+      host.classList.add('is-lit');
+      if (!offFrame) offFrame = onFrame(paint);
+    }
+    function onOut(e) {
+      if (!e.relatedTarget) host.classList.remove('is-lit');
+    }
+    function onBlur() {
+      host.classList.remove('is-lit');
+    }
+    document.addEventListener('pointermove', onMove, { passive: true });
+    document.addEventListener('pointerout', onOut, { passive: true });
+    root.addEventListener('blur', onBlur);
+    return function off() {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerout', onOut);
+      root.removeEventListener('blur', onBlur);
+      if (offFrame) offFrame();
+      offFrame = null;
+      onBlur();
+    };
+  }
+
   motion.onFrame = onFrame;
   motion.onScroll = onScroll;
   motion.measure = measure;
@@ -357,4 +416,5 @@
   motion.reveal = reveal;
   motion.counter = counter;
   motion.spotlight = spotlight;
+  motion.cursorLight = cursorLight;
 })();

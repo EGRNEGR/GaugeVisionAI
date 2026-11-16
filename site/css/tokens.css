@@ -15,7 +15,7 @@
   --border-strong: rgba(230, 234, 239, 0.16);
   --text-primary: #E6EAEF;
   --text-muted: #A1A9B4;
-  --text-faint: #868E99;
+  --text-faint: #8D95A0;
 
   /* Единственный тёплый акцент — цвет стрелки */
   --accent: #FF5A1F;
@@ -32,6 +32,16 @@
   --glow-warm: rgba(255, 90, 31, 0.09);
   --glow-cool: rgba(150, 178, 205, 0.06);
   --surface-card: linear-gradient(90deg, transparent, var(--edge-light) 50%, transparent) top / 100% 1px no-repeat, var(--bg-surface);
+
+  /* Фон страницы — неподвижный слой на весь экран: сверху обсидиан (шапка на нём без шва), к низу —
+     жжёный оранжевый. Пятно за курсором светлее фона. Худшая точка (низ экрана + центр пятна) держит
+     --text-faint и --accent >= 4,5 : 1 — ярче их не делать. */
+  --bg-ambient:
+    radial-gradient(120% 75% at 85% 115%, rgba(255, 90, 31, 0.06), transparent 70%),
+    radial-gradient(70% 55% at 0% 0%, rgba(255, 90, 31, 0.05), transparent 70%),
+    linear-gradient(172deg, #090B0E 0%, #0C0B0D 45%, #150C08 100%);
+  --glow-cursor: rgba(255, 138, 76, 0.16);
+  --glow-cursor-edge: rgba(255, 110, 50, 0.05);
 
   /* Шрифты: Onest + IBM Plex Mono (Tweaks меняет пару) */
   --font-sans: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;

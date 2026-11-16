@@ -189,7 +189,10 @@
           h('span', null, c.meta.name + NBSP + 'v' + c.meta.version),
           license ? kit.extLink({ class: 'gv-footer__license', href: license.href }, license.label) : null)));
 
-    var page = h('div', { class: 'gv-page' }, header, main, footer);
+    // Фон страницы: градиент и светлое пятно за курсором — слой под всем содержимым
+    var light = h('span', { class: 'gv-ambient__light' });
+    var ambient = h('div', { class: 'gv-ambient', 'aria-hidden': 'true' }, light);
+    var page = h('div', { class: 'gv-page' }, ambient, header, main, footer);
     root.appendChild(page);
 
     /* ---------- навигация, телеметрия, появление заголовков ---------- */
@@ -220,6 +223,7 @@
     }));
 
     offs.push(motion.reveal(main));
+    offs.push(motion.cursorLight(light));
 
     /* Переход по якорю из адреса. Битый адрес (#%E0) не роняет страницу — хэш просто игнорируется. */
     var raw = (window.location.hash || '').slice(1);

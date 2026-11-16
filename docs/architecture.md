@@ -17,7 +17,7 @@
 
 ## Модули
 
-- `GV.motion` (`js/motion.js`) — `reduced`, `onFrame(fn(dt, now)) → off`, `onScroll`, `measure`, `viewport`, `pinProgress(sectionEl)` 0..1, `spring`, `reveal`, `counter`, `spotlight`. Единственный rAF-цикл: спит, когда подписчиков нет; `dt` ≤ 1/20 с. Чистые `reduced` и `spring` работают и без DOM (на них тест).
+- `GV.motion` (`js/motion.js`) — `reduced`, `onFrame(fn(dt, now)) → off`, `onScroll`, `measure`, `viewport`, `pinProgress(sectionEl)` 0..1, `spring`, `reveal`, `counter`, `spotlight`, `cursorLight(lightEl)` (пятно фона за курсором; слой `.gv-ambient` создаёт `GV.page`). Единственный rAF-цикл: спит, когда подписчиков нет; `dt` ≤ 1/20 с. Чистые `reduced` и `spring` работают и без DOM (на них тест).
 - `GV.components.<name>.mount(el, options) → { destroy() }`; BEM-классы `gv-<name>__*`. Данные берёт из `GV.content`, страница их не передаёт.
 - `scrollVideo` (`#hero`) — видео перематывается по `pinProgress`: `currentTime` догоняет цель с инерцией, пишется только если `!video.seeking`. Источник по `max-width: 768px`. Ошибка видео или reduced motion — постер, `data-static` на секции. Экспорт `timeFor(progress, duration)`.
 - `precisionDial` (`#reading`) — SVG-прибор, стрелка на `spring`; цель — прогресс прокрутки, затем курсор (`angleFromPointer`, `clampAngle`) или клавиши ←/→/Home/End (`role="slider"`). Возврат `{ destroy, setValue(v) }`.

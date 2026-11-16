@@ -1,10 +1,12 @@
 /*
  * #hero — ролик на прокрутке (GV.components.scrollVideo) и HUD поверх.
  * Сцена 280vh, кадр закреплён под шапкой (sticky). Поверх видео только три элемента: h1, одна строка
- * сути и индикатор прокрутки (подпись + шкала). JS двигает только transform и opacity (HUD, затемнение),
+ * сути и индикатор прокрутки (подпись + шкала). JS двигает только transform и opacity (HUD, гашение кадра),
  * шкалу индикатора — через --hero-p (0..1) в transform: scaleY на широких экранах, scaleX на телефоне.
  * Низ HUD не заходит в угол кнопки Tweaks (--tweaks-clearance из tweaks.css).
  * data-static (ошибка видео или «уменьшить движение»): постер, один экран, без закрепления.
+ * Своего фона у сцены нет: низ кадра растворяется маской в фон страницы (.gv-ambient), в конце прокрутки
+ * гаснет сам кадр — сплошной плашки цвета фона на тёплом градиенте нет, шва тоже.
  */
 
 :root {
@@ -29,8 +31,14 @@
   height: calc(100vh - var(--pin-top));
   height: calc(100svh - var(--pin-top));
   overflow: hidden;
-  background: var(--bg-canvas);
   isolation: isolate;
+}
+
+/* Низ кадра уходит в прозрачность: под ним фон страницы, а не плашка цвета фона */
+.gv-hero__media,
+.gv-hero__scrim {
+  -webkit-mask-image: linear-gradient(0deg, transparent 0%, #000 24%);
+  mask-image: linear-gradient(0deg, transparent 0%, #000 24%);
 }
 
 .gv-hero__media {
@@ -46,10 +54,9 @@
   height: 100%;
   object-fit: cover;
   object-position: 42% 50%;
-  background: var(--bg-canvas);
 }
 
-/* Затемнение для читаемости HUD: снизу к фону страницы, слева мягче, сверху под шапкой */
+/* Затемнение для читаемости HUD: снизу, слева мягче, сверху под шапкой (низ обрезает та же маска) */
 .gv-hero__scrim {
   position: absolute;
   inset: 0;
@@ -57,18 +64,8 @@
   pointer-events: none;
   background:
     linear-gradient(180deg, rgba(9, 11, 14, 0.55) 0%, rgba(9, 11, 14, 0) 18%),
-    linear-gradient(0deg, var(--bg-canvas) 0%, rgba(9, 11, 14, 0.82) 22%, rgba(9, 11, 14, 0.25) 52%, rgba(9, 11, 14, 0) 70%),
+    linear-gradient(0deg, rgba(9, 11, 14, 0.82) 22%, rgba(9, 11, 14, 0.25) 52%, rgba(9, 11, 14, 0) 70%),
     linear-gradient(90deg, rgba(9, 11, 14, 0.8) 0%, rgba(9, 11, 14, 0.5) 40%, rgba(9, 11, 14, 0) 70%);
-}
-
-/* Камера отъехала — кадр уходит в темноту, из неё проявляется прибор следующей сцены */
-.gv-hero__dusk {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-  background: var(--bg-canvas);
-  opacity: 0;
 }
 
 /* ---------- HUD ---------- */
@@ -158,8 +155,7 @@
   min-height: 32rem;
 }
 
-.gv-hero[data-static] .gv-hero__scroll,
-.gv-hero[data-static] .gv-hero__dusk {
+.gv-hero[data-static] .gv-hero__scroll {
   display: none;
 }
 
