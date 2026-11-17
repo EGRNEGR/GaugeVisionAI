@@ -20,9 +20,10 @@
   var KEY_ON = 'gv.tweaks.on';
   var NBSP = ' ';
 
-  var DEFAULTS = { font: 'auto', scale: 1, ambient: 'warm' };
+  /* Умолчания посетителя — Manrope, 110 %, «Чертёж»; их же ставит <html> в index.html до скрипта. */
+  var DEFAULTS = { font: 'manrope', scale: 1.1, ambient: 'blueprint' };
 
-  /* 'auto' — шрифт страницы по умолчанию (Onest); в панели он отмечен на чипе Onest. */
+  /* 'auto' — сохранённое старыми версиями «шрифт CSS» (Onest); в панели он отмечен на чипе Onest. */
   var VALID = {
     font: ['auto', 'onest', 'manrope', 'plex'],
     scale: [0.9, 1, 1.1, 1.25],

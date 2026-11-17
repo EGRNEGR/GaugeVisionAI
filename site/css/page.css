@@ -213,6 +213,17 @@
   width: 2rem;
   height: 1px;
   background: var(--accent);
+  transform-origin: left center;
+  transition: transform var(--dur-xslow) var(--ease-out) var(--dur-fast);
+}
+
+/* Черта у номера секции прочерчивается вместе с появлением заголовка (GV.motion.reveal) */
+.gv-head:has(.gv-reveal) .gv-head__index::after {
+  transform: scaleX(0);
+}
+
+.gv-head:has(.gv-reveal.is-in) .gv-head__index::after {
+  transform: none;
 }
 
 .gv-head__title {
@@ -570,20 +581,18 @@ html[data-ambient="obsidian"] .gv-ambient__light {
   background: var(--accent);
   color: var(--accent-contrast);
   text-decoration: none;
-  transition: transform var(--dur-fast) var(--ease-out);
+  transform: translate3d(var(--mx, 0), var(--my, 0), 0);
 }
 
-.gv-contact__repo:hover {
-  transform: translateY(-0.125rem);
-}
-
+/* Магнит (GV.motion.magnet): кнопка тянется к курсору, иконка — сильнее, для глубины */
 .gv-contact__repo:active {
-  transform: translateY(1px);
+  transform: translate3d(var(--mx, 0), var(--my, 0), 0) scale(0.98);
 }
 
 .gv-contact__repo .gv-icon {
   width: 1.5rem;
   height: 1.5rem;
+  transform: translate3d(calc(var(--mx, 0rem) * 0.6), calc(var(--my, 0rem) * 0.6), 0);
 }
 
 .gv-contact__repo .gv-icon:not(.gv-icon--fill) {

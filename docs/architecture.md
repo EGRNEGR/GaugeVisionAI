@@ -9,7 +9,7 @@
 - `site/js/content.js` — `GV.content`, единственный источник фактов, без DOM. Существующие поля не переименовывать: на них опирается `check.js`. `sections` — ровно 8 записей `hero, reading, pipeline, metrics, compare, architecture, limits, contact`.
 - `site/js/page.js` — `GV.page = { mounts, render(root) → cleanup }`; сам вызывается на `DOMContentLoaded`, рисует в `#gv-root`. Для каждой записи `sections` строит `<section id>` с eyebrow, заголовком `title` и монтирует модуль из `GV.page.mounts` (`hero:scrollVideo`, `reading:precisionDial`, `pipeline:pipelineTrack`, `metrics`, `compare`, `architecture`, `limits`). `contact` и футер рисует сам.
 - Модуля нет или `mount` бросил — `console.error`, секция остаётся с заголовком; hero показывает статичный h1 на постере. Битый `location.hash` страницу не роняет.
-- Inline-скрипт в `<head>` `index.html` до первой отрисовки ставит `data-font`, `data-ambient` и `--ui-scale` из localStorage `gv.tweaks`, а `data-tweaks="on"` — по адресу с `?tweaks` или флагу `gv.tweaks.on` (кнопка Tweaks видна только автору, ADR 0010).
+- `<html>` несёт умолчания Tweaks (`data-font="manrope"`, `data-ambient="blueprint"`, `--ui-scale: 1.1`); inline-скрипт в `<head>` `index.html` до первой отрисовки перекрывает их `data-font`, `data-ambient` и `--ui-scale` из localStorage `gv.tweaks`, а `data-tweaks="on"` — по адресу с `?tweaks` или флагу `gv.tweaks.on` (кнопка Tweaks видна только автору, ADR 0010).
 
 ## Порядок скриптов (`site/index.html`)
 
@@ -17,7 +17,7 @@
 
 ## Модули
 
-- `GV.motion` (`js/motion.js`) — `reduced`, `onFrame(fn(dt, now)) → off`, `onScroll`, `measure`, `viewport`, `pinProgress(sectionEl)` 0..1, `spring`, `reveal`, `counter`, `spotlight`, `cursorLight(lightEl)` (пятно фона за курсором; слой `.gv-ambient` создаёт `GV.page`, первый ребёнок пятна едет навстречу — сетка «Чертежа»), `shiftBelow(el, change, scopeEl)` (раскрытие без скачка: всё ниже `el` доезжает по `transform`). Единственный rAF-цикл: спит, когда подписчиков нет; `dt` ≤ 1/20 с. Чистые `reduced` и `spring` работают и без DOM (на них тест).
+- `GV.motion` (`js/motion.js`) — `reduced`, `onFrame(fn(dt, now)) → off`, `onScroll`, `measure`, `viewport`, `pinProgress(sectionEl)` 0..1, `spring`, `reveal`, `counter`, `spotlight`, `cursorLight(lightEl)` (пятно фона за курсором; слой `.gv-ambient` создаёт `GV.page`, первый ребёнок пятна едет навстречу — сетка «Чертежа»), `shiftBelow(el, change, scopeEl)` (раскрытие без скачка: всё ниже `el` доезжает по `transform`), `magnet(el, { pull, max })` (кнопка тянется к курсору через `--mx/--my`). Единственный rAF-цикл: спит, когда подписчиков нет; `dt` ≤ 1/20 с. Чистые `reduced` и `spring` работают и без DOM (на них тест).
 - `GV.components.<name>.mount(el, options) → { destroy() }`; BEM-классы `gv-<name>__*`. Данные берёт из `GV.content`, страница их не передаёт.
 - `scrollVideo` (`#hero`) — видео перематывается по `pinProgress`: `currentTime` догоняет цель с инерцией, пишется только если `!video.seeking`. Источник по `max-width: 768px`. Ошибка видео или reduced motion — постер, `data-static` на секции. Экспорт `timeFor(progress, duration)`.
 - `precisionDial` (`#reading`) — SVG-прибор, стрелка на `spring`; цель — прогресс прокрутки, затем курсор (`angleFromPointer`, `clampAngle`) или клавиши ←/→/Home/End (`role="slider"`). Возврат `{ destroy, setValue(v) }`.
@@ -25,7 +25,7 @@
 - `metrics`, `compare`, `architecture`, `limits` — по одной раскладке, строки таблиц на линиях 1px; движение через `GV.motion` (счётчики, `shiftBelow` у компромиссов, импульсы по рёбрам).
 - `GV.kit` (`components/kit.js`) — чистая математика калибровки (`angleToValue`, `valueToAngle`, `toBar`, `zoneOf`, `levelOf`, `emaStep`, `NBSP`; повторяет `app/vision.py`) и DOM-хелперы: `scope()` (`on/add/timeout/interval/frame/observe/destroy`, всё снимается в `destroy`), `onTweaks`, `polar`, `arcPath`, `icon`, `extLink`, `sectionNav`. Неиспользуемый экспорт `kit` валит `check.js`.
 - `GV.util` (`js/util.js`) — `h`, `svg`, `formatNumber` (запятая), `onVisible`, `rovingTabs`, `prefersReducedMotion`. `rovingTabs` вызывает `onSelect` синхронно в конструкторе, до возврата.
-- `GV.tweaks` (`js/tweaks.js`) — `{ font: auto|manrope|onest|plex, scale: 0.9|1|1.1|1.25, ambient: warm|blueprint|dial|obsidian }` в localStorage `gv.tweaks`; применяет `html[data-font]`, `html[data-ambient]` и `--ui-scale`, шлёт `document`-событие `gv:tweaks`. API `get / set / reset / open / close`. Панель — в `#gv-tweaks`, видна при `html[data-tweaks="on"]`; Shift + T переключает видимость.
+- `GV.tweaks` (`js/tweaks.js`) — `{ font: auto|manrope|onest|plex, scale: 0.9|1|1.1|1.25, ambient: warm|blueprint|dial|obsidian }` (по умолчанию `manrope`, `1.1`, `blueprint`) в localStorage `gv.tweaks`; применяет `html[data-font]`, `html[data-ambient]` и `--ui-scale`, шлёт `document`-событие `gv:tweaks`. API `get / set / reset / open / close`. Панель — в `#gv-tweaks`, видна при `html[data-tweaks="on"]`; Shift + T переключает видимость.
 
 ## CSS
 

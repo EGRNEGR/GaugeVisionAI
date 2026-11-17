@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru" data-font="auto">
+<html lang="ru" data-font="manrope" data-ambient="blueprint" style="--ui-scale: 1.1">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,6 +23,7 @@
 
   <script>
     /* Настройки Tweaks — до первой отрисовки, без скачка вёрстки. Полная логика — js/tweaks.js.
+       Умолчания (Manrope, 110 %, «Чертёж») стоят на <html>; сохранённый выбор их перекрывает.
        Кнопку Tweaks видит только автор: адрес с ?tweaks включает её на этом устройстве, ?tweaks=off — выключает. */
     (function () {
       var d = document.documentElement;

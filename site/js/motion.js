@@ -15,6 +15,7 @@
  *   counter(el, { to, from, digits, display, duration, format }) → off   докрутка до display при появлении
  *   spotlight(rootEl, selector) → off             пятно света по ободку карточки за курсором (transform)
  *   cursorLight(lightEl) → off                    светлое пятно фона за курсором (transform), только мышь
+ *   magnet(el, { pull, max }) → off               кнопка тянется к курсору (доля pull, не дальше max rem), только мышь
  *   shiftBelow(el, change, scopeEl)               change() меняет высоту el, всё ниже доезжает по transform
  *
  * При reduced(): pinProgress → 1, spring.step → цель, reveal и counter сразу ставят конечное состояние.
@@ -447,6 +448,68 @@
     }, 400);
   }
 
+  /* ---------- Магнит ---------- */
+
+  // Смещение — доля pull от расстояния курсора до центра кнопки; CSS собирает из --mx/--my transform.
+  // Центр считается без текущего смещения, иначе кнопка убегала бы от собственного сдвига.
+  function clampAbs(v, lim) {
+    return v > lim ? lim : (v < -lim ? -lim : v);
+  }
+
+  function magnet(el, opts) {
+    if (!el || reduced() || (finePointer && !finePointer.matches)) return function () {};
+    var pull = (opts && opts.pull) || 0.25;
+    var maxRem = (opts && opts.max) || 0.5;
+    var limit = 8;
+    var x = 0;
+    var y = 0;
+    var tx = 0;
+    var ty = 0;
+    var offFrame = null;
+
+    function paint(dt) {
+      var k = 1 - Math.exp(-dt * 12);
+      x += (tx - x) * k;
+      y += (ty - y) * k;
+      if (Math.abs(tx - x) < 0.1 && Math.abs(ty - y) < 0.1) {
+        x = tx;
+        y = ty;
+        if (offFrame) { offFrame(); offFrame = null; }
+      }
+      el.style.setProperty('--mx', x.toFixed(2) + 'px');
+      el.style.setProperty('--my', y.toFixed(2) + 'px');
+    }
+    function wake() {
+      if (!offFrame) offFrame = onFrame(paint);
+    }
+    function onMove(e) {
+      if (e.pointerType === 'touch') return;
+      var box = el.getBoundingClientRect();
+      tx = clampAbs((e.clientX - (box.left - x) - box.width / 2) * pull, limit);
+      ty = clampAbs((e.clientY - (box.top - y) - box.height / 2) * pull, limit);
+      wake();
+    }
+    function onEnter() {
+      limit = maxRem * (parseFloat(root.getComputedStyle(document.documentElement).fontSize) || 16);
+    }
+    function onLeave() {
+      tx = 0;
+      ty = 0;
+      wake();
+    }
+    el.addEventListener('pointerenter', onEnter, { passive: true });
+    el.addEventListener('pointermove', onMove, { passive: true });
+    el.addEventListener('pointerleave', onLeave, { passive: true });
+    return function off() {
+      el.removeEventListener('pointerenter', onEnter);
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerleave', onLeave);
+      if (offFrame) { offFrame(); offFrame = null; }
+      el.style.removeProperty('--mx');
+      el.style.removeProperty('--my');
+    };
+  }
+
   motion.onFrame = onFrame;
   motion.onScroll = onScroll;
   motion.measure = measure;
@@ -456,5 +519,6 @@
   motion.counter = counter;
   motion.spotlight = spotlight;
   motion.cursorLight = cursorLight;
+  motion.magnet = magnet;
   motion.shiftBelow = shiftBelow;
 })();

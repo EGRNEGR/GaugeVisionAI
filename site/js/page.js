@@ -168,13 +168,14 @@
     var repo = links.filter(function (l) { return l.primary; })[0];
     var license = links.filter(function (l) { return l.id === 'license'; })[0];
     var contactSec = byId.contact;
+    var repoLink;
     var contact = h('section', { id: 'contact', class: 'gv-section gv-section--contact gv-contact', 'aria-labelledby': 'gv-contact-title' },
       h('div', { class: 'gv-contact__backdrop', 'aria-hidden': 'true' },
         h('img', { src: c.contact.backdrop, alt: '', loading: 'lazy', decoding: 'async' })),
       h('span', { class: 'gv-glow gv-glow--' + GLOWS.contact, 'aria-hidden': 'true' }),
       head(contactSec),
       h('div', { class: 'gv-container gv-contact__inner' },
-        kit.extLink({ class: 'gv-contact__repo', href: repo.href },
+        repoLink = kit.extLink({ class: 'gv-contact__repo', href: repo.href },
           kit.icon('github'),
           h('span', { class: 'gv-contact__repo-label' }, repo.label),
           h('span', { class: 'gv-contact__repo-url' }, repo.href.replace(/^https?:\/\//, ''))),
@@ -248,6 +249,7 @@
 
     offs.push(motion.reveal(main));
     offs.push(motion.cursorLight(light));
+    offs.push(motion.magnet(repoLink, { pull: 0.25 }));
 
     /* Переход по якорю из адреса. Битый адрес (#%E0) не роняет страницу — хэш просто игнорируется. */
     var raw = (window.location.hash || '').slice(1);

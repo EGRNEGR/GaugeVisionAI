@@ -108,6 +108,8 @@
   --dur-fast: 160ms;
   --dur-med: 320ms;
   --dur-slow: 600ms;
+  --dur-xslow: 1000ms;
+  --dur-crawl: 1400ms;
 
   /* Хром */
   --tap: calc(2.75 * var(--chrome-u));

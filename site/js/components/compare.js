@@ -4,12 +4,16 @@
  * Две колонки «Было» и «Стало» всегда видны (на телефоне — стопкой): пункты и стоимость точки (оценка
  * команды), ниже — итог −89 %. Под ним шкала смены 12 ч с подписью «Иллюстративный сценарий»; переключатель
  * «Было / Стало» стоит в шапке шкалы: ведёт отметку «Обнаружено» и подсвечивает свою колонку. Стартует с «Было».
+ * Переключатель — капсула с бегунком (transform); отметка едет медленно (--dur-crawl), доехав — расходится
+ * кольцом-пингом. Цены и итог докручиваются от нуля GV.motion.counter; ширину держит невидимый конечный текст.
  */
 (function () {
   'use strict';
 
   var GV = (window.GV = window.GV || {});
   GV.components = GV.components || {};
+
+  var NUMBER_RE = /\d[\d \u00a0]*\d|\d/;
 
   var T = {
     modeGroup: 'Сценарий',
@@ -24,6 +28,17 @@
     var cmp = c.compare;
     var tl = cmp.timeline;
     var sc = kit.scope();
+    var counters = [];
+
+    /* Число с докруткой: живой текст поверх невидимого конечного, читающим экран — конечная строка */
+    function countUp(cls, text) {
+      var live = h('span', { class: 'gv-compare__count-live', 'aria-hidden': 'true' }, text);
+      counters.push({ el: live, text: text });
+      return h('span', { class: [cls, 'gv-compare__count'] },
+        h('span', { class: 'gv-compare__count-ghost', 'aria-hidden': 'true' }, text),
+        live,
+        h('span', { class: 'gv-visually-hidden' }, text));
+    }
 
     /* ---------- колонки ---------- */
 
@@ -34,7 +49,7 @@
         h('ul', { class: 'gv-compare__points', role: 'list' },
           data.points.map(function (p) { return h('li', { class: 'gv-compare__point' }, p); })),
         h('p', { class: 'gv-compare__cost' },
-          h('span', { class: 'gv-compare__cost-value' }, data.cost.value),
+          countUp('gv-compare__cost-value', data.cost.value),
           h('span', { class: 'gv-compare__cost-unit' }, data.cost.unit)),
         h('p', { class: 'gv-compare__cost-note' }, data.cost.note));
     }
@@ -44,7 +59,7 @@
 
     var saving = h('div', { class: 'gv-compare__saving' },
       cmp.saving ? h('p', { class: 'gv-compare__saving-value' },
-        h('span', { class: 'gv-compare__saving-num' }, cmp.saving.value),
+        countUp('gv-compare__saving-num', cmp.saving.value),
         h('span', { class: 'gv-compare__saving-label' }, cmp.saving.label)) : null,
       h('p', { class: 'gv-compare__saving-note' }, cmp.savingNote));
 
@@ -79,7 +94,8 @@
 
     var btnBefore = h('button', { type: 'button', class: 'gv-compare__mode', 'aria-pressed': 'false', 'data-mode': 'before' }, tl.beforeLabel);
     var btnAfter = h('button', { type: 'button', class: 'gv-compare__mode', 'aria-pressed': 'false', 'data-mode': 'after' }, tl.afterLabel);
-    var modes = h('div', { class: 'gv-compare__modes', role: 'group', 'aria-label': T.modeGroup }, btnBefore, btnAfter);
+    var modes = h('div', { class: 'gv-compare__modes', role: 'group', 'aria-label': T.modeGroup },
+      h('span', { class: 'gv-compare__thumb', 'aria-hidden': 'true' }), btnBefore, btnAfter);
 
     var timeline = h('div', { class: 'gv-compare__timeline' },
       h('div', { class: 'gv-compare__timeline-head' },
@@ -95,14 +111,28 @@
       timeline);
     el.appendChild(rootEl);
 
+    /* Класс анимации снимается и ставится заново через перерасчёт стиля — так она играет при каждом переключении */
+    function replay(node, cls) {
+      node.classList.remove(cls);
+      void node.offsetWidth;
+      node.classList.add(cls);
+    }
+
+    var started = false;
     function apply(next) {
       rootEl.setAttribute('data-mode', next);
       var before = next === 'before';
       detect.style.setProperty('--pos', pos(before ? nextRound : tl.deviationHour));
       tlText.textContent = before ? tl.beforeText : tl.afterText;
+      if (started) replay(tlText, 'is-swap');
+      started = true;
       colBefore.classList.toggle('is-active', before);
       colAfter.classList.toggle('is-active', !before);
     }
+
+    sc.on(detect, 'transitionend', function (e) {
+      if (e.target === detect && e.propertyName === 'transform') replay(detect, 'is-ping');
+    });
 
     var roving = u.rovingTabs(modes, {
       selector: '.gv-compare__mode',
@@ -111,6 +141,18 @@
       onSelect: function (i) { apply(i === 0 ? 'before' : 'after'); }
     });
     sc.add(roving.destroy);
+
+    counters.forEach(function (n) {
+      var m = n.text.match(NUMBER_RE);
+      if (!m) return;
+      var value = Number(m[0].replace(/\D/g, ''));
+      sc.add(GV.motion.counter(n.el, {
+        to: 1,
+        display: n.text,
+        duration: 1600,
+        format: function (t) { return n.text.replace(m[0], fmt(Math.round(value * t))); }
+      }));
+    });
 
     return {
       destroy: function () {
