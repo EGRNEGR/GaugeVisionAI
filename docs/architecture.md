@@ -9,7 +9,7 @@
 - `site/js/content.js` — `GV.content`, единственный источник фактов, без DOM. Существующие поля не переименовывать: на них опирается `check.js`. `sections` — ровно 8 записей `hero, reading, pipeline, metrics, compare, architecture, limits, contact`.
 - `site/js/page.js` — `GV.page = { mounts, render(root) → cleanup }`; сам вызывается на `DOMContentLoaded`, рисует в `#gv-root`. Для каждой записи `sections` строит `<section id>` с eyebrow, заголовком `title` и монтирует модуль из `GV.page.mounts` (`hero:scrollVideo`, `reading:precisionDial`, `pipeline:pipelineTrack`, `metrics`, `compare`, `architecture`, `limits`). `contact` и футер рисует сам.
 - Модуля нет или `mount` бросил — `console.error`, секция остаётся с заголовком; hero показывает статичный h1 на постере. Битый `location.hash` страницу не роняет.
-- Inline-скрипт в `<head>` `index.html` до первой отрисовки ставит `data-font`, `data-heading`, `data-ambient` и `--ui-scale` из localStorage `gv.tweaks`, а `data-tweaks="on"` — по адресу с `?tweaks` или флагу `gv.tweaks.on` (кнопка Tweaks видна только автору, ADR 0010).
+- Inline-скрипт в `<head>` `index.html` до первой отрисовки ставит `data-font`, `data-ambient` и `--ui-scale` из localStorage `gv.tweaks`, а `data-tweaks="on"` — по адресу с `?tweaks` или флагу `gv.tweaks.on` (кнопка Tweaks видна только автору, ADR 0010).
 
 ## Порядок скриптов (`site/index.html`)
 
@@ -25,7 +25,7 @@
 - `metrics`, `compare`, `architecture`, `limits` — по одной раскладке, строки таблиц на линиях 1px; движение через `GV.motion` (счётчики, `shiftBelow` у компромиссов, импульсы по рёбрам).
 - `GV.kit` (`components/kit.js`) — чистая математика калибровки (`angleToValue`, `valueToAngle`, `toBar`, `zoneOf`, `levelOf`, `emaStep`, `NBSP`; повторяет `app/vision.py`) и DOM-хелперы: `scope()` (`on/add/timeout/interval/frame/observe/destroy`, всё снимается в `destroy`), `onTweaks`, `polar`, `arcPath`, `icon`, `extLink`, `sectionNav`. Неиспользуемый экспорт `kit` валит `check.js`.
 - `GV.util` (`js/util.js`) — `h`, `svg`, `formatNumber` (запятая), `onVisible`, `rovingTabs`, `prefersReducedMotion`. `rovingTabs` вызывает `onSelect` синхронно в конструкторе, до возврата.
-- `GV.tweaks` (`js/tweaks.js`) — `{ font: auto|manrope|onest|plex, scale: 0.9|1|1.1|1.25, heading: alegreya|text, ambient: warm|blueprint|dial|obsidian }` в localStorage `gv.tweaks`; применяет `html[data-font]`, `html[data-heading]`, `html[data-ambient]` и `--ui-scale`, шлёт `document`-событие `gv:tweaks`. API `get / set / reset / open / close`. Панель — в `#gv-tweaks`, видна при `html[data-tweaks="on"]`; Shift + T переключает видимость.
+- `GV.tweaks` (`js/tweaks.js`) — `{ font: auto|manrope|onest|plex, scale: 0.9|1|1.1|1.25, ambient: warm|blueprint|dial|obsidian }` в localStorage `gv.tweaks`; применяет `html[data-font]`, `html[data-ambient]` и `--ui-scale`, шлёт `document`-событие `gv:tweaks`. API `get / set / reset / open / close`. Панель — в `#gv-tweaks`, видна при `html[data-tweaks="on"]`; Shift + T переключает видимость.
 
 ## CSS
 

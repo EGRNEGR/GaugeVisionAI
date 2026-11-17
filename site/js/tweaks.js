@@ -1,8 +1,8 @@
 /*
- * GV.tweaks — плавающая панель Tweaks: масштаб, шрифт текста, шрифт заголовков и фон страницы.
- * Состояние { font, scale, heading, ambient } хранится в localStorage `gv.tweaks` и применяется к <html>:
- * атрибуты data-font, data-heading, data-ambient и переменная --ui-scale. Лишние ключи старых версий
- * (bg, media) игнорируются. После каждого изменения: document → CustomEvent('gv:tweaks', { detail: state }).
+ * GV.tweaks — плавающая панель Tweaks: масштаб, шрифт страницы и фон.
+ * Состояние { font, scale, ambient } хранится в localStorage `gv.tweaks` и применяется к <html>:
+ * атрибуты data-font, data-ambient и переменная --ui-scale. Лишние ключи старых версий
+ * (bg, media, heading) игнорируются. После каждого изменения: document → CustomEvent('gv:tweaks', { detail: state }).
  * Подключается до page.js и применяет состояние синхронно, до первого рендера страницы.
  *
  * Посетитель кнопку не видит: это инструмент автора. Видимость — атрибут data-tweaks="on" на <html>,
@@ -20,13 +20,12 @@
   var KEY_ON = 'gv.tweaks.on';
   var NBSP = ' ';
 
-  var DEFAULTS = { font: 'auto', scale: 1, heading: 'alegreya', ambient: 'warm' };
+  var DEFAULTS = { font: 'auto', scale: 1, ambient: 'warm' };
 
   /* 'auto' — шрифт страницы по умолчанию (Onest); в панели он отмечен на чипе Onest. */
   var VALID = {
     font: ['auto', 'onest', 'manrope', 'plex'],
     scale: [0.9, 1, 1.1, 1.25],
-    heading: ['alegreya', 'text'],
     ambient: ['warm', 'blueprint', 'dial', 'obsidian']
   };
 
@@ -42,10 +41,6 @@
       { value: 'manrope', label: 'Manrope', family: "'Manrope', sans-serif" },
       { value: 'plex', label: 'IBM Plex', family: "'IBM Plex Sans', sans-serif" }
     ],
-    heading: [
-      { value: 'alegreya', label: 'Alegreya SC', family: "'Alegreya SC', serif" },
-      { value: 'text', label: 'Как текст' }
-    ],
     ambient: [
       { value: 'warm', label: 'Тёплый' },
       { value: 'blueprint', label: 'Чертёж' },
@@ -56,8 +51,7 @@
 
   var GROUPS = [
     { key: 'scale', legend: 'Масштаб', cols: 4 },
-    { key: 'font', legend: 'Шрифт текста', cols: 3 },
-    { key: 'heading', legend: 'Заголовки', cols: 2 },
+    { key: 'font', legend: 'Шрифт', cols: 3 },
     { key: 'ambient', legend: 'Фон', cols: 2 }
   ];
 
@@ -92,14 +86,13 @@
 
   function apply(notify) {
     html.setAttribute('data-font', state.font);
-    html.setAttribute('data-heading', state.heading);
     html.setAttribute('data-ambient', state.ambient);
     html.style.setProperty('--ui-scale', String(state.scale));
     if (notify) document.dispatchEvent(new CustomEvent('gv:tweaks', { detail: get() }));
   }
 
   function get() {
-    return { font: state.font, scale: state.scale, heading: state.heading, ambient: state.ambient };
+    return { font: state.font, scale: state.scale, ambient: state.ambient };
   }
 
   function set(partial) {
