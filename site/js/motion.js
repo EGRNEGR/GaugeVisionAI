@@ -15,6 +15,7 @@
  *   counter(el, { to, from, digits, display, duration, format }) → off   докрутка до display при появлении
  *   spotlight(rootEl, selector) → off             пятно света по ободку карточки за курсором (transform)
  *   cursorLight(lightEl) → off                    светлое пятно фона за курсором (transform), только мышь
+ *   shiftBelow(el, change, scopeEl)               change() меняет высоту el, всё ниже доезжает по transform
  *
  * При reduced(): pinProgress → 1, spring.step → цель, reveal и counter сразу ставят конечное состояние.
  */
@@ -356,10 +357,13 @@
    * lightEl лежит в неподвижном слое на весь экран, поэтому координаты — прямо clientX/clientY.
    * Пятно догоняет курсор с коротким затуханием (при reduced() — встаёт сразу); слой получает is-lit,
    * пока мышь над окном. Палец и стилус без наведения пятна не зажигают.
+   * Вложенный слой пятна (первый ребёнок) едет навстречу и стоит на месте относительно экрана:
+   * пятно его не тащит, а проявляет — так фон «Чертёж» светит сеткой под курсором.
    */
   function cursorLight(lightEl) {
     var host = lightEl && lightEl.parentNode;
     if (!host || (finePointer && !finePointer.matches)) return function () {};
+    var inner = lightEl.firstElementChild;
     var x = 0;
     var y = 0;
     var tx = 0;
@@ -369,6 +373,7 @@
 
     function place() {
       lightEl.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+      if (inner) inner.style.transform = 'translate3d(' + (-x).toFixed(1) + 'px,' + (-y).toFixed(1) + 'px,0)';
     }
     function paint(dt) {
       var k = reduced() ? 1 : 1 - Math.exp(-dt * 14);
@@ -408,6 +413,40 @@
     };
   }
 
+  /*
+   * Раскрытие без скачка: change() меняет высоту el (показывает или прячет блок), а всё, что ниже el
+   * до границы scopeEl, стартует со старого места и доезжает на новое по transform (FLIP). Высота
+   * не анимируется — сдвиг одинаков для всех следующих соседей el и его предков. Фиксированные слои
+   * не трогаются. При reduced() — просто change().
+   */
+  function shiftBelow(el, change, scopeEl) {
+    if (!el) { change(); return; }
+    var scope = scopeEl || document.body;
+    var targets = [];
+    for (var node = el; node && node !== scope && node.parentElement; node = node.parentElement) {
+      for (var sib = node.nextElementSibling; sib; sib = sib.nextElementSibling) {
+        if (root.getComputedStyle(sib).position !== 'fixed') targets.push(sib);
+      }
+    }
+    var before = el.getBoundingClientRect().bottom;
+    change();
+    if (reduced() || !targets.length) return;
+    var delta = before - el.getBoundingClientRect().bottom;
+    if (Math.abs(delta) < 1) return;
+    targets.forEach(function (t) {
+      t.style.transition = 'none';
+      t.style.transform = 'translate3d(0,' + delta.toFixed(1) + 'px,0)';
+    });
+    void el.offsetHeight; // стартовое положение применено до включения перехода
+    targets.forEach(function (t) {
+      t.style.transition = 'transform var(--dur-med) var(--ease-out)';
+      t.style.transform = '';
+    });
+    root.setTimeout(function () {
+      targets.forEach(function (t) { if (!t.style.transform) t.style.transition = ''; });
+    }, 400);
+  }
+
   motion.onFrame = onFrame;
   motion.onScroll = onScroll;
   motion.measure = measure;
@@ -417,4 +456,5 @@
   motion.counter = counter;
   motion.spotlight = spotlight;
   motion.cursorLight = cursorLight;
+  motion.shiftBelow = shiftBelow;
 })();

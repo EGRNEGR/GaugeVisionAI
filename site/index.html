@@ -22,14 +22,24 @@
   <link rel="stylesheet" href="css/tweaks.css">
 
   <script>
-    /* Масштаб и шрифт из Tweaks — до первой отрисовки, без скачка вёрстки. Полная логика — js/tweaks.js. */
+    /* Настройки Tweaks — до первой отрисовки, без скачка вёрстки. Полная логика — js/tweaks.js.
+       Кнопку Tweaks видит только автор: адрес с ?tweaks включает её на этом устройстве, ?tweaks=off — выключает. */
     (function () {
       var d = document.documentElement;
+      var q = location.search;
+      var on = /[?&]tweaks(=on|=1)?(&|$)/.test(q);
+      var off = /[?&]tweaks=off(&|$)/.test(q);
       try {
+        if (on) localStorage.setItem('gv.tweaks.on', '1');
+        if (off) localStorage.removeItem('gv.tweaks.on');
+        if (localStorage.getItem('gv.tweaks.on') === '1') d.setAttribute('data-tweaks', 'on');
         var t = JSON.parse(localStorage.getItem('gv.tweaks') || '{}');
         if (['auto', 'onest', 'manrope', 'plex'].indexOf(t.font) >= 0) d.setAttribute('data-font', t.font);
         if ([0.9, 1, 1.1, 1.25].indexOf(t.scale) >= 0) d.style.setProperty('--ui-scale', String(t.scale));
+        if (['alegreya', 'text'].indexOf(t.heading) >= 0) d.setAttribute('data-heading', t.heading);
+        if (['warm', 'blueprint', 'dial', 'obsidian'].indexOf(t.ambient) >= 0) d.setAttribute('data-ambient', t.ambient);
       } catch (e) {
+        if (on) d.setAttribute('data-tweaks', 'on');
         d.setAttribute('data-boot', 'defaults');
       }
     })();

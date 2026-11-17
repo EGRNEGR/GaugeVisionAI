@@ -16,6 +16,16 @@
   }
 }
 
+/* Посетитель кнопку не видит: data-tweaks="on" ставит загрузочный скрипт (?tweaks) или Shift + T.
+   Без кнопки угол свободен — запас под неё не нужен */
+html:not([data-tweaks="on"]) {
+  --tweaks-clearance: 0rem;
+}
+
+html:not([data-tweaks="on"]) #gv-tweaks {
+  display: none;
+}
+
 #gv-tweaks {
   font-family: var(--font-chrome);
   font-size: calc(0.8125 * var(--chrome-u));

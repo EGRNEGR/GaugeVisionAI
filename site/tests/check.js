@@ -120,7 +120,7 @@ function loadMounts() {
 /* ---------- 0. форма ---------- */
 const SHAPE = {
   meta: ['name', 'repoUrl', 'licenseUrl', 'trackShort', 'copyright', 'version'],
-  hero: ['title', 'line', 'scrollLabel', 'video'],
+  hero: ['title', 'line', 'video'],
   'hero.video': ['src', 'srcMobile', 'poster', 'label'],
   reading: ['theta', 'device', 'caption'],
   calibration: ['thetaMin', 'thetaMax', 'vMin', 'vMax', 'unit', 'direction', 'setpoints', 'barPerMpa', 'formula'],

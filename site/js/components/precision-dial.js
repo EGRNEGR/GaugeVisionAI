@@ -150,7 +150,7 @@
 
     var face = s('circle', { class: 'gv-pd__face', cx: C, cy: C, r: 178, fill: url('face') });
 
-    /* Зоны уставок: CRITICAL · предупреждение · НОРМА · предупреждение · CRITICAL */
+    /* Зоны уставок: АВАРИЯ · предупреждение · НОРМА · предупреждение · АВАРИЯ */
     var edges = [vMin, sp.LL, sp.L, sp.H, sp.HH, vMax];
     var zoneIds = ['LL', 'L', 'NORMA', 'H', 'HH'];
     var zoneLevels = ['alert', 'warning', 'normal', 'warning', 'alert'];

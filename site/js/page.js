@@ -1,7 +1,7 @@
 /*
  * GV.page — одна страница «Циферблат» (бывший вариант B): шапка с навигацией и полосой телеметрии,
  * восемь секций GV.content.sections по порядку, финал с GitHub и футер.
- * Секция получает заголовок (крупный контурный номер + h2 с каскадом слов), а содержимое рисует модуль
+ * Секция получает заголовок (номер в левой колонке + h2 с каскадом слов), а содержимое рисует модуль
  * из таблицы mounts: GV.components[name].mount(body, options) → { destroy }.
  * Подключается последним и строит страницу сам на DOMContentLoaded.
  *
@@ -189,9 +189,29 @@
           h('span', null, c.meta.name + NBSP + 'v' + c.meta.version),
           license ? kit.extLink({ class: 'gv-footer__license', href: license.href }, license.label) : null)));
 
-    // Фон страницы: градиент и светлое пятно за курсором — слой под всем содержимым
-    var light = h('span', { class: 'gv-ambient__light' });
-    var ambient = h('div', { class: 'gv-ambient', 'aria-hidden': 'true' }, light);
+    /* Фон страницы — слой под всем содержимым: градиент и светлое пятно за курсором. Вариант фона из Tweaks
+       (data-ambient на <html>) включает свои слои: «Чертёж» — сетку, которую пятно проявляет под курсором,
+       «Шкала» — шкалу прибора 270°, стрелка которой показывает, сколько страницы прочитано. */
+    function dialScale(needleEl) {
+      var ticks = [];
+      for (var i = 0; i <= 50; i++) {
+        var a = (135 + i * 5.4) * Math.PI / 180;
+        var major = i % 5 === 0;
+        var r1 = major ? 80 : 85;
+        ticks.push(s('line', {
+          class: ['gv-ambient__tick', major ? 'gv-ambient__tick--major' : null],
+          x1: (Math.cos(a) * r1).toFixed(2), y1: (Math.sin(a) * r1).toFixed(2),
+          x2: (Math.cos(a) * 90).toFixed(2), y2: (Math.sin(a) * 90).toFixed(2)
+        }));
+      }
+      return s('svg', { class: 'gv-ambient__dial', viewBox: '-100 -100 200 200', focusable: 'false' },
+        s('path', { class: 'gv-ambient__arc', d: kit.arcPath(0, 0, 90, 135, 45) }), ticks, needleEl);
+    }
+    var needle = s('g', { class: 'gv-ambient__needle' },
+      s('line', { x1: -12, y1: 0, x2: 76, y2: 0 }),
+      s('circle', { cx: 0, cy: 0, r: 2.5 }));
+    var light = h('span', { class: 'gv-ambient__light' }, h('span', { class: 'gv-ambient__grid' }));
+    var ambient = h('div', { class: 'gv-ambient', 'aria-hidden': 'true' }, dialScale(needle), light);
     var page = h('div', { class: 'gv-page' }, ambient, header, main, footer);
     root.appendChild(page);
 
@@ -207,11 +227,15 @@
     var total = pad(sections.length, 2);
     var lastLabel = '';
     var lastName = '';
+    var lastAngle = '';
     offs.push(motion.onScroll(function (y) {
       var vh = motion.viewport().height;
       var doc = motion.measure(page);
       var p = Math.min(1, Math.max(0, y / Math.max(1, doc.top + doc.height - vh)));
       bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
+      // Стрелка шкалы фона: 135° — начало страницы, +270° — конец (догоняет переходом transform в css)
+      var angle = (135 + 270 * p).toFixed(1);
+      if (angle !== lastAngle) { needle.style.transform = 'rotate(' + angle + 'deg)'; lastAngle = angle; }
       var idx = 0;
       for (var i = 0; i < sectionEls.length; i++) {
         if (motion.measure(sectionEls[i]).top <= y + vh * 0.4) idx = i;

@@ -1,6 +1,7 @@
 /*
  * GaugeVision AI — токены одной страницы «Циферблат» на обсидиане.
- * Порядок слоёв: :root (обсидиан, Onest + IBM Plex Mono) → html[data-font] (шрифт из Tweaks).
+ * Порядок слоёв: :root (обсидиан, Alegreya SC + Onest + IBM Plex Mono) → html[data-font], html[data-heading]
+ * (шрифты из Tweaks) → html[data-ambient] (фон из Tweaks, css/page.css).
  * Таблица значений, контраст и правила света и движения — в site/design-system.md.
  */
 
@@ -43,9 +44,11 @@
   --glow-cursor: rgba(255, 138, 76, 0.16);
   --glow-cursor-edge: rgba(255, 110, 50, 0.05);
 
-  /* Шрифты: Onest + IBM Plex Mono (Tweaks меняет пару) */
+  /* Шрифты: заголовки — Alegreya SC (капитель с засечками), текст — Onest, цифры — IBM Plex Mono.
+     Tweaks меняет шрифт текста (data-font) и может вернуть заголовкам шрифт текста (data-heading="text") */
   --font-sans: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Alegreya SC', 'Georgia', 'Times New Roman', serif;
+  --weight-display: 700;
   --font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
   /* Хром панели Tweaks не меняет шрифт вместе со страницей */
   --font-chrome: 'IBM Plex Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
@@ -65,10 +68,12 @@
   --fs-2xl: clamp(1.875rem, 1.2rem + 2.2vw, 3rem);
   --fs-3xl: clamp(2.25rem, 1.3rem + 3.6vw, 4.25rem);
   --fs-display: clamp(2.5rem, 1.1rem + 5.2vw, 6rem);
-  --lh-tight: 1.04;
+  --lh-tight: 1.1;
   --lh-snug: 1.25;
   --lh-body: 1.55;
-  --tracking-display: -0.03em;
+  /* Капитель не сжимают: у засечек свой ритм; гротеску заголовков нужен отрицательный трекинг */
+  --tracking-display: 0;
+  --tracking-head: 0.01em;
   --tracking-caps: 0.08em;
 
   /* Отступы: шаг 4 → 8 → 12 → 16 → 24 → 32 → 48 → 80 px при 100 % */
@@ -87,6 +92,8 @@
   --container: 90rem;
   --gutter: clamp(1rem, 0.5rem + 2.5vw, 3rem);
   --measure: 68ch;
+  /* Левая колонка: номер секции, метки групп замеров, статус ограничения — одна вертикаль на всю страницу */
+  --rail: 11rem;
   --header-h: 4rem;
   --telemetry-h: 1.75rem;
 
@@ -111,10 +118,16 @@
 
 html[data-font="manrope"] {
   --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 
 html[data-font="plex"] {
   --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* Заголовки шрифтом текста — прежний вид: жирный гротеск со сжатым трекингом */
+html[data-heading="text"] {
+  --font-display: var(--font-sans);
+  --weight-display: 800;
+  --tracking-display: -0.03em;
+  --tracking-head: -0.01em;
 }

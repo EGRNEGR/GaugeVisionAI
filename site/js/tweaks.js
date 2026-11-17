@@ -1,9 +1,13 @@
 /*
- * GV.tweaks — плавающая панель Tweaks: только масштаб и шрифт (фон и картинки больше не настраиваются).
- * Состояние { font, scale } хранится в localStorage `gv.tweaks` и применяется к <html>:
- * атрибут data-font и переменная --ui-scale. Лишние ключи старых версий (bg, media) игнорируются.
- * После каждого изменения: document → CustomEvent('gv:tweaks', { detail: state }).
+ * GV.tweaks — плавающая панель Tweaks: масштаб, шрифт текста, шрифт заголовков и фон страницы.
+ * Состояние { font, scale, heading, ambient } хранится в localStorage `gv.tweaks` и применяется к <html>:
+ * атрибуты data-font, data-heading, data-ambient и переменная --ui-scale. Лишние ключи старых версий
+ * (bg, media) игнорируются. После каждого изменения: document → CustomEvent('gv:tweaks', { detail: state }).
  * Подключается до page.js и применяет состояние синхронно, до первого рендера страницы.
+ *
+ * Посетитель кнопку не видит: это инструмент автора. Видимость — атрибут data-tweaks="on" на <html>,
+ * его ставит загрузочный скрипт в index.html по адресу с ?tweaks (запоминается в `gv.tweaks.on`,
+ * ?tweaks=off — забыть). Shift + T включает и выключает кнопку на этом устройстве.
  *
  * API: get() → копия состояния · set(partial) · reset() · open() · close() · defaults · options
  */
@@ -13,12 +17,18 @@
   var GV = (window.GV = window.GV || {});
   var html = document.documentElement;
   var KEY = 'gv.tweaks';
+  var KEY_ON = 'gv.tweaks.on';
   var NBSP = ' ';
 
-  var DEFAULTS = { font: 'auto', scale: 1 };
+  var DEFAULTS = { font: 'auto', scale: 1, heading: 'alegreya', ambient: 'warm' };
 
   /* 'auto' — шрифт страницы по умолчанию (Onest); в панели он отмечен на чипе Onest. */
-  var VALID = { font: ['auto', 'onest', 'manrope', 'plex'], scale: [0.9, 1, 1.1, 1.25] };
+  var VALID = {
+    font: ['auto', 'onest', 'manrope', 'plex'],
+    scale: [0.9, 1, 1.1, 1.25],
+    heading: ['alegreya', 'text'],
+    ambient: ['warm', 'blueprint', 'dial', 'obsidian']
+  };
 
   var OPTIONS = {
     scale: [
@@ -31,12 +41,24 @@
       { value: 'onest', label: 'Onest', family: "'Onest', sans-serif" },
       { value: 'manrope', label: 'Manrope', family: "'Manrope', sans-serif" },
       { value: 'plex', label: 'IBM Plex', family: "'IBM Plex Sans', sans-serif" }
+    ],
+    heading: [
+      { value: 'alegreya', label: 'Alegreya SC', family: "'Alegreya SC', serif" },
+      { value: 'text', label: 'Как текст' }
+    ],
+    ambient: [
+      { value: 'warm', label: 'Тёплый' },
+      { value: 'blueprint', label: 'Чертёж' },
+      { value: 'dial', label: 'Шкала' },
+      { value: 'obsidian', label: 'Обсидиан' }
     ]
   };
 
   var GROUPS = [
     { key: 'scale', legend: 'Масштаб', cols: 4 },
-    { key: 'font', legend: 'Шрифт', cols: 3 }
+    { key: 'font', legend: 'Шрифт текста', cols: 3 },
+    { key: 'heading', legend: 'Заголовки', cols: 2 },
+    { key: 'ambient', legend: 'Фон', cols: 2 }
   ];
 
   function sanitize(raw) {
@@ -70,12 +92,14 @@
 
   function apply(notify) {
     html.setAttribute('data-font', state.font);
+    html.setAttribute('data-heading', state.heading);
+    html.setAttribute('data-ambient', state.ambient);
     html.style.setProperty('--ui-scale', String(state.scale));
     if (notify) document.dispatchEvent(new CustomEvent('gv:tweaks', { detail: get() }));
   }
 
   function get() {
-    return { font: state.font, scale: state.scale };
+    return { font: state.font, scale: state.scale, heading: state.heading, ambient: state.ambient };
   }
 
   function set(partial) {
@@ -214,10 +238,33 @@
     refs.toggle.focus();
   }
 
+  /* Кнопка Tweaks на этом устройстве: показать или спрятать (и запомнить) */
+  function toggleVisible() {
+    var on = html.getAttribute('data-tweaks') !== 'on';
+    if (on) html.setAttribute('data-tweaks', 'on');
+    else {
+      close();
+      html.removeAttribute('data-tweaks');
+    }
+    try {
+      if (on) window.localStorage.setItem(KEY_ON, '1');
+      else window.localStorage.removeItem(KEY_ON);
+    } catch (err) {
+      // без localStorage видимость действует до перезагрузки
+    }
+  }
+
   function onKeydown(e) {
     if (e.key === 'Escape' && refs.panel && !refs.panel.hidden) {
       e.preventDefault();
       close();
+      return;
+    }
+    var t = e.target;
+    var typing = t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) && t.type !== 'radio' && t.type !== 'range');
+    if (e.shiftKey && !e.ctrlKey && !e.metaKey && !e.altKey && e.code === 'KeyT' && !typing) {
+      e.preventDefault();
+      toggleVisible();
     }
   }
 

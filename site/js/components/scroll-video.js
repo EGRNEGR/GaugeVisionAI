@@ -56,7 +56,6 @@
     var heading = h('h1', { class: 'gv-hero__title', id: 'gv-hero-title' }, hero.title);
     var line = h('p', { class: 'gv-hero__line' }, hero.line);
     var indicator = h('div', { class: 'gv-hero__scroll', 'aria-hidden': 'true' },
-      h('span', { class: 'gv-hero__scroll-label' }, hero.scrollLabel),
       h('span', { class: 'gv-hero__scroll-track' }, fill));
     var media = h('div', { class: 'gv-hero__media' });
     var scrim = h('div', { class: 'gv-hero__scrim', 'aria-hidden': 'true' });

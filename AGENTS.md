@@ -38,6 +38,7 @@
 - README расходится с кодом (стрелка, CLAHE, таймауты смартфона 6 с / 30 с, выход за шкалу ±5 %): прав код, см. `docs/adr/0003-kod-glavnee-readme.md`
 - Не публиковать «34 проверки e2e / 18 браузерных» и «ответ сервера 3–37 мс»; лицензия проприетарная, без «open source», «MIT», «бесплатно»
 - Playwright MCP блокирует file:// и открывает страницу в масштабе 67 %: для визуальной проверки брать `playwright-core` с chromium: `C:/Users/Egoru/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules/playwright-core` (другие копии в кэше без браузера)
+- Кнопка Tweaks скрыта от посетителя: открыть — `site/index.html?tweaks` (запоминается) или Shift + T, забыть — `?tweaks=off` (ADR 0010)
 - Видео для перемотки перекодировано (каждый кадр ключевой), команды — `site/assets/video/README.md`; ffmpeg — из пакета `imageio_ffmpeg`; исходники `references/gauge_pullback.mp4` и `docs/gemini_*` лежат вне git
 
 ## Окружение

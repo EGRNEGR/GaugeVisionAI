@@ -89,7 +89,7 @@
   grid-area: heading;
   max-width: 15ch;
   font-size: var(--fs-display);
-  font-weight: 800;
+  font-weight: var(--weight-display);
   line-height: var(--lh-tight);
   letter-spacing: var(--tracking-display);
   text-wrap: balance;
@@ -100,12 +100,12 @@
   grid-area: line;
   max-width: 50rem;
   font-size: var(--fs-l);
-  line-height: 1.35;
+  line-height: var(--lh-body);
   color: var(--text-muted);
   text-wrap: pretty;
 }
 
-/* ---------- индикатор прокрутки: подпись + шкала, заливка — прогресс сцены ---------- */
+/* ---------- индикатор прокрутки: шкала без подписи, заливка — прогресс сцены ---------- */
 
 .gv-hero__scroll {
   --hero-p: 0;
@@ -113,16 +113,6 @@
   align-self: end;
   display: grid;
   justify-items: center;
-  gap: var(--space-3);
-}
-
-.gv-hero__scroll-label {
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-  white-space: nowrap;
-  color: var(--text-muted);
 }
 
 .gv-hero__scroll-track {

@@ -3,13 +3,14 @@
  * mount(el, { ids?: [id…], note?: true }) → { destroy() }
  *
  * Группы — labels.metricGroups по порядку (точность · скорость · масштаб); у каждой слева метка группы
- * и вид данных («замер» / «расчёт»), справа записи группы. Точность и скорость — карточки с крупной
- * моноширинной цифрой. Масштаб — горизонтальные столбцы в одной шкале (к/с): замер залит акцентом,
- * расчёт заштрихован, у каждой строки метка «замер» или «расчёт» — 50 и 100 камер не выдаются за замер.
+ * и вид данных («замер» / «расчёт»), справа записи группы строками одной таблицы на линиях 1px:
+ * подпись · условие · крупная моноширинная цифра у правого края. В масштабе вместо условия — столбцы
+ * в одной шкале (к/с), условие уходит под строку: замер залит акцентом, расчёт заштрихован, у каждой строки
+ * метка «замер» или «расчёт» — 50 и 100 камер не выдаются за замер.
  * Столбцы вырастают scaleX при первом показе (data-reveal → .is-in, css/components.css).
  * Цифры докручиваются от нуля GV.motion.counter (≈ 1,2 с); конечный текст — точная строка
  * metrics[].display. Для диапазона «30–100» и пары «1,00 / 1,00» растут все числа записи.
- * Ободок карточки ловит свет курсора (GV.motion.spotlight). Читающим экран — готовая запись без счётчика.
+ * Читающим экран — готовая запись без счётчика.
  */
 (function () {
   'use strict';
@@ -78,26 +79,19 @@
       return h('span', { class: 'gv-metrics__kind', 'data-kind': kind, 'aria-hidden': 'true' }, L.kind[kind]);
     }
 
-    function card(m) {
-      // dt идёт первым (порядок dl), цифра встаёт наверх через order в css
-      return h('div', { class: 'gv-metrics__item', 'data-kind': m.kind, 'data-id': m.id },
-        h('dt', { class: 'gv-metrics__label' }, m.label),
-        figure(m),
-        h('dd', { class: 'gv-metrics__condition' }, m.condition));
-    }
-
-    /* Столбцы масштаба: доля от наибольшего значения группы задаёт ширину, рост — scaleX */
-    function bars(items) {
+    /* Строки группы. В масштабе — столбец: доля от наибольшего значения группы задаёт ширину, рост — scaleX */
+    function rows(items, withBars) {
       var max = items.reduce(function (a, m) { return Math.max(a, Number(m.value) || 0); }, 0) || 1;
-      return h('dl', { class: 'gv-metrics__bars', 'data-reveal': '' }, items.map(function (m, i) {
-        var share = Math.max(0.02, (Number(m.value) || 0) / max);
-        return h('div', { class: 'gv-metrics__row', 'data-kind': m.kind, 'data-id': m.id, style: { '--i': String(i) } },
-          h('dt', { class: 'gv-metrics__label' }, m.label),
-          figure(m, kindTag(m.kind)),
-          h('dd', { class: 'gv-metrics__bar', 'aria-hidden': 'true' },
-            h('span', { class: 'gv-metrics__bar-fill', style: { width: (share * 100).toFixed(2) + '%' } })),
-          h('dd', { class: 'gv-metrics__condition' }, m.condition));
-      }));
+      return h('dl', { class: ['gv-metrics__rows', withBars ? 'gv-metrics__bars' : null], 'data-reveal': withBars ? '' : null },
+        items.map(function (m, i) {
+          var share = Math.max(0.02, (Number(m.value) || 0) / max);
+          return h('div', { class: 'gv-metrics__row', 'data-kind': m.kind, 'data-id': m.id, style: { '--i': String(i) } },
+            h('dt', { class: 'gv-metrics__label' }, m.label),
+            figure(m, withBars ? kindTag(m.kind) : null),
+            withBars ? h('dd', { class: 'gv-metrics__bar', 'aria-hidden': 'true' },
+              h('span', { class: 'gv-metrics__bar-fill', style: { width: (share * 100).toFixed(2) + '%' } })) : null,
+            h('dd', { class: 'gv-metrics__condition' }, m.condition));
+        }));
     }
 
     var groupIds = Object.keys(L.metricGroups || {});
@@ -107,14 +101,13 @@
       if (!items.length) return null;
       var kinds = [];
       items.forEach(function (m) { if (kinds.indexOf(m.kind) < 0) kinds.push(m.kind); });
-      var isScale = gid === 'scale';
       return h('section', { class: ['gv-metrics__group', 'gv-metrics__group--' + gid], 'aria-labelledby': 'gv-metrics-' + gid },
         h('header', { class: 'gv-metrics__group-head' },
           h('h3', { class: 'gv-metrics__group-title', id: 'gv-metrics-' + gid }, L.metricGroups[gid]),
           h('p', { class: 'gv-metrics__group-kinds' }, kinds.map(kindTag))),
-        isScale ? bars(items) : h('dl', { class: 'gv-metrics__list' }, items.map(card)));
+        rows(items, gid === 'scale'));
     });
-    if (leftovers.length) groups.push(h('dl', { class: 'gv-metrics__list' }, leftovers.map(card)));
+    if (leftovers.length) groups.push(rows(leftovers, false));
 
     var rootEl = h('div', { class: 'gv-metrics gv-metrics--dial' }, groups);
     if (options.note !== false && c.metricsNote) {
@@ -126,7 +119,6 @@
       var opts = counterOptions(d.display);
       if (opts) offs.push(motion.counter(d.el, opts));
     });
-    offs.push(motion.spotlight(rootEl, '.gv-metrics__item'));
 
     return {
       destroy: function () {

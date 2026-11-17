@@ -1,9 +1,10 @@
 /*
  * GV.components.limits — инженерные компромиссы и ограничения среды цеха.
  * mount(el) → { destroy() }
- * Состав: «Компромиссы» (выбрали → платим; клик раскрывает «почему так» и источник в коде),
- * «Ограничения» (5 карточек со статусом и фильтром по статусу; ободок карточки ловит свет курсора —
- * GV.motion.spotlight), «Не проверено в поле», Roadmap.
+ * Состав: «Компромиссы» (выбрали → платим; клик раскрывает «почему так» и источник в коде: блок
+ * проявляется opacity, строки ниже доезжают по transform — GV.motion.shiftBelow),
+ * «Ограничения» (5 строк таблицы: условие и статус · риск · ответ в коде, фильтр по статусу),
+ * «Не проверено в поле», Roadmap.
  */
 (function () {
   'use strict';
@@ -15,7 +16,8 @@
     filter: 'Фильтр по статусу',
     shown: function (n, total) { return 'Показано ограничений: ' + n + ' из ' + total; },
     arrow: '→',
-    note: 'Оговорка'
+    note: 'Оговорка',
+    condition: 'Условие'
   };
 
   function mount(el) {
@@ -23,7 +25,6 @@
     var c = GV.content;
     var L = c.labels;
     var sc = kit.scope();
-    var offs = [];
 
     /* ---------- компромиссы ---------- */
 
@@ -40,12 +41,15 @@
       var body = h('div', { class: 'gv-limits__trade-body', id: bodyId, hidden: true },
         h('p', { class: 'gv-limits__trade-why' }, h('span', { class: 'gv-limits__trade-key' }, L.why), t.why),
         h('p', { class: 'gv-limits__trade-source' }, h('span', { class: 'gv-limits__trade-key' }, L.source), h('code', null, t.source)));
+      var item = h('li', { class: 'gv-limits__trade', 'data-id': t.id }, btn, body);
       sc.on(btn, 'click', function () {
         var open = btn.getAttribute('aria-expanded') !== 'true';
-        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        body.hidden = !open;
+        motion.shiftBelow(item, function () {
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          body.hidden = !open;
+        }, el.closest('.gv-page'));
       });
-      return h('li', { class: 'gv-limits__trade', 'data-id': t.id }, btn, body);
+      return item;
     });
 
     var trades = h('div', { class: 'gv-limits__block gv-limits__block--trades' },
@@ -82,10 +86,14 @@
     var shown = h('p', { class: 'gv-visually-hidden', 'aria-live': 'polite' });
 
     var limitsList = h('ul', { class: 'gv-limits__list', role: 'list' }, limitEls);
+    // Шапка колонок таблицы: в строках те же подписи остаются только для чтения с экрана
+    var columns = h('div', { class: 'gv-limits__columns', 'aria-hidden': 'true' },
+      h('span', null, T.condition), h('span', null, L.risk), h('span', null, L.response));
     var limitsBlock = h('div', { class: 'gv-limits__block gv-limits__block--limits' },
       h('div', { class: 'gv-limits__block-head' },
         h('h3', { class: 'gv-limits__block-title' }, L.limitsTitle),
         filterBar),
+      columns,
       limitsList,
       shown);
 
@@ -125,18 +133,15 @@
           h('ul', { class: 'gv-limits__stage-items', role: 'list' }, r.items.map(function (it) { return h('li', null, it); })));
       })));
 
-    var rootEl = h('div', { class: 'gv-limits gv-limits--cards' },
+    var rootEl = h('div', { class: 'gv-limits' },
       trades,
       limitsBlock,
       h('div', { class: 'gv-limits__after' }, untested, roadmap));
     el.appendChild(rootEl);
 
-    offs.push(motion.spotlight(limitsList, '.gv-limits__item'));
-
     return {
       destroy: function () {
         sc.destroy();
-        offs.forEach(function (off) { off(); });
         if (rootEl.parentNode) rootEl.parentNode.removeChild(rootEl);
       }
     };

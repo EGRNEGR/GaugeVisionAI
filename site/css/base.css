@@ -40,8 +40,9 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 700;
+  font-variant-numeric: lining-nums;
   line-height: var(--lh-snug);
-  letter-spacing: -0.01em;
+  letter-spacing: var(--tracking-head);
   text-wrap: balance;
 }
 
@@ -198,7 +199,7 @@ input[type="range"] {
   font-size: var(--fs-3xl);
   line-height: var(--lh-tight);
   letter-spacing: var(--tracking-display);
-  font-weight: 800;
+  font-weight: var(--weight-display);
 }
 
 .gv-noscript p {

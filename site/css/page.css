@@ -186,55 +186,58 @@
   padding-block: 0;
 }
 
-/* Заголовок секции: крупный контурный номер за названием (мотив ref4) */
+/* Заголовок секции слева: номер — узкая левая колонка (та же 11rem, что у меток групп замеров),
+   название — справа от неё. Асимметрия вместо оси по центру */
 .gv-head {
   display: grid;
-  justify-items: center;
+  grid-template-columns: minmax(0, var(--rail)) minmax(0, 1fr);
+  column-gap: var(--space-6);
+  row-gap: var(--space-4);
+  align-items: baseline;
   margin-bottom: clamp(3rem, 1.5rem + 4vw, 6rem);
-  text-align: center;
 }
 
 .gv-head__index {
-  grid-area: 1 / 1;
-  align-self: center;
-  font-family: var(--font-display);
-  font-size: clamp(6rem, 3.5rem + 7vw, 11rem);
-  font-weight: 800;
-  line-height: 0.8;
-  letter-spacing: -0.04em;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tracking-caps);
   font-variant-numeric: tabular-nums;
-  color: var(--border-hairline);
-  user-select: none;
+  color: var(--text-faint);
 }
 
-@supports (-webkit-text-stroke: 1px currentColor) {
-  .gv-head__index {
-    color: transparent;
-    -webkit-text-stroke: 1px var(--border-strong);
-  }
+.gv-head__index::after {
+  content: '';
+  width: 2rem;
+  height: 1px;
+  background: var(--accent);
 }
 
 .gv-head__title {
-  grid-area: 1 / 1;
-  align-self: center;
-  position: relative;
   max-width: 20ch;
-  font-size: var(--fs-2xl);
-  font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -0.025em;
+  font-size: var(--fs-3xl);
+  font-weight: var(--weight-display);
+  line-height: var(--lh-tight);
+  letter-spacing: var(--tracking-display);
 }
 
 /* Заголовок внутри закреплённой сцены (прибор, конвейер): слева, без номера — он уже в телеметрии */
 .gv-head--pinned {
-  justify-items: start;
+  grid-template-columns: minmax(0, 1fr);
   margin-bottom: 0;
-  text-align: left;
 }
 
 .gv-head--pinned .gv-head__title {
-  grid-area: auto;
   max-width: 18ch;
+  font-size: var(--fs-2xl);
+}
+
+@media (max-width: 900px) {
+  .gv-head {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 640px) {
@@ -273,6 +276,106 @@
 
 .gv-ambient.is-lit .gv-ambient__light {
   opacity: 1;
+}
+
+/* ---------- варианты фона из Tweaks (data-ambient на <html>); по умолчанию — «Тёплый» выше ---------- */
+
+/* Сетка «Чертежа» внутри пятна: GV.motion.cursorLight сдвигает её навстречу пятну, она стоит на месте
+   относительно экрана и совпадает с неподвижной сеткой фона — пятно проявляет её ярче */
+.gv-ambient__grid {
+  display: none;
+  position: absolute;
+  left: 22rem;
+  top: 22rem;
+  width: 100vw;
+  height: 100vh;
+  will-change: transform;
+}
+
+/* Шкала прибора справа, наполовину за краем экрана; стрелка — доля прочитанной страницы */
+.gv-ambient__dial {
+  display: none;
+  position: absolute;
+  top: 50%;
+  right: -48vmin;
+  width: 128vmin;
+  height: 128vmin;
+  margin-top: -64vmin;
+  overflow: visible;
+}
+
+.gv-ambient__arc,
+.gv-ambient__tick {
+  fill: none;
+  stroke: rgba(230, 234, 239, 0.09);
+  stroke-width: 0.25;
+}
+
+.gv-ambient__tick--major {
+  stroke: rgba(230, 234, 239, 0.16);
+  stroke-width: 0.4;
+}
+
+.gv-ambient__needle {
+  transform: rotate(135deg);
+  transform-origin: 0 0;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.gv-ambient__needle line {
+  stroke: rgba(255, 90, 31, 0.22);
+  stroke-width: 0.4;
+  stroke-linecap: round;
+}
+
+.gv-ambient__needle circle {
+  fill: rgba(255, 90, 31, 0.22);
+}
+
+html[data-ambient="blueprint"] .gv-ambient {
+  background:
+    linear-gradient(rgba(230, 234, 239, 0.035) 1px, transparent 1px) 0 0 / 2rem 2rem,
+    linear-gradient(90deg, rgba(230, 234, 239, 0.035) 1px, transparent 1px) 0 0 / 2rem 2rem,
+    var(--bg-canvas);
+}
+
+html[data-ambient="blueprint"] .gv-ambient__light {
+  overflow: hidden;
+  background: radial-gradient(closest-side, rgba(255, 138, 76, 0.07), transparent);
+  -webkit-mask-image: radial-gradient(closest-side, #000 35%, transparent);
+  mask-image: radial-gradient(closest-side, #000 35%, transparent);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+html[data-ambient="blueprint"] .gv-ambient__grid {
+  display: block;
+  background:
+    linear-gradient(rgba(255, 138, 76, 0.3) 1px, transparent 1px) 0 0 / 8rem 8rem,
+    linear-gradient(90deg, rgba(255, 138, 76, 0.3) 1px, transparent 1px) 0 0 / 8rem 8rem,
+    linear-gradient(rgba(255, 138, 76, 0.14) 1px, transparent 1px) 0 0 / 2rem 2rem,
+    linear-gradient(90deg, rgba(255, 138, 76, 0.14) 1px, transparent 1px) 0 0 / 2rem 2rem;
+}
+
+html[data-ambient="dial"] .gv-ambient__dial {
+  display: block;
+}
+
+html[data-ambient="obsidian"] .gv-ambient {
+  background: var(--bg-canvas);
+}
+
+html[data-ambient="obsidian"] .gv-ambient__light {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .gv-ambient__dial {
+    right: -96vmin;
+    width: 160vmin;
+    height: 160vmin;
+    margin-top: -80vmin;
+  }
 }
 
 /* ---------- свет: направленные пятна низкой непрозрачности (статичные) ---------- */
@@ -348,7 +451,7 @@
 .gv-hero-static__title {
   max-width: 16ch;
   font-size: var(--fs-display);
-  font-weight: 800;
+  font-weight: var(--weight-display);
   line-height: var(--lh-tight);
   letter-spacing: var(--tracking-display);
 }
@@ -359,17 +462,6 @@
   color: var(--text-muted);
 }
 
-/* ---------- поверхности компонентов: 1px-граница и верхний блик ---------- */
-
-.gv-metrics--dial .gv-metrics__item,
-.gv-compare__col,
-.gv-architecture__caption,
-.gv-limits--cards .gv-limits__item {
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-l);
-  background: var(--surface-card);
-}
-
 
 /* Сравнение: переключатель в шапке шкалы смены — он ведёт шкалу и подсвечивает колонку */
 .gv-compare__timeline-head .gv-compare__modes {
@@ -378,7 +470,7 @@
 
 .gv-compare__title {
   font-size: var(--fs-xl);
-  font-weight: 800;
+  font-weight: var(--weight-display);
 }
 
 .gv-compare__cost-value {
@@ -387,7 +479,9 @@
 
 .gv-compare__saving-num {
   font-family: var(--font-display);
-  font-weight: 800;
+  font-weight: var(--weight-display);
+  font-variant-numeric: lining-nums tabular-nums;
+  letter-spacing: var(--tracking-display);
   word-spacing: normal;
 }
 
@@ -397,17 +491,13 @@
 }
 
 /* Ограничения */
-.gv-limits--cards .gv-limits__list {
-  gap: var(--space-4);
-}
-
 .gv-limits__condition {
   font-size: var(--fs-l);
   font-weight: 700;
 }
 
 .gv-limits__block-title {
-  font-weight: 800;
+  font-weight: var(--weight-display);
 }
 
 /* ---------- финал: GitHub на приглушённом кадре котельной ---------- */
@@ -454,11 +544,18 @@
   margin-bottom: var(--space-7);
 }
 
+/* Кнопка и трек — под названием, в правой колонке заголовка */
 .gv-contact__inner {
   display: grid;
-  justify-items: center;
+  justify-items: start;
   gap: var(--space-5);
-  text-align: center;
+  padding-left: calc(var(--gutter) + var(--rail) + var(--space-6));
+}
+
+@media (max-width: 900px) {
+  .gv-contact__inner {
+    padding-left: var(--gutter);
+  }
 }
 
 .gv-contact__repo {
@@ -519,7 +616,7 @@
 /* Снизу запас под плавающую кнопку Tweaks: в конце страницы она не закрывает ссылку на лицензию */
 .gv-footer {
   border-top: 1px solid var(--border-hairline);
-  padding-block: var(--space-5) calc(var(--space-7) + 3.5rem);
+  padding-block: var(--space-5) calc(var(--space-6) + var(--tweaks-clearance, 0rem));
 }
 
 .gv-footer__inner {
