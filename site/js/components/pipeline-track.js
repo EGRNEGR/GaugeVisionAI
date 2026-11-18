@@ -4,9 +4,10 @@
  *
  * Сцена .gv-track высотой (N + 0,5) × 75vh, внутри sticky-сцена: сверху заголовок секции (head от GV.page)
  * и шаги 01–04 с именами, по центру трек, снизу итог конвейера. Прогресс GV.motion.pinProgress
- * округляется до шага, «шаг» s догоняет его на пружине. По s:
- *   · трек едет translateX так, что точка s трека стоит в центре кадра: в покое активная карточка
- *     ровно по центру, при смене шага трек плавно переезжает к следующей (без рывка на телефоне);
+ * переводится в «шаг» s непрерывно: на краях каждого отрезка карточка держится по центру (HOLD), между
+ * ними трек переезжает по smoothstep; пружина сглаживает рывки колёсика. По s:
+ *   · трек едет translateX так, что точка s трека стоит в центре кадра: на целом s активная карточка
+ *     ровно по центру;
  *   · карточка i входит (opacity + translateX) на отрезке s ∈ [i − 1, i], первая видна сразу;
  *   · «фокус» карточки f = 1 − |s − i|: яркий ободок (opacity), полная яркость и схема шага;
  *   · схема шага (SVG) показывает, что делает шаг с кадром, и доигрывает к f = 1:
@@ -15,7 +16,8 @@
  *       03 — стрелка доходит до θ, линия HoughLinesP сходится с ней из 12°;
  *       04 — шумные отсчёты Vₜ и кривая EMA V̄ₜ, рассчитанная kit.emaStep с α из карточки;
  *   · связь между карточками i и i + 1 растёт scaleX вместе со входом карточки i + 1;
- *   · линия под шагами растёт scaleX, кнопка активного шага подсвечена.
+ *   · оранжевая черта под шагами перетекает от шага к шагу (translateX + scaleX по s), номер активного
+ *     шага — акцентом.
  * Кнопки шагов — нативные <button>: клик прокручивает страницу к шагу.
  * Подписи и формулы — GV.content.pipelineCards, итог — pipelineTotal. Ничего не выдумано:
  * задержка только замеренная; у карточек 02 и 03 своего замера нет — они входят в итог внизу сцены.
@@ -31,6 +33,7 @@
   var ENTER_REM = 3;      // с какого смещения карточка выезжает
   var DIM = 0.85;         // яркость карточки вне фокуса: текст в ней держит контраст ≥ 4,5 : 1
   var HOUGH_SPREAD = 12;  // из скольких градусов линия Hough сходится со стрелкой (согласование ≤ 12°)
+  var HOLD = 0.2;         // доля отрезка прокрутки у каждого шага, где карточка стоит по центру
   var T = {
     steps: 'Шаги конвейера',
     step: 'Шаг',
@@ -256,10 +259,10 @@
     var rail = h('ol', { class: 'gv-track__rail', role: 'list' }, items);
     var viewport = h('div', { class: 'gv-track__viewport' }, rail);
 
-    var meter = h('span', { class: 'gv-track__meter', 'aria-hidden': 'true' });
+    var marker = h('span', { class: 'gv-track__marker', 'aria-hidden': 'true' });
     var stepButtons = [];
     var steps = flat ? null : h('nav', { class: 'gv-track__steps', 'aria-label': T.steps },
-      h('span', { class: 'gv-track__meter-track', 'aria-hidden': 'true' }, meter),
+      marker,
       cards.map(function (card, i) {
         var b = h('button', {
           type: 'button', class: 'gv-track__step',
@@ -307,10 +310,21 @@
     var cardW = 0;      // ширина карточки
     var firstLeft = 0;  // левый край первой карточки на треке без сдвига
     var pitch = 0;      // шаг карточек: ширина + промежуток
+    var remPx = 16;
+    var stepBoxes = []; // черта под каждым шагом: { x, w } от левого края полосы шагов
+
+    /* Положения шагов читаются в measure и при смене активного (на телефоне у него появляется имя) */
+    function measureSteps() {
+      stepBoxes = stepButtons.map(function (b) {
+        var pad = parseFloat(window.getComputedStyle(b).paddingLeft) || 0;
+        return { x: b.offsetLeft + pad, w: Math.max(0, b.offsetWidth - 2 * pad) };
+      });
+    }
 
     function measure() {
-      var rem = parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
-      enterPx = ENTER_REM * rem;
+      remPx = parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
+      enterPx = ENTER_REM * remPx;
+      measureSteps();
       frameW = viewport.clientWidth;
       // Разность прямоугольников не зависит от текущего сдвига трека: он у обоих одинаковый.
       var railBox = rail.getBoundingClientRect();
@@ -345,9 +359,19 @@
       rail.style.transform = 'translate3d(' + (-shiftFor(s)).toFixed(2) + 'px,0,0)';
     }
 
+    /* Черта под шагами: между шагами i и i + 1 — смесь их положений и ширин */
+    function paintMarker(s) {
+      if (!stepBoxes.length) return;
+      var i = Math.min(Math.max(0, Math.floor(s)), stepBoxes.length - 1);
+      var a = stepBoxes[i];
+      var b = stepBoxes[Math.min(i + 1, stepBoxes.length - 1)];
+      var t = clamp01(s - i);
+      var x = a.x + (b.x - a.x) * t;
+      var w = a.w + (b.w - a.w) * t;
+      marker.style.transform = 'translate3d(' + x.toFixed(2) + 'px,0,0) scaleX(' + (w / remPx).toFixed(4) + ')';
+    }
+
     function paint(s) {
-      var k = clamp01(s / last);
-      meter.style.transform = 'scaleX(' + k.toFixed(4) + ')';
       for (var i = 0; i < N; i++) {
         var enter = enterOf(i, s);
         var focus = clamp01(1 - Math.abs(s - i));
@@ -368,10 +392,21 @@
           if (j === active) b.setAttribute('aria-current', 'step');
           else b.removeAttribute('aria-current');
         });
+        measureSteps();
       }
+      paintMarker(s);
     }
 
-    /* ---------- пружина за прокруткой: цель — ближайший целый шаг ---------- */
+    /* Прокрутка → шаг: у краёв отрезка карточка стоит, посередине трек переезжает плавно */
+    function stepFor(p) {
+      var x = p * last;
+      var i = Math.min(last - 1, Math.floor(x));
+      if (i < 0) return 0;
+      var g = clamp01((x - i - HOLD) / (1 - 2 * HOLD));
+      return i + g * g * (3 - 2 * g);
+    }
+
+    /* ---------- пружина за прокруткой: цель — непрерывный шаг stepFor ---------- */
 
     var spring = motion.spring({ stiffness: 120, damping: 22, precision: 0.0008, value: 0 });
     var offFrame = null;
@@ -386,7 +421,7 @@
     }
 
     offs.push(motion.onScroll(function () {
-      var target = Math.round(motion.pinProgress(rootEl) * last);
+      var target = stepFor(motion.pinProgress(rootEl));
       if (first) {
         first = false;
         spring.set(target);

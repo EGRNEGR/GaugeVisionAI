@@ -856,7 +856,9 @@
   padding: 0 var(--space-2);
 }
 
+/* Узел фиксированной ширины: в узкой раскладке подпись держит прежний кегль, иначе «Пульт оператора» в многоточии */
 .gv-architecture[data-layout="narrow"] .gv-architecture__label {
+  font-size: 0.875rem;
   letter-spacing: -0.01em;
 }
 
