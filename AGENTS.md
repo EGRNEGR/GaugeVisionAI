@@ -16,6 +16,7 @@
 - `node site/tests/components.test.js` — калибровка, бары, зоны, EMA, пружина и reduced motion `GV.motion`, угол прибора, время видео hero
 - открыть `site/index.html` двойным кликом (file://) — так работают и видео, и всё остальное
 - `python -m http.server 8765 --directory site` — `http://localhost:8765/` (порт бывает занят); без Range-запросов видео hero стоит на кадре 0
+- публикация — пуш в `main`: `.github/workflows/pages.yml` гоняет обе проверки и выкладывает `site/` в GitHub Pages
 
 ## Где что
 
