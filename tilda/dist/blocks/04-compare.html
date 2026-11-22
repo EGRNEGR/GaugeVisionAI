@@ -1,0 +1,849 @@
+<!-- GaugeVision AI для Tilda: сгенерировано tilda/build.mjs из site/. Правьте site/ и пересобирайте. -->
+<!-- Лист 02 «Смена»: тексты, стили и модуль components/shift.js -->
+<div class="gvt" data-gv-block="compare"></div>
+<style>
+/*
+ * Лист 02 — «Двенадцать часов против трети секунды».
+ * Сцена с роликом во всю ширину окна (поля листа выходят за край), под ней шкала смены в масштабе,
+ * затраты с полосами в точной пропорции и две колонки «Было / Стало».
+ */
+.gvt .gv-shift__lead {
+  grid-column: 1 / span 7;
+  margin: calc(-1 * var(--s4)) 0 var(--s10);
+  font-size: var(--fs-xl);
+  line-height: 1.25;
+  font-weight: 500;
+  color: var(--ink-2);
+  text-wrap: balance;
+}
+/* ---------- сцена ---------- */
+.gvt .gv-shift__stage {
+  grid-column: 1 / -1;
+  margin-left: calc(-1 * (var(--margin) + var(--gutter)));
+  margin-right: calc(-1 * (var(--tabs) + var(--gutter)));
+  height: 260vh;
+  position: relative;
+  z-index: 4;
+}
+.gvt .gv-shift__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+.gvt .gv-shift__video,
+.gvt .gv-shift__after {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.gvt .gv-shift__after {
+  display: none;
+  opacity: var(--after, 0);
+}
+.gvt .gv-shift__stage.is-fallback .gv-shift__after {
+  display: block;
+}
+.gvt .gv-shift__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(20, 22, 23, 0.88) 0, rgba(20, 22, 23, 0.45) 30%, rgba(20, 22, 23, 0) 55%);
+  pointer-events: none;
+}
+.gvt .gv-shift__cap {
+  position: absolute;
+  left: calc(var(--margin) + var(--gutter));
+  bottom: calc(var(--s8) + var(--s4));
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-2xl);
+  line-height: 1;
+  color: var(--plate-ink);
+  opacity: 0;
+  transform: translate3d(0, 1rem, 0);
+  transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
+}
+.gvt .gv-shift__cap.is-on {
+  opacity: 1;
+  transform: none;
+}
+.gvt .gv-shift__clock {
+  position: absolute;
+  left: calc(var(--margin) + var(--gutter));
+  right: calc(var(--tabs) + var(--gutter) + var(--s2));
+  bottom: var(--s4);
+  height: 1rem;
+  container-type: inline-size;
+}
+.gvt .gv-shift__clock-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 1px solid rgba(233, 235, 228, 0.35);
+}
+.gvt .gv-shift__marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0.1875rem;
+  height: 100%;
+  margin-left: -0.09375rem;
+  background: var(--plate-red);
+}
+/* «уменьшить движение»: два кадра рядом */
+.gvt .gv-shift__stage.is-still {
+  height: auto;
+  margin-inline: 0;
+  z-index: auto;
+}
+.gvt .gv-shift__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gutter);
+}
+.gvt .gv-shift__still {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.25rem;
+}
+.gvt .gv-shift__still img {
+  width: 100%;
+  height: auto;
+}
+.gvt .gv-shift__still .gv-shift__cap {
+  position: static;
+  opacity: 1;
+  transform: none;
+  padding: var(--s2);
+  font-size: var(--fs-xl);
+}
+/* ---------- шкала смены ---------- */
+.gvt .gv-ruler {
+  grid-column: 1 / -1;
+  margin-top: var(--s12);
+}
+.gvt .gv-ruler__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s1) var(--s3);
+  padding-bottom: var(--s2);
+  border-bottom: 1px solid var(--ink);
+}
+.gvt .gv-ruler__drag {
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+}
+.gvt .gv-ruler__field {
+  --name: 8rem;
+  position: relative;
+  padding-top: var(--s5);
+  touch-action: pan-y;
+  cursor: ew-resize;
+  user-select: none;
+}
+.gvt .gv-ruler__scale {
+  position: relative;
+  margin-left: var(--name);
+  height: var(--s3);
+}
+.gvt .gv-ruler__tick {
+  position: absolute;
+  bottom: 0;
+  height: 0.5rem;
+  border-left: 1px solid var(--ink-3);
+}
+.gvt .gv-ruler__tick.is-major {
+  height: 1rem;
+  border-left-color: var(--ink);
+}
+.gvt .gv-ruler__h {
+  position: absolute;
+  bottom: calc(100% + 0.25rem);
+  left: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: var(--fs-2xs);
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.gvt .gv-ruler__row {
+  display: grid;
+  grid-template-columns: var(--name) minmax(0, 1fr);
+  align-items: center;
+  height: calc(var(--row) * 2);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.gvt .gv-ruler__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-l);
+}
+.gvt .gv-ruler__track {
+  position: relative;
+  height: 100%;
+}
+.gvt .gv-ruler__round {
+  position: absolute;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  border-left: 1px solid var(--violet);
+}
+.gvt .gv-ruler__round .gv-hand {
+  position: absolute;
+  top: -0.25rem;
+  left: 0.375rem;
+  font-size: var(--fs-m);
+  white-space: nowrap;
+}
+.gvt .gv-ruler__round.is-end .gv-hand {
+  left: auto;
+  right: 0.375rem;
+}
+.gvt .gv-ruler__tick.is-start .gv-ruler__h {
+  transform: none;
+}
+.gvt .gv-ruler__tick.is-end .gv-ruler__h {
+  transform: translateX(-100%);
+}
+.gvt .gv-ruler__blind {
+  position: absolute;
+  top: 35%;
+  height: 30%;
+  background: rgba(184, 50, 28, 0.14);
+  border-top: 1px solid var(--red);
+  border-bottom: 1px solid var(--red);
+}
+.gvt .gv-ruler__track--cam::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 35%;
+  height: 30%;
+  background: repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 0.1875rem);
+  opacity: 0.85;
+}
+.gvt .gv-ruler__cam-hit {
+  position: absolute;
+  top: 25%;
+  height: 50%;
+  width: 0.1875rem;
+  margin-left: -0.09375rem;
+  background: var(--red);
+}
+.gvt .gv-ruler__dev {
+  --x: 0;
+  position: absolute;
+  top: var(--s3);
+  bottom: 0;
+  left: calc(var(--name) + (100% - var(--name)) * var(--x));
+  width: 2.75rem;
+  transform: translateX(-50%);
+  cursor: ew-resize;
+  outline-offset: 0;
+}
+.gvt .gv-ruler__dev-line {
+  position: absolute;
+  top: var(--s4);
+  bottom: -0.5rem;
+  left: 50%;
+  width: 0.125rem;
+  margin-left: -0.0625rem;
+  background: var(--red);
+}
+.gvt .gv-ruler__dev-label {
+  position: absolute;
+  bottom: -2rem;
+  left: 50%;
+  transform: translateX(calc(-100% * var(--x)));
+  padding: 0.125rem 0.375rem;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-2xs);
+  font-weight: 600;
+  color: var(--paper);
+  background: var(--red);
+  border-radius: 0.125rem;
+  white-space: nowrap;
+}
+.gvt .gv-ruler__out {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: var(--s4) var(--gutter);
+  margin-top: var(--s8);
+}
+.gvt .gv-ruler__res {
+  display: grid;
+  gap: var(--s1);
+  align-content: start;
+}
+.gvt .gv-ruler__res p {
+  display: grid;
+  gap: var(--s1);
+}
+.gvt .gv-ruler__res .gv-num {
+  font-family: var(--font-mono);
+  font-stretch: 112.5%;
+  font-weight: 500;
+  font-size: var(--fs-figure);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.gvt .gv-ruler__res--hand .gv-num {
+  color: var(--red);
+}
+.gvt .gv-ruler__res--cam {
+  grid-template-columns: auto minmax(0, 1fr);
+  column-gap: var(--s5);
+  align-items: end;
+}
+.gvt .gv-loupe {
+  display: grid;
+  gap: var(--s1);
+  max-width: 18rem;
+}
+.gvt .gv-loupe__box {
+  position: relative;
+  height: 3rem;
+  border: 1px solid var(--ink);
+  border-radius: 1.5rem;
+  background: var(--paper-lift);
+  overflow: hidden;
+}
+.gvt .gv-loupe__f {
+  position: absolute;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  border-left: 1px solid var(--ink);
+}
+.gvt .gv-loupe__f:nth-child(2) {
+  border-left: 0.1875rem solid var(--ink);
+  margin-left: -0.09375rem;
+}
+.gvt .gv-loupe__hit {
+  position: absolute;
+  left: 14%;
+  top: 0.25rem;
+  bottom: 0.25rem;
+  width: 0.1875rem;
+  background: var(--red);
+}
+.gvt .gv-ruler__ema {
+  grid-column: 1 / -1;
+}
+/* ---------- затраты ---------- */
+.gvt .gv-cost {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
+  gap: var(--s6) var(--gutter);
+  align-items: end;
+  margin-top: var(--s16);
+}
+.gvt .gv-cost__total {
+  display: grid;
+  gap: var(--s2);
+  align-content: end;
+}
+.gvt .gv-cost__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--s2);
+}
+.gvt .gv-cost__giant {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: var(--fs-h2);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+}
+.gvt .gv-cost__label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+.gvt .gv-cost__qual {
+  max-width: 34ch;
+  font-size: var(--fs-l);
+  line-height: 1.35;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+.gvt .gv-cost__rows {
+  display: grid;
+  gap: var(--s4);
+  padding-bottom: var(--s1);
+}
+.gvt .gv-cost__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--s1) var(--s3);
+  align-items: baseline;
+}
+.gvt .gv-cost__name {
+  display: grid;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-l);
+  line-height: 1.1;
+}
+.gvt .gv-cost__bar {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  display: block;
+  height: 1.25rem;
+  border-bottom: 1px solid var(--rule-strong);
+}
+.gvt .gv-cost__fill {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  transition: transform 1400ms var(--ease-out);
+}
+.gvt .gv-cost__row--before .gv-cost__fill {
+  background: var(--ink-3);
+}
+.gvt .gv-cost.is-drawn .gv-cost__fill {
+  transform: scaleX(var(--w));
+}
+.gvt .gv-cost__row--after .gv-cost__fill {
+  transition-delay: 300ms;
+}
+.gvt .gv-cost__value {
+  font-family: var(--font-mono);
+  font-stretch: 100%;
+  font-weight: 600;
+  font-size: var(--fs-xl);
+  white-space: nowrap;
+}
+.gvt .gv-cost__unit {
+  font-weight: 400;
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+}
+/* ---------- было и стало ---------- */
+.gvt .gv-points {
+  margin-top: var(--s12);
+}
+.gvt .gv-points--before {
+  grid-column: 1 / span 5;
+}
+.gvt .gv-points--after {
+  grid-column: 7 / span 6;
+}
+.gvt .gv-points__title {
+  margin-bottom: var(--s2);
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+.gvt .gv-points--before .gv-points__title {
+  font-family: var(--font-hand);
+  font-weight: 400;
+  color: var(--violet);
+}
+.gvt .gv-points__list li {
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--rule-strong);
+  line-height: 1.35;
+}
+.gvt .gv-points--before li {
+  color: var(--ink-2);
+}
+.gvt .gv-points--after li {
+  font-weight: 600;
+}
+@media (max-width: 900px) {
+  .gvt .gv-shift__lead { grid-column: 1 / -1; }
+  .gvt .gv-ruler__out { grid-template-columns: minmax(0, 1fr); }
+  .gvt .gv-cost { grid-template-columns: minmax(0, 1fr); }
+  .gvt .gv-points--before,
+  .gvt .gv-points--after { grid-column: 1 / -1; }
+  .gvt .gv-points--after { margin-top: var(--s6); }
+  .gvt .gv-shift__pair { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+  .gvt .gv-shift__lead { margin-top: 0; }
+  .gvt .gv-cost__row { grid-template-columns: minmax(0, 1fr); }
+  .gvt .gv-cost__name { grid-row: 1; }
+  .gvt .gv-cost__value { grid-row: 2; white-space: normal; }
+  .gvt .gv-cost__bar { grid-row: 3; }
+  .gvt .gv-shift__stage { height: 220vh; }
+  .gvt .gv-shift__cap { bottom: calc(var(--s8) + var(--s2)); font-size: var(--fs-xl); max-width: 18ch; }
+  .gvt .gv-ruler__field { --name: 5.25rem; }
+  .gvt .gv-ruler__name { font-size: var(--fs-m); }
+  .gvt .gv-ruler__res--cam { grid-template-columns: minmax(0, 1fr); }
+}
+</style>
+<script>
+/* Тексты листа 02 — данные из site/js/content.js после типографа */
+(function () {
+  var GV = (window.GV = window.GV || {});
+  var c = (GV.content = GV.content || {});
+  var part = {
+    "compare": {
+      "video": {
+        "src": "https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@23e7775eb733323ace1f838a66125783f22c7390/site/assets/video/shift.scrub.mp4",
+        "srcMobile": "https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@23e7775eb733323ace1f838a66125783f22c7390/site/assets/video/shift.scrub-m.mp4",
+        "poster": "https://static.tildacdn.com/tila3937-6636-4230-a265-623335656337/shift-before.jpg",
+        "posterAfter": "https://static.tildacdn.com/tila3634-3835-4565-a633-633762373466/shift-after.jpg",
+        "label": "Ролик: обходчик записывает показание манометра в журнал и уходит; на поручне остаётся камера, которая смотрит на шкалу"
+      },
+      "captions": {
+        "before": "Было: обход раз в смену, показание пишут в журнал от руки",
+        "after": "Стало: камера на поручне читает стрелку вместо обходчика"
+      },
+      "outside": "По оценке команды, до 60\u00a0% приборов ТЭЦ не подключены к АСУ ТП",
+      "before": {
+        "title": "Было",
+        "points": [
+          "Показания записывают в журнал раз в смену",
+          "Отклонение между обходами незаметно",
+          "Диспетчер видит запись с задержкой",
+          "Смарт-датчик: барьеры, кабели, проект, останов котла"
+        ],
+        "cost": {
+          "value": "300\u00a0000",
+          "unit": "₽ на точку",
+          "note": "замена на смарт-датчик, оценка команды"
+        }
+      },
+      "after": {
+        "title": "Стало",
+        "points": [
+          "Камера снаружи контура: без врезки и останова",
+          "3 обработки в секунду на камеру",
+          "Пятизонные уставки, сирена, квитирование",
+          "Архив SQLite и CSV с метками ISO 8601 UTC"
+        ],
+        "cost": {
+          "value": "33\u00a0000",
+          "unit": "₽ на точку",
+          "note": "ПО и камера «Рубитек», оценка команды"
+        }
+      },
+      "saving": {
+        "value": "−89\u00a0%",
+        "label": "затрат на точку"
+      },
+      "savingNote": "Оценка команды: 26,7\u00a0млн\u00a0₽ на 100\u00a0приборах. Нужен пилот.",
+      "timeline": {
+        "caption": "Иллюстративный сценарий",
+        "shiftHours": 12,
+        "rounds": [
+          0,
+          12
+        ],
+        "deviationHour": 5,
+        "roundLabel": "Обход",
+        "handRow": "Обходчик",
+        "cameraRow": "Камера",
+        "deviationLabel": "Отклонение",
+        "drag": "Перетащите отклонение по смене или выберите час стрелками",
+        "deviationAt": "Отклонение примерно в",
+        "deviationStart": "Отклонение в начале смены",
+        "hourForms": [
+          "час",
+          "часа",
+          "часов"
+        ],
+        "beforeLead": "Обходчик заметит через",
+        "afterLead": "Камера увидит на следующем кадре, через",
+        "afterValue": "⅓ с",
+        "emaNote": "По формуле EMA показание догонит ≈\u00a090\u00a0% скачка за 8\u00a0кадров; это оценка, а не замер",
+        "loupe": "Одна секунда смены: три кадра камеры"
+      }
+    }
+  };
+  Object.keys(part).forEach(function (k) { c[k] = part[k]; });
+})();
+/*
+ * GV.components.shift — лист 02 «Двенадцать часов против трети секунды».
+ *   1. Закреплённая сцена во всю ширину: ролик Gemini перематывается прокруткой — обходчик дописывает
+ *      журнал и уходит, на поручне остаётся камера. currentTime догоняет прогресс с инерцией;
+ *      подписи «было / стало» сменяются на середине. При «уменьшить движение» — два кадра рядом.
+ *   2. Шкала смены в масштабе: 12 ч, обходы в 0 и 12 ч. Отклонение тянут по смене (или стрелками):
+ *      окно, в котором обходчик его не видит, растёт до следующего обхода; у камеры — ⅓ с,
+ *      которую на этой шкале не разглядеть, поэтому рядом лупа на одну секунду с тремя кадрами.
+ *   3. Затраты на точку: полосы в точной пропорции 33 000 к 300 000 и итог −89 % (оценка команды).
+ *   4. «Было» и «Стало» — две колонки строк.
+ *
+ *   mount(body, { sheet }) → { destroy }
+ *   timeFor(progress, duration) → секунды ролика для прогресса прокрутки 0..1
+ *   delayHours(hour, rounds, shiftHours) → часов до следующего обхода
+ */
+(function () {
+  'use strict';
+
+  var GV = (window.GV = window.GV || {});
+
+  function timeFor(progress, duration) {
+    if (!isFinite(duration) || duration <= 0) return 0;
+    var p = Math.max(0, Math.min(1, progress));
+    return p * Math.max(0, duration - 0.05);
+  }
+
+  function delayHours(hour, rounds, shiftHours) {
+    var next = null;
+    rounds.forEach(function (r) {
+      if (r > hour && (next === null || r < next)) next = r;
+    });
+    if (next === null) next = shiftHours + (rounds.length ? Math.min.apply(null, rounds) : 0);
+    return next - hour;
+  }
+
+  function mount(body, opts) {
+    var u = GV.util;
+    var kit = GV.kit;
+    var motion = GV.motion;
+    var h = u.h;
+    var c = GV.content;
+    var t = c.compare;
+    var tl = t.timeline;
+    var sc = kit.scope();
+    var fmt = u.formatNumber;
+    var NBSP = kit.NBSP;
+
+    body.classList.add('gv-shift');
+
+    /* ---------- 0. строка-тезис ---------- */
+    body.appendChild(h('p', { class: 'gv-shift__lead', 'data-reveal': '' }, t.outside));
+
+    /* ---------- 1. сцена с роликом ---------- */
+
+    var reduced = motion.reduced();
+    var small = window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+    var stage = h('div', { class: 'gv-shift__stage' + (reduced ? ' is-still' : '') });
+    var capBefore = h('p', { class: 'gv-shift__cap gv-shift__cap--before' }, t.captions.before);
+    var capAfter = h('p', { class: 'gv-shift__cap gv-shift__cap--after' }, t.captions.after);
+    var marker = h('span', { class: 'gv-shift__marker' });
+    var clockRuler = h('div', { class: 'gv-shift__clock', 'aria-hidden': 'true' },
+      h('span', { class: 'gv-shift__clock-line' }), marker);
+
+    if (reduced) {
+      stage.appendChild(h('div', { class: 'gv-shift__pair' },
+        h('figure', { class: 'gv-shift__still gv-plate' },
+          h('img', { src: t.video.poster, alt: t.captions.before, width: 1280, height: 720, loading: 'lazy' }), capBefore),
+        h('figure', { class: 'gv-shift__still gv-plate' },
+          h('img', { src: t.video.posterAfter, alt: t.captions.after, width: 1280, height: 720, loading: 'lazy' }), capAfter)));
+    } else {
+      var video = h('video', {
+        class: 'gv-shift__video',
+        muted: true,
+        playsinline: true,
+        preload: 'auto',
+        poster: t.video.poster,
+        'aria-label': t.video.label
+      });
+      video.muted = true;
+      video.setAttribute('muted', '');
+      video.src = small ? t.video.srcMobile : t.video.src;
+      var after = h('img', { class: 'gv-shift__after', src: t.video.posterAfter, alt: '', 'aria-hidden': 'true' });
+      var pin = h('div', { class: 'gv-shift__pin gv-plate' }, video, after, h('div', { class: 'gv-shift__shade' }), capBefore, capAfter, clockRuler);
+      stage.appendChild(pin);
+
+      var duration = NaN;
+      var shownT = 0;
+      var progress = 0;
+      var offFrame = null;
+      var failed = false;
+      sc.on(video, 'loadedmetadata', function () { duration = video.duration; wake(); });
+      sc.on(video, 'error', function () { failed = true; stage.classList.add('is-fallback'); });
+      if (video.readyState >= 1) duration = video.duration;
+
+      function paint() {
+        var target = timeFor(progress, duration);
+        if (!failed && isFinite(duration)) {
+          shownT += (target - shownT) * 0.18;
+          if (Math.abs(target - shownT) < 0.01) shownT = target;
+          if (Math.abs(video.currentTime - shownT) > 0.02) {
+            try { video.currentTime = shownT; } catch (e) { /* ещё не готов к перемотке */ }
+          }
+        }
+        var after = progress > 0.55;
+        capBefore.classList.toggle('is-on', !after);
+        capAfter.classList.toggle('is-on', after);
+        stage.classList.toggle('is-after', after);
+        marker.style.transform = 'translate3d(' + (progress * 100).toFixed(2) + 'cqw, 0, 0)';
+        // без ролика (ошибка загрузки) второй кадр проявляется opacity поверх первого
+        if (failed) stage.style.setProperty('--after', String(Math.max(0, Math.min(1, (progress - 0.5) / 0.3))));
+        if (Math.abs(timeFor(progress, duration) - shownT) < 0.01 && offFrame) { offFrame(); offFrame = null; }
+      }
+      function wake() {
+        if (!offFrame) offFrame = motion.onFrame(paint);
+      }
+      sc.add(motion.onScroll(function () {
+        progress = motion.pinProgress(stage);
+        wake();
+      }));
+      sc.add(function () { if (offFrame) offFrame(); });
+    }
+    body.appendChild(stage);
+
+    /* ---------- 2. шкала смены ---------- */
+
+    var H = tl.shiftHours;
+    var hour = tl.deviationHour;
+    function pct(x) { return (x / H) * 100; }
+
+    var scale = h('div', { class: 'gv-ruler__scale', 'aria-hidden': 'true' });
+    for (var i = 0; i <= H; i++) {
+      scale.appendChild(h('span', { class: 'gv-ruler__tick' + (i % 3 === 0 ? ' is-major' : '') + (i === H ? ' is-end' : '') + (i === 0 ? ' is-start' : ''), style: { left: pct(i) + '%' } },
+        i % 3 === 0 ? h('span', { class: 'gv-ruler__h' }, i + NBSP + 'ч') : null));
+    }
+
+    var blind = h('span', { class: 'gv-ruler__blind' });
+    var handTrack = h('div', { class: 'gv-ruler__track gv-ruler__track--hand' },
+      tl.rounds.map(function (r) {
+        return h('span', { class: 'gv-ruler__round' + (r >= H ? ' is-end' : ''), style: { left: pct(r) + '%' } }, h('span', { class: 'gv-hand' }, tl.roundLabel));
+      }), blind);
+    var camTick = h('span', { class: 'gv-ruler__cam-hit' });
+    var camTrack = h('div', { class: 'gv-ruler__track gv-ruler__track--cam' }, camTick);
+
+    var devLabel = h('span', { class: 'gv-ruler__dev-label' });
+    var dev = h('div', {
+      class: 'gv-ruler__dev',
+      role: 'slider',
+      tabindex: '0',
+      'aria-label': tl.deviationLabel,
+      'aria-valuemin': '0',
+      'aria-valuemax': String(H)
+    }, h('span', { class: 'gv-ruler__dev-line' }), devLabel);
+
+    var field = h('div', { class: 'gv-ruler__field' },
+      scale,
+      h('div', { class: 'gv-ruler__row' }, h('span', { class: 'gv-ruler__name' }, tl.handRow), handTrack),
+      h('div', { class: 'gv-ruler__row' }, h('span', { class: 'gv-ruler__name' }, tl.cameraRow), camTrack),
+      dev);
+
+    var beforeOut = h('span', { class: 'gv-num' });
+    var loupe = h('figure', { class: 'gv-loupe', 'aria-hidden': 'true' },
+      h('div', { class: 'gv-loupe__box' },
+        h('span', { class: 'gv-loupe__f', style: { left: '0%' } }),
+        h('span', { class: 'gv-loupe__f', style: { left: '33.333%' } }),
+        h('span', { class: 'gv-loupe__f', style: { left: '66.667%' } }),
+        h('span', { class: 'gv-loupe__f', style: { left: '100%' } }),
+        h('span', { class: 'gv-loupe__hit' })),
+      h('figcaption', { class: 'gv-label' }, tl.loupe));
+
+    var readout = h('div', { class: 'gv-ruler__out' },
+      h('p', { class: 'gv-ruler__res gv-ruler__res--hand' },
+        h('span', { class: 'gv-label' }, tl.beforeLead), beforeOut),
+      h('div', { class: 'gv-ruler__res gv-ruler__res--cam' },
+        h('p', null, h('span', { class: 'gv-label' }, tl.afterLead), h('span', { class: 'gv-num' }, tl.afterValue)),
+        loupe),
+      h('p', { class: 'gv-ruler__ema gv-caption' }, tl.emaNote));
+
+    var ruler = h('div', { class: 'gv-ruler', 'data-reveal': '' },
+      h('p', { class: 'gv-ruler__head' }, h('span', { class: 'gv-label' }, tl.caption), h('span', { class: 'gv-ruler__drag' }, tl.drag)),
+      field, readout);
+    body.appendChild(ruler);
+
+    function hm(x) {
+      var hh = Math.floor(x + 1e-9);
+      var mm = Math.round((x - hh) * 60);
+      if (mm === 60) { hh += 1; mm = 0; }
+      return hh + NBSP + 'ч ' + (mm < 10 ? '0' : '') + mm + NBSP + 'мин';
+    }
+    /* «Отклонение примерно в 5 часов»: подпись округляет до часа, точное время — в aria-valuetext */
+    function aboutHour(x) {
+      var n = Math.round(x);
+      if (n === 0) return tl.deviationStart;
+      var f = tl.hourForms;
+      var form = n % 10 === 1 && n % 100 !== 11 ? f[0] : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? f[1] : f[2]);
+      return tl.deviationAt + ' ' + n + NBSP + form;
+    }
+    function setHour(x) {
+      hour = Math.max(0, Math.min(H, Math.round(x * 4) / 4));
+      var d = delayHours(hour, tl.rounds, H);
+      var next = hour + d;
+      dev.style.setProperty('--x', String(hour / H));
+      blind.style.left = pct(hour) + '%';
+      blind.style.width = Math.max(0, pct(Math.min(next, H)) - pct(hour)) + '%';
+      camTick.style.left = pct(hour) + '%';
+      devLabel.textContent = aboutHour(hour);
+      beforeOut.textContent = hm(d);
+      dev.setAttribute('aria-valuenow', String(hour));
+      dev.setAttribute('aria-valuetext', hm(hour) + ' от начала смены; ' + tl.beforeLead.toLowerCase() + ' ' + hm(d));
+    }
+    setHour(hour);
+
+    function hourFromEvent(e) {
+      var trackBox = handTrack.getBoundingClientRect();
+      return ((e.clientX - trackBox.left) / trackBox.width) * H;
+    }
+    var dragging = false;
+    sc.on(field, 'pointerdown', function (e) {
+      dragging = true;
+      field.setPointerCapture(e.pointerId);
+      setHour(hourFromEvent(e));
+      dev.focus({ preventScroll: true });
+    });
+    sc.on(field, 'pointermove', function (e) { if (dragging) setHour(hourFromEvent(e)); });
+    sc.on(field, 'pointerup', function () { dragging = false; });
+    sc.on(field, 'pointercancel', function () { dragging = false; });
+    sc.on(dev, 'keydown', function (e) {
+      var step = null;
+      if (e.key === 'ArrowRight' || e.key === 'ArrowUp') step = 0.25;
+      else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') step = -0.25;
+      else if (e.key === 'PageUp') step = 1;
+      else if (e.key === 'PageDown') step = -1;
+      else if (e.key === 'Home') { e.preventDefault(); setHour(0); return; }
+      else if (e.key === 'End') { e.preventDefault(); setHour(H); return; }
+      if (step === null) return;
+      e.preventDefault();
+      setHour(hour + step);
+    });
+
+    /* ---------- 3. затраты ---------- */
+
+    function num(str) { return Number(String(str).replace(/[^\d]/g, '')); }
+    var vb = num(t.before.cost.value);
+    var va = num(t.after.cost.value);
+    var giant = h('span', { class: 'gv-cost__giant gv-num' }, t.saving.value);
+    var cost = h('div', { class: 'gv-cost', 'data-reveal': '' },
+      h('div', { class: 'gv-cost__total' },
+        h('p', { class: 'gv-cost__head' }, giant, h('span', { class: 'gv-cost__label' }, t.saving.label)),
+        h('p', { class: 'gv-cost__qual' }, t.savingNote)),
+      h('div', { class: 'gv-cost__rows' },
+        [[t.before, vb, 'before'], [t.after, va, 'after']].map(function (row) {
+          return h('div', { class: 'gv-cost__row gv-cost__row--' + row[2] },
+            h('p', { class: 'gv-cost__name' }, row[0].title, h('span', { class: 'gv-caption' }, row[0].cost.note)),
+            h('span', { class: 'gv-cost__bar' }, h('span', { class: 'gv-cost__fill', style: { '--w': (row[1] / vb).toFixed(4) } })),
+            h('p', { class: 'gv-cost__value gv-num' }, row[0].cost.value, h('span', { class: 'gv-cost__unit' }, ' ' + row[0].cost.unit)));
+        })));
+    body.appendChild(cost);
+    sc.observe(u.onVisible(cost, function () { cost.classList.add('is-drawn'); }, { once: true, threshold: 0.35 }));
+    var pctNum = Number(String(t.saving.value).replace(/[^\d]/g, ''));
+    sc.add(motion.counter(giant, { to: pctNum, digits: 0, display: t.saving.value, duration: 1400, format: function (v) { return '−' + fmt(v, 0) + NBSP + '%'; } }));
+
+    /* ---------- 4. было и стало ---------- */
+
+    function list(side, cls) {
+      return h('div', { class: 'gv-points gv-points--' + cls, 'data-reveal': '' },
+        h('h3', { class: 'gv-points__title' }, side.title),
+        h('ul', { class: 'gv-points__list', role: 'list' }, side.points.map(function (p) { return h('li', null, p); })));
+    }
+    body.appendChild(list(t.before, 'before'));
+    body.appendChild(list(t.after, 'after'));
+
+    return { destroy: sc.destroy };
+  }
+
+  GV.components = GV.components || {};
+  GV.components.shift = { mount: mount, timeFor: timeFor, delayHours: delayHours };
+})();
+
+window.GV && GV.tilda && GV.tilda.boot();
+</script>

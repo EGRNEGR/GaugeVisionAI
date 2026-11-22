@@ -1,0 +1,550 @@
+<!-- GaugeVision AI для Tilda: сгенерировано tilda/build.mjs из site/. Правьте site/ и пересобирайте. -->
+<!-- Лист 07 «Замечания»: тексты, стили и модуль components/limits.js -->
+<div class="gvt" data-gv-block="limits"></div>
+<style>
+/*
+ * Бланки журнала: протокол испытаний (лист 05), замечания и план (лист 07), сдача смены (лист 08).
+ * Таблицы на линиях 1px, без карточек; цифры — Martian Mono с tabular-nums, статусы — штампы.
+ */
+.gvt .gv-h3 {
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+/* ---------- компромиссы ---------- */
+.gvt .gv-trade {
+  grid-column: 1 / -1;
+}
+.gvt .gv-trade__head,
+.gvt .gv-envwrap__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s2) var(--s4);
+  margin-bottom: var(--s3);
+}
+.gvt .gv-trade__cols {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 5fr) minmax(0, 6fr) 2.75rem;
+  column-gap: var(--s2);
+  padding-bottom: var(--s1);
+  border-bottom: 1px solid var(--ink);
+}
+.gvt .gv-trade__cols span:first-child {
+  grid-column: 2;
+}
+.gvt .gv-trade__item {
+  border-bottom: 1px solid var(--rule-strong);
+}
+.gvt .gv-trade__row {
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 5fr) minmax(0, 6fr) 2.75rem;
+  column-gap: var(--s2);
+  align-items: baseline;
+  width: 100%;
+  padding: var(--s2) 0;
+  text-align: left;
+}
+.gvt .gv-trade__n {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+}
+.gvt .gv-trade__chose {
+  font-weight: 700;
+  line-height: 1.3;
+}
+.gvt .gv-trade__cost {
+  color: var(--ink-2);
+  line-height: 1.35;
+}
+.gvt .gv-trade__pm {
+  position: relative;
+  justify-self: end;
+  align-self: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+}
+.gvt .gv-trade__pm::before,
+.gvt .gv-trade__pm::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.75rem;
+  margin-left: -0.375rem;
+  border-top: 1px solid var(--ink);
+  transition: transform var(--dur-med) var(--ease-out);
+}
+.gvt .gv-trade__pm::after {
+  transform: rotate(90deg);
+}
+.gvt .gv-trade__row[aria-expanded='true'] .gv-trade__pm::after {
+  transform: rotate(0deg);
+}
+.gvt .gv-trade__row:hover .gv-trade__pm {
+  background: var(--ink);
+}
+.gvt .gv-trade__row:hover .gv-trade__pm::before,
+.gvt .gv-trade__row:hover .gv-trade__pm::after {
+  border-top-color: var(--paper);
+}
+.gvt .gv-trade__detail {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: var(--s1) var(--s2);
+  padding: 0 calc(2.75rem + var(--s2)) var(--s3) calc(3rem + var(--s2));
+  font-size: var(--fs-s);
+  color: var(--ink-2);
+  animation: gv-detail 600ms 120ms var(--ease-out) both;
+}
+@keyframes gv-detail {
+  from { opacity: 0; transform: translate3d(0, -0.5rem, 0); }
+  to { opacity: 1; transform: none; }
+}
+.gvt .gv-trade__detail p {
+  display: grid;
+  gap: 0.25rem;
+}
+.gvt .gv-trade__detail code {
+  font-size: var(--fs-xs);
+  color: var(--ink);
+}
+/* ---------- ограничения среды ---------- */
+.gvt .gv-envwrap {
+  grid-column: 1 / -1;
+  margin-top: var(--s12);
+}
+.gvt .gv-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s1);
+}
+.gvt .gv-filter__b {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  min-height: 2.75rem;
+  padding: 0 var(--s2);
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-xs);
+  border: 1px solid var(--ink);
+  border-radius: 0.1875rem;
+}
+.gvt .gv-filter__n {
+  color: var(--ink-3);
+}
+.gvt .gv-filter__b[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+.gvt .gv-filter__b[aria-pressed='true'] .gv-filter__n {
+  color: var(--plate-ink-2);
+}
+.gvt .gv-env {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid var(--ink);
+}
+.gvt .gv-env th,
+.gvt .gv-env td {
+  padding: var(--s2) var(--s2) var(--s2) 0;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--rule-strong);
+  line-height: 1.4;
+}
+.gvt .gv-env thead th {
+  padding-block: var(--s1);
+  font-family: var(--font-mono);
+  font-stretch: 75%;
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom-color: var(--ink);
+}
+.gvt .gv-env__cond {
+  width: 28%;
+}
+.gvt .gv-env__name {
+  display: block;
+  margin-bottom: var(--s1);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-xl);
+  line-height: 1;
+}
+.gvt .gv-env__risk {
+  width: 24%;
+  color: var(--ink-2);
+}
+.gvt .gv-env__resp {
+  font-size: var(--fs-s);
+}
+.gvt .gv-env__note {
+  display: block;
+  margin-top: var(--s1);
+  font-style: italic;
+  font-size: var(--fs-s);
+  color: var(--ink-2);
+}
+/* ---------- не проверено ---------- */
+.gvt .gv-untested {
+  grid-column: 3 / span 8;
+  display: grid;
+  gap: var(--s1);
+  margin-top: var(--s10);
+  padding: var(--s3) var(--s4);
+  border: 0.1875rem double var(--ink);
+  border-radius: 0.25rem;
+}
+.gvt .gv-untested__t {
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+.gvt .gv-untested .gv-note {
+  font-size: var(--fs-l);
+}
+/* ---------- план ---------- */
+.gvt .gv-plan {
+  grid-column: 1 / -1;
+  margin-top: var(--s12);
+}
+.gvt .gv-plan__title {
+  margin-bottom: var(--s3);
+}
+.gvt .gv-plan__list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--gutter);
+  border-top: 1px solid var(--ink);
+}
+.gvt .gv-plan__item {
+  padding-top: var(--s3);
+}
+.gvt .gv-plan__item + .gv-plan__item {
+  border-left: 1px solid var(--rule-strong);
+  padding-left: var(--gutter);
+}
+.gvt .gv-plan__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s1) var(--s2);
+  margin-bottom: var(--s2);
+}
+.gvt .gv-plan__i {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--ink-3);
+}
+.gvt .gv-plan__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-xl);
+  line-height: 1;
+}
+.gvt .gv-plan__items li {
+  padding: 0.375rem 0;
+  border-bottom: 1px dotted var(--rule-strong);
+  font-size: var(--fs-s);
+  line-height: 1.4;
+}
+.gvt .gv-plan__item--planned .gv-plan__items li {
+  color: var(--ink-2);
+}
+@media (max-width: 900px) {
+  .gvt .gv-untested { grid-column: 1 / -1; }
+  .gvt .gv-plan__list { grid-template-columns: minmax(0, 1fr); }
+  .gvt .gv-plan__item + .gv-plan__item { border-left: 0; padding-left: 0; border-top: 1px solid var(--rule-strong); }
+}
+@media (max-width: 760px) {
+  .gvt .gv-trade__cols { display: none; }
+  .gvt .gv-trade__row { grid-template-columns: 2rem minmax(0, 1fr) 2.75rem; row-gap: 0.25rem; }
+  .gvt .gv-trade__cost { grid-column: 2; grid-row: 2; font-size: var(--fs-s); }
+  .gvt .gv-trade__pm { grid-column: 3; grid-row: 1 / span 2; }
+  .gvt .gv-trade__detail { grid-template-columns: minmax(0, 1fr); padding: 0 0 var(--s3) calc(2rem + var(--s2)); }
+  .gvt .gv-env thead { display: none; }
+  .gvt .gv-env tr { display: grid; padding: var(--s2) 0; border-bottom: 1px solid var(--rule-strong); }
+  .gvt .gv-env tr[hidden] { display: none; }
+  .gvt .gv-env th,
+  .gvt .gv-env td { width: auto; border: 0; padding: 0.25rem 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gvt .gv-trade__detail { animation: none; }
+  .gvt .gv-trade__pm::before,
+  .gvt .gv-trade__pm::after { transition: none; }
+}
+</style>
+<script>
+/* Тексты листа 07 — данные из site/js/content.js после типографа */
+(function () {
+  var GV = (window.GV = window.GV || {});
+  var c = (GV.content = GV.content || {});
+  var part = {
+    "tradeoffs": [
+      {
+        "id": "yolo-nano",
+        "chose": "YOLOv8n только для поиска корпуса",
+        "cost": "Стрелку ищет геометрия OpenCV, не нейросеть",
+        "why": "7,2\u00a0мс/кадр на GPU, 29\u00a0мс на CPU. Класс Needle в модели есть, конвейер его не использует.",
+        "source": "models/gauge_yolov8.pt, YOLO_CLASSES в app/config.py"
+      },
+      {
+        "id": "affine",
+        "chose": "Аффинная нормализация эллипса",
+        "cost": "Проверено до ≈\u00a041°, сильные наклоны запланированы в Roadmap 02",
+        "why": "Эллипс по контуру находится на любом круглом приборе без разметки рисок.",
+        "source": "roi_from_ellipse, normalize_dial в app/vision.py"
+      },
+      {
+        "id": "ema",
+        "chose": "EMA α = 0,25 гасит вибрацию",
+        "cost": "Показание догоняет скачок за несколько кадров",
+        "why": "Остаток ×\u00a00,75 за кадр: половина уходит за 3\u00a0кадра, ≈\u00a090\u00a0% за 8. Оценка по формуле, не замер.",
+        "source": "EMA_ALPHA = 0.25 в app/config.py"
+      },
+      {
+        "id": "process-fps",
+        "chose": "3 обработки в секунду на камеру",
+        "cost": "Мониторинг, не видеопоток: броски короче трети секунды не видны",
+        "why": "25\u00a0камер замерены при 4\u00a0к/с на камеру (100\u00a0к/с, GPU 72\u00a0%), так что у режима 3\u00a0к/с есть запас.",
+        "source": "PROCESS_FPS = 3.0 в app/config.py"
+      },
+      {
+        "id": "confidence",
+        "chose": "Порог уверенности 0,25 и удержание значения",
+        "cost": "При грязном стекле пульт держит последнее достоверное значение; автоалерта нет",
+        "why": "Недостоверные точки не попадают в архив, и тренд не скачет. Автоалерт стоит в плане.",
+        "source": "MIN_NEEDLE_CONFIDENCE = 0.25 в app/config.py"
+      },
+      {
+        "id": "local",
+        "chose": "Самоподписанный сертификат, локальный контур",
+        "cost": "Браузер раз предупреждает о сертификате на каждом новом устройстве",
+        "why": "Ни одного исходящего запроса в интернет. Без HTTPS нет доступа к камере смартфона.",
+        "source": "app/cert_gen.py, run.py"
+      },
+      {
+        "id": "sqlite",
+        "chose": "SQLite и CSV вместо интеграции со SCADA",
+        "cost": "Связи с АСУ ТП нет: Modbus TCP и OPC UA запланированы в Roadmap 02",
+        "why": "Запуск без проекта интеграции: архив и выгрузка в Excel работают сразу.",
+        "source": "app/db.py"
+      }
+    ],
+    "limits": [
+      {
+        "id": "glare",
+        "condition": "Блики, тени, копоть",
+        "risk": "Ошибки выделения шкалы и стрелки",
+        "response": "CLAHE при поиске циферблата; Black-Hat / Top-Hat 31×31; Otsu по кольцу; фонарь смартфона",
+        "note": "Отдельной обработки копоти в коде нет",
+        "status": "done"
+      },
+      {
+        "id": "vibration",
+        "condition": "Вибрация",
+        "risk": "Дрожание показаний",
+        "response": "EMA α = 0,25; смещение ROI меньше 5\u00a0% оси игнорируется",
+        "status": "done"
+      },
+      {
+        "id": "angle",
+        "condition": "Съёмка под углом",
+        "risk": "Искажение геометрии шкалы",
+        "response": "Аффинная нормализация в круг 640\u00a0px, проверена при наклоне до ≈\u00a041°",
+        "note": "Сильные наклоны запланированы в Roadmap 02",
+        "status": "partial"
+      },
+      {
+        "id": "dirt",
+        "condition": "Загрязнение стекла",
+        "risk": "Падение достоверности",
+        "response": "Порог 0,25: недостоверный кадр не пишется, а после 3 промахов прибор ищется заново",
+        "note": "Автоалерт запланирован",
+        "status": "partial"
+      },
+      {
+        "id": "network",
+        "condition": "Обрыв сети или камеры",
+        "risk": "Потеря телеметрии",
+        "response": "Переподключение 1 → 15\u00a0с, после 8 неудач статус «офлайн». Смартфон без кадров через 6\u00a0с получает «переподключение», через 30\u00a0с «офлайн»",
+        "status": "done"
+      }
+    ],
+    "untested": {
+      "title": "Не проверено в поле",
+      "text": "Нелинейные шкалы, многострелочные приборы, работа на станции. Испытания пока проходили только на стенде."
+    },
+    "roadmap": [
+      {
+        "index": "01",
+        "title": "MVP",
+        "status": "done",
+        "items": [
+          "6 классов приборов",
+          "YOLOv8n на CUDA",
+          "смартфон по QR-коду",
+          "уставки, сирена и экспорт в CSV"
+        ]
+      },
+      {
+        "index": "02",
+        "title": "Связь со SCADA",
+        "status": "planned",
+        "items": [
+          "Modbus TCP и OPC UA",
+          "полевой пилот на станции",
+          "полная гомография",
+          "нелинейные шкалы и многоточечная калибровка"
+        ]
+      },
+      {
+        "index": "03",
+        "title": "Масштаб цеха",
+        "status": "planned",
+        "items": [
+          "PTZ-камеры с пресетами обхода: одна камера на десятки приборов",
+          "нательные регистраторы обходчиков"
+        ]
+      }
+    ]
+  };
+  Object.keys(part).forEach(function (k) { c[k] = part[k]; });
+})();
+/*
+ * GV.components.limits — лист 07 «Компромиссы, ограничения и план».
+ *   Компромиссы — строки журнала «выбрали → платим»; строка раскрывается: почему так и где в коде.
+ *   Раскрытие без скачка — GV.motion.shiftBelow: строки ниже доезжают transform.
+ *   Ограничения среды — таблица «условие и штамп статуса · риск · ответ в коде»; фильтр по статусу.
+ *   «Не проверено в поле» — пометка рукой; план — три листа 01–03 со штампами статуса.
+ *
+ *   mount(body) → { destroy }
+ */
+(function () {
+  'use strict';
+
+  var GV = (window.GV = window.GV || {});
+
+  function mount(body) {
+    var u = GV.util;
+    var kit = GV.kit;
+    var motion = GV.motion;
+    var h = u.h;
+    var c = GV.content;
+    var L = c.labels;
+    var sc = kit.scope();
+
+    body.classList.add('gv-limits');
+
+    /* ---------- компромиссы ---------- */
+
+    var trade = h('div', { class: 'gv-trade', 'data-reveal': '' },
+      h('div', { class: 'gv-trade__head' },
+        h('h3', { class: 'gv-h3' }, L.tradeoffsTitle),
+        h('p', { class: 'gv-label' }, L.tradeoffsLead)),
+      h('div', { class: 'gv-trade__cols', 'aria-hidden': 'true' },
+        h('span', { class: 'gv-label' }, L.chose), h('span', { class: 'gv-label' }, L.cost)));
+    var tradeList = h('ol', { class: 'gv-trade__list', role: 'list' });
+    c.tradeoffs.forEach(function (t, i) {
+      var id = 'gv-trade-' + t.id;
+      var detail = h('div', { class: 'gv-trade__detail', id: id, hidden: true },
+        h('p', null, h('span', { class: 'gv-label' }, L.why), t.why),
+        h('p', null, h('span', { class: 'gv-label' }, L.source), h('code', null, t.source)));
+      var btn = h('button', { class: 'gv-trade__row', type: 'button', 'aria-expanded': 'false', 'aria-controls': id },
+        h('span', { class: 'gv-trade__n gv-num' }, (i < 9 ? '0' : '') + (i + 1)),
+        h('span', { class: 'gv-trade__chose' }, h('span', { class: 'gv-visually-hidden' }, L.chose + ': '), t.chose),
+        h('span', { class: 'gv-trade__cost' }, h('span', { class: 'gv-visually-hidden' }, L.cost + ': '), t.cost),
+        h('span', { class: 'gv-trade__pm', 'aria-hidden': 'true' }));
+      sc.on(btn, 'click', function () {
+        var open = btn.getAttribute('aria-expanded') !== 'true';
+        motion.shiftBelow(btn.parentNode, function () {
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+          detail.hidden = !open;
+        }, body);
+      });
+      tradeList.appendChild(h('li', { class: 'gv-trade__item' }, btn, detail));
+    });
+    trade.appendChild(tradeList);
+    body.appendChild(trade);
+
+    /* ---------- ограничения среды ---------- */
+
+    var counts = { all: c.limits.length, done: 0, partial: 0 };
+    c.limits.forEach(function (l) { counts[l.status] += 1; });
+    var filters = h('div', { class: 'gv-filter', role: 'group', 'aria-label': L.filterLabel },
+      [['all', L.filterAll], ['done', L.status.done], ['partial', L.status.partial]].map(function (f) {
+        return h('button', { class: 'gv-filter__b', type: 'button', 'data-filter': f[0], 'aria-pressed': 'false' },
+          f[1], h('span', { class: 'gv-filter__n gv-num' }, String(counts[f[0]])));
+      }));
+
+    var rows = [];
+    var table = h('table', { class: 'gv-env' },
+      h('caption', { class: 'gv-visually-hidden' }, L.limitsTitle),
+      h('thead', null, h('tr', null,
+        h('th', { scope: 'col' }, L.condition), h('th', { scope: 'col' }, L.risk), h('th', { scope: 'col' }, L.response))),
+      h('tbody', null, c.limits.map(function (l) {
+        var tr = h('tr', { class: 'gv-env__row', 'data-status': l.status },
+          h('th', { scope: 'row', class: 'gv-env__cond' }, h('span', { class: 'gv-env__name' }, l.condition),
+            h('span', { class: 'gv-mark gv-mark--stamp', 'data-tone': l.status }, L.status[l.status])),
+          h('td', { class: 'gv-env__risk' }, l.risk),
+          h('td', { class: 'gv-env__resp' }, l.response, l.note ? h('span', { class: 'gv-env__note' }, l.note) : null));
+        rows.push(tr);
+        return tr;
+      })));
+
+    var env = h('div', { class: 'gv-envwrap', 'data-reveal': '' },
+      h('div', { class: 'gv-envwrap__head' }, h('h3', { class: 'gv-h3' }, L.limitsTitle), filters),
+      table);
+    body.appendChild(env);
+
+    u.rovingTabs(filters, {
+      selector: '.gv-filter__b',
+      attr: 'aria-pressed',
+      onSelect: function (i, el) {
+        var f = el.getAttribute('data-filter');
+        rows.forEach(function (tr) { tr.hidden = f !== 'all' && tr.getAttribute('data-status') !== f; });
+      }
+    });
+    sc.observe(u.onVisible(table, function () { table.classList.add('gv-stamped'); }, { once: true, threshold: 0.2 }));
+
+    /* ---------- не проверено в поле ---------- */
+
+    body.appendChild(h('aside', { class: 'gv-untested', 'data-reveal': '' },
+      h('h3', { class: 'gv-untested__t' }, c.untested.title),
+      h('p', { class: 'gv-note' }, c.untested.text)));
+
+    /* ---------- план ---------- */
+
+    var plan = h('div', { class: 'gv-plan', 'data-reveal': '' },
+      h('h3', { class: 'gv-h3 gv-plan__title' }, L.roadmapTitle),
+      h('ol', { class: 'gv-plan__list', role: 'list' }, c.roadmap.map(function (r) {
+        return h('li', { class: 'gv-plan__item gv-plan__item--' + r.status },
+          h('p', { class: 'gv-plan__head' },
+            h('span', { class: 'gv-plan__i gv-num' }, r.index),
+            h('span', { class: 'gv-plan__name' }, r.title),
+            h('span', { class: 'gv-mark gv-mark--stamp', 'data-tone': r.status }, L.status[r.status])),
+          h('ul', { class: 'gv-plan__items', role: 'list' }, r.items.map(function (it) { return h('li', null, it); })));
+      })));
+    body.appendChild(plan);
+    sc.observe(u.onVisible(plan, function () { plan.classList.add('gv-stamped'); }, { once: true, threshold: 0.3 }));
+
+    return { destroy: sc.destroy };
+  }
+
+  GV.components = GV.components || {};
+  GV.components.limits = { mount: mount };
+})();
+
+window.GV && GV.tilda && GV.tilda.boot();
+</script>

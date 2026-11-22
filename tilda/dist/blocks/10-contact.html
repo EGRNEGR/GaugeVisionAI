@@ -1,0 +1,197 @@
+<!-- GaugeVision AI для Tilda: сгенерировано tilda/build.mjs из site/. Правьте site/ и пересобирайте. -->
+<!-- Лист 08 «GitHub»: тексты, стили и модуль components/contact.js -->
+<div class="gvt" data-gv-block="contact"></div>
+<style>
+/* ---------- сдача смены ---------- */
+.gvt .gv-sheet--contact {
+  padding-bottom: var(--s20);
+}
+.gvt .gv-close__handover {
+  grid-column: 4 / span 9;
+  border-top: 1px solid var(--ink);
+}
+.gvt .gv-close__line {
+  display: grid;
+  grid-template-columns: 11rem minmax(0, 1fr);
+  align-items: center;
+  min-height: calc(var(--row) * 2.5);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.gvt .gv-close__line dd {
+  margin: 0;
+}
+.gvt .gv-close__sign {
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+.gvt .gv-close__seal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s1) var(--s3);
+}
+.gvt .gv-close__seal .gv-mark {
+  font-size: var(--fs-s);
+  padding: 0.375rem 0.75rem 0.25rem;
+}
+.gvt .gv-close__time {
+  font-family: var(--font-mono);
+  font-size: var(--fs-s);
+  font-weight: 600;
+}
+.gvt .gv-close__mine {
+  font-size: var(--fs-s);
+  color: var(--ink-2);
+}
+.gvt .gv-close__act {
+  grid-column: 4 / span 9;
+  display: grid;
+  justify-items: start;
+  min-width: 0;
+  gap: var(--s3);
+  margin-top: var(--s8);
+}
+.gvt .gv-close__act > * {
+  max-width: 100%;
+}
+.gvt .gv-close__lead {
+  max-width: 40ch;
+  font-size: var(--fs-l);
+  line-height: 1.4;
+  color: var(--ink-2);
+}
+.gvt .gv-close__cta {
+  min-height: 5rem;
+  padding: var(--s2) var(--s5) var(--s2) var(--s4);
+  font-size: var(--fs-2xl);
+}
+.gvt .gv-close__cta .gv-icon {
+  width: 1.75rem;
+  height: 1.75rem;
+}
+.gvt .gv-close__cta-t {
+  display: grid;
+  gap: 0.375rem;
+}
+.gvt .gv-close__license {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-xs);
+}
+@media (max-width: 900px) {
+  .gvt .gv-close__handover,
+  .gvt .gv-close__act { grid-column: 1 / -1; }
+}
+@media (max-width: 760px) {
+  .gvt .gv-close__line { grid-template-columns: minmax(0, 1fr); padding: var(--s1) 0; }
+  .gvt .gv-close__cta { font-size: var(--fs-xl); padding-inline: var(--s3); width: 100%; }
+  .gvt .gv-close__cta .gv-stamp__sub { overflow-wrap: anywhere; }
+}
+</style>
+<script>
+/* Тексты листа 08 — данные из site/js/content.js после типографа */
+(function () {
+  var GV = (window.GV = window.GV || {});
+  var c = (GV.content = GV.content || {});
+  var part = {
+    "contact": {
+      "title": "Журнал открыт на GitHub",
+      "handedLabel": "Смену сдал",
+      "handedBy": "обходчик",
+      "acceptedLabel": "Смену принял",
+      "acceptedBy": "GaugeVision AI",
+      "opened": "Лист открыт",
+      "yourEntries": "Ваших записей в журнале",
+      "lead": "Код, README с условиями замеров и историю коммитов можно посмотреть в репозитории.",
+      "links": [
+        {
+          "id": "repo",
+          "label": "Код на GitHub",
+          "href": "https://github.com/EGRNEGR/GaugeVisionAI",
+          "primary": true
+        },
+        {
+          "id": "license",
+          "label": "Проприетарная лицензия",
+          "href": "https://github.com/EGRNEGR/GaugeVisionAI/blob/main/LICENSE"
+        }
+      ]
+    }
+  };
+  Object.keys(part).forEach(function (k) { c[k] = part[k]; });
+})();
+/*
+ * GV.components.contact — лист 08 «Журнал открыт на GitHub».
+ * Сдача смены двумя строками журнала: «Смену сдал — обходчик» его рукой, «Смену принял —
+ * GaugeVision AI» печатью. Под ними одно главное действие — штамп «Код на GitHub» с адресом
+ * репозитория — и проприетарная лицензия. Других контактов нет (PRODUCT.md).
+ *
+ *   mount(body, { reading }) → { destroy }   reading — общее показание: считает записи посетителя
+ */
+(function () {
+  'use strict';
+
+  var GV = (window.GV = window.GV || {});
+
+  function mount(body, opts) {
+    var u = GV.util;
+    var kit = GV.kit;
+    var motion = GV.motion;
+    var h = u.h;
+    var c = GV.content;
+    var t = c.contact;
+    var sc = kit.scope();
+
+    body.classList.add('gv-close');
+
+    var handed = h('span', { class: 'gv-write gv-hand gv-close__sign' }, t.handedBy);
+    var stampTime = h('time', { class: 'gv-close__time gv-num' });
+    var mine = h('span', { class: 'gv-close__mine' });
+    var accepted = h('span', { class: 'gv-close__seal' },
+      h('span', { class: 'gv-mark gv-mark--stamp', 'data-tone': 'measured' }, t.acceptedBy), stampTime, mine);
+    var entries = 0;
+    function sign() {
+      var now = new Date();
+      var p2 = function (n) { return String(n).padStart(2, '0'); };
+      stampTime.textContent = p2(now.getDate()) + '.' + p2(now.getMonth() + 1) + '.' + now.getFullYear() + ', ' + p2(now.getHours()) + ':' + p2(now.getMinutes());
+      stampTime.setAttribute('datetime', now.toISOString());
+      mine.textContent = entries ? t.yourEntries + ': ' + entries : '';
+    }
+    if (opts && opts.reading) sc.add(opts.reading.onCommit(function () { entries += 1; sign(); }));
+    var handover = h('dl', { class: 'gv-close__handover', 'data-reveal': '' },
+      h('div', { class: 'gv-close__line' }, h('dt', { class: 'gv-label' }, t.handedLabel), h('dd', null, handed)),
+      h('div', { class: 'gv-close__line' }, h('dt', { class: 'gv-label' }, t.acceptedLabel), h('dd', null, accepted)));
+
+    var repo = t.links.filter(function (l) { return l.primary; })[0];
+    var license = t.links.filter(function (l) { return !l.primary; })[0];
+    var cta = kit.extLink({ class: 'gv-stamp gv-close__cta', href: repo.href },
+      kit.icon('github'),
+      h('span', { class: 'gv-close__cta-t' }, repo.label, h('span', { class: 'gv-stamp__sub' }, c.meta.repoLabel)));
+    sc.add(motion.magnet(cta, { pull: 0.22, max: 0.5 }));
+
+    body.appendChild(handover);
+    body.appendChild(h('div', { class: 'gv-close__act', 'data-reveal': '' },
+      h('p', { class: 'gv-close__lead' }, t.lead),
+      cta,
+      kit.extLink({ class: 'gv-close__license', href: license.href }, license.label)));
+
+    sc.observe(u.onVisible(handover, function () {
+      sign();
+      handed.classList.add('is-written');
+      handover.classList.add('gv-stamped');
+    }, { once: true, threshold: 0.5 }));
+    accepted.firstChild.style.setProperty('--gv-stamp-delay', '900ms');
+
+    return { destroy: sc.destroy };
+  }
+
+  GV.components = GV.components || {};
+  GV.components.contact = { mount: mount };
+})();
+
+window.GV && GV.tilda && GV.tilda.boot();
+</script>

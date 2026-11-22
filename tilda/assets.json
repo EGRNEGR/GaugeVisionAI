@@ -1,0 +1,25 @@
+{
+  "note": {
+    "fonts": "Шрифты — те же файлы fontsource, что в site/assets/fonts (md5 совпадает), с jsDelivr: upload_image принимает шрифты только содержимым.",
+    "video": "Ролик листа 02 — jsDelivr по коммиту 23e7775: работает, когда коммит есть на GitHub. До этого компонент показывает кадр после.",
+    "images": "Постеры — CDN Tilda (upload_image)."
+  },
+  "files": {
+    "assets/fonts/sofia-xcond-cyrillic.woff2": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans-extra-condensed@5.3.0/files/sofia-sans-extra-condensed-cyrillic-wght-normal.woff2",
+    "assets/fonts/sofia-xcond-latin.woff2": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans-extra-condensed@5.3.0/files/sofia-sans-extra-condensed-latin-wght-normal.woff2",
+    "assets/fonts/sofia-sans-cyrillic.woff2": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-cyrillic-wght-normal.woff2",
+    "assets/fonts/sofia-sans-greek.woff2": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-greek-wght-normal.woff2",
+    "assets/fonts/sofia-sans-latin.woff2": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-latin-wght-normal.woff2",
+    "assets/fonts/sofia-sans-italic-cyrillic.woff2": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-cyrillic-wght-italic.woff2",
+    "assets/fonts/sofia-sans-italic-latin.woff2": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-latin-wght-italic.woff2",
+    "assets/fonts/martian-mono-cyrillic.woff2": "https://cdn.jsdelivr.net/npm/@fontsource-variable/martian-mono@5.3.0/files/martian-mono-cyrillic-standard-normal.woff2",
+    "assets/fonts/martian-mono-latin.woff2": "https://cdn.jsdelivr.net/npm/@fontsource-variable/martian-mono@5.3.0/files/martian-mono-latin-standard-normal.woff2",
+    "assets/fonts/bad-script-cyrillic.woff2": "https://cdn.jsdelivr.net/npm/@fontsource/bad-script@5.3.0/files/bad-script-cyrillic-400-normal.woff2",
+    "assets/fonts/bad-script-latin.woff2": "https://cdn.jsdelivr.net/npm/@fontsource/bad-script@5.3.0/files/bad-script-latin-400-normal.woff2",
+    "assets/video/shift.scrub.mp4": "https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@23e7775eb733323ace1f838a66125783f22c7390/site/assets/video/shift.scrub.mp4",
+    "assets/video/shift.scrub-m.mp4": "https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@23e7775eb733323ace1f838a66125783f22c7390/site/assets/video/shift.scrub-m.mp4",
+    "assets/img/shift-before.jpg": "https://static.tildacdn.com/tila3937-6636-4230-a265-623335656337/shift-before.jpg",
+    "assets/img/shift-after.jpg": "https://static.tildacdn.com/tila3634-3835-4565-a633-633762373466/shift-after.jpg",
+    "assets/img/favicon.svg": "https://static.tildacdn.com/tila6163-3130-4138-a363-623436323738/favicon.svg"
+  }
+}

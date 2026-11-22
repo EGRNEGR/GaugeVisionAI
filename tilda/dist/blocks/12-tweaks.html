@@ -1,0 +1,167 @@
+<!-- GaugeVision AI для Tilda: сгенерировано tilda/build.mjs из site/. Правьте site/ и пересобирайте. -->
+<!-- Панель Tweaks: масштаб и сорт бумаги, видит только автор (адрес с ?tweaks) -->
+<div class="gvt" data-gv-block="tweaks">
+  <aside id="gv-tweaks" aria-label="Настройки внешнего вида"></aside>
+</div>
+<style>
+/* Tweaks — инструмент автора: виден только при html[data-tweaks='on'] (ADR 0010). */
+.gvt .gv-tw {
+  display: none;
+}
+html[data-tweaks='on'] .gvt .gv-tw {
+  display: grid;
+  justify-items: start;
+  gap: var(--s1);
+  position: fixed;
+  z-index: 40;
+  left: var(--s2);
+  bottom: var(--s2);
+}
+.gvt .gv-tw__btn {
+  min-height: 2.75rem;
+  padding: 0 var(--s2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--paper);
+  background: var(--violet);
+  border-radius: 0.1875rem;
+}
+.gvt .gv-tw__panel {
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s2);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 0.25rem;
+  box-shadow: 0 1rem 2rem -1rem rgba(23, 25, 28, 0.5);
+}
+.gvt .gv-tw__panel[hidden] {
+  display: none;
+}
+.gvt .gv-tw__group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.gvt .gv-tw__opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.375rem;
+}
+.gvt .gv-tw__opt {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0 0.625rem;
+  font-size: var(--fs-xs);
+  border: 1px solid var(--rule-strong);
+  border-radius: 0.1875rem;
+  cursor: pointer;
+}
+.gvt .gv-tw__radio {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.gvt .gv-tw__opt:has(.gv-tw__radio:checked) {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.gvt .gv-tw__opt:has(.gv-tw__radio:focus-visible) {
+  outline: 0.125rem solid var(--violet);
+  outline-offset: 0.125rem;
+}
+@media (max-width: 900px) {
+  html[data-tweaks='on'] .gvt .gv-tw {
+      bottom: calc(3.5rem + env(safe-area-inset-bottom));
+    }
+}
+</style>
+<script>
+/*
+ * GV.tweaks — инструмент автора (ADR 0010): масштаб страницы и сорт бумаги.
+ * Посетитель кнопку не видит: адрес с ?tweaks включает её на этом устройстве (запоминается),
+ * ?tweaks=off выключает, Shift + T показывает или прячет. Выбор хранится в localStorage gv.tweaks
+ * и ставится до первой отрисовки скриптом в <head>; здесь — панель и событие gv:tweaks.
+ *
+ *   mount(asideEl)
+ */
+(function () {
+  'use strict';
+
+  var GV = (window.GV = window.GV || {});
+  var KEY = 'gv.tweaks';
+  var SCALES = [0.9, 1, 1.1, 1.25];
+  var PAPERS = [['ledger', 'Журнальная'], ['graph', 'Миллиметровка'], ['tracing', 'Калька']];
+
+  function read() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { return {}; }
+  }
+  function write(state) {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* приватный режим: только на сессию */ }
+  }
+
+  function mount(aside) {
+    if (!aside || aside.childNodes.length) return;
+    var h = GV.util.h;
+    var d = document.documentElement;
+    var state = read();
+    if (SCALES.indexOf(state.scale) < 0) state.scale = 1;
+    if (!PAPERS.some(function (p) { return p[0] === state.paper; })) state.paper = 'ledger';
+
+    function apply() {
+      d.style.setProperty('--ui-scale', String(state.scale));
+      if (state.paper === 'ledger') d.removeAttribute('data-paper');
+      else d.setAttribute('data-paper', state.paper);
+      write(state);
+      document.dispatchEvent(new CustomEvent('gv:tweaks', { detail: { scale: state.scale, paper: state.paper } }));
+    }
+
+    function group(legend, name, options, current, onPick) {
+      return h('fieldset', { class: 'gv-tw__group' },
+        h('legend', { class: 'gv-label' }, legend),
+        h('div', { class: 'gv-tw__opts' }, options.map(function (o) {
+          var id = 'gv-tw-' + name + '-' + String(o[0]).replace('.', '');
+          var input = h('input', { type: 'radio', name: 'gv-tw-' + name, id: id, value: String(o[0]), class: 'gv-tw__radio' });
+          input.checked = String(o[0]) === String(current);
+          input.addEventListener('change', function () { onPick(o[0]); });
+          return h('label', { class: 'gv-tw__opt', for: id }, input, h('span', null, o[1]));
+        })));
+    }
+
+    var panelId = 'gv-tw-panel';
+    var btn = h('button', { class: 'gv-tw__btn', type: 'button', 'aria-expanded': 'false', 'aria-controls': panelId }, 'Tweaks');
+    var panel = h('div', { class: 'gv-tw__panel', id: panelId, hidden: true },
+      group('Масштаб', 'scale', SCALES.map(function (v) { return [v, Math.round(v * 100) + ' %']; }), state.scale,
+        function (v) { state.scale = v; apply(); }),
+      group('Бумага', 'paper', PAPERS, state.paper, function (v) { state.paper = v; apply(); }));
+
+    btn.addEventListener('click', function () {
+      var open = btn.getAttribute('aria-expanded') !== 'true';
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      panel.hidden = !open;
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !panel.hidden) { panel.hidden = true; btn.setAttribute('aria-expanded', 'false'); btn.focus(); return; }
+      if (!e.shiftKey || (e.key !== 'T' && e.key !== 'Т')) return;
+      var tag = (e.target && e.target.tagName) || '';
+      if (/INPUT|TEXTAREA|SELECT/.test(tag)) return;
+      if (d.getAttribute('data-tweaks') === 'on') d.removeAttribute('data-tweaks');
+      else d.setAttribute('data-tweaks', 'on');
+    });
+
+    aside.className = 'gv-tw';
+    aside.appendChild(panel);
+    aside.appendChild(btn);
+  }
+
+  GV.tweaks = { mount: mount };
+})();
+
+window.GV && GV.tilda && GV.tilda.boot();
+</script>

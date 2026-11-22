@@ -1,0 +1,886 @@
+<!-- GaugeVision AI для Tilda: сгенерировано tilda/build.mjs из site/. Правьте site/ и пересобирайте. -->
+<!-- Блок 01 всегда первый и невидим: общие тексты и библиотека util, motion -->
+<script>
+/* Общие тексты: шапка, листы, подписи, калибровка, показание — данные из site/js/content.js после типографа */
+(function () {
+  var GV = (window.GV = window.GV || {});
+  var c = (GV.content = GV.content || {});
+  var part = {
+    "meta": {
+      "name": "GaugeVision AI",
+      "repoUrl": "https://github.com/EGRNEGR/GaugeVisionAI",
+      "repoLabel": "github.com/EGRNEGR/GaugeVisionAI",
+      "licenseUrl": "https://github.com/EGRNEGR/GaugeVisionAI/blob/main/LICENSE",
+      "trackShort": "Трек №3, Умное производство",
+      "copyright": "© 2026 EGRNEGR. Все права защищены. Код опубликован только для ознакомления",
+      "version": "1.0.0",
+      "form": "Журнал обхода и показаний КИП, котельный цех"
+    },
+    "sections": [
+      {
+        "id": "hero",
+        "index": "01",
+        "nav": "Журнал",
+        "form": "Смена идёт"
+      },
+      {
+        "id": "compare",
+        "index": "02",
+        "nav": "Смена",
+        "form": "Было и стало",
+        "title": "Двенадцать часов против трети секунды"
+      },
+      {
+        "id": "reading",
+        "index": "03",
+        "nav": "Показание",
+        "form": "Калибровка",
+        "title": "От угла θ\nк мегапаскалям"
+      },
+      {
+        "id": "pipeline",
+        "index": "04",
+        "nav": "Конвейер",
+        "form": "Обработка кадра",
+        "title": "Четыре операции над одним кадром"
+      },
+      {
+        "id": "metrics",
+        "index": "05",
+        "nav": "Протокол",
+        "form": "Протокол",
+        "title": "Протокол испытаний"
+      },
+      {
+        "id": "architecture",
+        "index": "06",
+        "nav": "Схема",
+        "form": "Схема соединений",
+        "title": "Один сервер в локальном контуре"
+      },
+      {
+        "id": "limits",
+        "index": "07",
+        "nav": "Замечания",
+        "form": "Замечания",
+        "title": "Компромиссы, ограничения и план"
+      },
+      {
+        "id": "contact",
+        "index": "08",
+        "nav": "GitHub",
+        "form": "Сдача смены",
+        "title": "Журнал открыт на GitHub"
+      }
+    ],
+    "labels": {
+      "status": {
+        "done": "реализовано",
+        "partial": "частично",
+        "planned": "в плане"
+      },
+      "kind": {
+        "measured": "замер",
+        "calculated": "расчёт"
+      },
+      "metricGroups": {
+        "quality": "Точность",
+        "speed": "Скорость",
+        "scale": "Масштаб"
+      },
+      "filterAll": "Все",
+      "filterLabel": "Показать замечания по статусу",
+      "tradeoffsTitle": "Компромиссы",
+      "tradeoffsLead": "Выбрали → платим",
+      "limitsTitle": "Ограничения среды цеха",
+      "chose": "Выбрали",
+      "cost": "Платим",
+      "why": "Почему так",
+      "source": "Где в коде",
+      "condition": "Условие",
+      "risk": "Риск",
+      "response": "Ответ в коде",
+      "roadmapTitle": "План",
+      "stackTitle": "Спецификация",
+      "opsList": "Операции над кадром",
+      "latency": "Задержка",
+      "inTotal": "Отдельного замера нет: входит в конвейер целиком",
+      "opsFrame": {
+        "box": "gauge, conf ≥\u00a00,35",
+        "ellipse": "эллипс циферблата",
+        "square": "640 ×\u00a0640",
+        "ring": "кольцо момента 0,06–0,36",
+        "hough": "HoughLinesP",
+        "hist": "гистограмма момента, шаг 1°",
+        "raw": "сырые отсчёты",
+        "ema": "EMA α = 0,25",
+        "catchUp": "≈\u00a090\u00a0% за 8\u00a0кадров"
+      },
+      "nav": "Листы журнала",
+      "home": "GaugeVision AI, к первому листу",
+      "sheet": "Лист",
+      "skip": "К содержанию",
+      "newTab": "откроется в новой вкладке"
+    },
+    "calibration": {
+      "thetaMin": 45,
+      "thetaMax": 315,
+      "vMin": 0,
+      "vMax": 10,
+      "unit": "МПа",
+      "direction": "CW",
+      "span": 270,
+      "clamp": 0.05,
+      "setpoints": {
+        "LL": 1,
+        "L": 2,
+        "H": 8,
+        "HH": 9
+      },
+      "barPerMpa": 10,
+      "formula": "V = Vmin + ((θ − θmin) mod 360) / span · (Vmax − Vmin)"
+    },
+    "reading": {
+      "theta": 163.4,
+      "device": "Манометр, шкала 0–10\u00a0МПа",
+      "caption": "Калибровка по двум точкам: θmin 45° → 0, θmax 315° → 10\u00a0МПа по часовой; отсчёт 0° от стрелки вниз",
+      "zones": {
+        "normal": "НОРМА",
+        "warning": "ПРЕДУПРЕЖДЕНИЕ",
+        "alert": "АВАРИЯ"
+      },
+      "sliderLabel": "Показание прибора, МПа",
+      "hint": "Ведите курсором по шкале; клик фиксирует, ← → двигают",
+      "hintTouch": "Коснитесь шкалы, и стрелка встанет в точку касания",
+      "formulaLabel": "Формула из app/vision.py",
+      "substitution": "Подстановка",
+      "angleLabel": "Угол стрелки θ",
+      "spanLabel": "Рабочий сектор шкалы",
+      "barLabel": "то же в барах",
+      "zoneLabel": "Зона уставок",
+      "write": "Записать в журнал",
+      "written": "Записано в журнал листа 01"
+    }
+  };
+  Object.keys(part).forEach(function (k) { c[k] = part[k]; });
+})();
+/*
+ * GV.util — общие хелперы. Без зависимостей, классический скрипт.
+ *   formatNumber(n, digits)          → '0,38' (ru-RU, запятая, неразрывный пробел в разрядах)
+ *   prefersReducedMotion()           → bool
+ *   onVisible(el, cb, {once, threshold, rootMargin}) → unsubscribe; cb(isVisible, entry)
+ *   h(tag, attrs, ...children)       → HTMLElement
+ *   svg(tag, attrs, ...children)     → SVGElement
+ *   rovingTabs(listEl, {onSelect, selector, attr, orientation, initial}) → {select(i), index(), destroy()}
+ *   uid(prefix)                      → уникальный id для aria-связок
+ */
+(function () {
+  'use strict';
+
+  var GV = (window.GV = window.GV || {});
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+  var formatters = {};
+
+  function formatNumber(n, digits) {
+    if (typeof n !== 'number' || !isFinite(n)) return String(n);
+    var key = digits === undefined ? 'auto' : String(digits);
+    if (!formatters[key]) {
+      formatters[key] = new Intl.NumberFormat('ru-RU', digits === undefined
+        ? { maximumFractionDigits: 3 }
+        : { minimumFractionDigits: digits, maximumFractionDigits: digits });
+    }
+    // Intl в ru-RU разделяет разряды неразрывным пробелом; минус — типографский.
+    return formatters[key].format(n).replace(/[\u202F\u2009 ]/g, '\u00A0').replace(/^-/, '−');
+  }
+
+  var motionQuery = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  function prefersReducedMotion() {
+    return !!(motionQuery && motionQuery.matches);
+  }
+
+  function onVisible(el, cb, opts) {
+    opts = opts || {};
+    if (!el || typeof cb !== 'function') return function () {};
+    if (!('IntersectionObserver' in window)) {
+      cb(true, null);
+      return function () {};
+    }
+    var done = false;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (done) return;
+        if (opts.once) {
+          if (entry.isIntersecting) {
+            done = true;
+            io.disconnect();
+            cb(true, entry);
+          }
+          return;
+        }
+        cb(entry.isIntersecting, entry);
+      });
+    }, { threshold: opts.threshold === undefined ? 0.15 : opts.threshold, rootMargin: opts.rootMargin || '0px' });
+    io.observe(el);
+    return function unsubscribe() {
+      done = true;
+      io.disconnect();
+    };
+  }
+
+  function append(parent, child) {
+    if (child === null || child === undefined || child === false) return;
+    if (Array.isArray(child)) { child.forEach(function (c) { append(parent, c); }); return; }
+    parent.appendChild(child instanceof Node ? child : document.createTextNode(String(child)));
+  }
+
+  function applyAttrs(el, attrs, isSvg) {
+    if (!attrs) return;
+    Object.keys(attrs).forEach(function (key) {
+      var value = attrs[key];
+      if (value === null || value === undefined || value === false) return;
+      if (key === 'on') {
+        Object.keys(value).forEach(function (type) { el.addEventListener(type, value[type]); });
+      } else if (key === 'html') {
+        el.innerHTML = value; // только доверенный контент из GV.content
+      } else if (key === 'text') {
+        el.textContent = value;
+      } else if (key === 'class') {
+        el.setAttribute('class', Array.isArray(value) ? value.filter(Boolean).join(' ') : value);
+      } else if (key === 'style' && typeof value === 'object') {
+        Object.keys(value).forEach(function (prop) {
+          if (prop.indexOf('--') === 0) el.style.setProperty(prop, value[prop]);
+          else el.style[prop] = value[prop];
+        });
+      } else if (key === 'dataset') {
+        Object.keys(value).forEach(function (d) { el.dataset[d] = value[d]; });
+      } else if (value === true) {
+        el.setAttribute(key, '');
+      } else if (!isSvg && (key === 'value' || key === 'checked' || key === 'disabled') && key in el) {
+        el[key] = value;
+      } else {
+        el.setAttribute(key, String(value));
+      }
+    });
+  }
+
+  function h(tag, attrs) {
+    var el = document.createElement(tag);
+    applyAttrs(el, attrs, false);
+    append(el, Array.prototype.slice.call(arguments, 2));
+    return el;
+  }
+
+  function svg(tag, attrs) {
+    var el = document.createElementNS(SVG_NS, tag);
+    applyAttrs(el, attrs, true);
+    append(el, Array.prototype.slice.call(arguments, 2));
+    return el;
+  }
+
+  /*
+   * Roving tabindex для списка вкладок или переключателей.
+   * attr: 'aria-selected' (по умолчанию, role="tab") или 'aria-pressed' (кнопки-переключатели).
+   * Стрелки ←/→ (и ↑/↓ при orientation: 'vertical' или 'both'), Home/End; клик выбирает.
+   */
+  function rovingTabs(listEl, opts) {
+    opts = opts || {};
+    var selector = opts.selector || '[role="tab"]';
+    var attr = opts.attr || 'aria-selected';
+    var orientation = opts.orientation || 'horizontal';
+    var current = -1;
+
+    function items() {
+      return Array.prototype.slice.call(listEl.querySelectorAll(selector));
+    }
+    function select(i, focus) {
+      var list = items();
+      if (!list.length) return;
+      i = (i + list.length) % list.length;
+      list.forEach(function (el, j) {
+        el.setAttribute(attr, j === i ? 'true' : 'false');
+        el.tabIndex = j === i ? 0 : -1;
+      });
+      if (focus) list[i].focus();
+      var changed = i !== current;
+      current = i;
+      if (changed && typeof opts.onSelect === 'function') opts.onSelect(i, list[i]);
+    }
+    function onKey(e) {
+      var list = items();
+      var i = list.indexOf(document.activeElement);
+      if (i < 0) return;
+      var next = null;
+      var horizontal = orientation !== 'vertical';
+      var vertical = orientation !== 'horizontal';
+      if ((e.key === 'ArrowRight' && horizontal) || (e.key === 'ArrowDown' && vertical)) next = i + 1;
+      else if ((e.key === 'ArrowLeft' && horizontal) || (e.key === 'ArrowUp' && vertical)) next = i - 1;
+      else if (e.key === 'Home') next = 0;
+      else if (e.key === 'End') next = list.length - 1;
+      if (next === null) return;
+      e.preventDefault();
+      select(next, true);
+    }
+    function onClick(e) {
+      var list = items();
+      var target = e.target.closest ? e.target.closest(selector) : null;
+      var i = list.indexOf(target);
+      if (i >= 0) select(i, false);
+    }
+
+    listEl.addEventListener('keydown', onKey);
+    listEl.addEventListener('click', onClick);
+    select(opts.initial || 0, false);
+
+    return {
+      select: function (i) { select(i, false); },
+      index: function () { return current; },
+      destroy: function () {
+        listEl.removeEventListener('keydown', onKey);
+        listEl.removeEventListener('click', onClick);
+      }
+    };
+  }
+
+  var uidCounter = 0;
+  function uid(prefix) {
+    uidCounter += 1;
+    return (prefix || 'gv') + '-' + uidCounter;
+  }
+
+  GV.util = {
+    formatNumber: formatNumber,
+    prefersReducedMotion: prefersReducedMotion,
+    onVisible: onVisible,
+    h: h,
+    svg: svg,
+    rovingTabs: rovingTabs,
+    uid: uid
+  };
+})();
+
+/*
+ * GV.motion — общий двигатель движения страницы. Классический скрипт, подключается после util.js.
+ * Один rAF-цикл на всю страницу: он спит, пока нет подписчиков кадра и непрочитанной прокрутки.
+ * Геометрия (measure) кэшируется и сбрасывается на resize и при изменении высоты документа,
+ * в кадре getBoundingClientRect не читается. Двигаются только transform и opacity.
+ *
+ *   reduced() → bool                              prefers-reduced-motion: reduce
+ *   onFrame(fn(dt, now)) → off                    dt в секундах, не больше 1/20
+ *   onScroll(fn(scrollY)) → off                   пассивный scroll + resize, не чаще кадра
+ *   measure(el) → { top, height }                 документные координаты, кэш до resize
+ *   viewport() → { width, height }                размер окна, кэш до resize
+ *   pinProgress(sectionEl) → 0..1                 0 — верх секции у верха экрана, 1 — низ секции у низа
+ *   spring({ stiffness, damping, mass, value, precision }) → { target(v), set(v), step(dt), value(), settled() }
+ *   reveal(rootEl, selector = '[data-reveal]') → off       каскад по словам или элементам, шаг 60 мс, один раз
+ *   counter(el, { to, from, digits, display, duration, format }) → off   докрутка до display при появлении
+ *   spotlight(rootEl, selector) → off             пятно света по ободку карточки за курсором (transform)
+ *   cursorLight(lightEl) → off                    светлое пятно фона за курсором (transform), только мышь
+ *   magnet(el, { pull, max }) → off               кнопка тянется к курсору (доля pull, не дальше max rem), только мышь
+ *   shiftBelow(el, change, scopeEl)               change() меняет высоту el, всё ниже доезжает по transform
+ *
+ * При reduced(): pinProgress → 1, spring.step → цель, reveal и counter сразу ставят конечное состояние.
+ */
+(function () {
+  'use strict';
+
+  var root = typeof window !== 'undefined' ? window : this;
+  var GV = (root.GV = root.GV || {});
+
+  var MAX_DT = 1 / 20;
+  var SUB_DT = 1 / 120;
+  var STAGGER_MS = 60;
+  var STAGGER_CAP = 10;
+
+  var reducedQuery = typeof root.matchMedia === 'function' ? root.matchMedia('(prefers-reduced-motion: reduce)') : null;
+
+  function reduced() {
+    return !!(reducedQuery && reducedQuery.matches);
+  }
+
+  function clamp01(v) {
+    return v < 0 ? 0 : (v > 1 ? 1 : v);
+  }
+
+  /*
+   * Пружина: полунеявный Эйлер с подшагом ≤ 1/120 с — устойчива и при длинном кадре.
+   * Единицы любые (градусы стрелки, доли прогресса); precision — порог «успокоилась».
+   */
+  function spring(opts) {
+    opts = opts || {};
+    var k = opts.stiffness === undefined ? 170 : opts.stiffness;
+    var c = opts.damping === undefined ? 18 : opts.damping;
+    var m = opts.mass === undefined ? 1 : opts.mass;
+    var eps = opts.precision === undefined ? 0.01 : opts.precision;
+    var x = opts.value === undefined ? 0 : opts.value;
+    var goal = x;
+    var v = 0;
+
+    function settled() {
+      return Math.abs(goal - x) <= eps && Math.abs(v) <= eps * 10;
+    }
+
+    return {
+      target: function (next) { goal = next; return this; },
+      set: function (next) { x = next; goal = next; v = 0; return this; },
+      step: function (dt) {
+        if (reduced()) { x = goal; v = 0; return x; }
+        var left = Math.min(Math.max(dt || 0, 0), MAX_DT);
+        while (left > 1e-9) {
+          var h = Math.min(SUB_DT, left);
+          v += ((-k * (x - goal) - c * v) / m) * h;
+          x += v * h;
+          left -= h;
+        }
+        if (settled()) { x = goal; v = 0; }
+        return x;
+      },
+      value: function () { return x; },
+      settled: settled
+    };
+  }
+
+  var motion = {
+    reduced: reduced,
+    spring: spring,
+    pinProgress: function () { return reduced() ? 1 : 0; }
+  };
+  GV.motion = motion;
+
+  if (typeof document === 'undefined' || typeof root.requestAnimationFrame !== 'function') return;
+
+  /* ---------- Кадр и прокрутка ---------- */
+
+  var frameSubs = [];
+  var scrollSubs = [];
+  var running = false;
+  var last = 0;
+  var scrollDirty = true;
+  var scrollY = root.pageYOffset || 0;
+  var listening = false;
+
+  // Ошибка одного подписчика не должна останавливать цикл всей страницы:
+  // она уходит в консоль, остальные подписчики кадра выполняются, следующий кадр планируется.
+  function each(list, a, b) {
+    list.slice().forEach(function (fn) {
+      try { fn(a, b); } catch (err) { root.console.error('GV.motion: подписчик упал', err); }
+    });
+  }
+
+  function tick(now) {
+    var dt = last ? Math.min((now - last) / 1000, MAX_DT) : 1 / 60;
+    last = now;
+    if (scrollDirty) {
+      scrollDirty = false;
+      scrollY = root.pageYOffset || 0;
+      each(scrollSubs, scrollY);
+    }
+    each(frameSubs, dt, now);
+    if (frameSubs.length || scrollDirty) {
+      root.requestAnimationFrame(tick);
+    } else {
+      running = false;
+      last = 0;
+    }
+  }
+
+  function wake() {
+    if (running) return;
+    running = true;
+    root.requestAnimationFrame(tick);
+  }
+
+  function remove(list, fn) {
+    return function off() {
+      var i = list.indexOf(fn);
+      if (i >= 0) list.splice(i, 1);
+    };
+  }
+
+  function onFrame(fn) {
+    frameSubs.push(fn);
+    wake();
+    return remove(frameSubs, fn);
+  }
+
+  function onScroll(fn) {
+    listen();
+    scrollSubs.push(fn);
+    scrollDirty = true;
+    wake();
+    return remove(scrollSubs, fn);
+  }
+
+  /* ---------- Геометрия: кэш до resize ---------- */
+
+  var geometry = new WeakMap();
+  var view = null;
+
+  function invalidate() {
+    geometry = new WeakMap();
+    view = null;
+    scrollDirty = true;
+    wake();
+  }
+
+  function listen() {
+    if (listening) return;
+    listening = true;
+    root.addEventListener('scroll', function () { scrollDirty = true; wake(); }, { passive: true });
+    root.addEventListener('resize', invalidate, { passive: true });
+    root.addEventListener('orientationchange', invalidate, { passive: true });
+    document.addEventListener('gv:tweaks', invalidate);
+    // Высота документа меняется при загрузке шрифтов, видео и монтировании модулей
+    if ('ResizeObserver' in root && document.body) {
+      new root.ResizeObserver(invalidate).observe(document.body);
+    }
+  }
+
+  function viewport() {
+    if (!view) view = { width: document.documentElement.clientWidth, height: root.innerHeight };
+    return view;
+  }
+
+  function measure(el) {
+    listen();
+    var hit = geometry.get(el);
+    if (hit) return hit;
+    var r = el.getBoundingClientRect();
+    hit = { top: r.top + (root.pageYOffset || 0), height: r.height };
+    geometry.set(el, hit);
+    return hit;
+  }
+
+  function pinProgress(el) {
+    if (reduced()) return 1;
+    if (!el || typeof el.getBoundingClientRect !== 'function') return 0;
+    var m = measure(el);
+    var range = m.height - viewport().height;
+    if (range <= 0) return scrollY >= m.top ? 1 : 0;
+    return clamp01((scrollY - m.top) / range);
+  }
+
+  /* ---------- Появление заголовков и блоков ---------- */
+
+  function splitWords(el) {
+    var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    var i = 0;
+    nodes.forEach(function (node) {
+      var parts = node.nodeValue.split(/( +)/);
+      var frag = document.createDocumentFragment();
+      parts.forEach(function (part) {
+        if (!part) return;
+        if (/^ +$/.test(part)) { frag.appendChild(document.createTextNode(part)); return; }
+        var w = document.createElement('span');
+        w.className = 'gv-reveal__w';
+        w.style.setProperty('--i', String(Math.min(i, STAGGER_CAP * 2)));
+        w.textContent = part;
+        frag.appendChild(w);
+        i += 1;
+      });
+      node.parentNode.replaceChild(frag, node);
+    });
+  }
+
+  function reveal(rootEl, selector) {
+    if (!rootEl) return function () {};
+    selector = selector || '[data-reveal]';
+    var els = Array.prototype.slice.call(rootEl.querySelectorAll(selector));
+    if (rootEl.matches && rootEl.matches(selector)) els.unshift(rootEl);
+    els = els.filter(function (el) { return !el.classList.contains('gv-reveal'); });
+    var still = reduced() || !('IntersectionObserver' in root);
+    els.forEach(function (el) {
+      if (!still && el.getAttribute('data-reveal') === 'words') splitWords(el);
+      el.classList.add('gv-reveal');
+      if (still) el.classList.add('is-in');
+    });
+    if (still || !els.length) return function () {};
+
+    var io = new root.IntersectionObserver(function (entries) {
+      var batch = entries.filter(function (e) { return e.isIntersecting; }).map(function (e) { return e.target; });
+      batch.forEach(function (el, i) {
+        el.style.setProperty('--gv-reveal-delay', Math.min(i, STAGGER_CAP) * STAGGER_MS + 'ms');
+        el.classList.add('is-in');
+        io.unobserve(el);
+      });
+    }, { threshold: 0.2, rootMargin: '0px 0px -8% 0px' });
+    els.forEach(function (el) { io.observe(el); });
+    return function off() {
+      io.disconnect();
+      els.forEach(function (el) { el.classList.add('is-in'); });
+    };
+  }
+
+  /* ---------- Счётчик ---------- */
+
+  function counter(el, opts) {
+    opts = opts || {};
+    if (!el) return function () {};
+    var fmt = (GV.util && GV.util.formatNumber) || function (n) { return String(n); };
+    var digits = opts.digits === undefined ? 0 : opts.digits;
+    var from = opts.from === undefined ? 0 : opts.from;
+    var to = Number(opts.to);
+    var format = typeof opts.format === 'function' ? opts.format : function (v) { return fmt(v, digits); };
+    var finalText = opts.display !== undefined ? String(opts.display) : format(to);
+    var duration = opts.duration === undefined ? 1200 : opts.duration;
+
+    if (reduced() || !('IntersectionObserver' in root) || !isFinite(to)) {
+      el.textContent = finalText;
+      return function () {};
+    }
+
+    var offFrame = null;
+    var done = false;
+    el.textContent = format(from);
+    function finish() {
+      done = true;
+      if (offFrame) { offFrame(); offFrame = null; }
+      el.textContent = finalText;
+    }
+    var io = new root.IntersectionObserver(function (entries) {
+      if (done || !entries.some(function (e) { return e.isIntersecting; })) return;
+      io.disconnect();
+      var t = 0;
+      offFrame = onFrame(function (dt) {
+        t = Math.min(1, t + (dt * 1000) / duration);
+        var eased = 1 - Math.pow(1 - t, 3);
+        if (t >= 1) finish();
+        else el.textContent = format(from + (to - from) * eased);
+      });
+    }, { threshold: 0.4 });
+    io.observe(el);
+    return function off() {
+      io.disconnect();
+      finish();
+    };
+  }
+
+  /* ---------- Пятно света по ободку ---------- */
+
+  var finePointer = typeof root.matchMedia === 'function' ? root.matchMedia('(hover: hover) and (pointer: fine)') : null;
+
+  function spotlight(rootEl, selector) {
+    if (!rootEl || !selector) return function () {};
+    var cards = Array.prototype.slice.call(rootEl.querySelectorAll(selector));
+    cards.forEach(function (card) {
+      if (card.querySelector(':scope > .gv-spot')) return;
+      var layer = document.createElement('span');
+      layer.className = 'gv-spot';
+      layer.setAttribute('aria-hidden', 'true');
+      var light = document.createElement('span');
+      light.className = 'gv-spot__light';
+      layer.appendChild(light);
+      card.classList.add('gv-spot-host');
+      card.insertBefore(layer, card.firstChild);
+    });
+    if (finePointer && !finePointer.matches) return function () {};
+
+    var lit = null;
+    var pending = null;
+    var offFrame = null;
+
+    function paint() {
+      if (pending) {
+        var light = pending.card.querySelector(':scope > .gv-spot > .gv-spot__light');
+        if (light) light.style.transform = 'translate3d(' + pending.x.toFixed(1) + 'px,' + pending.y.toFixed(1) + 'px,0)';
+        pending = null;
+      }
+      if (offFrame) { offFrame(); offFrame = null; }
+    }
+    function dim() {
+      if (lit) lit.classList.remove('is-lit');
+      lit = null;
+    }
+    function onMove(e) {
+      var card = e.target && e.target.closest ? e.target.closest(selector) : null;
+      if (!card || !rootEl.contains(card)) { dim(); return; }
+      if (card !== lit) { dim(); lit = card; card.classList.add('is-lit'); }
+      // Положение карточки читается в событии, а не из кэша measure: карточка может ехать transform
+      // (трек конвейера) без resize, и документные координаты из кэша устаревают.
+      var box = card.getBoundingClientRect();
+      pending = { card: card, x: e.clientX - box.left, y: e.clientY - box.top };
+      if (!offFrame) offFrame = onFrame(paint);
+    }
+    rootEl.addEventListener('pointermove', onMove, { passive: true });
+    rootEl.addEventListener('pointerleave', dim, { passive: true });
+    return function off() {
+      rootEl.removeEventListener('pointermove', onMove);
+      rootEl.removeEventListener('pointerleave', dim);
+      if (offFrame) offFrame();
+      dim();
+    };
+  }
+
+  /* ---------- Свет фона за курсором ---------- */
+
+  /*
+   * lightEl лежит в неподвижном слое на весь экран, поэтому координаты — прямо clientX/clientY.
+   * Пятно догоняет курсор с коротким затуханием (при reduced() — встаёт сразу); слой получает is-lit,
+   * пока мышь над окном. Палец и стилус без наведения пятна не зажигают.
+   * Вложенный слой пятна (первый ребёнок) едет навстречу и стоит на месте относительно экрана:
+   * пятно его не тащит, а проявляет — так фон «Чертёж» светит сеткой под курсором.
+   */
+  function cursorLight(lightEl) {
+    var host = lightEl && lightEl.parentNode;
+    if (!host || (finePointer && !finePointer.matches)) return function () {};
+    var inner = lightEl.firstElementChild;
+    var x = 0;
+    var y = 0;
+    var tx = 0;
+    var ty = 0;
+    var placed = false;
+    var offFrame = null;
+
+    function place() {
+      lightEl.style.transform = 'translate3d(' + x.toFixed(1) + 'px,' + y.toFixed(1) + 'px,0)';
+      if (inner) inner.style.transform = 'translate3d(' + (-x).toFixed(1) + 'px,' + (-y).toFixed(1) + 'px,0)';
+    }
+    function paint(dt) {
+      var k = reduced() ? 1 : 1 - Math.exp(-dt * 14);
+      x += (tx - x) * k;
+      y += (ty - y) * k;
+      if (Math.abs(tx - x) < 0.5 && Math.abs(ty - y) < 0.5) {
+        x = tx;
+        y = ty;
+        if (offFrame) { offFrame(); offFrame = null; }
+      }
+      place();
+    }
+    function onMove(e) {
+      if (e.pointerType === 'touch') return;
+      tx = e.clientX;
+      ty = e.clientY;
+      if (!placed) { x = tx; y = ty; placed = true; place(); }
+      host.classList.add('is-lit');
+      if (!offFrame) offFrame = onFrame(paint);
+    }
+    function onOut(e) {
+      if (!e.relatedTarget) host.classList.remove('is-lit');
+    }
+    function onBlur() {
+      host.classList.remove('is-lit');
+    }
+    document.addEventListener('pointermove', onMove, { passive: true });
+    document.addEventListener('pointerout', onOut, { passive: true });
+    root.addEventListener('blur', onBlur);
+    return function off() {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerout', onOut);
+      root.removeEventListener('blur', onBlur);
+      if (offFrame) offFrame();
+      offFrame = null;
+      onBlur();
+    };
+  }
+
+  /*
+   * Раскрытие без скачка: change() меняет высоту el (показывает или прячет блок), а всё, что ниже el
+   * до границы scopeEl, стартует со старого места и доезжает на новое по transform (FLIP). Высота
+   * не анимируется — сдвиг одинаков для всех следующих соседей el и его предков. Фиксированные слои
+   * не трогаются. При reduced() — просто change().
+   */
+  function shiftBelow(el, change, scopeEl) {
+    if (!el) { change(); return; }
+    var scope = scopeEl || document.body;
+    var targets = [];
+    for (var node = el; node && node !== scope && node.parentElement; node = node.parentElement) {
+      for (var sib = node.nextElementSibling; sib; sib = sib.nextElementSibling) {
+        if (root.getComputedStyle(sib).position !== 'fixed') targets.push(sib);
+      }
+    }
+    var before = el.getBoundingClientRect().bottom;
+    change();
+    if (reduced() || !targets.length) return;
+    var delta = before - el.getBoundingClientRect().bottom;
+    if (Math.abs(delta) < 1) return;
+    targets.forEach(function (t) {
+      t.style.transition = 'none';
+      t.style.transform = 'translate3d(0,' + delta.toFixed(1) + 'px,0)';
+    });
+    void el.offsetHeight; // стартовое положение применено до включения перехода
+    targets.forEach(function (t) {
+      t.style.transition = 'transform var(--dur-med) var(--ease-out)';
+      t.style.transform = '';
+    });
+    root.setTimeout(function () {
+      targets.forEach(function (t) { if (!t.style.transform) t.style.transition = ''; });
+    }, 400);
+  }
+
+  /* ---------- Магнит ---------- */
+
+  // Смещение — доля pull от расстояния курсора до центра кнопки; CSS собирает из --mx/--my transform.
+  // Центр считается без текущего смещения, иначе кнопка убегала бы от собственного сдвига.
+  function clampAbs(v, lim) {
+    return v > lim ? lim : (v < -lim ? -lim : v);
+  }
+
+  function magnet(el, opts) {
+    if (!el || reduced() || (finePointer && !finePointer.matches)) return function () {};
+    var pull = (opts && opts.pull) || 0.25;
+    var maxRem = (opts && opts.max) || 0.5;
+    var limit = 8;
+    var x = 0;
+    var y = 0;
+    var tx = 0;
+    var ty = 0;
+    var offFrame = null;
+
+    function paint(dt) {
+      var k = 1 - Math.exp(-dt * 12);
+      x += (tx - x) * k;
+      y += (ty - y) * k;
+      if (Math.abs(tx - x) < 0.1 && Math.abs(ty - y) < 0.1) {
+        x = tx;
+        y = ty;
+        if (offFrame) { offFrame(); offFrame = null; }
+      }
+      el.style.setProperty('--mx', x.toFixed(2) + 'px');
+      el.style.setProperty('--my', y.toFixed(2) + 'px');
+    }
+    function wake() {
+      if (!offFrame) offFrame = onFrame(paint);
+    }
+    function onMove(e) {
+      if (e.pointerType === 'touch') return;
+      var box = el.getBoundingClientRect();
+      tx = clampAbs((e.clientX - (box.left - x) - box.width / 2) * pull, limit);
+      ty = clampAbs((e.clientY - (box.top - y) - box.height / 2) * pull, limit);
+      wake();
+    }
+    function onEnter() {
+      limit = maxRem * (parseFloat(root.getComputedStyle(document.documentElement).fontSize) || 16);
+    }
+    function onLeave() {
+      tx = 0;
+      ty = 0;
+      wake();
+    }
+    el.addEventListener('pointerenter', onEnter, { passive: true });
+    el.addEventListener('pointermove', onMove, { passive: true });
+    el.addEventListener('pointerleave', onLeave, { passive: true });
+    return function off() {
+      el.removeEventListener('pointerenter', onEnter);
+      el.removeEventListener('pointermove', onMove);
+      el.removeEventListener('pointerleave', onLeave);
+      if (offFrame) { offFrame(); offFrame = null; }
+      el.style.removeProperty('--mx');
+      el.style.removeProperty('--my');
+    };
+  }
+
+  motion.onFrame = onFrame;
+  motion.onScroll = onScroll;
+  motion.measure = measure;
+  motion.viewport = viewport;
+  motion.pinProgress = pinProgress;
+  motion.reveal = reveal;
+  motion.counter = counter;
+  motion.spotlight = spotlight;
+  motion.cursorLight = cursorLight;
+  motion.magnet = magnet;
+  motion.shiftBelow = shiftBelow;
+})();
+
+</script>

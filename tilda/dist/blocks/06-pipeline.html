@@ -1,0 +1,951 @@
+<!-- GaugeVision AI для Tilda: сгенерировано tilda/build.mjs из site/. Правьте site/ и пересобирайте. -->
+<!-- Лист 04 «Конвейер»: тексты, стили и модуль components/operations.js -->
+<div class="gvt" data-gv-block="pipeline"></div>
+<style>
+/*
+ * Лист 04 — «Четыре операции над одним кадром».
+ * Колонки 5 : 7 — список операций слева, вклеенный кадр справа. На десктопе сцена закреплена
+ * (высота прокрутки ≈ 3,4 экрана), шаг задаёт прокрутка; уже 900 px — без закрепления, кадр сверху.
+ * Циферблат снят под углом: эллипс = rotate · scaleX · rotate; на шаге 02 он выпрямляется в круг.
+ */
+.gvt .gv-ops__scroll {
+  grid-column: 1 / -1;
+}
+.gvt .gv-ops.is-pinned .gv-ops__scroll {
+  height: 340vh;
+}
+.gvt .gv-ops__pin {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  column-gap: var(--gutter);
+  align-items: center;
+}
+.gvt .gv-ops.is-pinned .gv-ops__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  padding-block: var(--s4);
+}
+/* ---------- список операций ---------- */
+.gvt .gv-ops__col {
+  display: grid;
+  gap: var(--s5);
+  align-content: center;
+}
+.gvt .gv-ops__list {
+  border-bottom: 1px solid var(--ink);
+}
+.gvt .gv-ops__item {
+  border-top: 1px solid var(--ink);
+}
+.gvt .gv-ops__step {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  width: 100%;
+  min-height: 3.25rem;
+  padding: var(--s1) 0;
+  text-align: left;
+}
+.gvt .gv-ops__idx {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--ink-3);
+  width: 2rem;
+}
+.gvt .gv-ops__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-xl);
+  line-height: 1.05;
+  color: var(--ink-2);
+}
+.gvt .gv-ops__step:hover .gv-ops__name,
+.gvt .gv-ops__step.is-on .gv-ops__name {
+  color: var(--ink);
+}
+.gvt .gv-ops__step.is-on .gv-ops__idx {
+  color: var(--ink);
+}
+.gvt .gv-ops__panel-text {
+  display: grid;
+  gap: var(--s2);
+  padding: 0 0 var(--s3) calc(2rem + var(--s2));
+  animation: gv-ops-in 520ms var(--ease-out) both;
+}
+@keyframes gv-ops-in {
+  from { opacity: 0; transform: translate3d(0, 0.5rem, 0); }
+  to { opacity: 1; transform: none; }
+}
+.gvt .gv-ops__title {
+  font-size: var(--fs-m);
+  font-weight: 700;
+  line-height: 1.3;
+}
+.gvt .gv-ops__formula {
+  display: grid;
+  gap: 0.25rem;
+}
+.gvt .gv-ops__formula .gv-math {
+  padding-block: 0.25rem;
+  font-size: var(--fs-s);
+  color: var(--ink);
+}
+/* Телефон: строки шага — не только формулы («CLAHE clip 3,0, сетка 8×8»), им можно переноситься;
+   дробь и индекс не рвутся */
+@media (max-width: 760px) {
+  .gvt .gv-ops__formula .gv-math {
+      font-size: var(--fs-xs);
+      white-space: normal;
+    }
+  .gvt .gv-ops__formula .gv-math__frac,
+  .gvt .gv-ops__formula .gv-math__id { white-space: nowrap; }
+}
+.gvt .gv-ops__params {
+  display: grid;
+  grid-template-columns: minmax(7rem, auto) minmax(0, 1fr);
+  column-gap: var(--s2);
+  font-size: var(--fs-xs);
+}
+.gvt .gv-ops__params dt,
+.gvt .gv-ops__params dd {
+  padding: 0.25rem 0;
+  border-bottom: 1px dotted var(--rule-strong);
+}
+.gvt .gv-ops__params dt {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  color: var(--ink-2);
+}
+.gvt .gv-ops__params dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-weight: 600;
+  text-align: right;
+}
+.gvt .gv-ops__lat {
+  display: grid;
+  gap: 0.25rem;
+}
+.gvt .gv-ops__lat-v {
+  font-family: var(--font-mono);
+  font-stretch: 112.5%;
+  font-weight: 500;
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+.gvt .gv-ops__lat-u {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.gvt .gv-ops__total {
+  display: grid;
+  gap: 0.25rem;
+}
+.gvt .gv-ops__total-v {
+  font-family: var(--font-mono);
+  font-stretch: 112.5%;
+  font-weight: 500;
+  font-size: var(--fs-figure);
+  line-height: 1;
+}
+/* ---------- кадр ---------- */
+.gvt .gv-ops__frame {
+  padding: var(--s2);
+  border-radius: 0.25rem;
+  box-shadow: 0 1.5rem 3rem -1.5rem rgba(23, 25, 28, 0.55);
+}
+.gvt .gv-ops__svg {
+  width: 100%;
+  height: auto;
+}
+.gvt .gv-ops__cap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem var(--s2);
+  padding-top: var(--s1);
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-2xs);
+  color: var(--plate-ink-2);
+}
+.gvt .gv-ops__frame-note {
+  color: var(--plate-ink);
+}
+.gvt .gv-ops__scene rect { fill: #1F2224; }
+.gvt .gv-ops__scene line { stroke: #2C3033; stroke-width: 3; }
+.gvt .gv-ops__case { fill: #33373A; }
+.gvt .gv-ops__enamel { fill: #D3CFC3; }
+.gvt .gv-ops__tick { stroke: #26282A; stroke-width: 1.2; }
+.gvt .gv-ops__tick.is-major { stroke-width: 2.6; }
+.gvt .gv-ops__n { fill: #26282A; font-family: var(--font-display); font-weight: 800; }
+.gvt .gv-ops__needle { stroke: #111213; stroke-width: 4.5; stroke-linecap: round; }
+.gvt .gv-ops__hub { fill: #111213; }
+.gvt .gv-ops__glare { fill: #FFFFFF; opacity: 0.42; }
+.gvt .gv-ops__dial {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: rotate(-26deg) scale(0.6, 1) rotate(26deg);
+  transition: transform 1000ms var(--ease-in-out);
+}
+.gvt .gv-ops[data-step='2'] .gv-ops__dial,
+.gvt .gv-ops[data-step='3'] .gv-ops__dial,
+.gvt .gv-ops[data-step='4'] .gv-ops__dial {
+  transform: none;
+}
+.gvt .gv-ops__o {
+  opacity: 0;
+  transition: opacity 500ms var(--ease-out);
+}
+.gvt .gv-ops[data-step='1'] .gv-ops__o--1,
+.gvt .gv-ops[data-step='2'] .gv-ops__o--2,
+.gvt .gv-ops[data-step='3'] .gv-ops__o--3,
+.gvt .gv-ops[data-step='4'] .gv-ops__o--4 {
+  opacity: 1;
+}
+.gvt .gv-ops[data-step='2'] .gv-ops__o--2 {
+  transition-delay: 600ms;
+}
+.gvt .gv-ops__box path { fill: none; stroke: var(--plate-red); stroke-width: 2.5; }
+.gvt .gv-ops__tag { fill: var(--plate-red); }
+.gvt .gv-ops__t { font-family: var(--font-mono); fill: var(--plate-ink-2); }
+.gvt .gv-ops__t--tag { fill: #141617; font-weight: 600; }
+.gvt .gv-ops__t--accent { fill: var(--plate-red); font-weight: 600; }
+.gvt .gv-ops__contour { fill: none; stroke: var(--plate-red); stroke-width: 1.6; stroke-dasharray: 7 5; }
+.gvt .gv-ops__square { fill: none; stroke: var(--plate-ink-2); stroke-width: 1; stroke-dasharray: 4 4; }
+.gvt .gv-ops__ring { fill: rgba(240, 106, 78, 0.2); stroke: var(--plate-red); stroke-width: 0.8; }
+.gvt .gv-ops__zero { stroke: var(--plate-ink-2); stroke-width: 1; stroke-dasharray: 3 3; }
+.gvt .gv-ops__theta { fill: none; stroke: var(--plate-red); stroke-width: 2; }
+.gvt .gv-ops__hough { stroke: var(--plate-red); stroke-width: 2; stroke-dasharray: 10 5; }
+.gvt .gv-ops__bin { fill: var(--plate-ink-2); opacity: 0.55; }
+.gvt .gv-ops__bin.is-peak { fill: var(--plate-red); opacity: 1; }
+.gvt .gv-ops__axis { stroke: var(--plate-ink-2); stroke-width: 1; }
+.gvt .gv-ops__panel { fill: rgba(20, 22, 23, 0.94); stroke: rgba(233, 235, 228, 0.22); stroke-width: 1; }
+.gvt .gv-ops__raw { fill: var(--plate-ink-2); }
+.gvt .gv-ops__curve { fill: none; stroke: var(--plate-red); stroke-width: 2.5; stroke-linejoin: round; }
+.gvt .gv-ops__mark { stroke: var(--plate-ink-2); stroke-width: 1; stroke-dasharray: 3 3; }
+@media (max-width: 900px) {
+  .gvt .gv-ops__pin {
+      grid-template-columns: minmax(0, 1fr);
+      row-gap: var(--s4);
+    }
+  .gvt .gv-ops__frame {
+      order: -1;
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gvt .gv-ops__dial,
+  .gvt .gv-ops__o {
+      transition: none;
+    }
+  .gvt .gv-ops__panel-text {
+      animation: none;
+    }
+}
+</style>
+<script>
+/* Тексты листа 04 — данные из site/js/content.js после типографа */
+(function () {
+  var GV = (window.GV = window.GV || {});
+  var c = (GV.content = GV.content || {});
+  var part = {
+    "pipeline": [
+      {
+        "id": "capture",
+        "index": "00",
+        "title": "Захват",
+        "short": "Последний кадр каждой камеры, буфер 1\u00a0кадр",
+        "params": [
+          {
+            "name": "CAPTURE_BUFFERSIZE",
+            "value": "1",
+            "note": "кадр в буфере драйвера"
+          },
+          {
+            "name": "PROCESS_FPS",
+            "value": "3,0",
+            "note": "обработок в секунду на камеру"
+          },
+          {
+            "name": "VISION_EXECUTOR_WORKERS",
+            "value": "2",
+            "note": "потока для расчёта кадров"
+          },
+          {
+            "name": "MAX_PROCESS_WIDTH",
+            "value": "1280\u00a0px",
+            "note": "кадры шире уменьшаются (INTER_AREA)"
+          },
+          {
+            "name": "Лимит кадра смартфона",
+            "value": "8\u00a0МиБ",
+            "note": "проверка в ws_phone"
+          }
+        ],
+        "formula": "cap.set(CAP_PROP_BUFFERSIZE, 1)",
+        "file": "app/streamer.py, app/main.py",
+        "aspect": "Потоковая обработка"
+      },
+      {
+        "id": "locate",
+        "index": "01",
+        "title": "Локализация",
+        "short": "YOLOv8n находит корпус, OpenCV уточняет циферблат эллипсом",
+        "params": [
+          {
+            "name": "YOLO_IMGSZ",
+            "value": "640",
+            "note": "размер входа детектора"
+          },
+          {
+            "name": "YOLO_CONF",
+            "value": "0,35",
+            "note": "порог уверенности бокса"
+          },
+          {
+            "name": "YOLO_CLASSES",
+            "value": "gauge, dial, meter, manometer, clock",
+            "note": "классы корпуса прибора"
+          },
+          {
+            "name": "Устройство",
+            "value": "CUDA FP16 или CPU",
+            "note": "YOLO_DEVICE = auto"
+          },
+          {
+            "name": "Допуск эллипса",
+            "value": "±\u00a015\u00a0% бокса",
+            "note": "центр эллипса внутри бокса YOLO"
+          },
+          {
+            "name": "HoughCircles",
+            "value": "dp 1,2, param1\u00a0140, param2 45",
+            "note": "только подтверждение эллипса"
+          }
+        ],
+        "formula": "source = «yolo+ellipse», если центр эллипса ∈ бокс YOLO ± 15 %",
+        "file": "app/vision.py",
+        "aspect": "Детекция"
+      },
+      {
+        "id": "normalize",
+        "index": "02",
+        "title": "Нормализация",
+        "short": "Эллипс циферблата аффинно выпрямляется в круг 640 ×\u00a0640",
+        "params": [
+          {
+            "name": "DIAL_SIZE",
+            "value": "640\u00a0px",
+            "note": "диаметр нормализованного циферблата"
+          },
+          {
+            "name": "Интерполяция",
+            "value": "INTER_LINEAR",
+            "note": "cv2.warpAffine"
+          },
+          {
+            "name": "Края",
+            "value": "BORDER_REPLICATE",
+            "note": "без чёрной рамки"
+          },
+          {
+            "name": "Проверенный наклон",
+            "value": "≈\u00a041°",
+            "note": "стенд, по README"
+          }
+        ],
+        "formula": "M = T(S/2) · R(φ) · diag(R/a, R/b) · R(−φ) · T(−c)",
+        "file": "app/vision.py",
+        "aspect": "Коррекция перспективы"
+      },
+      {
+        "id": "light",
+        "index": "03",
+        "title": "Свет и контраст",
+        "short": "CLAHE для циферблата, «шляпы» Black-Hat / Top-Hat для стрелки",
+        "params": [
+          {
+            "name": "CLAHE",
+            "value": "clip 3,0, сетка 8×8",
+            "note": "только при поиске циферблата"
+          },
+          {
+            "name": "Ядро Black-Hat / Top-Hat",
+            "value": "эллипс 31×31",
+            "note": "три маски: тёмная, светлая, насыщенность"
+          },
+          {
+            "name": "Кольцо порога Otsu",
+            "value": "0,04–0,46 размера",
+            "note": "фон вне циферблата не влияет"
+          },
+          {
+            "name": "Нижний порог маски",
+            "value": "18",
+            "note": "после Otsu"
+          },
+          {
+            "name": "MORPH_CLOSE",
+            "value": "ядро 5×5",
+            "note": "склейка разрывов стрелки"
+          }
+        ],
+        "formula": "BlackHat = close(I) − I · TopHat = I − open(I)",
+        "file": "app/vision.py",
+        "aspect": "Коррекция освещения"
+      },
+      {
+        "id": "needle",
+        "index": "04",
+        "title": "Вектор стрелки",
+        "short": "Радиальный момент ведёт, HoughLinesP уточняет",
+        "params": [
+          {
+            "name": "Кольцо момента",
+            "value": "0,06–0,36 размера",
+            "note": "внешние риски и цифры исключены"
+          },
+          {
+            "name": "Гистограмма",
+            "value": "шаг 1°, сглаживание ±\u00a04°",
+            "note": "круговое окно 9"
+          },
+          {
+            "name": "Второй максимум",
+            "value": "за пределами ±\u00a025°",
+            "note": "входит в уверенность"
+          },
+          {
+            "name": "HoughLinesP",
+            "value": "порог 0,08·size, длина ≥\u00a00,15·size, разрыв 10",
+            "note": "линия через ось"
+          },
+          {
+            "name": "Согласование Hough и момента",
+            "value": "≤\u00a012°",
+            "note": "иначе уверенность ×\u00a00,9"
+          }
+        ],
+        "formula": "θ = atan2(Δy, Δx) mod 360",
+        "file": "app/vision.py",
+        "aspect": "Детекция стрелки"
+      },
+      {
+        "id": "calibrate",
+        "index": "05",
+        "title": "Калибровка",
+        "short": "Угол θ → значение по двухточечной калибровке",
+        "params": [
+          {
+            "name": "θmin → Vmin",
+            "value": "135° → 0",
+            "note": "по умолчанию"
+          },
+          {
+            "name": "θmax → Vmax",
+            "value": "45° → 10",
+            "note": "по умолчанию"
+          },
+          {
+            "name": "Направление",
+            "value": "CW или CCW",
+            "note": "задаётся в окне «Настройка»"
+          },
+          {
+            "name": "Выход за шкалу",
+            "value": "±\u00a05\u00a0%",
+            "note": "clamp = 0,05"
+          }
+        ],
+        "formula": "V = Vmin + ((θ − θmin) mod 360) / span · (Vmax − Vmin)",
+        "file": "app/vision.py",
+        "aspect": "Перевод в МПа / бар"
+      },
+      {
+        "id": "stabilize",
+        "index": "06",
+        "title": "Стабилизация",
+        "short": "EMA α = 0,25 и порог уверенности 0,25",
+        "params": [
+          {
+            "name": "EMA_ALPHA",
+            "value": "0,25",
+            "note": "вес нового отсчёта"
+          },
+          {
+            "name": "MIN_NEEDLE_CONFIDENCE",
+            "value": "0,25",
+            "note": "ниже\u00a0— отсчёт недостоверен"
+          },
+          {
+            "name": "REDETECT_EVERY_N_FRAMES",
+            "value": "15",
+            "note": "период повторной локализации"
+          },
+          {
+            "name": "Промахов до сброса",
+            "value": "3",
+            "note": "подряд"
+          },
+          {
+            "name": "Гистерезис ROI",
+            "value": "5\u00a0% оси",
+            "note": "меньшее смещение игнорируется"
+          }
+        ],
+        "formula": "V̄ₜ = α · Vₜ + (1 − α) · V̄ₜ₋₁",
+        "file": "app/vision.py, app/config.py",
+        "aspect": "Сглаживание показаний"
+      },
+      {
+        "id": "setpoints",
+        "index": "07",
+        "title": "Уставки",
+        "short": "Пять зон LL / L / НОРМА / H / HH",
+        "params": [
+          {
+            "name": "Зоны",
+            "value": "LL / L / НОРМА / H / HH",
+            "note": "дуги на оверлее шкалы"
+          },
+          {
+            "name": "Статусы",
+            "value": "normal, warning, alert",
+            "note": "хранятся в БД"
+          },
+          {
+            "name": "Порядок",
+            "value": "LL ≤ L ≤ H ≤ HH",
+            "note": "иначе ошибка 422"
+          },
+          {
+            "name": "Стандарт",
+            "value": "ISA-18.2 / ГОСТ Р МЭК 62682",
+            "note": "модель сигнализации"
+          }
+        ],
+        "formula": "V ≤ LL или V ≥ HH → alert; V ≤ L или V ≥ H → warning",
+        "file": "app/vision.py, app/main.py",
+        "aspect": "Сигнализация"
+      },
+      {
+        "id": "output",
+        "index": "08",
+        "title": "Выдача",
+        "short": "WebSocket на пульт, SQLite раз в секунду, CSV",
+        "params": [
+          {
+            "name": "DB_WRITE_INTERVAL",
+            "value": "1\u00a0с",
+            "note": "минимальный интервал записи"
+          },
+          {
+            "name": "Очередь пульта",
+            "value": "300\u00a0сообщений",
+            "note": "DashboardHub, на каждого клиента"
+          },
+          {
+            "name": "HISTORY_KEEP_DAYS",
+            "value": "90\u00a0суток",
+            "note": "срок хранения истории"
+          },
+          {
+            "name": "MJPEG_FPS",
+            "value": "8",
+            "note": "превью с оверлеем"
+          },
+          {
+            "name": "CSV",
+            "value": "UTF-8\u00a0с BOM, разделитель «;»",
+            "note": "открывается в Excel"
+          }
+        ],
+        "formula": "запись, если valid и прошло ≥ 1 с с прошлой записи",
+        "file": "app/main.py, app/db.py",
+        "aspect": "Потоковая обработка"
+      }
+    ],
+    "pipelineCards": [
+      {
+        "id": "locate",
+        "index": "01",
+        "step": "Локализация",
+        "title": "Локализация: CLAHE + YOLOv8n",
+        "frame": "Бокс корпуса и эллипс циферблата",
+        "formula": [
+          "CLAHE clip 3,0, сетка 8×8",
+          "ROI = YOLOv8n(кадр)"
+        ],
+        "params": [
+          {
+            "name": "YOLO_IMGSZ",
+            "value": "640"
+          },
+          {
+            "name": "YOLO_CONF",
+            "value": "0,35"
+          },
+          {
+            "name": "Устройство",
+            "value": "CUDA FP16 или CPU"
+          }
+        ],
+        "latency": {
+          "value": "7,2",
+          "unit": "мс/кадр GPU",
+          "note": "29\u00a0мс/кадр CPU"
+        }
+      },
+      {
+        "id": "normalize",
+        "index": "02",
+        "step": "Эллипс → круг",
+        "title": "Эллипс → круг: аффинная коррекция",
+        "frame": "Наклонный циферблат выпрямлен в круг 640\u00a0px",
+        "formula": [
+          "M = T(S/2)·R(φ)·diag(R/a, R/b)·R(−φ)·T(−c)"
+        ],
+        "params": [
+          {
+            "name": "DIAL_SIZE",
+            "value": "640\u00a0px"
+          },
+          {
+            "name": "Интерполяция",
+            "value": "INTER_LINEAR"
+          },
+          {
+            "name": "Наклон на стенде",
+            "value": "до ≈\u00a041°"
+          }
+        ],
+        "latency": null
+      },
+      {
+        "id": "needle",
+        "index": "03",
+        "step": "Угол θ",
+        "title": "Угол θ: радиальный момент + HoughLinesP",
+        "frame": "Гистограмма момента и линия Hough через ось",
+        "formula": [
+          "θ = (atan2(y₁−y₀, x₁−x₀) − 90°) mod 360",
+          "V = Vmin + ((θ−θmin) mod 360)/span·(Vmax−Vmin)"
+        ],
+        "params": [
+          {
+            "name": "Гистограмма",
+            "value": "шаг 1°, ±\u00a04°"
+          },
+          {
+            "name": "Маски",
+            "value": "Black-Hat / Top-Hat 31×31"
+          },
+          {
+            "name": "Hough ↔ момент",
+            "value": "≤\u00a012°"
+          }
+        ],
+        "latency": null
+      },
+      {
+        "id": "stabilize",
+        "index": "04",
+        "step": "Сглаживание",
+        "title": "Сглаживание EMA α = 0,25",
+        "frame": "Сырые отсчёты с вибрацией и кривая EMA",
+        "formula": [
+          "EMA(t) = α·V(t) + (1 − α)·EMA(t − 1)"
+        ],
+        "params": [
+          {
+            "name": "EMA_ALPHA",
+            "value": "0,25"
+          },
+          {
+            "name": "MIN_NEEDLE_CONFIDENCE",
+            "value": "0,25"
+          }
+        ],
+        "latency": {
+          "value": "≈\u00a090\u00a0%",
+          "unit": "скачка за 8\u00a0кадров",
+          "note": "оценка по формуле, не замер"
+        }
+      }
+    ],
+    "pipelineTotal": {
+      "value": "30–100",
+      "unit": "мс/кадр",
+      "label": "Конвейер целиком",
+      "condition": "локализация, нормализация, стрелка, EMA"
+    },
+    "pipelineFrame": "Схема кадра: прибор, снятый под углом"
+  };
+  Object.keys(part).forEach(function (k) { c[k] = part[k]; });
+})();
+/*
+ * GV.components.operations — лист 04 «Четыре операции над одним кадром».
+ * Один синтетический кадр (прибор снят под углом, на стекле блик) проходит четыре операции кода:
+ *   01 бокс YOLOv8n и контур эллипса → 02 эллипс аффинно выпрямляется в круг 640 px →
+ *   03 кольцо радиального момента, линия Hough через ось и угол θ, гистограмма → 04 сырые отсчёты
+ *   с вибрацией и кривая EMA α = 0,25.
+ * Десктоп: сцена закреплена, шаг задаёт прокрутка; список шагов — кнопки (переносят к своему шагу).
+ * Окно уже 900 px и «уменьшить движение»: без закрепления, шаг выбирают кнопками.
+ * Подписи и параметры — content.pipelineCards; задержка только замеренная.
+ *
+ *   mount(body) → { destroy }
+ *   stepFor(progress, count) → индекс шага для прогресса прокрутки 0..1
+ */
+(function () {
+  'use strict';
+
+  var GV = (window.GV = window.GV || {});
+
+  function stepFor(progress, count) {
+    var p = Math.max(0, Math.min(0.9999, progress));
+    return Math.floor(p * count);
+  }
+
+  function mount(body) {
+    var u = GV.util;
+    var kit = GV.kit;
+    var motion = GV.motion;
+    var h = u.h;
+    var s = u.svg;
+    var c = GV.content;
+    var L = c.labels;
+    var F = L.opsFrame;
+    var cards = c.pipelineCards;
+    var calib = c.calibration;
+    var sc = kit.scope();
+    var fmt = u.formatNumber;
+
+    body.classList.add('gv-ops');
+
+    /* ---------- кадр ---------- */
+
+    var CX = 300;
+    var CY = 196;
+    var R = 112;
+    var theta = c.reading.theta;
+
+    function dialFace() {
+      var g = s('g', { class: 'gv-ops__face' });
+      g.appendChild(s('circle', { class: 'gv-ops__case', cx: CX, cy: CY, r: R + 12 }));
+      g.appendChild(s('circle', { class: 'gv-ops__enamel', cx: CX, cy: CY, r: R }));
+      for (var i = 0; i <= 50; i++) {
+        var a = calib.thetaMin + (i / 50) * calib.span;
+        var major = i % 5 === 0;
+        var p0 = kit.polar(CX, CY, R - 6, a);
+        var p1 = kit.polar(CX, CY, R - (major ? 20 : 12), a);
+        g.appendChild(s('line', { class: major ? 'gv-ops__tick is-major' : 'gv-ops__tick', x1: p0[0].toFixed(1), y1: p0[1].toFixed(1), x2: p1[0].toFixed(1), y2: p1[1].toFixed(1) }));
+        if (major) {
+          var pt = kit.polar(CX, CY, R - 36, a);
+          g.appendChild(s('text', { class: 'gv-ops__n', x: pt[0].toFixed(1), y: pt[1].toFixed(1), 'font-size': 17, 'text-anchor': 'middle', 'dominant-baseline': 'central' }, String(i / 5)));
+        }
+      }
+      var tip = kit.polar(CX, CY, R - 14, theta);
+      var tail = kit.polar(CX, CY, 22, theta + 180);
+      g.appendChild(s('line', { class: 'gv-ops__needle', x1: tail[0].toFixed(1), y1: tail[1].toFixed(1), x2: tip[0].toFixed(1), y2: tip[1].toFixed(1) }));
+      g.appendChild(s('circle', { class: 'gv-ops__hub', cx: CX, cy: CY, r: 8 }));
+      g.appendChild(s('ellipse', { class: 'gv-ops__glare', cx: CX - 40, cy: CY - 54, rx: 48, ry: 20, transform: 'rotate(-30 ' + (CX - 40) + ' ' + (CY - 54) + ')' }));
+      return g;
+    }
+
+    /* кольцо момента и линия Hough живут внутри циферблата: после шага 02 они на круге */
+    var ring = s('path', {
+      class: 'gv-ops__ring',
+      'fill-rule': 'evenodd',
+      d: 'M' + (CX + R * 0.72) + ' ' + CY + ' a' + (R * 0.72) + ' ' + (R * 0.72) + ' 0 1 0 ' + (-R * 1.44) + ' 0 a' + (R * 0.72) + ' ' + (R * 0.72) + ' 0 1 0 ' + (R * 1.44) + ' 0 Z ' +
+        'M' + (CX + R * 0.12) + ' ' + CY + ' a' + (R * 0.12) + ' ' + (R * 0.12) + ' 0 1 0 ' + (-R * 0.24) + ' 0 a' + (R * 0.12) + ' ' + (R * 0.12) + ' 0 1 0 ' + (R * 0.24) + ' 0 Z'
+    });
+    var h0 = kit.polar(CX, CY, R + 34, theta + 180);
+    var h1 = kit.polar(CX, CY, R + 34, theta);
+    var hough = s('line', { class: 'gv-ops__hough', x1: h0[0].toFixed(1), y1: h0[1].toFixed(1), x2: h1[0].toFixed(1), y2: h1[1].toFixed(1) });
+    var zeroRay = kit.polar(CX, CY, R + 26, 0);
+    var thetaArc = s('path', { class: 'gv-ops__theta', d: kit.arcPath(CX, CY, 46, 0, theta) });
+    var thetaLbl = kit.polar(CX, CY, 62, theta / 2);
+    var stage3 = s('g', { class: 'gv-ops__o gv-ops__o--3' },
+      ring,
+      s('line', { class: 'gv-ops__zero', x1: CX, y1: CY, x2: zeroRay[0].toFixed(1), y2: zeroRay[1].toFixed(1) }),
+      thetaArc,
+      hough,
+      s('text', { class: 'gv-ops__t gv-ops__t--accent', x: (thetaLbl[0] + 8).toFixed(1), y: (thetaLbl[1] + 20).toFixed(1), 'font-size': 13 }, 'θ = ' + fmt(theta, 1) + '°'),
+      s('text', { class: 'gv-ops__t', x: (h1[0] + 6).toFixed(1), y: (h1[1] - 6).toFixed(1), 'font-size': 12 }, F.hough));
+
+    var contour = s('circle', { class: 'gv-ops__contour gv-ops__o gv-ops__o--1', cx: CX, cy: CY, r: R + 12 });
+    var dial = s('g', { class: 'gv-ops__dial' }, dialFace(), contour, stage3);
+
+    /* шаг 01: бокс корпуса — уголки и метка */
+    var bx = CX - 96;
+    var by = CY - 136;
+    var bw = 192;
+    var bh = 272;
+    function corner(x, y, dx, dy) {
+      return s('path', { d: 'M' + x + ' ' + (y + dy) + ' V' + y + ' H' + (x + dx) });
+    }
+    var box = s('g', { class: 'gv-ops__o gv-ops__o--1 gv-ops__box' },
+      corner(bx, by, 22, 22), corner(bx + bw, by, -22, 22), corner(bx, by + bh, 22, -22), corner(bx + bw, by + bh, -22, -22),
+      s('rect', { class: 'gv-ops__tag', x: bx, y: by - 24, width: 176, height: 20 }),
+      s('text', { class: 'gv-ops__t gv-ops__t--tag', x: bx + 6, y: by - 10, 'font-size': 12 }, F.box),
+      s('text', { class: 'gv-ops__t', x: bx + bw + 12, y: CY - 8, 'font-size': 12 }, F.ellipse));
+
+    /* шаг 02: квадрат нормализации */
+    var square = s('g', { class: 'gv-ops__o gv-ops__o--2' },
+      s('rect', { class: 'gv-ops__square', x: CX - R - 16, y: CY - R - 16, width: (R + 16) * 2, height: (R + 16) * 2 }),
+      s('text', { class: 'gv-ops__t', x: CX + R + 24, y: CY - R - 6, 'font-size': 12 }, F.square));
+
+    /* шаг 03: гистограмма момента — 72 столбца по 5°, пик у θ */
+    var hist = s('g', { class: 'gv-ops__o gv-ops__o--3 gv-ops__hist' });
+    var hx = 470;
+    var hy = 352;
+    var hw = 150;
+    for (var k = 0; k < 72; k++) {
+      var deg = k * 5;
+      var d = Math.min(Math.abs(deg - theta), 360 - Math.abs(deg - theta));
+      var v = 4 + 52 * Math.exp(-(d * d) / (2 * 9 * 9)) + 6 * Math.exp(-((Math.min(Math.abs(deg - 70), 360 - Math.abs(deg - 70))) ** 2) / 200);
+      hist.appendChild(s('rect', { class: d < 5 ? 'gv-ops__bin is-peak' : 'gv-ops__bin', x: (hx + (k / 72) * hw).toFixed(1), y: (hy - v).toFixed(1), width: (hw / 72 - 0.4).toFixed(2), height: v.toFixed(1) }));
+    }
+    hist.appendChild(s('line', { class: 'gv-ops__axis', x1: hx, y1: hy, x2: hx + hw, y2: hy }));
+    hist.appendChild(s('text', { class: 'gv-ops__t', x: hx, y: hy + 16, 'font-size': 11 }, F.hist));
+
+    /* шаг 04: сырые отсчёты и EMA — скачок 4,39 → 6,0 МПа на 10-м кадре */
+    var ema = s('g', { class: 'gv-ops__o gv-ops__o--4 gv-ops__ema' });
+    var ex = 452;
+    var ey = 96;
+    var ew = 168;
+    var eh = 210;
+    ema.appendChild(s('rect', { class: 'gv-ops__panel', x: ex - 14, y: ey - 34, width: ew + 28, height: eh + 70, rx: 4 }));
+    var vLo = 3.6;
+    var vHi = 6.6;
+    function px(i) { return ex + (i / 30) * ew; }
+    function py(val) { return ey + eh - ((val - vLo) / (vHi - vLo)) * eh; }
+    var smooth = null;
+    var pts = '';
+    var noise = [0.12, -0.18, 0.05, 0.2, -0.1, -0.22, 0.15, 0.02, -0.14, 0.19, -0.06, 0.24, -0.2, 0.08, 0.16, -0.12, -0.24, 0.1, 0.21, -0.04, -0.16, 0.13, 0.06, -0.21, 0.18, -0.09, 0.03, 0.22, -0.15, 0.11, -0.02];
+    for (var f = 0; f <= 30; f++) {
+      var truth = f < 10 ? 4.39 : 6.0;
+      var raw = truth + noise[f];
+      smooth = kit.emaStep(smooth, raw, 0.25);
+      ema.appendChild(s('circle', { class: 'gv-ops__raw', cx: px(f).toFixed(1), cy: py(raw).toFixed(1), r: 2.6 }));
+      pts += (f ? ' L' : 'M') + px(f).toFixed(1) + ' ' + py(smooth).toFixed(1);
+    }
+    ema.appendChild(s('path', { class: 'gv-ops__curve', d: pts }));
+    ema.appendChild(s('line', { class: 'gv-ops__mark', x1: px(18), y1: ey, x2: px(18), y2: ey + eh }));
+    ema.appendChild(s('line', { class: 'gv-ops__axis', x1: ex, y1: ey + eh, x2: ex + ew, y2: ey + eh }));
+    ema.appendChild(s('text', { class: 'gv-ops__t gv-ops__t--accent', x: ex, y: ey - 14, 'font-size': 12 }, F.ema));
+    ema.appendChild(s('text', { class: 'gv-ops__t', x: ex, y: ey + eh + 18, 'font-size': 11 }, F.raw));
+    ema.appendChild(s('text', { class: 'gv-ops__t', x: px(18) + 4, y: ey + 12, 'font-size': 11 }, F.catchUp));
+
+    /* сцена котельной за прибором: трубы и поручень — геометрия, без рисунка */
+    var scene = s('g', { class: 'gv-ops__scene' },
+      s('rect', { x: 0, y: 330, width: 640, height: 34, rx: 6 }),
+      s('rect', { x: 560, y: 0, width: 40, height: 400, rx: 6 }),
+      s('rect', { x: 284, y: 318, width: 32, height: 40 }),
+      s('line', { x1: 0, y1: 270, x2: 640, y2: 250 }),
+      s('line', { x1: 0, y1: 298, x2: 640, y2: 280 }));
+
+    var svgEl = s('svg', { class: 'gv-ops__svg', viewBox: '0 0 640 400', role: 'img', 'aria-label': c.pipelineFrame },
+      scene, box, dial, square, hist, ema);
+
+    var frameNote = h('p', { class: 'gv-ops__frame-note' });
+    var frame = h('figure', { class: 'gv-ops__frame gv-plate' }, svgEl,
+      h('figcaption', { class: 'gv-ops__cap' }, h('span', null, c.pipelineFrame), frameNote));
+
+    /* ---------- шаги ---------- */
+
+    var buttons = [];
+    var panels = [];
+    var list = h('ol', { class: 'gv-ops__list', role: 'list', 'aria-label': L.opsList });
+    cards.forEach(function (card, i) {
+      var btn = h('button', { class: 'gv-ops__step', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'gv-ops-p' + i },
+        h('span', { class: 'gv-ops__idx gv-num' }, card.index),
+        h('span', { class: 'gv-ops__name' }, card.step));
+      var lat = card.latency
+        ? h('p', { class: 'gv-ops__lat' }, h('span', { class: 'gv-label' }, L.latency),
+          h('span', { class: 'gv-ops__lat-v gv-num' }, card.latency.value, h('span', { class: 'gv-ops__lat-u' }, ' ' + card.latency.unit)),
+          card.latency.note ? h('span', { class: 'gv-caption' }, card.latency.note) : null)
+        : h('p', { class: 'gv-ops__lat gv-ops__lat--none' }, h('span', { class: 'gv-label' }, L.latency), h('span', { class: 'gv-caption' }, L.inTotal));
+      var panel = h('div', { class: 'gv-ops__panel-text', id: 'gv-ops-p' + i, hidden: true },
+        h('h3', { class: 'gv-ops__title' }, card.title.indexOf(card.step) === 0 ? card.title.slice(card.step.length).replace(/^[:\s]+/, '') : card.title),
+        h('div', { class: 'gv-ops__formula' }, card.formula.map(function (f) { return kit.math(f).el; })),
+        h('dl', { class: 'gv-ops__params' }, card.params.map(function (p) {
+          return [h('dt', null, p.name), h('dd', { class: 'gv-num' }, p.value)];
+        })),
+        lat);
+      buttons.push(btn);
+      panels.push(panel);
+      list.appendChild(h('li', { class: 'gv-ops__item' }, btn, panel));
+    });
+
+    var total = h('p', { class: 'gv-ops__total' },
+      h('span', { class: 'gv-label' }, c.pipelineTotal.label),
+      h('span', { class: 'gv-ops__total-v gv-num' }, c.pipelineTotal.value, h('span', { class: 'gv-ops__lat-u' }, ' ' + c.pipelineTotal.unit)),
+      h('span', { class: 'gv-caption' }, c.pipelineTotal.condition));
+
+    var pinned = h('div', { class: 'gv-ops__pin' }, h('div', { class: 'gv-ops__col' }, list, total), frame);
+    var scroller = h('div', { class: 'gv-ops__scroll' }, pinned);
+    body.appendChild(scroller);
+
+    /* ---------- переключение ---------- */
+
+    var current = -1;
+    function show(i) {
+      if (i === current) return;
+      current = i;
+      body.setAttribute('data-step', String(i + 1));
+      buttons.forEach(function (b, j) {
+        var on = j === i;
+        b.setAttribute('aria-expanded', on ? 'true' : 'false');
+        b.classList.toggle('is-on', on);
+        panels[j].hidden = !on;
+      });
+      frameNote.textContent = cards[i].index + '. ' + cards[i].frame;
+    }
+    show(0);
+
+    var narrow = window.matchMedia ? window.matchMedia('(max-width: 900px)') : null;
+    function isPinned() {
+      return !motion.reduced() && !(narrow && narrow.matches);
+    }
+    function sync() {
+      body.classList.toggle('is-pinned', isPinned());
+    }
+    sync();
+    if (narrow) {
+      if (narrow.addEventListener) narrow.addEventListener('change', sync);
+      sc.add(function () { if (narrow.removeEventListener) narrow.removeEventListener('change', sync); });
+    }
+
+    sc.add(motion.onScroll(function () {
+      if (!isPinned()) return;
+      show(stepFor(motion.pinProgress(scroller), cards.length));
+    }));
+
+    buttons.forEach(function (b, i) {
+      sc.on(b, 'click', function () {
+        if (!isPinned()) { show(i); return; }
+        var m = motion.measure(scroller);
+        var range = m.height - motion.viewport().height;
+        var y = m.top + range * ((i + 0.5) / cards.length);
+        window.scrollTo({ top: y, behavior: motion.reduced() ? 'auto' : 'smooth' });
+        show(i);
+      });
+    });
+
+    return { destroy: sc.destroy };
+  }
+
+  GV.components = GV.components || {};
+  GV.components.operations = { mount: mount, stepFor: stepFor };
+})();
+
+window.GV && GV.tilda && GV.tilda.boot();
+</script>
