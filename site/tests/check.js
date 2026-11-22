@@ -15,7 +15,7 @@
  *   4. В js/ нет import/export и type="module".
  *   5. Листы идут по порядку журнала; каждый модуль из GV.page.mounts подключён <script> в index.html.
  *   6. Нет вариантов, роутера и студийной панели.
- *   7. Ни одна выводимая строка GV.content не длиннее 140 символов; заголовки 3–6 слов;
+ *   7. Ни одна выводимая строка GV.content не длиннее 140 символов; заголовки листов 2–6 слов, у h1 3–6;
  *      над h1 нет надзаголовка (kicker), строка сути — одно предложение;
  *      ссылки — только GitHub EGRNEGR; 25 камер — замер, 50 и 100 — расчёт.
  *   8. Типографика строк content.js: нет « - » вместо тире, дефисных диапазонов и десятичной точки.
@@ -121,7 +121,7 @@ function loadMounts() {
 const SHAPE = {
   meta: ['name', 'repoUrl', 'licenseUrl', 'trackShort', 'copyright', 'version'],
   hero: ['title', 'line', 'columns', 'demo', 'cta'],
-  'compare.video': ['src', 'srcMobile', 'poster', 'posterAfter', 'label', 'credit'],
+  'compare.video': ['src', 'srcMobile', 'poster', 'posterAfter', 'label'],
   reading: ['theta', 'device', 'caption'],
   calibration: ['thetaMin', 'thetaMax', 'vMin', 'vMax', 'unit', 'direction', 'setpoints', 'barPerMpa', 'formula'],
   compare: ['before', 'after', 'savingNote', 'timeline', 'captions'],
@@ -476,7 +476,7 @@ function checkText(c) {
     if (s.id !== 'hero' && isEmpty(s.title)) fail(7, `у секции «${s.id}» нет заголовка`);
     if (s.title !== undefined) {
       const n = words(s.title).length;
-      if (n < 3 || n > 6) fail(7, `заголовок секции «${s.id}» — ${n} слов, нужно 3–6: «${s.title}»`);
+      if (n < 2 || n > 6) fail(7, `заголовок секции «${s.id}» — ${n} слов, нужно 2–6: «${s.title}»`);
     }
     if (s.lead !== undefined) fail(7, `у секции «${s.id}» остался lead — абзацев на странице нет`);
   });

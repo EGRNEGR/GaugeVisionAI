@@ -57,7 +57,6 @@
     var stage = h('div', { class: 'gv-shift__stage' + (reduced ? ' is-still' : '') });
     var capBefore = h('p', { class: 'gv-shift__cap gv-shift__cap--before' }, t.captions.before);
     var capAfter = h('p', { class: 'gv-shift__cap gv-shift__cap--after' }, t.captions.after);
-    var credit = h('p', { class: 'gv-shift__credit' }, t.video.credit);
     var marker = h('span', { class: 'gv-shift__marker' });
     var clockRuler = h('div', { class: 'gv-shift__clock', 'aria-hidden': 'true' },
       h('span', { class: 'gv-shift__clock-line' }), marker);
@@ -68,7 +67,6 @@
           h('img', { src: t.video.poster, alt: t.captions.before, width: 1280, height: 720, loading: 'lazy' }), capBefore),
         h('figure', { class: 'gv-shift__still gv-plate' },
           h('img', { src: t.video.posterAfter, alt: t.captions.after, width: 1280, height: 720, loading: 'lazy' }), capAfter)));
-      stage.appendChild(credit);
     } else {
       var video = h('video', {
         class: 'gv-shift__video',
@@ -82,7 +80,7 @@
       video.setAttribute('muted', '');
       video.src = small ? t.video.srcMobile : t.video.src;
       var after = h('img', { class: 'gv-shift__after', src: t.video.posterAfter, alt: '', 'aria-hidden': 'true' });
-      var pin = h('div', { class: 'gv-shift__pin gv-plate' }, video, after, h('div', { class: 'gv-shift__shade' }), capBefore, capAfter, credit, clockRuler);
+      var pin = h('div', { class: 'gv-shift__pin gv-plate' }, video, after, h('div', { class: 'gv-shift__shade' }), capBefore, capAfter, clockRuler);
       stage.appendChild(pin);
 
       var duration = NaN;
@@ -188,6 +186,14 @@
       if (mm === 60) { hh += 1; mm = 0; }
       return hh + NBSP + 'ч ' + (mm < 10 ? '0' : '') + mm + NBSP + 'мин';
     }
+    /* «Отклонение примерно в 5 часов»: подпись округляет до часа, точное время — в aria-valuetext */
+    function aboutHour(x) {
+      var n = Math.round(x);
+      if (n === 0) return tl.deviationStart;
+      var f = tl.hourForms;
+      var form = n % 10 === 1 && n % 100 !== 11 ? f[0] : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? f[1] : f[2]);
+      return tl.deviationAt + ' ' + n + NBSP + form;
+    }
     function setHour(x) {
       hour = Math.max(0, Math.min(H, Math.round(x * 4) / 4));
       var d = delayHours(hour, tl.rounds, H);
@@ -196,7 +202,7 @@
       blind.style.left = pct(hour) + '%';
       blind.style.width = Math.max(0, pct(Math.min(next, H)) - pct(hour)) + '%';
       camTick.style.left = pct(hour) + '%';
-      devLabel.textContent = tl.deviationAt + ' ' + hm(hour);
+      devLabel.textContent = aboutHour(hour);
       beforeOut.textContent = hm(d);
       dev.setAttribute('aria-valuenow', String(hour));
       dev.setAttribute('aria-valuetext', hm(hour) + ' от начала смены; ' + tl.beforeLead.toLowerCase() + ' ' + hm(d));

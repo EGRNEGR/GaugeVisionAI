@@ -9,6 +9,12 @@
  * это не факты продукта, и страница подписывает их как демонстрацию (hero.demo).
  * reading — общее показание страницы: чертёж листа 03 двигает эту же стрелку и пишет строки «вы».
  *
+ * Журнал хранит историю (KEEP строк) и прокручивается. Пока посетитель следит за концом, новые строки
+ * въезжают снизу. Ручная прокрутка (колесо, палец, полоса прокрутки) ставит слежение на паузу: строки
+ * дописываются в конец, не сдвигая читаемое, а у края появляется «К новым записям». Через IDLE_MS
+ * без прокрутки, по кнопке или когда посетитель сам вернулся в конец, журнал плавно доезжает
+ * до свежих строк и снова следит за ними.
+ *
  *   mount(body, { section, sheet, reading, headId }) → { destroy }
  */
 (function () {
@@ -19,6 +25,10 @@
   var SHIFT_START = 8 * 3600000;   // 08:00 — начало демонстрационной смены
   var FRAME_MS = 1000 / 3;         // PROCESS_FPS = 3,0 (app/config.py)
   var ROWS = 6;                    // машинных строк в окне журнала
+  var KEEP = 360;                  // строк истории: две минуты смены при 3 строках в секунду
+  var SPARE = 180;                 // запас на паузе, пока посетитель листает историю
+  var IDLE_MS = 4000;              // без прокрутки столько — журнал возвращается к свежим строкам
+  var INTENT_MS = 400;             // прокрутка в этом окне после колеса, касания или нажатия — ручная
   var TAG = 'МН-1';                // бирка демонстрационного манометра
   var JITTER = 0.6;                // дрожь стрелки от вибрации, ± градусы
   var ALPHA = 0.25;                // EMA_ALPHA (app/config.py)
@@ -73,14 +83,21 @@
       cell('who', handWrite(t.hand, 1400)));
 
     var stream = h('div', { class: 'gv-log__stream', 'aria-hidden': 'true' });
+    var scroller = h('div', { class: 'gv-log__scroll' });
     var track = h('div', { class: 'gv-log__track' });
-    stream.appendChild(track);
+    scroller.appendChild(track);
+    stream.appendChild(scroller);
+    var freshCount = h('span', { class: 'gv-log__fresh-n gv-num' });
+    var fresh = h('button', { class: 'gv-log__fresh', type: 'button', hidden: true },
+      kit.icon('arrow'), h('span', null, t.fresh), freshCount);
 
     var latest = h('p', { class: 'gv-visually-hidden', 'aria-live': 'polite' });
-    var log = h('div', { class: 'gv-log', role: 'table', 'aria-label': c.meta.form, 'data-reveal': '' },
-      h('div', { role: 'rowgroup' }, head),
-      h('div', { role: 'rowgroup' }, handRow),
-      stream);
+    var log = h('div', { class: 'gv-log', 'data-reveal': '' },
+      h('div', { class: 'gv-log__table', role: 'table', 'aria-label': c.meta.form },
+        h('div', { role: 'rowgroup' }, head),
+        h('div', { role: 'rowgroup' }, handRow),
+        stream),
+      fresh);
     var demo = h('p', { class: 'gv-hero__demo gv-caption' }, t.demo, '. ', t.rate, '.');
 
     /* ---------- кадр камеры ---------- */
@@ -223,13 +240,82 @@
         h('span', { class: 'gv-log__c gv-log__c--who' }, who));
     }
 
+    /* ---------- слежение за концом журнала и пауза на ручной прокрутке ---------- */
+
+    var following = true;
+    var unseen = 0;
+    var intentAt = -Infinity;
+    var touching = false;
+    var cancelIdle = null;
+    var cancelSettle = null;
+    function now() { return window.performance ? performance.now() : Date.now(); }
+    // конец с допуском в полторы строки: пока колесо доезжает до низа, снизу успевает дописаться строка
+    function atEnd() {
+      var row = rows.length ? rows[rows.length - 1].offsetHeight : 0;
+      return scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight < row * 1.5 + 2;
+    }
+    function toEnd() { scroller.scrollTop = scroller.scrollHeight; }
+    function showFresh() {
+      freshCount.textContent = unseen ? '+' + unseen : '';
+      fresh.hidden = following;
+    }
+    function follow() {
+      if (cancelIdle) { cancelIdle(); cancelIdle = null; }
+      if (cancelSettle) { cancelSettle(); cancelSettle = null; }
+      following = true;
+      unseen = 0;
+      toEnd();
+      showFresh();
+    }
+    /* плавный проезд к концу; ручная прокрутка во время проезда снова ставит паузу */
+    function resume() {
+      if (cancelIdle) { cancelIdle(); cancelIdle = null; }
+      if (motion.reduced()) { follow(); return; }
+      scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
+      if (cancelSettle) cancelSettle();
+      cancelSettle = sc.timeout(follow, 700);
+    }
+    function pause() {
+      following = false;
+      if (cancelSettle) { cancelSettle(); cancelSettle = null; }
+      if (cancelIdle) cancelIdle();
+      cancelIdle = sc.timeout(resume, IDLE_MS);
+      showFresh();
+    }
+    function intent() { intentAt = now(); }
+    sc.on(scroller, 'wheel', intent, { passive: true });
+    sc.on(scroller, 'pointerdown', intent);
+    sc.on(scroller, 'touchstart', function () { touching = true; intent(); }, { passive: true });
+    sc.on(scroller, 'touchend', function () { touching = false; intent(); }, { passive: true });
+    sc.on(scroller, 'scroll', function () {
+      // прокрутку кодом (строка въехала, проезд к концу) пропускаем: ручная — сразу после жеста
+      if (!touching && now() - intentAt > INTENT_MS) return;
+      intent(); // инерция пальца продолжает ручную прокрутку
+      if (atEnd()) follow();
+      else pause();
+    }, { passive: true });
+    sc.on(fresh, 'click', resume);
+
     function push(mine, exact) {
       clock += FRAME_MS;
       var value = typeof exact === 'number' ? exact : measure();
       var row = rowFor(clock, value, mine);
       track.appendChild(row);
       rows.push(row);
-      while (rows.length > ROWS + 1) track.removeChild(rows.shift());
+      if (!following) {
+        // на паузе читаемое не двигается: строки дописываются в конец, старые уходят только сверх запаса
+        unseen += 1;
+        if (rows.length > KEEP + SPARE) {
+          var gone = rows.shift();
+          var lost = gone.offsetHeight;
+          track.removeChild(gone);
+          scroller.scrollTop -= lost;
+        }
+        showFresh();
+        return;
+      }
+      while (rows.length > KEEP) track.removeChild(rows.shift());
+      toEnd();
       if (!motion.reduced()) {
         track.style.transition = 'none';
         track.style.transform = 'translate3d(0, var(--row), 0)';

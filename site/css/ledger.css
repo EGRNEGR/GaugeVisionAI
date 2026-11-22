@@ -129,10 +129,6 @@
 }
 .gv-proto__group--scale tr:nth-child(3) .gv-proto__fill { transition-delay: 140ms; }
 .gv-proto__group--scale tr:nth-child(4) .gv-proto__fill { transition-delay: 280ms; }
-.gv-proto__note {
-  grid-column: 6 / -1;
-  margin-top: var(--s3);
-}
 
 /* ---------- компромиссы ---------- */
 .gv-trade {
@@ -470,7 +466,6 @@
 }
 
 @media (max-width: 900px) {
-  .gv-proto__note,
   .gv-untested,
   .gv-close__handover,
   .gv-close__act { grid-column: 1 / -1; }

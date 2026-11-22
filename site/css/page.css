@@ -208,6 +208,15 @@
 .gv-sheet--architecture .gv-sheet__head { grid-column: 7 / tabs; }
 .gv-sheet--contact .gv-sheet__head { grid-column: 5 / tabs; }
 .gv-sheet--contact .gv-h2 { font-size: var(--fs-h1); max-width: 12ch; }
+/* Заголовок с явным переносом: каждая смысловая часть — своей строкой */
+.gv-h2__l { display: block; }
+/* «Протокол испытаний» — одной строкой: на узком экране кегль уменьшается по ширине колонки
+   (ширина строки ≈ 6,7 кегля, колонка = экран минус поле и ярлыки) */
+.gv-sheet--metrics .gv-h2 {
+  max-width: none;
+  white-space: nowrap;
+  font-size: min(var(--fs-h2), calc((100vw - 4.75rem) / 6.9));
+}
 
 /* Тело листа — подсетка на те же 12 колонок: модули ставят блоки по колонкам листа */
 .gv-sheet__body {

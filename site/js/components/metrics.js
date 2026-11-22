@@ -1,5 +1,5 @@
 /*
- * GV.components.metrics — лист 05 «Протокол испытаний на стенде».
+ * GV.components.metrics — лист 05 «Протокол испытаний».
  * Таблица протокола: № · показатель · условия замера · значение · вид (штамп «замер» или «расчёт»).
  * Строки сгруппированы «Точность · Скорость · Масштаб»; у масштаба в колонке условий — полоса
  * в одной шкале (к/с): замер залит, расчёт заштрихован. Цифры докручиваются при первом показе,
@@ -72,9 +72,7 @@
       table.appendChild(tbody);
     });
 
-    var note = h('p', { class: 'gv-note gv-proto__note', 'data-reveal': '' }, c.metricsNote);
     body.appendChild(h('div', { class: 'gv-proto__scroll', 'data-reveal': '' }, table));
-    body.appendChild(note);
 
     sc.observe(u.onVisible(table, function () { table.classList.add('gv-stamped', 'is-drawn'); }, { once: true, threshold: 0.15 }));
     Array.prototype.forEach.call(table.querySelectorAll('.gv-mark--stamp'), function (el, i) {

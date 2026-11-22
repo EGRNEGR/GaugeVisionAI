@@ -101,7 +101,9 @@
 
       if (sec.title) {
         sheet.appendChild(h('div', { class: 'gv-sheet__head' },
-          h('h2', { class: 'gv-h2', id: headId, 'data-reveal': 'words' }, sec.title)));
+          h('h2', { class: 'gv-h2', id: headId, 'data-reveal': 'words' }, sec.title.split('\n').map(function (part, i, all) {
+            return all.length > 1 ? h('span', { class: 'gv-h2__l' }, part) : part;
+          }))));
       }
       var body = h('div', { class: 'gv-sheet__body' });
       sheet.appendChild(body);

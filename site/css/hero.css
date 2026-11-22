@@ -151,6 +151,7 @@
 
 /* ---------- журнал ---------- */
 .gv-log {
+  position: relative;
   grid-column: 1 / span 8;
   grid-row: 4;
   margin-top: var(--s6);
@@ -206,12 +207,51 @@
   -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--row));
   mask-image: linear-gradient(to bottom, transparent 0, #000 var(--row));
 }
+/* История прокручивается; пока строк меньше окна, они прижаты к низу */
+.gv-log__scroll {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rule-strong) transparent;
+}
 .gv-log__track {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  margin-top: auto;
   transition: transform 260ms var(--ease-out);
+}
+/* «К новым записям» — только на паузе, у нижнего края окна */
+.gv-log__fresh {
+  position: absolute;
+  right: var(--s2);
+  bottom: var(--s1);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2rem;
+  padding: 0 0.75rem;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ink);
+  border: 0;
+  border-radius: 0.1875rem;
+  cursor: pointer;
+  animation: gv-fresh-in 220ms var(--ease-out) both;
+}
+.gv-log__fresh svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.gv-log__fresh-n {
+  color: var(--plate-ink-2);
+}
+@keyframes gv-fresh-in {
+  from { opacity: 0; transform: translate3d(0, 0.5rem, 0); }
 }
 .gv-log__row--machine {
   font-family: var(--font-mono);
@@ -295,4 +335,5 @@
 @media (prefers-reduced-motion: reduce) {
   .gv-hero__dot { transition: none; }
   .gv-log__track { transition: none; }
+  .gv-log__fresh { animation: none; }
 }

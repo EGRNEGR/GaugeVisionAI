@@ -69,20 +69,6 @@
   opacity: 1;
   transform: none;
 }
-.gv-shift__credit {
-  position: absolute;
-  top: var(--s3);
-  right: calc(var(--tabs) + var(--gutter) + var(--s2));
-  max-width: 34ch;
-  padding: 0.375rem var(--s1);
-  text-align: right;
-  font-style: italic;
-  font-size: var(--fs-xs);
-  line-height: 1.35;
-  color: var(--plate-ink);
-  background: rgba(20, 22, 23, 0.82);
-  border-radius: 0.1875rem;
-}
 .gv-shift__clock {
   position: absolute;
   left: calc(var(--margin) + var(--gutter));
@@ -134,13 +120,6 @@
   transform: none;
   padding: var(--s2);
   font-size: var(--fs-xl);
-}
-.gv-shift__stage.is-still .gv-shift__credit {
-  position: static;
-  margin-top: var(--s1);
-  max-width: none;
-  text-align: left;
-  color: var(--ink-3);
 }
 
 /* ---------- шкала смены ---------- */
@@ -507,7 +486,6 @@
   .gv-cost__bar { grid-row: 3; }
   .gv-shift__stage { height: 220vh; }
   .gv-shift__cap { bottom: calc(var(--s8) + var(--s2)); font-size: var(--fs-xl); max-width: 18ch; }
-  .gv-shift__credit { left: calc(var(--margin) + var(--gutter)); right: var(--s2); text-align: left; max-width: none; }
   .gv-ruler__field { --name: 5.25rem; }
   .gv-ruler__name { font-size: var(--fs-m); }
   .gv-ruler__res--cam { grid-template-columns: minmax(0, 1fr); }
