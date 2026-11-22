@@ -125,14 +125,15 @@
     var spring = motion.spring({ stiffness: 170, damping: 18, value: kit.valueToAngle(calib.vMin, calib), precision: 0.02 });
     var shown = spring.value();
 
-    function clampTheta(theta) {
+    function clampTheta(theta, prev) {
       var comp = GV.components.precisionDial;
-      return comp && comp.clampAngle ? comp.clampAngle(theta, calib) : theta;
+      return comp && comp.clampAngle ? comp.clampAngle(theta, calib, prev) : theta;
     }
     function angleText(v, digits) {
       return fmt(v, digits);
     }
     function paintNeedle(theta) {
+      theta = clampTheta(theta);
       g.setAngle(theta);
       var v = kit.angleToValue(theta, calib);
       thetaOut.textContent = fmt(((theta % 360) + 360) % 360, 1) + '°';
@@ -158,10 +159,12 @@
     }
     sc.add(reading.on(function (theta) { aim(theta); }));
 
-    function pointerTheta(e) {
+    /* follow — палец или мышь ведут стрелку: под шкалой она держится края, у которого стоит */
+    function pointerTheta(e, follow) {
       var box = g.el.getBoundingClientRect();
       var comp = GV.components.precisionDial;
-      return clampTheta(comp.angleFromPointer(e.clientX - (box.left + box.width / 2), e.clientY - (box.top + box.height / 2)));
+      return clampTheta(comp.angleFromPointer(e.clientX - (box.left + box.width / 2), e.clientY - (box.top + box.height / 2)),
+        follow ? reading.get() : undefined);
     }
     var dragging = false;
     sc.on(dialBox, 'pointerdown', function (e) {
@@ -171,7 +174,7 @@
       reading.set(pointerTheta(e), 'hero');
     });
     sc.on(dialBox, 'pointermove', function (e) {
-      if (dragging) reading.set(pointerTheta(e), 'hero');
+      if (dragging) reading.set(pointerTheta(e, true), 'hero');
     });
     function stop() {
       dragging = false;

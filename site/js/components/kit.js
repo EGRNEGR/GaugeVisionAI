@@ -10,10 +10,15 @@
  *   emaStep(prev, v, α) → V̄              EmaFilter: первое значение берётся как есть
  *   createReading(θ) → { get, set, commit, on, onCommit }   общее показание страницы (лист 01 ↔ лист 03)
  *   clockText(мс) → '08:00:00,333'         время строки журнала
+ *   mathTree(строка) → узлы формулы        разбор линейной записи: дроби a / b, индексы Vmin и θmin, слоты {имя}
+ *
+ * Углы сайта отсчитываются от «6 часов» по часовой: θ = (θкадра − 90°) mod 360. Шов 0° / 360° лежит
+ * в пустом секторе под шкалой, поэтому стрелка между θmin и θmax никогда его не пересекает.
  *
  * DOM-хелперы (только в браузере):
  *   scope() → { on, add, timeout, interval, frame, observe, destroy }  — всё, что снимается в destroy()
- *   polar(cx, cy, r, θ) → [x, y]           точка на окружности (0° — «3 часа», по часовой)
+ *   math(строка, { label }) → { el, slots }  формула вёрсткой: дробь в два этажа, индексы, слоты для живых чисел
+ *   polar(cx, cy, r, θ) → [x, y]           точка на окружности (0° — «6 часов», по часовой)
  *   arcPath(cx, cy, r, θ0, θ1) → d          SVG-дуга по часовой от θ0 до θ1
  *   gauge({ kind: 'enamel'|'drawing', caption }) → { el, needle, setAngle(θ) }   прибор 0–10 МПа
  *   icon(name) → SVG-иконка (external, github, arrow, right)
@@ -146,6 +151,60 @@
     return p(h, 2) + ':' + p(m, 2) + ':' + p(s, 2) + ',' + p(f, 3);
   }
 
+  /*
+   * Формула линейной записью → дерево узлов. «a / b» становится дробью: числитель и знаменатель — ближайшие
+   * слева и справа атомы, у скобочной группы внешние скобки снимаются. Vmin, θmax, y₁ → основа с индексом.
+   * {имя} — слот для числа, которое меняется на лету. Узлы: { t: 'text'|'op'|'sp'|'sub'|'group'|'frac'|'slot' }.
+   */
+  var MATH_SPLIT = /(\{\w+\}|[Vθ](?:min|max)|[a-z][₀-₉]|\s+|[()\/·−+=])/;
+  var SUB_DIGITS = '₀₁₂₃₄₅₆₇₈₉';
+  function mathTree(src) {
+    var parts = String(src).split(MATH_SPLIT).filter(function (p) { return p !== ''; });
+    var stack = [[]];
+    parts.forEach(function (p) {
+      var top = stack[stack.length - 1];
+      var m;
+      if (p === '(') stack.push([]);
+      else if (p === ')' && stack.length > 1) {
+        var items = stack.pop();
+        stack[stack.length - 1].push({ t: 'group', items: items });
+      } else if (/^\s+$/.test(p)) top.push({ t: 'sp' });
+      else if (/^[\/·−+=]$/.test(p)) top.push({ t: 'op', v: p });
+      else if ((m = /^\{(\w+)\}$/.exec(p))) top.push({ t: 'slot', name: m[1] });
+      else if ((m = /^([Vθ])(min|max)$/.exec(p))) top.push({ t: 'sub', base: m[1], sub: m[2] });
+      else if ((m = /^([a-z])([₀-₉])$/.exec(p))) top.push({ t: 'sub', base: m[1], sub: String(SUB_DIGITS.indexOf(m[2])) });
+      else top.push({ t: 'text', v: p });
+    });
+    while (stack.length > 1) {
+      // незакрытая скобка — оставляем её текстом
+      var open = stack.pop();
+      stack[stack.length - 1].push.apply(stack[stack.length - 1], [{ t: 'text', v: '(' }].concat(open));
+    }
+    return fractions(stack[0]);
+  }
+  function fractions(items) {
+    var out = [];
+    function unwrap(n) { return n.t === 'group' ? n.items : [n]; }
+    for (var i = 0; i < items.length; i++) {
+      var n = items[i];
+      if (n.t === 'group') n = { t: 'group', items: fractions(n.items) };
+      if (n.t === 'op' && n.v === '/') {
+        while (out.length && out[out.length - 1].t === 'sp') out.pop();
+        var j = i + 1;
+        while (j < items.length && items[j].t === 'sp') j++;
+        if (out.length && j < items.length) {
+          var right = items[j];
+          if (right.t === 'group') right = { t: 'group', items: fractions(right.items) };
+          out.push({ t: 'frac', num: unwrap(out.pop()), den: unwrap(right) });
+          i = j;
+          continue;
+        }
+      }
+      out.push(n);
+    }
+    return out;
+  }
+
   var kit = {
     angleToValue: angleToValue,
     valueToAngle: valueToAngle,
@@ -155,6 +214,7 @@
     emaStep: emaStep,
     createReading: createReading,
     clockText: clockText,
+    mathTree: mathTree,
     NBSP: NBSP
   };
   GV.kit = kit;
@@ -231,8 +291,10 @@
 
   /* ---------- SVG-геометрия ---------- */
 
+  /* θ сайта → экранный угол SVG: 0° смотрит вниз, рост по часовой */
+  var ZERO = 90;
   function polar(cx, cy, r, deg) {
-    var a = (deg * Math.PI) / 180;
+    var a = ((deg + ZERO) * Math.PI) / 180;
     return [cx + r * Math.cos(a), cy + r * Math.sin(a)];
   }
   function fx(n) {
@@ -330,7 +392,7 @@
 
   /*
    * Прибор 0–10 МПа одним SVG: шкала 270° от θmin до θmax по часовой, деления 0,2 и 1 МПа, цифры,
-   * дуги уставок LL / L / H / HH, стрелка поворачивается transform rotate (0° — «3 часа»).
+   * дуги уставок LL / L / H / HH, стрелка поворачивается transform rotate (0° — «6 часов»).
    *   opts.kind: 'enamel' — эмалевый циферблат в кадре камеры; 'drawing' — чертёж тушью на бумаге
    *   → { el, needle, setAngle(θ) }
    * Координаты: viewBox −200…200, центр в нуле; кегли цифр — в единицах viewBox.
@@ -400,11 +462,79 @@
     if (kind === 'enamel') root.appendChild(s('ellipse', { class: 'gv-gauge__glass', cx: -54, cy: -88, rx: 96, ry: 44, transform: 'rotate(-28 -54 -88)' }));
 
     function setAngle(theta) {
-      needle.setAttribute('transform', 'rotate(' + fx(theta) + ')');
+      // стрелка нарисована вдоль +x («3 часа»), отсчёт сайта — от «6 часов»
+      needle.setAttribute('transform', 'rotate(' + fx(theta + ZERO) + ')');
     }
     return { el: root, needle: needle, setAngle: setAngle };
   }
 
+  /*
+   * Формула вёрсткой из линейной записи (mathTree): дробь — два этажа с чертой, индексы min / max мельче
+   * и ниже, знаки операций с воздухом. Экранный диктор читает label (по умолчанию — исходная строка).
+   * На телефоне формула рвётся один раз — на первом «·» верхнего уровня, а если его нет, на первом знаке
+   * внутри внешней скобки; знак по правилам набора повторяется в начале второй строки. На широком экране
+   * разрыв скрыт, и формула идёт одной строкой.
+   * slots[имя] — пустые <span> на месте {имя}: числа подставляются в них без перерисовки формулы.
+   */
+  function math(src, opts) {
+    var h = GV.util.h;
+    var slots = {};
+    var visual = h('span', { class: 'gv-math__v', 'aria-hidden': 'true' });
+    var tree = mathTree(src);
+    function binary(list, j) {
+      var k = j - 1;
+      while (k >= 0 && list[k].t === 'sp') k--;
+      return k >= 0 && list[k].t !== 'op';
+    }
+    function firstOp(list, signs) {
+      for (var j = 0; j < list.length; j++) {
+        if (list[j].t === 'op' && signs.indexOf(list[j].v) >= 0 && binary(list, j)) return list[j];
+      }
+      return null;
+    }
+    // короткой записи разрыв не нужен: «(θ − θmin) mod 360 =» и так входит в строку
+    var brk = String(src).length > 32 ? firstOp(tree, '·') : null;
+    for (var g = 0; !brk && String(src).length > 32 && g < tree.length; g++) if (tree[g].t === 'group') brk = firstOp(tree[g].items, '·−+');
+    function render(items, parent) {
+      items.forEach(function (n, i) {
+        var prev = items[i - 1];
+        var next = items[i + 1];
+        if (n.t === 'sp') {
+          // пробел у знака операции не нужен: у знака свой воздух
+          if ((prev && prev.t === 'op') || (next && next.t === 'op')) return;
+          parent.appendChild(document.createTextNode(' '));
+        } else if (n.t === 'text') parent.appendChild(document.createTextNode(n.v));
+        else if (n.t === 'op') {
+          // минус в начале скобки или после знака — унарный, без воздуха: R(−φ)
+          var unary = !binary(items, i);
+          parent.appendChild(h('span', { class: unary ? 'gv-math__op gv-math__op--u' : 'gv-math__op' }, n.v));
+          if (n === brk) {
+            parent.appendChild(h('span', { class: 'gv-math__br' }));
+            parent.appendChild(h('span', { class: 'gv-math__op gv-math__rep' }, n.v));
+          }
+        }
+        else if (n.t === 'sub') parent.appendChild(h('span', { class: 'gv-math__id' }, n.base, h('sub', { class: 'gv-math__sub' }, n.sub)));
+        else if (n.t === 'slot') parent.appendChild((slots[n.name] = h('span', { class: 'gv-math__slot' })));
+        else if (n.t === 'group') {
+          parent.appendChild(document.createTextNode('('));
+          render(n.items, parent);
+          parent.appendChild(document.createTextNode(')'));
+        } else if (n.t === 'frac') {
+          var num = h('span', { class: 'gv-math__num' });
+          var den = h('span', { class: 'gv-math__den' });
+          render(n.num, num);
+          render(n.den, den);
+          parent.appendChild(h('span', { class: 'gv-math__frac' }, num, den));
+        }
+      });
+    }
+    render(tree, visual);
+    var label = h('span', { class: 'gv-visually-hidden' }, (opts && opts.label) || src);
+    var el = h('span', { class: 'gv-math' }, label, visual);
+    return { el: el, slots: slots, label: label };
+  }
+
+  kit.math = math;
   kit.gauge = gauge;
   kit.scope = scope;
   kit.sectionNav = sectionNav;

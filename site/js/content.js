@@ -124,9 +124,9 @@
 
     /* Лист 03: значение (4,39 МПа) не хранится — считается из theta по calibration. */
     reading: {
-      theta: 253.4,
+      theta: 163.4,
       device: 'Манометр, шкала 0–10 МПа',
-      caption: 'Калибровка по двум точкам: θmin 135° → 0, θmax 45° → 10 МПа, по часовой',
+      caption: 'Калибровка по двум точкам: θmin 45° → 0, θmax 315° → 10 МПа, по часовой; 0° — стрелка вниз',
       zones: { normal: 'НОРМА', warning: 'ПРЕДУПРЕЖДЕНИЕ', alert: 'АВАРИЯ' },
       sliderLabel: 'Показание прибора, МПа',
       hint: 'Ведите курсором по шкале; клик фиксирует, ← → двигают',
@@ -314,7 +314,7 @@
         latency: null },
       { id: 'needle', index: '03', step: 'Угол θ', title: 'Угол θ: радиальный момент + HoughLinesP',
         frame: 'Гистограмма момента и линия Hough через ось',
-        formula: ['θ = atan2(y₁−y₀, x₁−x₀)', 'V = Vmin + ((θ−θmin) mod 360)/span·(Vmax−Vmin)'],
+        formula: ['θ = (atan2(y₁−y₀, x₁−x₀) − 90°) mod 360', 'V = Vmin + ((θ−θmin) mod 360)/span·(Vmax−Vmin)'],
         params: [{ name: 'Гистограмма', value: 'шаг 1°, ± 4°' }, { name: 'Маски', value: 'Black-Hat / Top-Hat 31×31' }, { name: 'Hough ↔ момент', value: '≤ 12°' }],
         latency: null },
       { id: 'stabilize', index: '04', step: 'Сглаживание', title: 'Сглаживание EMA α = 0,25',
@@ -327,9 +327,12 @@
     pipelineFrame: 'Схема кадра: синтетический прибор, снятый под углом',
 
     /* Калибровка по app/vision.py angle_to_value; уставки — со скриншота пульта (манометр). */
+    /* Углы сайта — от «6 часов» по часовой: θ = (θкадра − 90°) mod 360. В приложении отсчёт от «3 часов»
+       (README), там та же шкала — θmin 135°, θmax 45°, текущий угол 253,4°. Шов 0° / 360° сайта лежит
+       в пустом секторе под шкалой. */
     calibration: {
-      thetaMin: 135,
-      thetaMax: 45,
+      thetaMin: 45,
+      thetaMax: 315,
       vMin: 0,
       vMax: 10,
       unit: 'МПа',

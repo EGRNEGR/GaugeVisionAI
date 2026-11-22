@@ -85,9 +85,20 @@
   display: grid;
   gap: 0.25rem;
 }
-.gv-ops__formula code {
+.gv-ops__formula .gv-math {
+  padding-block: 0.25rem;
   font-size: var(--fs-s);
   color: var(--ink);
+}
+/* Телефон: строки шага — не только формулы («CLAHE clip 3,0, сетка 8×8»), им можно переноситься;
+   дробь и индекс не рвутся */
+@media (max-width: 760px) {
+  .gv-ops__formula .gv-math {
+    font-size: var(--fs-xs);
+    white-space: normal;
+  }
+  .gv-ops__formula .gv-math__frac,
+  .gv-ops__formula .gv-math__id { white-space: nowrap; }
 }
 .gv-ops__params {
   display: grid;

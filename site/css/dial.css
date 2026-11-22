@@ -117,6 +117,13 @@
   color: var(--ink);
   font-weight: 600;
 }
+.gv-dial__f .gv-math {
+  display: inline-block;
+  padding-block: 0.25rem;
+}
+@media (max-width: 400px) {
+  .gv-dial__f .gv-math { font-size: var(--fs-xs); }
+}
 .gv-dial__angles {
   display: flex;
   flex-wrap: wrap;

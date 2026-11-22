@@ -7,8 +7,12 @@
  * «Записать в журнал» отправляет показание на лист 01 строкой «ваша запись».
  *
  *   mount(body, { reading }) → { destroy }
- *   angleFromPointer(dx, dy) → θ           угол точки относительно центра (0° — «3 часа», по часовой, ось Y вниз)
- *   clampAngle(θ, calib) → θ               угол в «мёртвом» секторе под шкалой прижимается к ближнему краю
+ *   angleFromPointer(dx, dy) → θ           угол точки относительно центра (0° — «6 часов», по часовой, ось Y вниз)
+ *   clampAngle(θ, calib, prev?) → θ        угол в «мёртвом» секторе под шкалой прижимается к краю: к ближнему,
+ *                                          а при ведении (prev — где стрелка сейчас) — к тому, у которого она стоит
+ *
+ * Шов 0° / 360° смотрит вниз, в пустой сектор между θmax и θmin: стрелка, упёршись в край шкалы,
+ * остаётся на нём и никогда не проходит через шов — пружина не крутит её обратным кругом.
  */
 (function () {
   'use strict';
@@ -20,17 +24,22 @@
   }
 
   function angleFromPointer(dx, dy) {
-    return mod((Math.atan2(dy, dx) * 180) / Math.PI, 360);
+    return mod((Math.atan2(dy, dx) * 180) / Math.PI - 90, 360);
   }
 
-  /* Рабочий сектор идёт по часовой от θmin до θmax (CW) или против (CCW). Вне его — ближний край. */
-  function clampAngle(theta, calib) {
+  /* Рабочий сектор идёт по часовой от θmin до θmax (CW) или против (CCW). Вне его — ближний край;
+     при ведении курсор, ушедший под шкалу, не перебрасывает стрелку через всю шкалу к другому краю. */
+  function clampAngle(theta, calib, prev) {
     var a0 = Number(calib.thetaMin);
     var a1 = Number(calib.thetaMax);
     var ccw = String(calib.direction || 'CW').toLowerCase() === 'ccw';
     var span = ccw ? mod(a0 - a1, 360) : mod(a1 - a0, 360);
     var d = ccw ? mod(a0 - theta, 360) : mod(theta - a0, 360);
     if (d <= span) return mod(theta, 360);
+    if (typeof prev === 'number') {
+      var dp = ccw ? mod(a0 - prev, 360) : mod(prev - a0, 360);
+      if (dp <= span) return dp > span / 2 ? a1 : a0;
+    }
     var toMax = d - span;
     var toMin = 360 - d;
     return toMax <= toMin ? a1 : a0;
@@ -62,17 +71,19 @@
       var p1 = kit.polar(0, 0, r1, theta);
       return s('line', { class: cls, x1: p0[0].toFixed(1), y1: p0[1].toFixed(1), x2: p1[0].toFixed(1), y2: p1[1].toFixed(1) });
     }
-    function label(theta, r, text, cls) {
+    function label(theta, r, text, cls, center) {
       var p = kit.polar(0, 0, r, theta);
-      var anchor = Math.cos((theta * Math.PI) / 180) > 0.2 ? 'start' : (Math.cos((theta * Math.PI) / 180) < -0.2 ? 'end' : 'middle');
+      var cx = Math.cos(((theta + 90) * Math.PI) / 180);
+      var anchor = center ? 'middle' : (cx > 0.2 ? 'start' : (cx < -0.2 ? 'end' : 'middle'));
       return s('text', { class: cls || 'gv-dial__dim-t', x: p[0].toFixed(1), y: p[1].toFixed(1), 'font-size': 13, 'text-anchor': anchor, 'dominant-baseline': 'central' }, text);
     }
     dims.appendChild(ray(calib.thetaMin, 186, 236, 'gv-dial__ext'));
     dims.appendChild(ray(calib.thetaMax, 186, 236, 'gv-dial__ext'));
     dims.appendChild(s('path', { class: 'gv-dial__span', d: kit.arcPath(0, 0, 226, calib.thetaMin, calib.thetaMax) }));
-    dims.appendChild(label(calib.thetaMin, 252, 'θmin ' + calib.thetaMin + '° → ' + calib.vMin));
-    dims.appendChild(label(calib.thetaMax, 252, 'θmax ' + calib.thetaMax + '° → ' + calib.vMax));
-    dims.appendChild(label(270, 244, t.spanLabel.toLowerCase() + ' ' + calib.span + '°', 'gv-dial__dim-t gv-dial__dim-t--span'));
+    // подписи краёв — по центру под концом выносной линии: целиком внутри чертежа и на узком экране
+    dims.appendChild(label(calib.thetaMin, 264, 'θmin ' + calib.thetaMin + '° → ' + calib.vMin, null, true));
+    dims.appendChild(label(calib.thetaMax, 264, 'θmax ' + calib.thetaMax + '° → ' + calib.vMax, null, true));
+    dims.appendChild(label(180, 244, t.spanLabel.toLowerCase() + ' ' + calib.span + '°', 'gv-dial__dim-t gv-dial__dim-t--span'));
     var deltaArc = s('path', { class: 'gv-dial__delta' });
     var thetaRay = s('line', { class: 'gv-dial__ray' });
     dims.appendChild(deltaArc);
@@ -91,7 +102,12 @@
     var zone = h('span', { class: 'gv-mark gv-mark--stamp' });
     var thetaEl = h('span', { class: 'gv-num' });
     var deltaEl = h('span', { class: 'gv-num gv-dial__delta-v' });
-    var subst = h('code', { class: 'gv-dial__subst' });
+    /* формулы вёрсткой: дробь в два этажа; в подстановке живут только θ и V */
+    var formula = kit.math(calib.formula);
+    var subst = kit.math('V = ' + fmt(calib.vMin, 0) + ' + (({theta} − ' + calib.thetaMin + '°) mod 360) / ' + calib.span +
+      ' · (' + calib.vMax + ' − ' + calib.vMin + ') = {V}');
+    subst.el.classList.add('gv-dial__subst');
+    var deltaK = kit.math('(θ − θmin) mod 360 =');
 
     var slider = h('input', {
       class: 'gv-dial__range',
@@ -113,11 +129,11 @@
         h('span', { class: 'gv-dial__zone' }, h('span', { class: 'gv-label' }, t.zoneLabel), zone)),
       h('dl', { class: 'gv-dial__f' },
         h('dt', { class: 'gv-label' }, t.formulaLabel),
-        h('dd', null, h('code', null, calib.formula)),
+        h('dd', null, formula.el),
         h('dt', { class: 'gv-label' }, t.substitution),
-        h('dd', null, subst),
+        h('dd', null, subst.el),
         h('dt', { class: 'gv-label' }, t.angleLabel),
-        h('dd', { class: 'gv-dial__angles' }, thetaEl, h('span', { class: 'gv-dial__delta-k' }, '(θ − θmin) mod 360 ='), deltaEl)),
+        h('dd', { class: 'gv-dial__angles' }, thetaEl, h('span', { class: 'gv-dial__delta-k' }, deltaK.el), deltaEl)),
       h('div', { class: 'gv-dial__ctl' }, sliderLabel, slider,
         h('p', { class: 'gv-dial__hint' }, fine ? t.hint : t.hintTouch)),
       h('div', { class: 'gv-dial__act' }, writeBtn, written));
@@ -128,6 +144,8 @@
     /* ---------- рисование по углу ---------- */
 
     function paint(theta) {
+      // перелёт пружины не выносит стрелку за упор шкалы
+      theta = clampAngle(theta, calib);
       g.setAngle(theta);
       var v = kit.angleToValue(theta, calib);
       var level = kit.levelOf(v, calib.setpoints);
@@ -139,7 +157,9 @@
         zone.textContent = t.zones[level];
       }
       thetaEl.textContent = fmt(mod(theta, 360), 1) + '°';
-      subst.textContent = 'V = ' + fmt(calib.vMin, 0) + ' + ((' + fmt(mod(theta, 360), 1) + '° − ' + calib.thetaMin + '°) mod 360) / ' +
+      subst.slots.theta.textContent = fmt(mod(theta, 360), 1) + '°';
+      subst.slots.V.textContent = fmt(v, 2);
+      subst.label.textContent = 'V = ' + fmt(calib.vMin, 0) + ' + ((' + fmt(mod(theta, 360), 1) + '° − ' + calib.thetaMin + '°) mod 360) / ' +
         calib.span + ' · (' + calib.vMax + ' − ' + calib.vMin + ') = ' + fmt(v, 2);
       deltaArc.setAttribute('d', kit.arcPath(0, 0, 204, calib.thetaMin, calib.thetaMin + Math.max(delta, 0.01)));
       var p0 = kit.polar(0, 0, 18, theta);
@@ -173,12 +193,13 @@
     /* ---------- управление ---------- */
 
     var fixed = reading.get();
-    function pointerTheta(e) {
+    /* follow — курсор ведут: под шкалой стрелка держится края, у которого стоит */
+    function pointerTheta(e, follow) {
       var box = svgEl.getBoundingClientRect();
       // центр прибора — точка (0, 0) viewBox −280 −262 560 524
       var cx = box.left + (280 / 560) * box.width;
       var cy = box.top + (262 / 524) * box.height;
-      return clampAngle(angleFromPointer(e.clientX - cx, e.clientY - cy), calib);
+      return clampAngle(angleFromPointer(e.clientX - cx, e.clientY - cy), calib, follow ? reading.get() : undefined);
     }
     var pressing = false;
     sc.on(svgEl, 'pointerdown', function (e) {
@@ -189,10 +210,10 @@
     });
     sc.on(svgEl, 'pointermove', function (e) {
       if (pressing) {
-        fixed = pointerTheta(e);
+        fixed = pointerTheta(e, true);
         reading.set(fixed, 'dial');
       } else if (e.pointerType === 'mouse') {
-        reading.set(pointerTheta(e), 'dial');
+        reading.set(pointerTheta(e, true), 'dial');
       }
     });
     function release() { pressing = false; }

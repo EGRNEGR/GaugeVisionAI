@@ -155,6 +155,54 @@ code {
   border: 0;
 }
 
+/* Формула вёрсткой (kit.math): дробь в два этажа с чертой по оси знаков, индексы min / max мельче и ниже,
+   знаки операций с воздухом. Строка не переносится — дробь укорачивает запись настолько, что она входит. */
+.gv-math {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.gv-math__op {
+  margin-inline: 0.3em;
+}
+.gv-math__op--u {
+  margin-inline: 0;
+}
+.gv-math__sub {
+  margin-left: 0.04em;
+  font-size: 0.66em;
+  font-stretch: 75%;
+  line-height: 0;
+  vertical-align: -0.3em;
+}
+.gv-math__frac {
+  display: inline-flex;
+  flex-direction: column;
+  margin-inline: 0.15em;
+  line-height: 1.3;
+  text-align: center;
+  vertical-align: middle;
+}
+.gv-math__num {
+  padding: 0 0.3em 0.12em;
+  border-bottom: 1px solid currentColor;
+}
+.gv-math__den {
+  padding: 0.12em 0.3em 0;
+}
+/* Разрыв строки после первого «·» и повтор знака в начале второй строки — только на телефоне */
+.gv-math__br,
+.gv-math__rep {
+  display: none;
+}
+@media (max-width: 760px) {
+  .gv-math__br { display: block; }
+  .gv-math__rep {
+    display: inline;
+    margin-inline: 0 0.3em;
+  }
+}
+
 .gv-skip {
   position: absolute;
   left: var(--s2);

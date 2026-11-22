@@ -183,7 +183,7 @@
         : h('p', { class: 'gv-ops__lat gv-ops__lat--none' }, h('span', { class: 'gv-label' }, L.latency), h('span', { class: 'gv-caption' }, L.inTotal));
       var panel = h('div', { class: 'gv-ops__panel-text', id: 'gv-ops-p' + i, hidden: true },
         h('h3', { class: 'gv-ops__title' }, card.title.indexOf(card.step) === 0 ? card.title.slice(card.step.length).replace(/^[:\s]+/, '') : card.title),
-        h('div', { class: 'gv-ops__formula' }, card.formula.map(function (f) { return h('code', null, f); })),
+        h('div', { class: 'gv-ops__formula' }, card.formula.map(function (f) { return kit.math(f).el; })),
         h('dl', { class: 'gv-ops__params' }, card.params.map(function (p) {
           return [h('dt', null, p.name), h('dd', { class: 'gv-num' }, p.value)];
         })),

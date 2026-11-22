@@ -51,7 +51,7 @@
       }
       var tip = kit.polar(16, 16, 11.5, kit.valueToAngle(4.4, c.calibration));
       return s('svg', { class: 'gv-mast__mark', viewBox: '0 0 32 32', 'aria-hidden': 'true', focusable: 'false' },
-        s('path', { class: 'arc', d: kit.arcPath(16, 16, 13, 135, 45) }),
+        s('path', { class: 'arc', d: kit.arcPath(16, 16, 13, c.calibration.thetaMin, c.calibration.thetaMax) }),
         ticks,
         s('line', { class: 'needle', x1: 16, y1: 16, x2: tip[0].toFixed(2), y2: tip[1].toFixed(2) }),
         s('circle', { class: 'hub', cx: 16, cy: 16, r: 2.2 }));
