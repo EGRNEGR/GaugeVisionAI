@@ -1,12 +1,12 @@
 /*
- * GV.content — единственный источник фактов лендинга GaugeVision AI.
- * Чистые данные, без DOM. Источники: README.md, PRODUCT.md, код в app/ и notes.md
- * (где README и код расходятся, текст написан по коду — interfaces.md, правило 1a).
- * Все числа во всех строках (кроме служебных ключей) сверяются с источниками
- * командой `node site/tests/check.js`; там же — длина выводимых строк (≤ 140 символов)
- * и заголовки секций в 3–6 слов: на странице нет абзацев, только заголовки, цифры и формулы.
- * В конце файла строки проходят типограф: неразрывный пробел между числом и единицей
- * и перед длинным тире.
+ * GV.content — единственный источник фактов лендинга GaugeVision AI («Журнал обходчика»).
+ * Чистые данные, без DOM. Источники: README.md, PRODUCT.md и код в app/
+ * (где README и код расходятся, текст написан по коду — docs/adr/0003-kod-glavnee-readme.md).
+ * Все числа во всех выводимых строках сверяет `node site/tests/check.js` с README.md, PRODUCT.md,
+ * app/config.py и notes.md прошлой сборки; там же — длина строк (≤ 140 символов) и заголовки в 3–6 слов.
+ * Демонстрационные строки журнала (время, бирка прибора) живут в js/components/journal.js
+ * и подписаны на странице как демонстрация — здесь только факты и тексты.
+ * В конце файла строки проходят типограф: неразрывный пробел между числом и единицей и перед тире.
  */
 (function () {
   'use strict';
@@ -20,38 +20,109 @@
     meta: {
       name: 'GaugeVision AI',
       repoUrl: REPO,
+      repoLabel: 'github.com/EGRNEGR/GaugeVisionAI',
       licenseUrl: REPO + '/blob/main/LICENSE',
-      trackShort: 'Трек №3 · Умное производство',
+      trackShort: 'Трек №3, Умное производство',
       copyright: '© 2026 EGRNEGR. Все права защищены. Код опубликован только для ознакомления',
-      version: '1.0.0'
+      version: '1.0.0',
+      form: 'Журнал обхода и показаний КИП, котельный цех'
     },
 
-    /* Восемь экранов одной страницы в порядке брифа; заголовок — 3–6 слов. У hero заголовок — hero.title (h1). */
+    /*
+     * Восемь листов журнала. sheet — подпись листа в поле, form — печатная строка бланка над заголовком.
+     * Заголовок — 3–6 слов; у hero заголовок — hero.title (h1).
+     */
     sections: [
-      { id: 'hero', index: '01', nav: 'Суть' },
-      { id: 'reading', index: '02', nav: 'Показание', title: 'От угла θ к МПа' },
-      { id: 'pipeline', index: '03', nav: 'Конвейер', title: 'Четыре шага от кадра к значению' },
-      { id: 'metrics', index: '04', nav: 'Замеры', title: 'Замеры с условиями стенда' },
-      { id: 'compare', index: '05', nav: 'Было → Стало', title: 'Журнал обходчика → пульт оператора' },
-      { id: 'architecture', index: '06', nav: 'Архитектура', title: 'Один сервер, локальный контур' },
-      { id: 'limits', index: '07', nav: 'Ограничения', title: 'Компромиссы и ограничения среды' },
-      { id: 'contact', index: '08', nav: 'GitHub', title: 'Код и README — на GitHub' }
+      { id: 'hero', index: '01', nav: 'Журнал', form: 'Смена идёт' },
+      { id: 'compare', index: '02', nav: 'Смена', form: 'Было и стало',
+        title: 'Двенадцать часов против трети секунды' },
+      { id: 'reading', index: '03', nav: 'Показание', form: 'Калибровка',
+        title: 'От угла θ к мегапаскалям' },
+      { id: 'pipeline', index: '04', nav: 'Конвейер', form: 'Обработка кадра',
+        title: 'Четыре операции над одним кадром' },
+      { id: 'metrics', index: '05', nav: 'Протокол', form: 'Протокол',
+        title: 'Протокол испытаний на стенде' },
+      { id: 'architecture', index: '06', nav: 'Схема', form: 'Схема соединений',
+        title: 'Один сервер в локальном контуре' },
+      { id: 'limits', index: '07', nav: 'Замечания', form: 'Замечания',
+        title: 'Компромиссы, ограничения и план' },
+      { id: 'contact', index: '08', nav: 'GitHub', form: 'Сдача смены',
+        title: 'Журнал открыт на GitHub' }
     ],
 
-    /* Hero: ролик Gemini на прокрутке и поверх только три элемента — h1, одна строка сути (одно предложение)
-       и индикатор прокрутки — линия без подписи. */
+    /* Первый экран: лист журнала, где после рукописной строки обходчика пишет камера. */
     hero: {
-      title: 'Стрелочные приборы ТЭЦ — на пульте оператора',
-      line: 'Камера считывает показания КИПиА без врезки и останова, без интернета.',
+      title: 'Прибор пишет журнал сам',
+      line: 'Камера снимает стрелку КИПиА снаружи контура: без врезки, останова и интернета.',
+      columns: ['Время', 'Прибор', 'Показание, МПа', 'Записал'],
+      hand: 'обходчик',
+      machine: 'камера',
+      demo: 'Демонстрация: строки считает калибровка из кода, прибор — манометр 0–10 МПа',
+      rate: '3 обработки в секунду на камеру',
+      dialLabel: 'Кадр камеры',
+      dialHint: 'Потяните стрелку — показание ляжет строкой в журнал',
+      dialHintTouch: 'Проведите по шкале — показание ляжет строкой в журнал',
+      cta: 'Код на GitHub',
+      ctaNext: 'Проверить механизм'
+    },
+
+    /* Лист 02: ролик Gemini на прокрутке (обходчик → камера на поручне) и шкала смены в масштабе. */
+    compare: {
       video: {
-        src: 'assets/video/gauge_pullback.scrub.mp4',
-        srcMobile: 'assets/video/gauge_pullback.scrub-m.mp4',
-        poster: 'assets/img/poster.jpg',
-        label: 'Ролик: камера отъезжает от манометра на трубопроводе котельной, рядом — камера, которая снимает его шкалу'
+        src: 'assets/video/shift.scrub.mp4',
+        srcMobile: 'assets/video/shift.scrub-m.mp4',
+        poster: 'assets/img/shift-before.jpg',
+        posterAfter: 'assets/img/shift-after.jpg',
+        label: 'Ролик: обходчик записывает показание манометра в журнал и уходит; на поручне остаётся камера, которая смотрит на шкалу',
+        credit: 'Иллюстрация, сгенерированная Gemini, — не съёмка со стенда'
+      },
+      captions: {
+        before: 'Было: обход раз в смену, показание — от руки в журнал',
+        after: 'Стало: камера на поручне читает стрелку вместо обходчика'
+      },
+      outside: 'До 60 % приборов ТЭЦ — вне АСУ ТП, по оценке команды',
+      before: {
+        title: 'Было',
+        points: [
+          'Показания — раз в смену, в журнал',
+          'Отклонение между обходами незаметно',
+          'Диспетчер видит запись с задержкой',
+          'Смарт-датчик: барьеры, кабели, проект, останов котла'
+        ],
+        cost: { value: '300 000', unit: '₽ на точку', note: 'замена на смарт-датчик, оценка команды' }
+      },
+      after: {
+        title: 'Стало',
+        points: [
+          'Камера снаружи контура: без врезки и останова',
+          '3 обработки в секунду на камеру',
+          'Пятизонные уставки, сирена, квитирование',
+          'Архив SQLite и CSV с метками ISO 8601 UTC'
+        ],
+        cost: { value: '33 000', unit: '₽ на точку', note: 'ПО и камера «Рубитек», оценка команды' }
+      },
+      saving: { value: '−89 %', label: 'затрат на точку' },
+      savingNote: 'Оценка команды: 26,7 млн ₽ на 100 приборах. Нужен пилот.',
+      timeline: {
+        caption: 'Иллюстративный сценарий',
+        shiftHours: 12,
+        rounds: [0, 12],
+        deviationHour: 5,
+        roundLabel: 'Обход',
+        handRow: 'Обходчик',
+        cameraRow: 'Камера',
+        deviationLabel: 'Отклонение',
+        drag: 'Перетащите отклонение по смене или выберите час стрелками',
+        deviationAt: 'Отклонение в',
+        beforeLead: 'Обходчик заметит через',
+        afterLead: 'Камера — на следующем кадре',
+        afterValue: '⅓ с',
+        emaNote: '≈ 90 % скачка показание догонит за 8 кадров — оценка по формуле EMA, не замер',
+        loupe: 'Одна секунда смены: три кадра камеры'
       }
     },
 
-    /* Сцена «Показание»: значение (4,39 МПа) не хранится — считается из theta по calibration. */
+    /* Лист 03: значение (4,39 МПа) не хранится — считается из theta по calibration. */
     reading: {
       theta: 253.4,
       device: 'Манометр, шкала 0–10 МПа',
@@ -59,7 +130,15 @@
       zones: { normal: 'НОРМА', warning: 'ПРЕДУПРЕЖДЕНИЕ', alert: 'АВАРИЯ' },
       sliderLabel: 'Показание прибора, МПа',
       hint: 'Ведите курсором по шкале; клик фиксирует, ← → двигают',
-      hintTouch: 'Коснитесь шкалы — стрелка встанет в точку касания'
+      hintTouch: 'Коснитесь шкалы — стрелка встанет в точку касания',
+      formulaLabel: 'Формула из app/vision.py',
+      substitution: 'Подстановка',
+      angleLabel: 'Угол стрелки θ',
+      spanLabel: 'Рабочий сектор шкалы',
+      barLabel: 'то же в барах',
+      zoneLabel: 'Зона уставок',
+      write: 'Записать в журнал',
+      written: 'Записано в журнал листа 01'
     },
 
     /* value — число для счётчика, display — итоговая запись (русская нотация). */
@@ -86,8 +165,10 @@
         label: '100 камер', condition: 'расчёт: RTX 4090 24 GB, узел ≈ 580–680 тыс. ₽', kind: 'calculated' }
     ],
     metricsNote: 'Стенд: синтетические приборы, наклон ≈ 41°. Скриптов воспроизведения замеров в репозитории нет.',
+    metricsColumns: ['№', 'Показатель', 'Условия замера', 'Значение', 'Вид'],
+    metricsAxis: 'к/с, шкала 0–400',
 
-    /* Девять этапов конвейера по коду (notes.md §1) — источник для карточек pipelineCards. */
+    /* Девять этапов конвейера по коду — справочник; на странице показаны четыре (pipelineCards). */
     pipeline: [
       {
         id: 'capture', index: '00', title: 'Захват',
@@ -100,7 +181,7 @@
           { name: 'Лимит кадра смартфона', value: '8 МиБ', note: 'проверка в ws_phone' }
         ],
         formula: 'cap.set(CAP_PROP_BUFFERSIZE, 1)',
-        file: 'app/streamer.py · app/main.py',
+        file: 'app/streamer.py, app/main.py',
         aspect: 'Потоковая обработка'
       },
       {
@@ -112,7 +193,7 @@
           { name: 'YOLO_CLASSES', value: 'gauge, dial, meter, manometer, clock', note: 'классы корпуса прибора' },
           { name: 'Устройство', value: 'CUDA FP16 или CPU', note: 'YOLO_DEVICE = auto' },
           { name: 'Допуск эллипса', value: '± 15 % бокса', note: 'центр эллипса внутри бокса YOLO' },
-          { name: 'HoughCircles', value: 'dp 1,2 · param1 140 · param2 45', note: 'только подтверждение эллипса' }
+          { name: 'HoughCircles', value: 'dp 1,2, param1 140, param2 45', note: 'только подтверждение эллипса' }
         ],
         formula: 'source = «yolo+ellipse», если центр эллипса ∈ бокс YOLO ± 15 %',
         file: 'app/vision.py',
@@ -135,7 +216,7 @@
         id: 'light', index: '03', title: 'Свет и контраст',
         short: 'CLAHE для циферблата, «шляпы» Black-Hat / Top-Hat для стрелки',
         params: [
-          { name: 'CLAHE', value: 'clip 3,0 · сетка 8×8', note: 'только при поиске циферблата' },
+          { name: 'CLAHE', value: 'clip 3,0, сетка 8×8', note: 'только при поиске циферблата' },
           { name: 'Ядро Black-Hat / Top-Hat', value: 'эллипс 31×31', note: 'три маски: тёмная, светлая, насыщенность' },
           { name: 'Кольцо порога Otsu', value: '0,04–0,46 размера', note: 'фон вне циферблата не влияет' },
           { name: 'Нижний порог маски', value: '18', note: 'после Otsu' },
@@ -152,7 +233,7 @@
           { name: 'Кольцо момента', value: '0,06–0,36 размера', note: 'внешние риски и цифры исключены' },
           { name: 'Гистограмма', value: 'шаг 1°, сглаживание ± 4°', note: 'круговое окно 9' },
           { name: 'Второй максимум', value: 'за пределами ± 25°', note: 'входит в уверенность' },
-          { name: 'HoughLinesP', value: 'порог 0,08·size · длина ≥ 0,15·size · разрыв 10', note: 'линия через ось' },
+          { name: 'HoughLinesP', value: 'порог 0,08·size, длина ≥ 0,15·size, разрыв 10', note: 'линия через ось' },
           { name: 'Согласование Hough и момента', value: '≤ 12°', note: 'иначе уверенность × 0,9' }
         ],
         formula: 'θ = atan2(Δy, Δx) mod 360',
@@ -183,7 +264,7 @@
           { name: 'Гистерезис ROI', value: '5 % оси', note: 'меньшее смещение игнорируется' }
         ],
         formula: 'V̄ₜ = α · Vₜ + (1 − α) · V̄ₜ₋₁',
-        file: 'app/vision.py · app/config.py',
+        file: 'app/vision.py, app/config.py',
         aspect: 'Сглаживание показаний'
       },
       {
@@ -191,12 +272,12 @@
         short: 'Пять зон LL / L / НОРМА / H / HH',
         params: [
           { name: 'Зоны', value: 'LL / L / НОРМА / H / HH', note: 'дуги на оверлее шкалы' },
-          { name: 'Статусы', value: 'normal · warning · alert', note: 'хранятся в БД' },
+          { name: 'Статусы', value: 'normal, warning, alert', note: 'хранятся в БД' },
           { name: 'Порядок', value: 'LL ≤ L ≤ H ≤ HH', note: 'иначе ошибка 422' },
           { name: 'Стандарт', value: 'ISA-18.2 / ГОСТ Р МЭК 62682', note: 'модель сигнализации' }
         ],
         formula: 'V ≤ LL или V ≥ HH → alert; V ≤ L или V ≥ H → warning',
-        file: 'app/vision.py · app/main.py',
+        file: 'app/vision.py, app/main.py',
         aspect: 'Сигнализация'
       },
       {
@@ -210,35 +291,40 @@
           { name: 'CSV', value: 'UTF-8 с BOM, разделитель «;»', note: 'открывается в Excel' }
         ],
         formula: 'запись, если valid и прошло ≥ 1 с с прошлой записи',
-        file: 'app/main.py · app/db.py',
+        file: 'app/main.py, app/db.py',
         aspect: 'Потоковая обработка'
       }
     ],
 
     /*
-     * Четыре карточки горизонтального трека (бриф, пункт 4) — подписи как в коде: аффинная коррекция,
-     * радиальный момент. Задержка — только замеренная; у 02 и 03 отдельного замера нет (latency: null,
-     * они входят в pipelineTotal).
+     * Четыре операции листа 04 — подписи как в коде: аффинная коррекция, радиальный момент.
+     * Задержка — только замеренная; у 02 и 03 отдельного замера нет (latency: null, они входят в pipelineTotal).
+     * frame — что сейчас нарисовано поверх кадра.
      */
     pipelineCards: [
       { id: 'locate', index: '01', step: 'Локализация', title: 'Локализация: CLAHE + YOLOv8n',
-        formula: ['CLAHE clip 3,0 · 8×8', 'ROI = YOLOv8n(кадр)'],
+        frame: 'Бокс корпуса и эллипс циферблата',
+        formula: ['CLAHE clip 3,0, сетка 8×8', 'ROI = YOLOv8n(кадр)'],
         params: [{ name: 'YOLO_IMGSZ', value: '640' }, { name: 'YOLO_CONF', value: '0,35' }, { name: 'Устройство', value: 'CUDA FP16 или CPU' }],
         latency: { value: '7,2', unit: 'мс/кадр GPU', note: '29 мс/кадр CPU' } },
       { id: 'normalize', index: '02', step: 'Эллипс → круг', title: 'Эллипс → круг: аффинная коррекция',
+        frame: 'Наклонный циферблат выпрямлен в круг 640 px',
         formula: ['M = T(S/2)·R(φ)·diag(R/a, R/b)·R(−φ)·T(−c)'],
         params: [{ name: 'DIAL_SIZE', value: '640 px' }, { name: 'Интерполяция', value: 'INTER_LINEAR' }, { name: 'Наклон на стенде', value: 'до ≈ 41°' }],
         latency: null },
       { id: 'needle', index: '03', step: 'Угол θ', title: 'Угол θ: радиальный момент + HoughLinesP',
+        frame: 'Гистограмма момента и линия Hough через ось',
         formula: ['θ = atan2(y₁−y₀, x₁−x₀)', 'V = Vmin + ((θ−θmin) mod 360)/span·(Vmax−Vmin)'],
         params: [{ name: 'Гистограмма', value: 'шаг 1°, ± 4°' }, { name: 'Маски', value: 'Black-Hat / Top-Hat 31×31' }, { name: 'Hough ↔ момент', value: '≤ 12°' }],
         latency: null },
       { id: 'stabilize', index: '04', step: 'Сглаживание', title: 'Сглаживание EMA α = 0,25',
-        formula: ['V̄ₜ = α·Vₜ + (1−α)·V̄ₜ₋₁'],
+        frame: 'Сырые отсчёты с вибрацией и кривая EMA',
+        formula: ['EMA(t) = α·V(t) + (1 − α)·EMA(t − 1)'],
         params: [{ name: 'EMA_ALPHA', value: '0,25' }, { name: 'MIN_NEEDLE_CONFIDENCE', value: '0,25' }],
         latency: { value: '≈ 90 %', unit: 'скачка за 8 кадров', note: 'оценка по формуле, не замер' } }
     ],
-    pipelineTotal: { value: '30–100', unit: 'мс/кадр', label: 'Конвейер целиком' },
+    pipelineTotal: { value: '30–100', unit: 'мс/кадр', label: 'Конвейер целиком', condition: 'локализация, нормализация, стрелка, EMA' },
+    pipelineFrame: 'Схема кадра: синтетический прибор, снятый под углом',
 
     /* Калибровка по app/vision.py angle_to_value; уставки — со скриншота пульта (манометр). */
     calibration: {
@@ -253,43 +339,6 @@
       setpoints: { LL: 1, L: 2, H: 8, HH: 9 },
       barPerMpa: 10,
       formula: 'V = Vmin + ((θ − θmin) mod 360) / span · (Vmax − Vmin)'
-    },
-
-    compare: {
-      before: {
-        title: 'Было: обход раз в смену',
-        points: [
-          'Показания — раз в смену, в журнал',
-          'Отклонение между обходами незаметно',
-          'Диспетчер видит запись с задержкой',
-          'Смарт-датчик: барьеры, кабели, проект, останов котла'
-        ],
-        cost: { value: '300 000', unit: '₽ на точку', note: 'замена на смарт-датчик, оценка команды' }
-      },
-      after: {
-        title: 'Стало: GaugeVision AI',
-        points: [
-          'Камера снаружи контура: без врезки и останова',
-          '3 обработки в секунду на камеру',
-          'Пятизонные уставки, сирена, квитирование',
-          'Архив SQLite и CSV с метками ISO 8601 UTC'
-        ],
-        cost: { value: '33 000', unit: '₽ на точку', note: 'ПО и камера «Рубитек», оценка команды' }
-      },
-      saving: { value: '−89 %', label: 'затрат на точку' },
-      savingNote: 'Оценка команды: 26,7 млн ₽ на 100 приборах. Нужен пилот.',
-      timeline: {
-        caption: 'Иллюстративный сценарий',
-        shiftHours: 12,
-        rounds: [0, 12],
-        deviationHour: 5,
-        roundLabel: 'Обход',
-        deviationLabel: 'Отклонение',
-        beforeLabel: 'Было',
-        afterLabel: 'Стало',
-        beforeText: 'Отклонение заметят на следующем обходе',
-        afterText: 'Отклонение видно на пульте сразу, уставки поднимают сигнал'
-      }
     },
 
     architecture: {
@@ -342,19 +391,20 @@
         { name: 'Chart.js', version: 'локально, без CDN' },
         { name: 'HTML / CSS / JS', version: 'без фреймворков' }
       ],
+      stackColumns: ['Поз.', 'Компонент', 'Версия'],
       boundaryLabel: 'Локальный контур: HTTPS / WSS, без исходящих запросов в интернет',
-      hint: 'Наведите на узел или перейдите к нему клавишей Tab — подсветятся связи',
-      hintTouch: 'Коснитесь узла — подсветятся его связи'
+      hint: 'Наведите на узел или выберите его стрелками — подсветится путь сигнала',
+      hintTouch: 'Коснитесь узла — подсветится путь сигнала'
     },
 
-    /* «Выбрали → платим», источник — константа или файл из notes.md. */
+    /* «Выбрали → платим», источник — константа или файл. */
     tradeoffs: [
       {
         id: 'yolo-nano',
         chose: 'YOLOv8n только для поиска корпуса',
         cost: 'Стрелку ищет геометрия OpenCV, не нейросеть',
         why: '7,2 мс/кадр на GPU, 29 мс на CPU. Класс Needle в модели есть, конвейер его не использует.',
-        source: 'models/gauge_yolov8.pt · YOLO_CLASSES в app/config.py'
+        source: 'models/gauge_yolov8.pt, YOLO_CLASSES в app/config.py'
       },
       {
         id: 'affine',
@@ -389,7 +439,7 @@
         chose: 'Самоподписанный сертификат, локальный контур',
         cost: 'Браузер раз предупреждает о сертификате на каждом новом устройстве',
         why: 'Ни одного исходящего запроса в интернет. Без HTTPS нет доступа к камере смартфона.',
-        source: 'app/cert_gen.py · run.py'
+        source: 'app/cert_gen.py, run.py'
       },
       {
         id: 'sqlite',
@@ -400,7 +450,7 @@
       }
     ],
 
-    /* Ограничения среды: README «Ограничения», ответы уточнены по коду (notes.md §4). */
+    /* Ограничения среды: README «Ограничения», ответы уточнены по коду. */
     limits: [
       {
         id: 'glare',
@@ -456,10 +506,16 @@
         items: ['PTZ-камеры с пресетами обхода: одна камера на десятки приборов', 'нательные регистраторы обходчиков'] }
     ],
 
-    /* Финал: одна главная ссылка — репозиторий; лицензия — в футере. Других контактов нет (PRODUCT.md). */
+    /* Финал: сдача смены и одна главная ссылка — репозиторий; лицензия — рядом. Других контактов нет. */
     contact: {
-      title: 'Код и README — на GitHub',
-      backdrop: 'assets/img/boiler-hall.jpg',
+      title: 'Журнал открыт на GitHub',
+      handedLabel: 'Смену сдал',
+      handedBy: 'обходчик',
+      acceptedLabel: 'Смену принял',
+      acceptedBy: 'GaugeVision AI',
+      opened: 'Лист открыт',
+      yourEntries: 'Ваших записей в журнале',
+      lead: 'Код, README с условиями замеров и история коммитов — в репозитории.',
       links: [
         { id: 'repo', label: 'Код на GitHub', href: REPO, primary: true },
         { id: 'license', label: 'Проприетарная лицензия', href: REPO + '/blob/main/LICENSE' }
@@ -472,6 +528,7 @@
       kind: { measured: 'замер', calculated: 'расчёт' },
       metricGroups: { quality: 'Точность', speed: 'Скорость', scale: 'Масштаб' },
       filterAll: 'Все',
+      filterLabel: 'Показать замечания по статусу',
       tradeoffsTitle: 'Компромиссы',
       tradeoffsLead: 'Выбрали → платим',
       limitsTitle: 'Ограничения среды цеха',
@@ -479,22 +536,41 @@
       cost: 'Платим',
       why: 'Почему так',
       source: 'Где в коде',
+      condition: 'Условие',
       risk: 'Риск',
       response: 'Ответ в коде',
-      roadmapTitle: 'Roadmap',
-      stackTitle: 'Стек',
+      roadmapTitle: 'План',
+      stackTitle: 'Спецификация',
+      opsList: 'Операции над кадром',
+      latency: 'Задержка',
+      inTotal: 'Отдельного замера нет: входит в конвейер целиком',
+      opsFrame: {
+        box: 'gauge, conf ≥ 0,35',
+        ellipse: 'эллипс циферблата',
+        square: '640 × 640',
+        ring: 'кольцо момента 0,06–0,36',
+        hough: 'HoughLinesP',
+        hist: 'гистограмма момента, шаг 1°',
+        raw: 'сырые отсчёты',
+        ema: 'EMA α = 0,25',
+        catchUp: '≈ 90 % за 8 кадров'
+      },
+      nav: 'Листы журнала',
+      home: 'GaugeVision AI — к первому листу',
+      sheet: 'Лист',
+      skip: 'К содержанию',
       newTab: 'откроется в новой вкладке'
     }
   };
 
   /* ---------- типограф ---------- */
-  var NBSP = '\u00A0';
+  var NBSP = ' ';
   var UNIT_RE = new RegExp(
     '(\\d) (?=(?:%|мс\\/кадр|мс|с|ч|к\\/с|px|МиБ|КБ|GB|МПа|кПа|бар|₽|тыс\\.|млн|эпох|сцен|кадр|кадра|кадров|камер|камеры|' +
     'сообщений|суток|месяцев|приборах|потока|°)(?![A-Za-zА-Яа-яЁё]))',
     'g'
   );
-  var SKIP_KEYS = { id: 1, src: 1, srcMobile: 1, poster: 1, backdrop: 1, href: 1, file: 1, source: 1, formula: 1, roi: 1, repoUrl: 1, licenseUrl: 1 };
+  var SKIP_KEYS = { id: 1, src: 1, srcMobile: 1, poster: 1, posterAfter: 1, href: 1, file: 1, source: 1, formula: 1, repoUrl: 1, licenseUrl: 1 };
 
   function typo(s) {
     return s

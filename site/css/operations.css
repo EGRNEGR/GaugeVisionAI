@@ -1,0 +1,244 @@
+/*
+ * Лист 04 — «Четыре операции над одним кадром».
+ * Колонки 5 : 7 — список операций слева, вклеенный кадр справа. На десктопе сцена закреплена
+ * (высота прокрутки ≈ 3,4 экрана), шаг задаёт прокрутка; уже 900 px — без закрепления, кадр сверху.
+ * Циферблат снят под углом: эллипс = rotate · scaleX · rotate; на шаге 02 он выпрямляется в круг.
+ */
+.gv-ops__scroll {
+  grid-column: 1 / -1;
+}
+.gv-ops.is-pinned .gv-ops__scroll {
+  height: 340vh;
+}
+.gv-ops__pin {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  column-gap: var(--gutter);
+  align-items: center;
+}
+.gv-ops.is-pinned .gv-ops__pin {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  padding-block: var(--s4);
+}
+
+/* ---------- список операций ---------- */
+.gv-ops__col {
+  display: grid;
+  gap: var(--s5);
+  align-content: center;
+}
+.gv-ops__list {
+  border-bottom: 1px solid var(--ink);
+}
+.gv-ops__item {
+  border-top: 1px solid var(--ink);
+}
+.gv-ops__step {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  width: 100%;
+  min-height: 3.25rem;
+  padding: var(--s1) 0;
+  text-align: left;
+}
+.gv-ops__idx {
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--ink-3);
+  width: 2rem;
+}
+.gv-ops__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-xl);
+  line-height: 1.05;
+  color: var(--ink-2);
+}
+.gv-ops__step:hover .gv-ops__name,
+.gv-ops__step.is-on .gv-ops__name {
+  color: var(--ink);
+}
+.gv-ops__step.is-on .gv-ops__idx {
+  color: var(--ink);
+}
+.gv-ops__panel-text {
+  display: grid;
+  gap: var(--s2);
+  padding: 0 0 var(--s3) calc(2rem + var(--s2));
+  animation: gv-ops-in 520ms var(--ease-out) both;
+}
+@keyframes gv-ops-in {
+  from { opacity: 0; transform: translate3d(0, 0.5rem, 0); }
+  to { opacity: 1; transform: none; }
+}
+.gv-ops__title {
+  font-size: var(--fs-m);
+  font-weight: 700;
+  line-height: 1.3;
+}
+.gv-ops__formula {
+  display: grid;
+  gap: 0.25rem;
+}
+.gv-ops__formula code {
+  font-size: var(--fs-s);
+  color: var(--ink);
+}
+.gv-ops__params {
+  display: grid;
+  grid-template-columns: minmax(7rem, auto) minmax(0, 1fr);
+  column-gap: var(--s2);
+  font-size: var(--fs-xs);
+}
+.gv-ops__params dt,
+.gv-ops__params dd {
+  padding: 0.25rem 0;
+  border-bottom: 1px dotted var(--rule-strong);
+}
+.gv-ops__params dt {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  color: var(--ink-2);
+}
+.gv-ops__params dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-weight: 600;
+  text-align: right;
+}
+.gv-ops__lat {
+  display: grid;
+  gap: 0.25rem;
+}
+.gv-ops__lat-v {
+  font-family: var(--font-mono);
+  font-stretch: 112.5%;
+  font-weight: 500;
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+.gv-ops__lat-u {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: var(--ink-3);
+}
+.gv-ops__total {
+  display: grid;
+  gap: 0.25rem;
+}
+.gv-ops__total-v {
+  font-family: var(--font-mono);
+  font-stretch: 112.5%;
+  font-weight: 500;
+  font-size: var(--fs-figure);
+  line-height: 1;
+}
+
+/* ---------- кадр ---------- */
+.gv-ops__frame {
+  padding: var(--s2);
+  border-radius: 0.25rem;
+  box-shadow: 0 1.5rem 3rem -1.5rem rgba(23, 25, 28, 0.55);
+}
+.gv-ops__svg {
+  width: 100%;
+  height: auto;
+}
+.gv-ops__cap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem var(--s2);
+  padding-top: var(--s1);
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-2xs);
+  color: var(--plate-ink-2);
+}
+.gv-ops__frame-note {
+  color: var(--plate-ink);
+}
+
+.gv-ops__scene rect { fill: #1F2224; }
+.gv-ops__scene line { stroke: #2C3033; stroke-width: 3; }
+.gv-ops__case { fill: #33373A; }
+.gv-ops__enamel { fill: #D3CFC3; }
+.gv-ops__tick { stroke: #26282A; stroke-width: 1.2; }
+.gv-ops__tick.is-major { stroke-width: 2.6; }
+.gv-ops__n { fill: #26282A; font-family: var(--font-display); font-weight: 800; }
+.gv-ops__needle { stroke: #111213; stroke-width: 4.5; stroke-linecap: round; }
+.gv-ops__hub { fill: #111213; }
+.gv-ops__glare { fill: #FFFFFF; opacity: 0.42; }
+
+.gv-ops__dial {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: rotate(-26deg) scale(0.6, 1) rotate(26deg);
+  transition: transform 1000ms var(--ease-in-out);
+}
+.gv-ops[data-step='2'] .gv-ops__dial,
+.gv-ops[data-step='3'] .gv-ops__dial,
+.gv-ops[data-step='4'] .gv-ops__dial {
+  transform: none;
+}
+
+.gv-ops__o {
+  opacity: 0;
+  transition: opacity 500ms var(--ease-out);
+}
+.gv-ops[data-step='1'] .gv-ops__o--1,
+.gv-ops[data-step='2'] .gv-ops__o--2,
+.gv-ops[data-step='3'] .gv-ops__o--3,
+.gv-ops[data-step='4'] .gv-ops__o--4 {
+  opacity: 1;
+}
+.gv-ops[data-step='2'] .gv-ops__o--2 {
+  transition-delay: 600ms;
+}
+
+.gv-ops__box path { fill: none; stroke: var(--plate-red); stroke-width: 2.5; }
+.gv-ops__tag { fill: var(--plate-red); }
+.gv-ops__t { font-family: var(--font-mono); fill: var(--plate-ink-2); }
+.gv-ops__t--tag { fill: #141617; font-weight: 600; }
+.gv-ops__t--accent { fill: var(--plate-red); font-weight: 600; }
+.gv-ops__contour { fill: none; stroke: var(--plate-red); stroke-width: 1.6; stroke-dasharray: 7 5; }
+.gv-ops__square { fill: none; stroke: var(--plate-ink-2); stroke-width: 1; stroke-dasharray: 4 4; }
+.gv-ops__ring { fill: rgba(240, 106, 78, 0.2); stroke: var(--plate-red); stroke-width: 0.8; }
+.gv-ops__zero { stroke: var(--plate-ink-2); stroke-width: 1; stroke-dasharray: 3 3; }
+.gv-ops__theta { fill: none; stroke: var(--plate-red); stroke-width: 2; }
+.gv-ops__hough { stroke: var(--plate-red); stroke-width: 2; stroke-dasharray: 10 5; }
+.gv-ops__bin { fill: var(--plate-ink-2); opacity: 0.55; }
+.gv-ops__bin.is-peak { fill: var(--plate-red); opacity: 1; }
+.gv-ops__axis { stroke: var(--plate-ink-2); stroke-width: 1; }
+.gv-ops__panel { fill: rgba(20, 22, 23, 0.94); stroke: rgba(233, 235, 228, 0.22); stroke-width: 1; }
+.gv-ops__raw { fill: var(--plate-ink-2); }
+.gv-ops__curve { fill: none; stroke: var(--plate-red); stroke-width: 2.5; stroke-linejoin: round; }
+.gv-ops__mark { stroke: var(--plate-ink-2); stroke-width: 1; stroke-dasharray: 3 3; }
+
+@media (max-width: 900px) {
+  .gv-ops__pin {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--s4);
+  }
+  .gv-ops__frame {
+    order: -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gv-ops__dial,
+  .gv-ops__o {
+    transition: none;
+  }
+  .gv-ops__panel-text {
+    animation: none;
+  }
+}

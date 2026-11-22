@@ -6,6 +6,8 @@
  * angle_to_value / classify_level в app/vision.py (notes.md §1.6, §1.8).
  * GV.motion: пружина стрелки (жёсткость 170, демпфирование 18 — спецификация, история 15)
  * и поведение при «уменьшить движение» (interfaces.md, правило 9).
+ * Лист 02: время ролика по прокрутке и окно, в котором обходчик не видит отклонение;
+ * лист 04: шаг операции по прокрутке; лист 01: время строк журнала и общее показание стрелки.
  */
 'use strict';
 
@@ -15,7 +17,7 @@ const vm = require('vm');
 
 const SITE = path.resolve(__dirname, '..');
 const FILES = ['js/content.js', 'js/util.js', 'js/motion.js', 'js/components/kit.js',
-  'js/components/scroll-video.js', 'js/components/precision-dial.js'];
+  'js/components/shift.js', 'js/components/precision-dial.js', 'js/components/operations.js'];
 
 function load(box) {
   vm.createContext(box);
@@ -117,7 +119,7 @@ if (!motion || typeof motion.spring !== 'function') {
   eq('spring.set(5) → step()', jump.step(1 / 60), 5);
 }
 
-/* ---------- Сцены hero и «Показание» (тикет 02) ---------- */
+/* ---------- Лист 03 «Показание» и прибор первого листа ---------- */
 
 const comps = sandbox.GV.components || {};
 const dialApi = comps.precisionDial;
@@ -140,15 +142,54 @@ if (!dialApi || typeof dialApi.clampAngle !== 'function' || typeof dialApi.angle
   eq('θ 90° за шкалой → МПа в пределах шкалы', [0, 10].indexOf(r2(kit.angleToValue(dialApi.clampAngle(90, calib), calib))) >= 0, true);
 }
 
-const videoApi = comps.scrollVideo;
-if (!videoApi || typeof videoApi.timeFor !== 'function') {
-  failures.push('нет GV.components.scrollVideo.timeFor (site/js/components/scroll-video.js)');
+const videoApi = comps.shift;
+if (!videoApi || typeof videoApi.timeFor !== 'function' || typeof videoApi.delayHours !== 'function') {
+  failures.push('нет GV.components.shift.timeFor / delayHours (site/js/components/shift.js)');
 } else {
   // Цель currentTime = прогресс × (длительность − 0,05) — interfaces.md, scrollVideo
   eq('видео: прогресс 0 → 0 с', videoApi.timeFor(0, 10), 0);
   eq('видео: прогресс 1 → 9,95 с', r2(videoApi.timeFor(1, 10)), 9.95);
   eq('видео: прогресс 0,5 → 4,975 с', Math.round(videoApi.timeFor(0.5, 10) * 1000) / 1000, 4.975);
   eq('видео: длительность неизвестна → 0', videoApi.timeFor(0.5, NaN), 0);
+  eq('видео: прогресс за пределами → 0', videoApi.timeFor(-0.2, 10), 0);
+  // Шкала смены: обходы в 0 и 12 ч (content.compare.timeline)
+  const tl = sandbox.GV.content.compare.timeline;
+  eq('отклонение в 5 ч → обходчик заметит через 7 ч', videoApi.delayHours(5, tl.rounds, tl.shiftHours), 7);
+  eq('отклонение сразу после обхода → 12 ч', videoApi.delayHours(0, tl.rounds, tl.shiftHours), 12);
+  eq('отклонение в 11,75 ч → 0,25 ч', videoApi.delayHours(11.75, tl.rounds, tl.shiftHours), 0.25);
+  eq('три обхода за смену: 7 ч → 1 ч', videoApi.delayHours(7, [0, 4, 8, 12], 12), 1);
+}
+
+const opsApi = comps.operations;
+if (!opsApi || typeof opsApi.stepFor !== 'function') {
+  failures.push('нет GV.components.operations.stepFor (site/js/components/operations.js)');
+} else {
+  eq('операции: прогресс 0 → шаг 0', opsApi.stepFor(0, 4), 0);
+  eq('операции: прогресс 0,3 → шаг 1', opsApi.stepFor(0.3, 4), 1);
+  eq('операции: прогресс 1 → последний шаг', opsApi.stepFor(1, 4), 3);
+  eq('операции: прогресс за пределами → шаг 0', opsApi.stepFor(-1, 4), 0);
+}
+
+// Время строки журнала: 08:00 + ⅓ с, 3 обработки в секунду
+eq('журнал: 08:00 + ⅓ с', kit.clockText(8 * 3600000 + 1000 / 3), '08:00:00,333');
+eq('журнал: 08:00 + 2⅔ с', kit.clockText(8 * 3600000 + 8000 / 3), '08:00:02,667');
+eq('журнал: переход через сутки', kit.clockText(24 * 3600000 + 5), '00:00:00,005');
+
+// Общее показание: подписчики получают угол и источник, свой же set без изменения — тишина
+{
+  const r = kit.createReading(253.4);
+  const seen = [];
+  const commits = [];
+  const off = r.on((theta, from) => seen.push(theta + ':' + from));
+  r.onCommit((theta) => commits.push(theta));
+  r.set(270, 'dial');
+  r.set(270, 'dial');
+  r.commit();
+  off();
+  r.set(200, 'hero');
+  eq('общее показание: get()', r.get(), 200);
+  eq('общее показание: уведомления', seen.join(','), '270:dial');
+  eq('общее показание: запись в журнал', commits.join(','), '270');
 }
 
 // «Уменьшить движение»: закреплённая секция сразу в конечном состоянии, пружина сразу у цели.
@@ -215,4 +256,4 @@ if (failures.length) {
   console.log(`\nFAIL: ${failures.length}`);
   process.exit(1);
 }
-console.log('OK: калибровка, бары, зоны уставок, EMA, пружина и reduced motion GV.motion, угол курсора прибора, время видео hero');
+console.log('OK: калибровка, бары, зоны уставок, EMA, пружина и reduced motion GV.motion, угол курсора прибора, ролик и шкала смены, шаги операций, журнал и общее показание');

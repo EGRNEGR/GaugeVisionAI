@@ -8,12 +8,14 @@
  *   zoneOf(V, setpoints) → 'LL'|'L'|'NORMA'|'H'|'HH'
  *   levelOf(V, setpoints) → 'alert'|'warning'|'normal'   classify_level, границы включены
  *   emaStep(prev, v, α) → V̄              EmaFilter: первое значение берётся как есть
+ *   createReading(θ) → { get, set, commit, on, onCommit }   общее показание страницы (лист 01 ↔ лист 03)
+ *   clockText(мс) → '08:00:00,333'         время строки журнала
  *
  * DOM-хелперы (только в браузере):
  *   scope() → { on, add, timeout, interval, frame, observe, destroy }  — всё, что снимается в destroy()
- *   onTweaks(scope, cb(state))             событие gv:tweaks (масштаб, шрифт)
  *   polar(cx, cy, r, θ) → [x, y]           точка на окружности (0° — «3 часа», по часовой)
  *   arcPath(cx, cy, r, θ0, θ1) → d          SVG-дуга по часовой от θ0 до θ1
+ *   gauge({ kind: 'enamel'|'drawing', caption }) → { el, needle, setAngle(θ) }   прибор 0–10 МПа
  *   icon(name) → SVG-иконка (external, github, arrow, right)
  *   extLink(attrs, ...children) → <a target="_blank" rel="noopener"> + иконка и скрытое «откроется в новой вкладке»
  *   sectionNav(scope, {container, links, ids, rootMargin, keepLast, onChange}) → { setCurrent }
@@ -101,6 +103,49 @@
     return alpha * value + (1 - alpha) * prev;
   }
 
+  /*
+   * Общее показание страницы: угол стрелки θ, который двигают прибор первого листа и чертёж листа 03.
+   * set(θ, from) — новое положение (from — кто подвинул, чтобы не отвечать самому себе);
+   * commit(θ) — «Записать в журнал»: журнал первого листа добавляет строку с отметкой «вы».
+   * on(fn(θ, from)) и onCommit(fn(θ)) возвращают отписку.
+   */
+  function createReading(theta) {
+    var current = theta;
+    var subs = [];
+    var commits = [];
+    function off(list, fn) {
+      return function () {
+        var i = list.indexOf(fn);
+        if (i >= 0) list.splice(i, 1);
+      };
+    }
+    return {
+      get: function () { return current; },
+      set: function (next, from) {
+        if (typeof next !== 'number' || !isFinite(next) || next === current) return;
+        current = next;
+        subs.slice().forEach(function (fn) { fn(current, from); });
+      },
+      commit: function (value) {
+        var v = typeof value === 'number' ? value : current;
+        commits.slice().forEach(function (fn) { fn(v); });
+      },
+      on: function (fn) { subs.push(fn); return off(subs, fn); },
+      onCommit: function (fn) { commits.push(fn); return off(commits, fn); }
+    };
+  }
+
+  /* «08:00:00,333» — время строки журнала от начала смены (мс). */
+  function clockText(ms) {
+    var total = Math.max(0, Math.round(ms));
+    var h = Math.floor(total / 3600000) % 24;
+    var m = Math.floor(total / 60000) % 60;
+    var s = Math.floor(total / 1000) % 60;
+    var f = total % 1000;
+    function p(n, w) { var t = String(n); while (t.length < w) t = '0' + t; return t; }
+    return p(h, 2) + ':' + p(m, 2) + ':' + p(s, 2) + ',' + p(f, 3);
+  }
+
   var kit = {
     angleToValue: angleToValue,
     valueToAngle: valueToAngle,
@@ -108,6 +153,8 @@
     zoneOf: zoneOf,
     levelOf: levelOf,
     emaStep: emaStep,
+    createReading: createReading,
+    clockText: clockText,
     NBSP: NBSP
   };
   GV.kit = kit;
@@ -180,10 +227,6 @@
       }
     }
     return { on: on, add: add, timeout: timeout, interval: interval, frame: frame, observe: observe, destroy: destroy };
-  }
-
-  function onTweaks(sc, cb) {
-    return sc.on(document, 'gv:tweaks', function (e) { cb((e && e.detail) || {}); });
   }
 
   /* ---------- SVG-геометрия ---------- */
@@ -285,9 +328,86 @@
     return { setCurrent: setCurrent };
   }
 
+  /*
+   * Прибор 0–10 МПа одним SVG: шкала 270° от θmin до θmax по часовой, деления 0,2 и 1 МПа, цифры,
+   * дуги уставок LL / L / H / HH, стрелка поворачивается transform rotate (0° — «3 часа»).
+   *   opts.kind: 'enamel' — эмалевый циферблат в кадре камеры; 'drawing' — чертёж тушью на бумаге
+   *   → { el, needle, setAngle(θ) }
+   * Координаты: viewBox −200…200, центр в нуле; кегли цифр — в единицах viewBox.
+   */
+  function gauge(opts) {
+    opts = opts || {};
+    var s = GV.util.svg;
+    var c = (GV.content && GV.content.calibration) || {};
+    var kind = opts.kind || 'enamel';
+    var R = 168;
+    var a0 = Number(c.thetaMin);
+    var a1 = Number(c.thetaMax);
+    var span = mod(a1 - a0, 360) || 360;
+    var vMin = Number(c.vMin);
+    var vMax = Number(c.vMax);
+    var sp = c.setpoints || {};
+    function ang(v) { return a0 + ((v - vMin) / (vMax - vMin)) * span; }
+
+    var root = s('svg', {
+      class: 'gv-gauge gv-gauge--' + kind,
+      viewBox: '-200 -200 400 400',
+      'aria-hidden': 'true',
+      focusable: 'false'
+    });
+    if (kind === 'enamel') {
+      root.appendChild(s('circle', { class: 'gv-gauge__case', r: 196 }));
+      root.appendChild(s('circle', { class: 'gv-gauge__face', r: 184 }));
+    } else {
+      root.appendChild(s('circle', { class: 'gv-gauge__case', r: 196 }));
+      root.appendChild(s('circle', { class: 'gv-gauge__face', r: 184 }));
+      root.appendChild(s('line', { class: 'gv-gauge__axis', x1: -208, y1: 0, x2: 208, y2: 0 }));
+      root.appendChild(s('line', { class: 'gv-gauge__axis', x1: 0, y1: -208, x2: 0, y2: 208 }));
+    }
+
+    var zones = s('g', { class: 'gv-gauge__zones' });
+    [['LL', vMin, sp.LL, 'alert'], ['L', sp.LL, sp.L, 'warning'], ['H', sp.H, sp.HH, 'warning'], ['HH', sp.HH, vMax, 'alert']]
+      .forEach(function (z) {
+        if (typeof z[1] !== 'number' || typeof z[2] !== 'number' || z[2] <= z[1]) return;
+        zones.appendChild(s('path', { class: 'gv-gauge__zone gv-gauge__zone--' + z[3], d: arcPath(0, 0, R - 9, ang(z[1]), ang(z[2])) }));
+      });
+    root.appendChild(zones);
+    root.appendChild(s('path', { class: 'gv-gauge__arc', d: arcPath(0, 0, R, a0, a1) }));
+
+    var ticks = s('g', { class: 'gv-gauge__ticks' });
+    var steps = Math.round((vMax - vMin) / 0.2);
+    for (var i = 0; i <= steps; i++) {
+      var v = vMin + i * 0.2;
+      var major = i % 5 === 0;
+      var p0 = polar(0, 0, R, ang(v));
+      var p1 = polar(0, 0, R - (major ? 22 : 11), ang(v));
+      ticks.appendChild(s('line', { class: major ? 'gv-gauge__tick is-major' : 'gv-gauge__tick', x1: fx(p0[0]), y1: fx(p0[1]), x2: fx(p1[0]), y2: fx(p1[1]) }));
+      if (major) {
+        var pt = polar(0, 0, R - 46, ang(v));
+        ticks.appendChild(s('text', { class: 'gv-gauge__num', x: fx(pt[0]), y: fx(pt[1]), 'font-size': 34, 'text-anchor': 'middle', 'dominant-baseline': 'central' },
+          String(Math.round(v))));
+      }
+    }
+    root.appendChild(ticks);
+    root.appendChild(s('text', { class: 'gv-gauge__unit', x: 0, y: 70, 'font-size': 15, 'text-anchor': 'middle' }, c.unit || 'МПа'));
+    if (opts.caption) root.appendChild(s('text', { class: 'gv-gauge__cap', x: 0, y: 98, 'font-size': 12, 'text-anchor': 'middle' }, opts.caption));
+
+    var needle = s('g', { class: 'gv-gauge__needle' },
+      s('path', { d: 'M -34 -5 L 150 -1.4 L 156 0 L 150 1.4 L -34 5 Z' }),
+      s('circle', { class: 'gv-gauge__hub', r: 13 }),
+      s('circle', { class: 'gv-gauge__pin', r: 4 }));
+    root.appendChild(needle);
+    if (kind === 'enamel') root.appendChild(s('ellipse', { class: 'gv-gauge__glass', cx: -54, cy: -88, rx: 96, ry: 44, transform: 'rotate(-28 -54 -88)' }));
+
+    function setAngle(theta) {
+      needle.setAttribute('transform', 'rotate(' + fx(theta) + ')');
+    }
+    return { el: root, needle: needle, setAngle: setAngle };
+  }
+
+  kit.gauge = gauge;
   kit.scope = scope;
   kit.sectionNav = sectionNav;
-  kit.onTweaks = onTweaks;
   kit.arcPath = arcPath;
   kit.polar = polar;
   kit.icon = icon;

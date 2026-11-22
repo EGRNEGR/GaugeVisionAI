@@ -1,127 +1,94 @@
 /*
- * GaugeVision AI — токены одной страницы «Циферблат» на обсидиане.
- * Порядок слоёв: :root (обсидиан, Onest + JetBrains Mono) → html[data-font] (шрифт из Tweaks)
- * → html[data-ambient] (фон из Tweaks, css/page.css).
- * Таблица значений, контраст и правила света и движения — в site/design-system.md.
+ * Токены мира «Журнал обходчика». Источник истины для значений; правила — DESIGN.md.
+ * Модуль сетки — 8 px (0,5rem при масштабе 100 %), строка линовки — 2rem (4 модуля).
+ * Все размеры в rem: масштаб Tweaks умножает корневой кегль через --ui-scale.
  */
-
 :root {
-  color-scheme: dark;
-
-  /* Обсидиан: фон и поверхности чуть светлее, без чистого #000 */
-  --bg-canvas: #090B0E;
-  --bg-surface: #0E1115;
-  --bg-elevated: #13171C;
-  --border-hairline: rgba(230, 234, 239, 0.07);
-  --border-strong: rgba(230, 234, 239, 0.16);
-  --text-primary: #E6EAEF;
-  --text-muted: #A1A9B4;
-  --text-faint: #8D95A0;
-
-  /* Единственный тёплый акцент — цвет стрелки */
-  --accent: #FF5A1F;
-  --accent-contrast: #1A0802;
-  --accent-soft: rgba(255, 90, 31, 0.12);
-
-  /* Статусы уставок: норма / предупреждение / авария — приглушённые, без неона */
-  --status-ok: #6DBE8F;
-  --status-warn: #D9A54E;
-  --status-alert: #EE7462;
-
-  /* Свет: верхний блик 1px на ободке карточек и два направленных пятна низкой непрозрачности */
-  --edge-light: rgba(255, 255, 255, 0.16);
-  --glow-warm: rgba(255, 90, 31, 0.09);
-  --glow-cool: rgba(150, 178, 205, 0.06);
-  --surface-card: linear-gradient(90deg, transparent, var(--edge-light) 50%, transparent) top / 100% 1px no-repeat, var(--bg-surface);
-
-  /* Фон страницы — неподвижный слой на весь экран: сверху обсидиан (шапка на нём без шва), к низу —
-     жжёный оранжевый. Пятно за курсором светлее фона. Худшая точка (низ экрана + центр пятна) держит
-     --text-faint и --accent >= 4,5 : 1 — ярче их не делать. */
-  --bg-ambient:
-    radial-gradient(120% 75% at 85% 115%, rgba(255, 90, 31, 0.06), transparent 70%),
-    radial-gradient(70% 55% at 0% 0%, rgba(255, 90, 31, 0.05), transparent 70%),
-    linear-gradient(172deg, #090B0E 0%, #0C0B0D 45%, #150C08 100%);
-  --glow-cursor: rgba(255, 138, 76, 0.16);
-  --glow-cursor-edge: rgba(255, 110, 50, 0.05);
-
-  /* Шрифты: заголовки и текст — Onest (тезисы 700, текст 400), цифры и метаданные — JetBrains Mono.
-     Tweaks меняет шрифт страницы (data-font) — заголовки идут за текстом */
-  --font-sans: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: var(--font-sans);
-  --weight-display: 700;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
-  /* Хром панели Tweaks не меняет шрифт вместе со страницей */
-  --font-chrome: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
-
-  /* Масштаб из Tweaks: корень html = 100 % × --ui-scale */
   --ui-scale: 1;
-  /* Единица хрома (панель Tweaks): не зависит от масштаба страницы */
-  --chrome-u: calc(1rem / var(--ui-scale));
 
-  /* Шкала типографики */
+  /* ---------- бумага и чернила ---------- */
+  --paper: #E9EBE4;            /* серо-зелёная журнальная бумага */
+  --paper-deep: #DDE1D6;       /* поле слева, шапка таблиц */
+  --paper-lift: #F1F2EC;       /* выделенная строка */
+  --rule: rgba(66, 104, 150, 0.2);         /* голубая линовка */
+  --rule-strong: rgba(66, 104, 150, 0.42); /* линия таблицы */
+  --grid: rgba(66, 104, 150, 0.1);         /* миллиметровка схемы */
+
+  --ink: #17191C;              /* графит печати — 14,6 : 1 */
+  --ink-press: #0B0C0D;        /* штамп-кнопка под курсором */
+  --ink-2: #454B53;            /* вторичный текст — 7,3 : 1 */
+  --ink-3: #5C626A;            /* метаданные — 5,1 : 1 */
+  --violet: #3A2C9C;           /* шариковая ручка обходчика — 8,6 : 1 */
+  --red: #B8321C;              /* красное поле и авария — 5,0 : 1 */
+  --ok: #1D6640;               /* НОРМА — 5,8 : 1 */
+  --warn: #7E5300;             /* ПРЕДУПРЕЖДЕНИЕ — 5,6 : 1 */
+
+  /* вклеенные фотографии и кадры камеры — единственные тёмные поверхности */
+  --plate: #141617;
+  --plate-ink: #E9EBE4;        /* 15,1 : 1 */
+  --plate-ink-2: #A9AFA6;      /* 8,1 : 1 */
+  --plate-red: #F06A4E;        /* 5,9 : 1 */
+
+  /* ---------- шрифты ---------- */
+  --font-display: 'Sofia Sans Extra Condensed', 'Sofia Sans', 'Arial Narrow', sans-serif;
+  --font-sans: 'Sofia Sans', 'Segoe UI', sans-serif;
+  --font-mono: 'Martian Mono', 'Sofia Sans', ui-monospace, monospace;
+  --font-hand: 'Bad Script', 'Segoe Script', cursive;
+
+  /* кегли — шкала 1,25 от основного 1,125rem; заголовки — плакат */
   --fs-2xs: 0.75rem;
-  --fs-xs: 0.8125rem;
-  --fs-s: 0.9375rem;
-  --fs-m: 1.0625rem;
-  --fs-l: 1.1875rem;
-  --fs-xl: clamp(1.375rem, 1.1rem + 0.9vw, 1.75rem);
-  --fs-2xl: clamp(1.875rem, 1.2rem + 2.2vw, 3rem);
-  --fs-3xl: clamp(2.25rem, 1.3rem + 3.6vw, 4.25rem);
-  --fs-display: clamp(2.5rem, 1.1rem + 5.2vw, 6rem);
-  --lh-tight: 1.1;
-  --lh-snug: 1.25;
-  --lh-body: 1.55;
-  /* Крупному гротеску нужен отрицательный трекинг: без него буквы заголовка расходятся */
-  --tracking-display: -0.025em;
-  --tracking-head: -0.01em;
+  --fs-xs: 0.875rem;
+  --fs-s: 1rem;
+  --fs-m: 1.125rem;            /* основной текст */
+  --fs-l: 1.375rem;
+  --fs-xl: 1.75rem;
+  --fs-2xl: 2.5rem;
+  --fs-h2: clamp(3.25rem, 1.6rem + 5.2vw, 7rem);
+  --fs-h1: clamp(4rem, 1.2rem + 8.4vw, 10.5rem);
+  --fs-figure: clamp(2.25rem, 1.4rem + 2.6vw, 4rem); /* цифры протокола */
+
+  --lh-display: 0.84;
+  --lh-text: 1.5;
+  --tracking-display: -0.01em;
   --tracking-caps: 0.08em;
 
-  /* Отступы: шаг 4 → 8 → 12 → 16 → 24 → 32 → 48 → 80 px при 100 % */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.5rem;
-  --space-6: 2rem;
-  --space-7: 3rem;
-  --space-8: 5rem;
-  /* Вертикальный ритм: на десктопе между секциями ≥ 12rem (по 6rem+ с каждой стороны) */
-  --section-pad: clamp(4rem, 1.5rem + 6.5vw, 7rem);
+  /* ---------- сетка 8 px ---------- */
+  --s1: 0.5rem;
+  --s2: 1rem;
+  --s3: 1.5rem;
+  --s4: 2rem;
+  --s5: 2.5rem;
+  --s6: 3rem;
+  --s8: 4rem;
+  --s10: 5rem;
+  --s12: 6rem;
+  --s16: 8rem;
+  --s20: 10rem;
+  --row: 2rem;                                   /* строка линовки */
+  --margin: clamp(4rem, 1rem + 7vw, 9rem);       /* поле журнала слева до красной линии */
+  --tabs: 3.5rem;                                /* колонка ярлыков листов справа */
+  --gutter: clamp(1rem, 0.5rem + 1.2vw, 2rem);
+  --sheet-pad: clamp(6rem, 3rem + 8vw, 12rem);   /* воздух над заголовком листа */
+  --hair: 1px;
 
-  /* Сетка */
-  --container: 90rem;
-  --gutter: clamp(1rem, 0.5rem + 2.5vw, 3rem);
-  --measure: 68ch;
-  /* Левая колонка: номер секции, метки групп замеров, статус ограничения — одна вертикаль на всю страницу */
-  --rail: 11rem;
-  --header-h: 4rem;
-  --telemetry-h: 1.75rem;
-
-  /* Радиусы: прибор держит углы почти острыми */
-  --radius-s: 0.25rem;
-  --radius-m: 0.5rem;
-  --radius-l: 0.75rem;
-
-  /* Движение: только transform и opacity */
+  /* ---------- движение ---------- */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-fast: 160ms;
   --dur-med: 320ms;
-  --dur-slow: 600ms;
-  --dur-xslow: 1000ms;
-  --dur-crawl: 1400ms;
+  --dur-slow: 700ms;
+  --dur-write: 1100ms;
 
-  /* Хром */
-  --tap: calc(2.75 * var(--chrome-u));
-  --focus-ring: 0 0 0 0.125rem var(--bg-canvas), 0 0 0 0.25rem var(--accent);
+  color-scheme: light;
 }
 
-/* ---------- Шрифт из Tweaks ---------- */
-
-html[data-font="manrope"] {
-  --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+/* Бумага Tweaks: «миллиметровка» — линовка гуще и сеткой, «калька» — холоднее и светлее. */
+html[data-paper='graph'] {
+  --paper: #E8EBE6;
+  --rule: rgba(66, 104, 150, 0.16);
 }
-
-html[data-font="plex"] {
-  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+html[data-paper='tracing'] {
+  --paper: #EEF0EE;
+  --paper-deep: #E2E6E4;
+  --rule: rgba(66, 104, 150, 0.16);
 }

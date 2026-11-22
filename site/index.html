@@ -1,29 +1,31 @@
 <!doctype html>
-<html lang="ru" data-font="manrope" data-ambient="blueprint" style="--ui-scale: 1.1">
+<html lang="ru">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GaugeVision AI — стрелочные приборы ТЭЦ на пульте оператора</title>
-  <meta name="description" content="GaugeVision AI снимает показания стрелочных приборов КИПиА камерой: без врезки, кабелей и останова. YOLOv8n и OpenCV в локальном контуре.">
-  <meta name="theme-color" content="#090B0E">
-  <meta name="color-scheme" content="dark">
+  <title>GaugeVision AI — прибор пишет журнал сам</title>
+  <meta name="description" content="GaugeVision AI снимает показания стрелочных приборов КИПиА камерой снаружи контура: без врезки, останова и интернета. YOLOv8n и OpenCV на одном сервере.">
+  <meta name="theme-color" content="#E9EBE4">
+  <meta name="color-scheme" content="light">
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 
-  <!-- Порядок стилей: шрифты → токены → база → движение → компоненты → страница → Tweaks -->
+  <!-- Порядок стилей: шрифты → токены → база → движение → страница → листы → Tweaks -->
   <link rel="stylesheet" href="css/fonts.css">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/motion.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/hero.css">
-  <link rel="stylesheet" href="css/dial.css">
-  <link rel="stylesheet" href="css/track.css">
   <link rel="stylesheet" href="css/page.css">
+  <link rel="stylesheet" href="css/gauge.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/shift.css">
+  <link rel="stylesheet" href="css/dial.css">
+  <link rel="stylesheet" href="css/operations.css">
+  <link rel="stylesheet" href="css/ledger.css">
+  <link rel="stylesheet" href="css/schema.css">
   <link rel="stylesheet" href="css/tweaks.css">
 
   <script>
     /* Настройки Tweaks — до первой отрисовки, без скачка вёрстки. Полная логика — js/tweaks.js.
-       Умолчания (Manrope, 110 %, «Чертёж») стоят на <html>; сохранённый выбор их перекрывает.
        Кнопку Tweaks видит только автор: адрес с ?tweaks включает её на этом устройстве, ?tweaks=off — выключает. */
     (function () {
       var d = document.documentElement;
@@ -35,12 +37,10 @@
         if (off) localStorage.removeItem('gv.tweaks.on');
         if (localStorage.getItem('gv.tweaks.on') === '1') d.setAttribute('data-tweaks', 'on');
         var t = JSON.parse(localStorage.getItem('gv.tweaks') || '{}');
-        if (['auto', 'onest', 'manrope', 'plex'].indexOf(t.font) >= 0) d.setAttribute('data-font', t.font);
         if ([0.9, 1, 1.1, 1.25].indexOf(t.scale) >= 0) d.style.setProperty('--ui-scale', String(t.scale));
-        if (['warm', 'blueprint', 'dial', 'obsidian'].indexOf(t.ambient) >= 0) d.setAttribute('data-ambient', t.ambient);
+        if (['ledger', 'graph', 'tracing'].indexOf(t.paper) >= 0) d.setAttribute('data-paper', t.paper);
       } catch (e) {
         if (on) d.setAttribute('data-tweaks', 'on');
-        d.setAttribute('data-boot', 'defaults');
       }
     })();
   </script>
@@ -52,10 +52,10 @@
 
   <noscript>
     <div class="gv-noscript">
-      <p class="gv-noscript__meta">Трек №3 · Умное производство</p>
-      <h1 class="gv-noscript__title">GaugeVision AI</h1>
-      <p>Камера снимает показания стрелочных приборов КИПиА и передаёт их на пульт оператора&nbsp;— без врезки, кабелей и останова.</p>
-      <a class="gv-button" href="https://github.com/EGRNEGR/GaugeVisionAI">Код на GitHub</a>
+      <p>Журнал обхода и показаний КИП, котельный цех</p>
+      <h1>Прибор пишет журнал сам</h1>
+      <p>GaugeVision AI снимает стрелку КИПиА камерой снаружи контура: без врезки, останова и интернета.</p>
+      <p><a href="https://github.com/EGRNEGR/GaugeVisionAI">Код на GitHub</a></p>
     </div>
   </noscript>
 
@@ -66,13 +66,14 @@
   <script src="js/util.js"></script>
   <script src="js/motion.js"></script>
   <script src="js/components/kit.js"></script>
-  <script src="js/components/scroll-video.js"></script>
+  <script src="js/components/journal.js"></script>
+  <script src="js/components/shift.js"></script>
   <script src="js/components/precision-dial.js"></script>
-  <script src="js/components/pipeline-track.js"></script>
+  <script src="js/components/operations.js"></script>
   <script src="js/components/metrics.js"></script>
-  <script src="js/components/compare.js"></script>
   <script src="js/components/architecture.js"></script>
   <script src="js/components/limits.js"></script>
+  <script src="js/components/contact.js"></script>
   <script src="js/tweaks.js"></script>
   <script src="js/page.js"></script>
 </body>

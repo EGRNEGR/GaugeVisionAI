@@ -12,10 +12,10 @@
 - `.\.venv\Scripts\python run.py` — пульт на `https://localhost:8443`; флаги `--host --port --lan-ip --log-level`
 
 Лендинг (сборки и зависимостей нет; из корня репозитория):
-- `node site/tests/check.js` — факты, пути и медиа, запрещённые слова, модули, 8 секций, минимум текста, типографика, px и анимации
-- `node site/tests/components.test.js` — калибровка, бары, зоны, EMA, пружина и reduced motion `GV.motion`, угол прибора, время видео hero
+- `node site/tests/check.js` — факты, пути и медиа, запрещённые слова, модули, 8 листов, минимум текста, типографика, px и анимации
+- `node site/tests/components.test.js` — калибровка, бары, зоны, EMA, пружина и reduced motion `GV.motion`, угол прибора, ролик и шкала смены, шаги операций, журнал
 - открыть `site/index.html` двойным кликом (file://) — так работают и видео, и всё остальное
-- `python -m http.server 8765 --directory site` — `http://localhost:8765/` (порт бывает занят); без Range-запросов видео hero стоит на кадре 0
+- `python -m http.server 8765 --directory site` — `http://localhost:8765/` (порт бывает занят); без Range-запросов ролик листа 02 стоит на кадре 0
 - публикация — пуш в `main`: `.github/workflows/pages.yml` гоняет обе проверки и выкладывает `site/` в GitHub Pages
 
 ## Где что
@@ -23,8 +23,9 @@
 - `app/main.py` — REST/WebSocket и оркестрация камер; `app/vision.py` — CV-конвейер; `app/config.py` — константы, типы приборов, env-переменные
 - `static/` — пульт оператора сервиса (отдельно от лендинга)
 - `site/js/content.js` — `GV.content`, единственный источник фактов лендинга
-- `site/js/page.js` — `GV.page`, строит единственную страницу из 8 секций; `site/js/motion.js` — `GV.motion` (единственный rAF); `site/js/components/` — модули секций; `site/css/` — по файлу на секцию
-- `site/assets/video/README.md` — перекодирование видео hero и путь к ffmpeg; `archive/site-variants-a-c/` — снятые варианты A и C (не часть сайта)
+- `site/js/page.js` — `GV.page`, строит страницу-журнал из 8 листов (ADR 0011); `site/js/motion.js` — `GV.motion` (единственный rAF); `site/js/components/` — модули листов; `site/css/` — по файлу на лист
+- `DESIGN.md` — правила мира «Журнал обходчика»; `docs/design/references.md` — разбор референсов и прошлой версии
+- `site/assets/video/README.md` — ролик листа 02 (Gemini), перекодирование и путь к ffmpeg; `archive/site-variants-a-c/` — снятые варианты A и C (не часть сайта)
 - `site/tests/` — единственные автотесты репозитория (сервис без тестов)
 - `PRODUCT.md` — аудитория и тон; `README.md` — факты и метрики; `docs/adr/` — почему так; `CONTEXT.md` — словарь
 - Архитектура лендинга (поток данных `GV.content` → `GV.page` → компоненты, порядок скриптов, токены, правила) — `docs/architecture.md`
@@ -40,7 +41,7 @@
 - Не публиковать «34 проверки e2e / 18 браузерных» и «ответ сервера 3–37 мс»; лицензия проприетарная, без «open source», «MIT», «бесплатно»
 - Playwright MCP блокирует file:// и открывает страницу в масштабе 67 %: для визуальной проверки брать `playwright-core` с chromium: `C:/Users/Egoru/AppData/Local/npm-cache/_npx/e41f203b7505f1fb/node_modules/playwright-core` (другие копии в кэше без браузера)
 - Кнопка Tweaks скрыта от посетителя: открыть — `site/index.html?tweaks` (запоминается) или Shift + T, забыть — `?tweaks=off` (ADR 0010)
-- Видео для перемотки перекодировано (каждый кадр ключевой), команды — `site/assets/video/README.md`; ffmpeg — из пакета `imageio_ffmpeg`; исходники `references/gauge_pullback.mp4` и `docs/gemini_*` лежат вне git
+- Видео для перемотки перекодировано (каждый кадр ключевой), команды — `site/assets/video/README.md`; ffmpeg — из пакета `imageio_ffmpeg`; исходники ролика и кадров — `docs/gemini_journal/` вне git
 
 ## Окружение
 

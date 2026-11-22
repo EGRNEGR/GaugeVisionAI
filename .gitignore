@@ -33,3 +33,7 @@ node_modules/
 # Локальные материалы: референсы и исходники видео — вне git
 references/
 desktop.ini
+
+# Снимки финального ревью impeccable и исходники генераций Gemini — локальные
+.impeccable/review/
+docs/gemini_*/

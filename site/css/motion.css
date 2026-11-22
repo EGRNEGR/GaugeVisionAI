@@ -1,127 +1,79 @@
 /*
- * Общие классы движения (js/motion.js и js/page.js). Только transform и opacity.
- * Скрытое начальное состояние ставит JS (класс .gv-reveal): без скрипта всё видно сразу.
+ * Грамматика движения журнала — только transform и opacity.
+ *   «печать»  — заголовок листа: слова поднимаются со строки линовки по очереди (GV.motion.reveal);
+ *   «рука»    — рукописная запись проявляется слева направо: бумажная шторка уезжает scaleX;
+ *   «штамп»   — статус падает на бумагу: scale 1,3 → 1 с перелётом, поворот −8° → −3°;
+ *   «строка»  — машинная строка журнала въезжает сверху (js/components/journal.js).
+ * Начальное скрытое состояние ставит JS (класс .gv-reveal), без скрипта всё видно.
  */
-
-/* ---------- Каскадное появление: слова заголовка или блоки ---------- */
-
-.gv-reveal:not([data-reveal="words"]) {
+.gv-reveal {
   opacity: 0;
-  transform: translate3d(0, 1.5rem, 0);
+  transform: translate3d(0, 1.25rem, 0);
   transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
   transition-delay: var(--gv-reveal-delay, 0ms);
 }
-
-.gv-reveal:not([data-reveal="words"]).is-in {
+.gv-reveal.is-in {
   opacity: 1;
   transform: none;
 }
 
+/* Заголовок по словам: контейнер виден, слова поднимаются из-под строки */
+.gv-reveal[data-reveal='words'] {
+  opacity: 1;
+  transform: none;
+}
 .gv-reveal__w {
   display: inline-block;
   opacity: 0;
-  transform: translate3d(0, 0.55em, 0);
-  transition: opacity 700ms var(--ease-out), transform 700ms var(--ease-out);
-  transition-delay: calc(var(--i, 0) * 60ms);
+  transform: translate3d(0, 0.45em, 0);
+  transition: opacity 900ms var(--ease-out), transform 900ms var(--ease-out);
+  transition-delay: calc(var(--gv-reveal-delay, 0ms) + var(--i, 0) * 70ms);
 }
-
 .gv-reveal.is-in .gv-reveal__w {
   opacity: 1;
   transform: none;
 }
 
-/* ---------- Пятно света по ободку карточки (GV.motion.spotlight) ---------- */
-
-.gv-spot-host {
+/* Рука: шторка цвета бумаги над рукописной строкой уезжает вправо */
+.gv-write {
   position: relative;
-  isolation: isolate;
+  display: inline-block;
 }
-
-/* Слой-кольцо толщиной 1px: маска оставляет только ободок, пятно внутри двигается transform */
-.gv-spot {
+.gv-write::after {
+  content: '';
   position: absolute;
-  inset: 0;
-  z-index: 0;
-  padding: 1px;
-  border-radius: inherit;
-  overflow: hidden;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity var(--dur-med) var(--ease-out);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
+  inset: -0.125rem -0.25rem;
+  background: var(--paper);
+  transform-origin: 100% 50%;
+  transform: scaleX(1);
+  transition: transform var(--dur-write) cubic-bezier(0.45, 0.05, 0.4, 1);
+  transition-delay: var(--gv-write-delay, 200ms);
 }
-
-.gv-spot__light {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 18rem;
-  height: 18rem;
-  margin: -9rem 0 0 -9rem;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255, 140, 96, 0.9), rgba(255, 90, 31, 0.35) 45%, transparent);
-  will-change: transform;
-}
-
-.gv-spot-host.is-lit > .gv-spot {
-  opacity: 1;
-}
-
-/* ---------- Телеметрия прокрутки под шапкой ---------- */
-
-.gv-telemetry {
-  position: relative;
-  height: var(--telemetry-h);
-  border-top: 1px solid var(--border-hairline);
-}
-
-/* Полоса лежит поверх верхней линии рамки (top: -1px), поэтому у .gv-telemetry нет overflow: hidden */
-.gv-telemetry__track {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: -1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-.gv-telemetry__bar {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(255, 90, 31, 0.15), var(--accent));
+.gv-write.is-written::after {
   transform: scaleX(0);
-  transform-origin: 0 50%;
-  will-change: transform;
 }
 
-.gv-telemetry__inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-4);
-  height: 100%;
-  font-family: var(--font-mono);
-  font-size: var(--fs-2xs);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-  color: var(--text-faint);
-  white-space: nowrap;
-  overflow: hidden;
+/* Штамп */
+@keyframes gv-stamp {
+  0% { opacity: 0; transform: scale(1.32) rotate(-8deg); }
+  60% { opacity: 1; transform: scale(0.97) rotate(-2.5deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-3deg); }
 }
-
-.gv-telemetry__label {
-  color: var(--text-muted);
+.gv-stamped .gv-mark--stamp {
+  animation: gv-stamp 420ms var(--ease-out) both;
+  animation-delay: var(--gv-stamp-delay, 0ms);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .gv-reveal:not([data-reveal="words"]),
-  .gv-reveal__w {
-    opacity: 1;
-    transform: none;
+  .gv-reveal,
+  .gv-reveal__w,
+  .gv-write::after {
     transition: none;
+  }
+  .gv-write::after {
+    transform: scaleX(0);
+  }
+  .gv-stamped .gv-mark--stamp {
+    animation: none;
   }
 }

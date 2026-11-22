@@ -1,151 +1,123 @@
 /*
- * GV.components.limits — инженерные компромиссы и ограничения среды цеха.
- * mount(el) → { destroy() }
- * Состав: «Компромиссы» (выбрали → платим; клик раскрывает «почему так» и источник в коде: блок
- * проявляется opacity, строки ниже доезжают по transform — GV.motion.shiftBelow),
- * «Ограничения» (5 строк таблицы: условие и статус · риск · ответ в коде, фильтр по статусу),
- * «Не проверено в поле», Roadmap.
+ * GV.components.limits — лист 07 «Компромиссы, ограничения и план».
+ *   Компромиссы — строки журнала «выбрали → платим»; строка раскрывается: почему так и где в коде.
+ *   Раскрытие без скачка — GV.motion.shiftBelow: строки ниже доезжают transform.
+ *   Ограничения среды — таблица «условие и штамп статуса · риск · ответ в коде»; фильтр по статусу.
+ *   «Не проверено в поле» — пометка рукой; план — три листа 01–03 со штампами статуса.
+ *
+ *   mount(body) → { destroy }
  */
 (function () {
   'use strict';
 
   var GV = (window.GV = window.GV || {});
-  GV.components = GV.components || {};
 
-  var T = {
-    filter: 'Фильтр по статусу',
-    shown: function (n, total) { return 'Показано ограничений: ' + n + ' из ' + total; },
-    arrow: '→',
-    note: 'Оговорка',
-    condition: 'Условие'
-  };
-
-  function mount(el) {
-    var u = GV.util, kit = GV.kit, motion = GV.motion, h = u.h;
+  function mount(body) {
+    var u = GV.util;
+    var kit = GV.kit;
+    var motion = GV.motion;
+    var h = u.h;
     var c = GV.content;
     var L = c.labels;
     var sc = kit.scope();
 
+    body.classList.add('gv-limits');
+
     /* ---------- компромиссы ---------- */
 
-    var tradeItems = c.tradeoffs.map(function (t, i) {
-      var bodyId = u.uid('gv-trade');
-      var btn = h('button', { type: 'button', class: 'gv-limits__trade-btn', 'aria-expanded': 'false', 'aria-controls': bodyId },
-        h('span', { class: 'gv-limits__trade-index', 'aria-hidden': 'true' }, (i + 1 < 10 ? '0' : '') + (i + 1)),
-        h('span', { class: 'gv-limits__trade-chose' },
-          h('span', { class: 'gv-limits__trade-key' }, L.chose), t.chose),
-        h('span', { class: 'gv-limits__trade-arrow', 'aria-hidden': 'true' }, T.arrow),
-        h('span', { class: 'gv-limits__trade-cost' },
-          h('span', { class: 'gv-limits__trade-key' }, L.cost), t.cost),
-        h('span', { class: 'gv-limits__trade-toggle', 'aria-hidden': 'true' }));
-      var body = h('div', { class: 'gv-limits__trade-body', id: bodyId, hidden: true },
-        h('p', { class: 'gv-limits__trade-why' }, h('span', { class: 'gv-limits__trade-key' }, L.why), t.why),
-        h('p', { class: 'gv-limits__trade-source' }, h('span', { class: 'gv-limits__trade-key' }, L.source), h('code', null, t.source)));
-      var item = h('li', { class: 'gv-limits__trade', 'data-id': t.id }, btn, body);
+    var trade = h('div', { class: 'gv-trade', 'data-reveal': '' },
+      h('div', { class: 'gv-trade__head' },
+        h('h3', { class: 'gv-h3' }, L.tradeoffsTitle),
+        h('p', { class: 'gv-label' }, L.tradeoffsLead)),
+      h('div', { class: 'gv-trade__cols', 'aria-hidden': 'true' },
+        h('span', { class: 'gv-label' }, L.chose), h('span', { class: 'gv-label' }, L.cost)));
+    var tradeList = h('ol', { class: 'gv-trade__list', role: 'list' });
+    c.tradeoffs.forEach(function (t, i) {
+      var id = 'gv-trade-' + t.id;
+      var detail = h('div', { class: 'gv-trade__detail', id: id, hidden: true },
+        h('p', null, h('span', { class: 'gv-label' }, L.why), t.why),
+        h('p', null, h('span', { class: 'gv-label' }, L.source), h('code', null, t.source)));
+      var btn = h('button', { class: 'gv-trade__row', type: 'button', 'aria-expanded': 'false', 'aria-controls': id },
+        h('span', { class: 'gv-trade__n gv-num' }, (i < 9 ? '0' : '') + (i + 1)),
+        h('span', { class: 'gv-trade__chose' }, h('span', { class: 'gv-visually-hidden' }, L.chose + ': '), t.chose),
+        h('span', { class: 'gv-trade__cost' }, h('span', { class: 'gv-visually-hidden' }, L.cost + ': '), t.cost),
+        h('span', { class: 'gv-trade__pm', 'aria-hidden': 'true' }));
       sc.on(btn, 'click', function () {
         var open = btn.getAttribute('aria-expanded') !== 'true';
-        motion.shiftBelow(item, function () {
+        motion.shiftBelow(btn.parentNode, function () {
           btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-          body.hidden = !open;
-        }, el.closest('.gv-page'));
+          detail.hidden = !open;
+        }, body);
       });
-      return item;
+      tradeList.appendChild(h('li', { class: 'gv-trade__item' }, btn, detail));
     });
+    trade.appendChild(tradeList);
+    body.appendChild(trade);
 
-    var trades = h('div', { class: 'gv-limits__block gv-limits__block--trades' },
-      h('div', { class: 'gv-limits__block-head' },
-        h('h3', { class: 'gv-limits__block-title' }, L.tradeoffsTitle),
-        h('p', { class: 'gv-limits__block-lead' }, L.tradeoffsLead)),
-      h('ol', { class: 'gv-limits__trades', role: 'list' }, tradeItems));
+    /* ---------- ограничения среды ---------- */
 
-    /* ---------- ограничения с фильтром ---------- */
+    var counts = { all: c.limits.length, done: 0, partial: 0 };
+    c.limits.forEach(function (l) { counts[l.status] += 1; });
+    var filters = h('div', { class: 'gv-filter', role: 'group', 'aria-label': L.filterLabel },
+      [['all', L.filterAll], ['done', L.status.done], ['partial', L.status.partial]].map(function (f) {
+        return h('button', { class: 'gv-filter__b', type: 'button', 'data-filter': f[0], 'aria-pressed': 'false' },
+          f[1], h('span', { class: 'gv-filter__n gv-num' }, String(counts[f[0]])));
+      }));
 
-    var statuses = [];
-    c.limits.forEach(function (l) { if (statuses.indexOf(l.status) < 0) statuses.push(l.status); });
-    var filters = [{ id: 'all', label: L.filterAll }].concat(statuses.map(function (st) { return { id: st, label: L.status[st] }; }));
-
-    var limitEls = c.limits.map(function (l) {
-      return h('li', { class: 'gv-limits__item', 'data-status': l.status, 'data-id': l.id },
-        h('div', { class: 'gv-limits__item-head' },
-          h('h4', { class: 'gv-limits__condition' }, l.condition),
-          h('span', { class: 'gv-limits__status', 'data-status': l.status }, L.status[l.status])),
-        h('dl', { class: 'gv-limits__facts' },
-          h('div', { class: 'gv-limits__fact' }, h('dt', null, L.risk), h('dd', null, l.risk)),
-          h('div', { class: 'gv-limits__fact gv-limits__fact--response' }, h('dt', null, L.response), h('dd', null, l.response)),
-          l.note ? h('div', { class: 'gv-limits__fact gv-limits__fact--note' }, h('dt', { class: 'gv-visually-hidden' }, T.note), h('dd', null, l.note)) : null));
-    });
-
-    var counts = {};
-    c.limits.forEach(function (l) { counts[l.status] = (counts[l.status] || 0) + 1; });
-    var filterBtns = filters.map(function (f) {
-      var n = f.id === 'all' ? c.limits.length : counts[f.id];
-      return h('button', { type: 'button', class: 'gv-limits__filter', 'aria-pressed': 'false', 'data-filter': f.id },
-        f.label, h('span', { class: 'gv-limits__filter-count' }, String(n)));
-    });
-    var filterBar = h('div', { class: 'gv-limits__filters', role: 'group', 'aria-label': T.filter }, filterBtns);
-    var shown = h('p', { class: 'gv-visually-hidden', 'aria-live': 'polite' });
-
-    var limitsList = h('ul', { class: 'gv-limits__list', role: 'list' }, limitEls);
-    // Шапка колонок таблицы: в строках те же подписи остаются только для чтения с экрана
-    var columns = h('div', { class: 'gv-limits__columns', 'aria-hidden': 'true' },
-      h('span', null, T.condition), h('span', null, L.risk), h('span', null, L.response));
-    var limitsBlock = h('div', { class: 'gv-limits__block gv-limits__block--limits' },
-      h('div', { class: 'gv-limits__block-head' },
-        h('h3', { class: 'gv-limits__block-title' }, L.limitsTitle),
-        filterBar),
-      columns,
-      limitsList,
-      shown);
-
-    var ready = false;
-    var roving = u.rovingTabs(filterBar, {
-      selector: '.gv-limits__filter',
-      attr: 'aria-pressed',
-      onSelect: function (i) {
-        var f = filters[i].id;
-        var n = 0;
-        limitEls.forEach(function (li) {
-          var match = f === 'all' || li.getAttribute('data-status') === f;
-          li.hidden = !match;
-          if (match) n += 1;
-        });
-        limitsList.setAttribute('data-filter', f);
-        if (ready) shown.textContent = T.shown(n, limitEls.length);
-      }
-    });
-    ready = true;
-    sc.add(roving.destroy);
-
-    /* ---------- не проверено в поле и Roadmap ---------- */
-
-    var untested = h('div', { class: 'gv-limits__untested' },
-      h('h3', { class: 'gv-limits__untested-title' }, c.untested.title),
-      h('p', { class: 'gv-limits__untested-text' }, c.untested.text));
-
-    var roadmap = h('div', { class: 'gv-limits__roadmap' },
-      h('h3', { class: 'gv-limits__block-title' }, L.roadmapTitle),
-      h('ol', { class: 'gv-limits__stages', role: 'list' }, c.roadmap.map(function (r) {
-        return h('li', { class: 'gv-limits__stage', 'data-status': r.status },
-          h('p', { class: 'gv-limits__stage-head' },
-            h('span', { class: 'gv-limits__stage-index' }, r.index),
-            h('span', { class: 'gv-limits__stage-title' }, r.title),
-            h('span', { class: 'gv-limits__status', 'data-status': r.status }, L.status[r.status])),
-          h('ul', { class: 'gv-limits__stage-items', role: 'list' }, r.items.map(function (it) { return h('li', null, it); })));
+    var rows = [];
+    var table = h('table', { class: 'gv-env' },
+      h('caption', { class: 'gv-visually-hidden' }, L.limitsTitle),
+      h('thead', null, h('tr', null,
+        h('th', { scope: 'col' }, L.condition), h('th', { scope: 'col' }, L.risk), h('th', { scope: 'col' }, L.response))),
+      h('tbody', null, c.limits.map(function (l) {
+        var tr = h('tr', { class: 'gv-env__row', 'data-status': l.status },
+          h('th', { scope: 'row', class: 'gv-env__cond' }, h('span', { class: 'gv-env__name' }, l.condition),
+            h('span', { class: 'gv-mark gv-mark--stamp', 'data-tone': l.status }, L.status[l.status])),
+          h('td', { class: 'gv-env__risk' }, l.risk),
+          h('td', { class: 'gv-env__resp' }, l.response, l.note ? h('span', { class: 'gv-env__note' }, l.note) : null));
+        rows.push(tr);
+        return tr;
       })));
 
-    var rootEl = h('div', { class: 'gv-limits' },
-      trades,
-      limitsBlock,
-      h('div', { class: 'gv-limits__after' }, untested, roadmap));
-    el.appendChild(rootEl);
+    var env = h('div', { class: 'gv-envwrap', 'data-reveal': '' },
+      h('div', { class: 'gv-envwrap__head' }, h('h3', { class: 'gv-h3' }, L.limitsTitle), filters),
+      table);
+    body.appendChild(env);
 
-    return {
-      destroy: function () {
-        sc.destroy();
-        if (rootEl.parentNode) rootEl.parentNode.removeChild(rootEl);
+    u.rovingTabs(filters, {
+      selector: '.gv-filter__b',
+      attr: 'aria-pressed',
+      onSelect: function (i, el) {
+        var f = el.getAttribute('data-filter');
+        rows.forEach(function (tr) { tr.hidden = f !== 'all' && tr.getAttribute('data-status') !== f; });
       }
-    };
+    });
+    sc.observe(u.onVisible(table, function () { table.classList.add('gv-stamped'); }, { once: true, threshold: 0.2 }));
+
+    /* ---------- не проверено в поле ---------- */
+
+    body.appendChild(h('aside', { class: 'gv-untested', 'data-reveal': '' },
+      h('h3', { class: 'gv-untested__t' }, c.untested.title),
+      h('p', { class: 'gv-note' }, c.untested.text)));
+
+    /* ---------- план ---------- */
+
+    var plan = h('div', { class: 'gv-plan', 'data-reveal': '' },
+      h('h3', { class: 'gv-h3 gv-plan__title' }, L.roadmapTitle),
+      h('ol', { class: 'gv-plan__list', role: 'list' }, c.roadmap.map(function (r) {
+        return h('li', { class: 'gv-plan__item gv-plan__item--' + r.status },
+          h('p', { class: 'gv-plan__head' },
+            h('span', { class: 'gv-plan__i gv-num' }, r.index),
+            h('span', { class: 'gv-plan__name' }, r.title),
+            h('span', { class: 'gv-mark gv-mark--stamp', 'data-tone': r.status }, L.status[r.status])),
+          h('ul', { class: 'gv-plan__items', role: 'list' }, r.items.map(function (it) { return h('li', null, it); })));
+      })));
+    body.appendChild(plan);
+    sc.observe(u.onVisible(plan, function () { plan.classList.add('gv-stamped'); }, { once: true, threshold: 0.3 }));
+
+    return { destroy: sc.destroy };
   }
 
+  GV.components = GV.components || {};
   GV.components.limits = { mount: mount };
 })();
