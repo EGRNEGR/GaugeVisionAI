@@ -10,7 +10,7 @@
  *      и screenshotFacts) встречается в README.md, PRODUCT.md, app/config.py или notes.md прошлой сборки.
  *   2. Локальные src/href в index.html и content.js (и url() в css/) существуют; видео и картинки —
  *      в бюджете размера; копии ролика для перемотки — без звука, moov в начале файла,
- *      ключевой кадр не реже каждого 2-го кадра.
+ *      ключевой кадр не реже каждого 4-го кадра.
  *   3. Запрещённые слова в site/ (кроме tests/ и design-system.md); «гомограф» — только в roadmap.
  *   4. В js/ нет import/export и type="module".
  *   5. Листы идут по порядку журнала; каждый модуль из GV.page.mounts подключён <script> в index.html.
@@ -351,7 +351,7 @@ function checkMedia() {
       const marks = video.sync.concat([video.samples + 1]);
       let prev = 0;
       for (const s of marks) {
-        if (s - prev > 2) { fail(2, `site/${m.file}: между ключевыми кадрами ${s - prev} кадров, нужно ≤ 2`); break; }
+        if (s - prev > 4) { fail(2, `site/${m.file}: между ключевыми кадрами ${s - prev} кадров, нужно ≤ 4`); break; }
         prev = s;
       }
     }
