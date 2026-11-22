@@ -9,11 +9,12 @@
  * это не факты продукта, и страница подписывает их как демонстрацию (hero.demo).
  * reading — общее показание страницы: чертёж листа 03 двигает эту же стрелку и пишет строки «вы».
  *
- * Журнал хранит историю (KEEP строк) и прокручивается. Пока посетитель следит за концом, новые строки
- * въезжают снизу. Ручная прокрутка (колесо, палец, полоса прокрутки) ставит слежение на паузу: строки
- * дописываются в конец, не сдвигая читаемое, а у края появляется «К новым записям». Через IDLE_MS
- * без прокрутки, по кнопке или когда посетитель сам вернулся в конец, журнал плавно доезжает
- * до свежих строк и снова следит за ними.
+ * Журнал хранит историю (KEEP строк) и прокручивается. Пока посетитель следит за концом, лента едет
+ * непрерывно, строка за ⅓ с, новая строка проявляется, штамп падает на смене зоны. Ручная прокрутка вверх
+ * (колесо, палец, полоса прокрутки) сразу ставит слежение на паузу: строки дописываются в конец, не сдвигая
+ * читаемое, у края — «К новым записям». Через IDLE_MS после последнего движения, по кнопке или когда
+ * посетитель сам докрутил до конца, журнал плавно доезжает до свежих строк и снова следит за ними.
+ * Стрелка в кадре мелко дрожит от вибрации — ту же дрожь камера читает, а EMA сглаживает.
  *
  *   mount(body, { section, sheet, reading, headId }) → { destroy }
  */
@@ -30,7 +31,7 @@
   var IDLE_MS = 4000;              // без прокрутки столько — журнал возвращается к свежим строкам
   var INTENT_MS = 400;             // прокрутка в этом окне после колеса, касания или нажатия — ручная
   var TAG = 'МН-1';                // бирка демонстрационного манометра
-  var JITTER = 0.6;                // дрожь стрелки от вибрации, ± градусы
+  var JITTER = 0.6;                // дрожь стрелки от вибрации, ± градусы (видна на стрелке кадра)
   var ALPHA = 0.25;                // EMA_ALPHA (app/config.py)
 
   function mount(body, opts) {
@@ -217,37 +218,49 @@
 
     var ema = null;
     var clock = SHIFT_START;
-    var phase = Math.random() * 10;
     var rows = [];
+    var lastLevel = 'normal';
+    var seed = Math.random() * 10;
 
+    /* Дрожь стрелки от вибрации — гладкая функция времени смены: её видно на стрелке кадра,
+       её же «читает» камера, а EMA в строках сглаживает */
+    function shakeAt(ms) {
+      var p = seed + ((ms - SHIFT_START) / 1000) * 5.1;
+      return JITTER * (Math.sin(p) * 0.6 + Math.sin(p * 2.3 + 1) * 0.4);
+    }
     function measure() {
-      phase += 1.7;
-      var shake = JITTER * (Math.sin(phase) * 0.6 + Math.sin(phase * 2.3 + 1) * 0.4);
-      var raw = kit.angleToValue(clampTheta(shown + shake), calib);
+      var raw = kit.angleToValue(clampTheta(shown + shakeAt(clock)), calib);
       ema = kit.emaStep(ema, raw, ALPHA);
       return ema;
     }
 
-    function rowFor(ms, value, mine) {
+    /* quiet — строка без анимации появления (начальное заполнение окна) */
+    function rowFor(ms, value, mine, quiet) {
       var level = kit.levelOf(value, calib.setpoints);
+      var changed = level !== lastLevel;
+      lastLevel = level;
       var who = [h('span', { class: 'gv-log__machine' }, t.machine)];
-      if (level !== 'normal') who.push(h('span', { class: 'gv-mark', 'data-tone': level }, c.reading.zones[level]));
+      // штамп падает только на строке, где зона сменилась, а не на каждой строке подряд
+      if (level !== 'normal') who.push(h('span', { class: 'gv-mark' + (changed && !quiet ? ' is-new' : ''), 'data-tone': level }, c.reading.zones[level]));
       if (mine) who.push(h('span', { class: 'gv-hand gv-log__mine' }, 'ваша запись'));
-      return h('div', { class: 'gv-log__row gv-log__row--machine' + (mine ? ' is-mine' : '') },
+      return h('div', { class: 'gv-log__row gv-log__row--machine' + (mine ? ' is-mine' : '') + (quiet ? '' : ' is-in') },
         h('span', { class: 'gv-log__c gv-log__c--time' }, kit.clockText(ms)),
         h('span', { class: 'gv-log__c gv-log__c--tag' }, TAG),
         h('span', { class: 'gv-log__c gv-log__c--value gv-num' }, fmt(value, 2)),
         h('span', { class: 'gv-log__c gv-log__c--who' }, who));
     }
 
-    /* ---------- слежение за концом журнала и пауза на ручной прокрутке ---------- */
+    /* ---------- лента: непрерывный ход, слежение за концом и пауза на ручной прокрутке ---------- */
 
     var following = true;
     var unseen = 0;
     var intentAt = -Infinity;
-    var touching = false;
+    var lastTop = 0;
+    var touchY = null;
     var cancelIdle = null;
     var cancelSettle = null;
+    var offset = 0;   // на сколько px строки ещё не доехали до места: лента едет ровно, строка за ⅓ с
+    var rowH = 0;
     function now() { return window.performance ? performance.now() : Date.now(); }
     // конец с допуском в полторы строки: пока колесо доезжает до низа, снизу успевает дописаться строка
     function atEnd() {
@@ -255,15 +268,25 @@
       return scroller.scrollHeight - scroller.scrollTop - scroller.clientHeight < row * 1.5 + 2;
     }
     function toEnd() { scroller.scrollTop = scroller.scrollHeight; }
+    function glide(px) {
+      offset = Math.max(0, px);
+      track.style.transform = offset > 0.05 ? 'translate3d(0, ' + offset.toFixed(2) + 'px, 0)' : '';
+    }
     function showFresh() {
       freshCount.textContent = unseen ? '+' + unseen : '';
       fresh.hidden = following;
+    }
+    /* таймер возврата перезапускается каждым ручным движением: пока листают, журнал не дёргается */
+    function idle() {
+      if (cancelIdle) cancelIdle();
+      cancelIdle = sc.timeout(resume, IDLE_MS);
     }
     function follow() {
       if (cancelIdle) { cancelIdle(); cancelIdle = null; }
       if (cancelSettle) { cancelSettle(); cancelSettle = null; }
       following = true;
       unseen = 0;
+      glide(0);
       toEnd();
       showFresh();
     }
@@ -276,32 +299,70 @@
       cancelSettle = sc.timeout(follow, 700);
     }
     function pause() {
+      // лента замирает ровно на том, что видно: недоеханное смещение переходит в прокрутку
+      if (following && offset) scroller.scrollTop -= offset;
+      glide(0);
       following = false;
       if (cancelSettle) { cancelSettle(); cancelSettle = null; }
-      if (cancelIdle) cancelIdle();
-      cancelIdle = sc.timeout(resume, IDLE_MS);
+      idle();
       showFresh();
     }
     function intent() { intentAt = now(); }
-    sc.on(scroller, 'wheel', intent, { passive: true });
-    sc.on(scroller, 'pointerdown', intent);
-    sc.on(scroller, 'touchstart', function () { touching = true; intent(); }, { passive: true });
-    sc.on(scroller, 'touchend', function () { touching = false; intent(); }, { passive: true });
+    // Направление берётся из самого жеста: колесо вверх, палец вниз, захват полосы — сразу пауза
+    sc.on(scroller, 'wheel', function (e) {
+      intent();
+      if (e.deltaY < 0) pause();
+      else if (!following) idle();
+    }, { passive: true });
+    sc.on(scroller, 'touchstart', function (e) { intent(); touchY = e.touches[0].clientY; }, { passive: true });
+    sc.on(scroller, 'touchmove', function (e) {
+      intent();
+      var y = e.touches[0].clientY;
+      if (touchY !== null && y > touchY + 1) pause();
+      else if (!following) idle();
+      touchY = y;
+    }, { passive: true });
+    sc.on(scroller, 'touchend', function () { intent(); touchY = null; }, { passive: true });
+    sc.on(scroller, 'pointerdown', function (e) {
+      intent();
+      if (e.offsetX > scroller.clientWidth) pause();
+    });
     sc.on(scroller, 'scroll', function () {
-      // прокрутку кодом (строка въехала, проезд к концу) пропускаем: ручная — сразу после жеста
-      if (!touching && now() - intentAt > INTENT_MS) return;
+      var top = scroller.scrollTop;
+      var dir = top - lastTop;
+      lastTop = top;
+      // прокрутку кодом (лента, проезд к концу) пропускаем: ручная — сразу после жеста
+      if (now() - intentAt > INTENT_MS) return;
       intent(); // инерция пальца продолжает ручную прокрутку
-      if (atEnd()) follow();
-      else pause();
+      if (following) return;
+      // на паузе прокрутку двигает только посетитель: вниз до конца — снова следим, иначе ждём
+      if (dir > 0 && atEnd()) follow();
+      else idle();
     }, { passive: true });
     sc.on(fresh, 'click', resume);
 
-    function push(mine, exact) {
+    /* Запись посетителя вспыхивает, когда журнал на экране: строку пишут с листа 03, а смотрят здесь */
+    var logInView = false;
+    var unlit = [];
+    function light() {
+      unlit.forEach(function (row) { row.classList.add('is-lit'); });
+      unlit = [];
+    }
+    sc.observe(u.onVisible(log, function (isIn) {
+      logInView = isIn;
+      if (isIn) light();
+    }, { threshold: 0.6 }));
+
+    function push(mine, exact, quiet) {
       clock += FRAME_MS;
       var value = typeof exact === 'number' ? exact : measure();
-      var row = rowFor(clock, value, mine);
+      var row = rowFor(clock, value, mine, quiet);
       track.appendChild(row);
       rows.push(row);
+      if (mine) {
+        unlit.push(row);
+        if (logInView) light();
+      }
       if (!following) {
         // на паузе читаемое не двигается: строки дописываются в конец, старые уходят только сверх запаса
         unseen += 1;
@@ -316,12 +377,10 @@
       }
       while (rows.length > KEEP) track.removeChild(rows.shift());
       toEnd();
-      if (!motion.reduced()) {
-        track.style.transition = 'none';
-        track.style.transform = 'translate3d(0, var(--row), 0)';
-        void track.offsetHeight;
-        track.style.transition = '';
-        track.style.transform = '';
+      if (!quiet && !motion.reduced()) {
+        if (!rowH) rowH = row.offsetHeight;
+        // новая строка встаёт под окном и доезжает вместе с лентой; запас не больше трёх строк
+        glide(Math.min(offset + rowH, rowH * 3));
       }
     }
 
@@ -330,7 +389,7 @@
     paintNeedle(shown);
     var startTheta = reading.get();
     shown = startTheta;
-    for (var i = 0; i < ROWS; i++) push(false);
+    for (var i = 0; i < ROWS; i++) push(false, undefined, true);
     shown = spring.value();
     paintNeedle(shown);
 
@@ -343,16 +402,24 @@
       sc.timeout(function () { dot.classList.remove('is-frame'); }, 90);
     }
     function tick(dt) {
+      // лента едет с постоянной скоростью — строка за кадр обработки; накопившийся запас догоняет быстрее
+      if (offset > 0 && rowH) glide(offset - dt * 1000 * (rowH / FRAME_MS) * Math.max(1, offset / rowH));
       acc += dt * 1000;
       while (acc >= FRAME_MS) {
         acc -= FRAME_MS;
         push(false);
         flash();
       }
+      // стрелка в кадре мелко дрожит от вибрации, пока её не ведут и не доводит пружина
+      if (!offSpring && !dragging) g.setAngle(clampTheta(shown + shakeAt(clock + acc)));
     }
     function syncStream() {
       var run = visible && !document.hidden && !motion.reduced();
-      if (run && !offTick) offTick = motion.onFrame(tick);
+      if (run && !offTick) {
+        glide(0);
+        if (following) toEnd();
+        offTick = motion.onFrame(tick);
+      }
       if (!run && offTick) { offTick(); offTick = null; acc = 0; }
     }
     sc.observe(u.onVisible(body, function (isIn) {

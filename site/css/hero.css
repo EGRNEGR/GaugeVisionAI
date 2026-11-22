@@ -217,9 +217,10 @@
   scrollbar-width: thin;
   scrollbar-color: var(--rule-strong) transparent;
 }
+/* ход ленты ведёт JS кадр за кадром (непрерывно, строка за ⅓ с), поэтому без transition */
 .gv-log__track {
   margin-top: auto;
-  transition: transform 260ms var(--ease-out);
+  will-change: transform;
 }
 /* «К новым записям» — только на паузе, у нижнего края окна */
 .gv-log__fresh {
@@ -274,10 +275,54 @@
   border-style: solid;
 }
 .gv-log__row.is-mine {
+  position: relative;
   background: var(--paper-lift);
 }
 .gv-log__mine {
+  display: inline-block;
   font-size: var(--fs-m);
+}
+/* Новая строка проявляется, пока лента довозит её до места */
+.gv-log__row.is-in {
+  animation: gv-row-in 520ms var(--ease-out) both;
+}
+@keyframes gv-row-in {
+  from { opacity: 0; }
+}
+/* Штамп зоны падает на строке, где зона сменилась */
+.gv-log__row--machine .gv-mark.is-new {
+  animation: gv-log-stamp 380ms var(--ease-out) both;
+}
+@keyframes gv-log-stamp {
+  0% { opacity: 0; transform: scale(1.6) rotate(-8deg); }
+  60% { opacity: 1; transform: scale(0.96) rotate(1deg); }
+  100% { opacity: 1; transform: none; }
+}
+/* Запись посетителя: вспышка фиолетовыми чернилами по строке и подпись от руки */
+.gv-log__row.is-mine::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--violet);
+  opacity: 0;
+  pointer-events: none;
+}
+.gv-log__row.is-mine.is-lit::before {
+  animation: gv-mine-flash 1800ms var(--ease-out) both;
+}
+@keyframes gv-mine-flash {
+  0% { opacity: 0.22; }
+  100% { opacity: 0; }
+}
+.gv-log__row.is-mine .gv-log__mine {
+  opacity: 0;
+}
+.gv-log__row.is-mine.is-lit .gv-log__mine {
+  opacity: 1;
+  animation: gv-mine-in 640ms var(--ease-out) 160ms both;
+}
+@keyframes gv-mine-in {
+  from { opacity: 0; transform: translate3d(-0.75rem, 0, 0) rotate(-4deg); }
 }
 
 .gv-hero__demo {
@@ -334,6 +379,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .gv-hero__dot { transition: none; }
-  .gv-log__track { transition: none; }
-  .gv-log__fresh { animation: none; }
+  .gv-log__fresh,
+  .gv-log__row.is-in,
+  .gv-log__row.is-lit::before,
+  .gv-log__row.is-lit .gv-log__mine,
+  .gv-log__row--machine .gv-mark.is-new { animation: none; }
 }
