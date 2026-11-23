@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-22T17:54:30+00:00",
+  "generatedAt": "2026-11-23T09:32:30+00:00",
   "title": "Design System: GaugeVision AI",
   "extensions": {
     "colorMeta": {
@@ -154,6 +154,21 @@
           "#F5EDE4"
         ]
       },
+      "marker": {
+        "role": "tertiary",
+        "displayName": "Маркер-выделитель",
+        "canonical": "oklch(86.6% 0.143 99)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#2C2501",
+          "#4D4203",
+          "#706103",
+          "#968203",
+          "#BAA637",
+          "#D9CA7D",
+          "#EEEEEE"
+        ]
+      },
       "plate": {
         "role": "neutral",
         "displayName": "Вклейка",
@@ -278,8 +293,8 @@
         "purpose": "Имена в списках и таблицах, надпись штампа-кнопки, название в шапке."
       },
       "lead": {
-        "displayName": "Вводный абзац",
-        "purpose": "Абзац под заголовком, цвет ink-2."
+        "displayName": "Строка сути",
+        "purpose": "Строка сути первого листа и подводка финала, цвет ink-2, ключевая фраза под маркером; вывод листа 02–07 — тот же приём крупнее (500, 1.75rem, 1,3)."
       },
       "body": {
         "displayName": "Текст",
@@ -471,11 +486,27 @@
       "css": ".ds-plate { margin: 0; max-width: 24rem; padding: 1rem 1rem 1.5rem; background: var(--plate); color: var(--plate-ink); border-radius: 0.25rem; box-shadow: 0 1.5rem 3rem -1.5rem rgba(23, 25, 28, 0.55); } .ds-plate__bar { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--plate-ink-2); } .ds-plate__rec { display: inline-flex; align-items: center; gap: 0.375rem; } .ds-plate__rec i { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--plate-red); } .ds-plate__read { display: grid; grid-template-columns: auto 1fr auto 1fr; align-items: baseline; gap: 0.5rem 1rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(233, 235, 228, 0.18); font-family: var(--font-mono); font-size: 1.125rem; font-weight: 500; font-variant-numeric: tabular-nums; } .ds-plate__k { font-family: var(--font-sans); font-style: italic; color: var(--plate-ink-2); } .ds-plate__hint { margin-top: 1rem; font-family: var(--font-sans); font-size: 0.875rem; line-height: 1.4; color: var(--plate-ink-2); }"
     },
     {
+      "name": "Графа бланка",
+      "kind": "card",
+      "refersTo": "field-box",
+      "description": "Главный вывод блока на светлой бумаге с рамкой 1px, подпись врезана в верхнюю линию; у «Не проверено» рамка двойная, как у официальной отметки. Не больше одной графы на лист.",
+      "html": "<div class=\"ds-boxes\"><div class=\"ds-box\"><span class=\"ds-box__legend\">Оценка команды</span><p class=\"ds-box__head\"><span class=\"ds-box__v\">−89 %</span><span class=\"ds-box__l\">затрат на точку</span></p><p class=\"ds-box__note\">26,7 млн ₽ на 100 приборах. Подтвердить оценку должен пилот.</p></div><div class=\"ds-box ds-box--double\"><p class=\"ds-box__t\">Не проверено в поле</p><p class=\"ds-box__note\">Нелинейные шкалы, многострелочные приборы, работа на станции. Испытания пока проходили только на стенде.</p></div></div>",
+      "css": ".ds-boxes { display: grid; gap: 2.5rem; max-width: 28rem; } .ds-box { position: relative; display: grid; gap: 0.5rem; padding: 2rem 2rem 1.5rem; background: var(--paper-lift); border: 1px solid var(--ink); border-radius: 0.25rem; } .ds-box--double { border: 0.1875rem double var(--ink); } .ds-box__legend { position: absolute; top: 0; left: 1.5rem; transform: translateY(-50%); padding: 0 0.5rem; font-family: var(--font-mono); font-stretch: 87.5%; font-size: 0.75rem; font-weight: 500; line-height: 1.6; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); background: linear-gradient(var(--paper) 50%, var(--paper-lift) 50%); } .ds-box p { margin: 0; } .ds-box__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 1rem; } .ds-box__v { font-family: var(--font-mono); font-stretch: 112.5%; font-weight: 500; font-size: 3rem; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums; color: var(--ink); } .ds-box__l { font-family: var(--font-display); font-weight: 800; font-size: 1.75rem; line-height: 1; } .ds-box__t { font-family: var(--font-display); font-weight: 850; font-size: 2.5rem; line-height: 1; } .ds-box__note { font-family: var(--font-sans); font-style: italic; font-size: 1.125rem; line-height: 1.45; color: var(--ink-2); } @media (max-width: 760px) { .ds-box { padding-inline: 1.5rem; } }"
+    },
+    {
       "name": "Строка протокола",
       "kind": "custom",
-      "description": "Строка бланка испытаний: номер, показатель, условия, цифра Martian Mono в широком начертании.",
-      "html": "<table class=\"ds-proto\"><tbody><tr><td class=\"ds-proto__n\">01</td><th class=\"ds-proto__label\" scope=\"row\">Максимальная ошибка шкалы</th><td class=\"ds-proto__cond\">28 сцен стенда, средняя ошибка 0,11 %</td><td class=\"ds-proto__value\"><span class=\"ds-proto__v\">0,38</span><span class=\"ds-proto__u\">%</span></td></tr></tbody></table>",
-      "css": ".ds-proto { width: 100%; border-collapse: collapse; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); font-variant-numeric: tabular-nums lining-nums; } .ds-proto th, .ds-proto td { padding: 1rem 1rem 1rem 0; text-align: left; vertical-align: middle; border-bottom: 1px solid var(--rule-strong); } .ds-proto__n { width: 3rem; font-family: var(--font-mono); font-size: 0.875rem; color: var(--ink-3); } .ds-proto__label { font-family: var(--font-sans); font-weight: 650; font-size: 1.125rem; line-height: 1.3; color: var(--ink); } .ds-proto__cond { font-family: var(--font-sans); font-size: 1rem; line-height: 1.4; color: var(--ink-2); } .ds-proto__value { text-align: right; white-space: nowrap; } .ds-proto__v { font-family: var(--font-mono); font-stretch: 112.5%; font-weight: 500; font-size: 2.5rem; line-height: 1; letter-spacing: -0.02em; color: var(--ink); } .ds-proto__u { margin-left: 0.375rem; font-family: var(--font-mono); font-stretch: 87.5%; font-size: 0.875rem; color: var(--ink-3); }"
+      "description": "Строка бланка испытаний: номер, показатель, условия, цифра Martian Mono в широком начертании; главный замер группы лежит на светлой бумаге.",
+      "html": "<table class=\"ds-proto\"><tbody><tr class=\"ds-proto__row is-key\"><td class=\"ds-proto__n\">01</td><th class=\"ds-proto__label\" scope=\"row\">Максимальная ошибка шкалы</th><td class=\"ds-proto__cond\">28 сцен стенда, средняя ошибка 0,11 %</td><td class=\"ds-proto__value\"><span class=\"ds-proto__v\">0,38</span><span class=\"ds-proto__u\">%</span></td></tr><tr class=\"ds-proto__row\"><td class=\"ds-proto__n\">02</td><th class=\"ds-proto__label\" scope=\"row\">Инференс YOLOv8n на GPU</th><td class=\"ds-proto__cond\">RTX 5060 Laptop, FP16, кадр 1280×720</td><td class=\"ds-proto__value\"><span class=\"ds-proto__v\">7,2</span><span class=\"ds-proto__u\">мс/кадр</span></td></tr></tbody></table>",
+      "css": ".ds-proto { width: 100%; border-collapse: collapse; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); font-variant-numeric: tabular-nums lining-nums; } .ds-proto th, .ds-proto td { padding: 1rem 1rem 1rem 0; text-align: left; vertical-align: middle; border-bottom: 1px solid var(--rule-strong); } .ds-proto__n { width: 3rem; font-family: var(--font-mono); font-size: 0.875rem; color: var(--ink-3); } .ds-proto__label { font-family: var(--font-sans); font-weight: 650; font-size: 1.125rem; line-height: 1.3; color: var(--ink); } .ds-proto__cond { font-family: var(--font-sans); font-size: 1rem; line-height: 1.4; color: var(--ink-2); } .ds-proto__value { text-align: right; white-space: nowrap; } .ds-proto__v { font-family: var(--font-mono); font-stretch: 112.5%; font-weight: 500; font-size: 2.5rem; line-height: 1; letter-spacing: -0.02em; color: var(--ink); } .ds-proto__u { margin-left: 0.375rem; font-family: var(--font-mono); font-stretch: 87.5%; font-size: 0.875rem; color: var(--ink-3); } .ds-proto__row.is-key { background: var(--paper-lift); } .ds-proto__row.is-key > :first-child { padding-left: 0.5rem; } .ds-proto__row.is-key .ds-proto__label { font-weight: 750; }"
+    },
+    {
+      "name": "Вывод листа с маркером",
+      "kind": "custom",
+      "refersTo": "marker-highlight",
+      "description": "Одно предложение под заголовком листа, цвет ink-2; фраза, которую читатель уносит, — под жёлтым маркером цветом ink.",
+      "html": "<p class=\"ds-lede\">Камера измеряет только угол стрелки, а в мегапаскали его переводит <mark class=\"ds-hl\">двухточечная калибровка шкалы</mark>.</p>",
+      "css": ".ds-lede { max-width: 32ch; margin: 0; font-family: var(--font-sans); font-size: 1.75rem; line-height: 1.3; font-weight: 500; color: var(--ink-2); text-wrap: pretty; } .ds-hl { padding: 0 0.12em; margin: 0 -0.04em; border-radius: 0.125rem 0.375rem; color: var(--ink); background: linear-gradient(transparent 40%, var(--marker) 40%, var(--marker) 94%, transparent 94%); -webkit-box-decoration-break: clone; box-decoration-break: clone; } @media (max-width: 760px) { .ds-lede { font-size: 1.375rem; } }"
     }
   ],
   "narrative": {
@@ -506,8 +537,18 @@
         "section": "colors"
       },
       {
+        "name": "The Marker Rule",
+        "body": "На листе одна пометка маркером, и она стоит в выводе листа: это фраза, которую читатель уносит с листа. Маркер лежит только на бумаге, никогда на вклейке, на цифрах протокола или на заголовке. Выделенную фразу берут дословно из текста (`accent` в `content.js`, совпадение сверяет `tests/check.js`).",
+        "section": "colors"
+      },
+      {
         "name": "The Tabular Figures Rule",
         "body": "Любая цифра — в Martian Mono с `tabular-nums lining-nums`. Числа в русской нотации (0,38 %, 7,2 мс), единица измерения мельче и цветом `ink-3`.",
+        "section": "typography"
+      },
+      {
+        "name": "The Formula Rule",
+        "body": "Формула набирается, а не пишется строкой: деление — дробью в два этажа с чертой по оси знаков, min / max и цифровые индексы — индексом, знаки операций с воздухом (`kit.math`). На широком экране формула идёт одной строкой; на телефоне рвётся один раз на знаке, и знак повторяется в начале новой строки.",
         "section": "typography"
       },
       {
@@ -535,6 +576,7 @@
       "Do держать текст на бумаге не светлее `ink-3` (5,1 : 1) и проверять новый цвет против `paper` до 4,5 : 1.",
       "Do ставить высоты строк таблиц и журнала кратными строке линовки (2rem), отступы — кратными модулю 8px (`s1`–`s20`).",
       "Do набирать все цифры Martian Mono с `tabular-nums lining-nums`, в русской нотации.",
+      "Do строить фразу связками и союзами («, и», «чтобы», «запланированы в»), а не длинным тире: тире в текстах страницы — исключение, а не ритм.",
       "Do показывать статус штампом с двойной рамкой и поворотом −3°, расчётное значение — пунктиром цветом `warn`, отличая его от замера.",
       "Do давать каждому эффекту движения статичную замену при `prefers-reduced-motion` и анимировать только `transform` и `opacity`.",
       "Do подписывать сгенерированные изображения и ролики прямо в кадре (например, «Иллюстрация, сгенерированная Gemini, — не съёмка со стенда»).",
