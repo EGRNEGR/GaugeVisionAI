@@ -193,8 +193,8 @@
       list.appendChild(h('li', { class: 'gv-ops__item' }, btn, panel));
     });
 
-    var total = h('p', { class: 'gv-ops__total' },
-      h('span', { class: 'gv-label' }, c.pipelineTotal.label),
+    var total = h('p', { class: 'gv-ops__total gv-box' },
+      h('span', { class: 'gv-box__legend' }, c.pipelineTotal.label),
       h('span', { class: 'gv-ops__total-v gv-num' }, c.pipelineTotal.value, h('span', { class: 'gv-ops__lat-u' }, ' ' + c.pipelineTotal.unit)),
       h('span', { class: 'gv-caption' }, c.pipelineTotal.condition));
 

@@ -144,6 +144,8 @@
 .gv-ops__total {
   display: grid;
   gap: 0.25rem;
+  justify-self: start;
+  min-width: min(100%, 22rem);
 }
 .gv-ops__total-v {
   font-family: var(--font-mono);

@@ -352,6 +352,16 @@
   }
 
   /*
+   * Строка с пометкой маркером: accent — дословная часть text (совпадение сверяет tests/check.js).
+   * → [до, <mark class="gv-hl">, после] для GV.util.h; без accent или без совпадения — [text].
+   */
+  function marked(text, accent) {
+    var at = accent ? String(text).indexOf(accent) : -1;
+    if (at < 0) return [text];
+    return [text.slice(0, at) || null, GV.util.h('mark', { class: 'gv-hl' }, accent), text.slice(at + accent.length) || null];
+  }
+
+  /*
    * Навигация шапки страницы.
    * opts: { container, links:{id: <a>}, ids:[…], rootMargin, keepLast, onChange(id|null) }
    *   — клик по якорю «#id» внутри container: плавная прокрутка к секции и фокус на ней;
@@ -556,6 +566,7 @@
   kit.polar = polar;
   kit.icon = icon;
   kit.extLink = extLink;
+  kit.marked = marked;
 })();
 
 /*
@@ -675,6 +686,7 @@
   function mountSheet(box, sec, st) {
     var u = GV.util;
     var h = u.h;
+    var kit = GV.kit;
     var headId = 'gv-h-' + sec.id;
     var sheet = h('section', { class: 'gv-sheet gv-sheet--' + sec.id, id: sec.id, 'aria-labelledby': headId });
     var opened = h('time', { class: 'gv-sheet__time' });
@@ -696,7 +708,9 @@
       sheet.appendChild(h('div', { class: 'gv-sheet__head' },
         h('h2', { class: 'gv-h2', id: headId, 'data-reveal': 'words' }, sec.title.split('\n').map(function (part, i, all) {
           return all.length > 1 ? h('span', { class: 'gv-h2__l' }, part) : part;
-        }))));
+        })),
+        // вывод листа: одна фраза под маркером, как в page.js
+        sec.lede ? h('p', { class: 'gv-lede', 'data-reveal': '' }, kit.marked(sec.lede, sec.accent)) : null));
     }
     var body = h('div', { class: 'gv-sheet__body' });
     sheet.appendChild(body);

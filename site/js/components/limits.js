@@ -96,7 +96,7 @@
 
     /* ---------- не проверено в поле ---------- */
 
-    body.appendChild(h('aside', { class: 'gv-untested', 'data-reveal': '' },
+    body.appendChild(h('aside', { class: 'gv-untested gv-box', 'data-reveal': '' },
       h('h3', { class: 'gv-untested__t' }, c.untested.title),
       h('p', { class: 'gv-note' }, c.untested.text)));
 

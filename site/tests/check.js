@@ -16,7 +16,8 @@
  *   5. Листы идут по порядку журнала; каждый модуль из GV.page.mounts подключён <script> в index.html.
  *   6. Нет вариантов, роутера и студийной панели.
  *   7. Ни одна выводимая строка GV.content не длиннее 140 символов; заголовки листов 2–6 слов, у h1 3–6;
- *      над h1 нет надзаголовка (kicker), строка сути — одно предложение;
+ *      над h1 нет надзаголовка (kicker), строка сути — одно предложение; вывод листа (lede) — одно
+ *      предложение до 120 символов, его accent и accent строк hero и финала — дословная часть своего текста;
  *      ссылки — только GitHub EGRNEGR; 25 камер — замер, 50 и 100 — расчёт.
  *   8. Типографика строк content.js: нет « - » вместо тире, дефисных диапазонов и десятичной точки.
  *   9. Движение: в css/ transition и @keyframes трогают только transform и opacity; карточки конвейера —
@@ -479,6 +480,16 @@ function checkText(c) {
       if (n < 2 || n > 6) fail(7, `заголовок секции «${s.id}» — ${n} слов, нужно 2–6: «${s.title}»`);
     }
     if (s.lead !== undefined) fail(7, `у секции «${s.id}» остался lead — абзацев на странице нет`);
+    // Вывод листа — одна фраза, а не абзац; маркер выделяет его дословную часть
+    if (s.lede !== undefined) {
+      if (s.lede.length > 120) fail(7, `вывод листа «${s.id}» длиннее 120 символов (${s.lede.length})`);
+      if (/[.!?…]\s+\S/.test(s.lede)) fail(7, `вывод листа «${s.id}» — больше одного предложения`);
+      if (isEmpty(s.accent) || s.lede.indexOf(s.accent) < 0) fail(7, `accent листа «${s.id}» не входит дословно в его вывод`);
+    } else if (s.accent !== undefined) fail(7, `у листа «${s.id}» accent без вывода (lede)`);
+  });
+  [['hero', 'line', 'lineAccent'], ['contact', 'lead', 'leadAccent']].forEach(([k, text, accent]) => {
+    const o = c[k] || {};
+    if (o[accent] !== undefined && String(o[text] || '').indexOf(o[accent]) < 0) fail(7, `${k}.${accent} не входит дословно в ${k}.${text}`);
   });
   if (c.hero) {
     const n = words(c.hero.title || '').length;

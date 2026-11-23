@@ -59,7 +59,7 @@
             h('span', { class: 'gv-proto__fill', style: { '--w': (m.value / scaleMax).toFixed(4) } })));
         }
         var cond = [h('span', { class: 'gv-proto__cond-t' }, m.condition)];
-        tbody.appendChild(h('tr', { class: 'gv-proto__row' },
+        tbody.appendChild(h('tr', { class: m.key ? 'gv-proto__row is-key' : 'gv-proto__row' },
           h('td', { class: 'gv-proto__n gv-num' }, (n < 10 ? '0' : '') + n),
           h('th', { scope: 'row', class: 'gv-proto__label' }, m.label),
           h('td', { class: 'gv-proto__cond' }, cond),

@@ -3,16 +3,6 @@
  * Сцена с роликом во всю ширину окна (поля листа выходят за край), под ней шкала смены в масштабе,
  * затраты с полосами в точной пропорции и две колонки «Было / Стало».
  */
-.gv-shift__lead {
-  grid-column: 1 / span 7;
-  margin: calc(-1 * var(--s4)) 0 var(--s10);
-  font-size: var(--fs-xl);
-  line-height: 1.25;
-  font-weight: 500;
-  color: var(--ink-2);
-  text-wrap: balance;
-}
-
 /* ---------- сцена ---------- */
 .gv-shift__stage {
   grid-column: 1 / -1;
@@ -352,6 +342,7 @@
   display: grid;
   gap: var(--s2);
   align-content: end;
+  padding: var(--s5) var(--s5) var(--s4);
 }
 .gv-cost__head {
   display: flex;
@@ -469,7 +460,6 @@
 }
 
 @media (max-width: 900px) {
-  .gv-shift__lead { grid-column: 1 / -1; }
   .gv-ruler__out { grid-template-columns: minmax(0, 1fr); }
   .gv-cost { grid-template-columns: minmax(0, 1fr); }
   .gv-points--before,
@@ -479,7 +469,6 @@
 }
 
 @media (max-width: 760px) {
-  .gv-shift__lead { margin-top: 0; }
   .gv-cost__row { grid-template-columns: minmax(0, 1fr); }
   .gv-cost__name { grid-row: 1; }
   .gv-cost__value { grid-row: 2; white-space: normal; }

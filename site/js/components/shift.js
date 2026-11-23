@@ -47,9 +47,6 @@
 
     body.classList.add('gv-shift');
 
-    /* ---------- 0. строка-тезис ---------- */
-    body.appendChild(h('p', { class: 'gv-shift__lead', 'data-reveal': '' }, t.outside));
-
     /* ---------- 1. сцена с роликом ---------- */
 
     var reduced = motion.reduced();
@@ -243,7 +240,8 @@
     var va = num(t.after.cost.value);
     var giant = h('span', { class: 'gv-cost__giant gv-num' }, t.saving.value);
     var cost = h('div', { class: 'gv-cost', 'data-reveal': '' },
-      h('div', { class: 'gv-cost__total' },
+      h('div', { class: 'gv-cost__total gv-box' },
+        h('span', { class: 'gv-box__legend' }, t.savingLegend),
         h('p', { class: 'gv-cost__head' }, giant, h('span', { class: 'gv-cost__label' }, t.saving.label)),
         h('p', { class: 'gv-cost__qual' }, t.savingNote)),
       h('div', { class: 'gv-cost__rows' },

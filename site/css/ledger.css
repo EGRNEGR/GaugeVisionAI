@@ -49,6 +49,16 @@
   color: var(--ink);
   border-bottom-color: var(--ink);
 }
+/* Выделенная строка протокола: главный замер своей группы лежит на светлой бумаге */
+.gv-proto__row.is-key {
+  background: var(--paper-lift);
+}
+.gv-proto__row.is-key > :first-child {
+  padding-left: var(--s1);
+}
+.gv-proto__row.is-key .gv-proto__label {
+  font-weight: 750;
+}
 .gv-proto__n {
   width: 3rem;
   font-family: var(--font-mono);
@@ -484,6 +494,7 @@
     border-bottom: 1px solid var(--rule-strong);
   }
   .gv-proto tr.gv-proto__row > * { border: 0; padding: 0; }
+  .gv-proto tr.gv-proto__row.is-key { padding-inline: var(--s1); }
   .gv-proto__label { width: auto; grid-column: 2 / -1; }
   .gv-proto__cond { grid-column: 2 / -1; grid-row: 2; margin-top: 0.25rem; }
   .gv-proto__value { grid-column: 2; grid-row: 3; text-align: left !important; margin-top: var(--s1); }

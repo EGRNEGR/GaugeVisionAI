@@ -7,15 +7,6 @@
  * Сцена с роликом во всю ширину окна (поля листа выходят за край), под ней шкала смены в масштабе,
  * затраты с полосами в точной пропорции и две колонки «Было / Стало».
  */
-.gvt .gv-shift__lead {
-  grid-column: 1 / span 7;
-  margin: calc(-1 * var(--s4)) 0 var(--s10);
-  font-size: var(--fs-xl);
-  line-height: 1.25;
-  font-weight: 500;
-  color: var(--ink-2);
-  text-wrap: balance;
-}
 /* ---------- сцена ---------- */
 .gvt .gv-shift__stage {
   grid-column: 1 / -1;
@@ -350,6 +341,7 @@
   display: grid;
   gap: var(--s2);
   align-content: end;
+  padding: var(--s5) var(--s5) var(--s4);
 }
 .gvt .gv-cost__head {
   display: flex;
@@ -465,7 +457,6 @@
   font-weight: 600;
 }
 @media (max-width: 900px) {
-  .gvt .gv-shift__lead { grid-column: 1 / -1; }
   .gvt .gv-ruler__out { grid-template-columns: minmax(0, 1fr); }
   .gvt .gv-cost { grid-template-columns: minmax(0, 1fr); }
   .gvt .gv-points--before,
@@ -474,7 +465,6 @@
   .gvt .gv-shift__pair { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
-  .gvt .gv-shift__lead { margin-top: 0; }
   .gvt .gv-cost__row { grid-template-columns: minmax(0, 1fr); }
   .gvt .gv-cost__name { grid-row: 1; }
   .gvt .gv-cost__value { grid-row: 2; white-space: normal; }
@@ -498,19 +488,18 @@
         "srcMobile": "https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@23e7775eb733323ace1f838a66125783f22c7390/site/assets/video/shift.scrub-m.mp4",
         "poster": "https://static.tildacdn.com/tila3937-6636-4230-a265-623335656337/shift-before.jpg",
         "posterAfter": "https://static.tildacdn.com/tila3634-3835-4565-a633-633762373466/shift-after.jpg",
-        "label": "Ролик: обходчик записывает показание манометра в журнал и уходит; на поручне остаётся камера, которая смотрит на шкалу"
+        "label": "Ролик: обходчик записывает показание манометра в\u00a0журнал и\u00a0уходит; на поручне остаётся камера, которая смотрит на шкалу"
       },
       "captions": {
-        "before": "Было: обход раз в смену, показание пишут в журнал от руки",
+        "before": "Было: обход раз в\u00a0смену, показание пишут в\u00a0журнал от руки",
         "after": "Стало: камера на поручне читает стрелку вместо обходчика"
       },
-      "outside": "По оценке команды, до 60\u00a0% приборов ТЭЦ не подключены к АСУ ТП",
       "before": {
         "title": "Было",
         "points": [
-          "Показания записывают в журнал раз в смену",
+          "Показания записывают в\u00a0журнал раз в\u00a0смену",
           "Отклонение между обходами незаметно",
-          "Диспетчер видит запись с задержкой",
+          "Диспетчер видит запись с\u00a0задержкой",
           "Смарт-датчик: барьеры, кабели, проект, останов котла"
         ],
         "cost": {
@@ -522,22 +511,23 @@
       "after": {
         "title": "Стало",
         "points": [
-          "Камера снаружи контура: без врезки и останова",
-          "3 обработки в секунду на камеру",
+          "Камера снаружи контура: без врезки и\u00a0останова",
+          "3 обработки в\u00a0секунду на камеру",
           "Пятизонные уставки, сирена, квитирование",
-          "Архив SQLite и CSV с метками ISO 8601 UTC"
+          "Архив SQLite и\u00a0CSV с\u00a0метками ISO 8601 UTC"
         ],
         "cost": {
           "value": "33\u00a0000",
           "unit": "₽ на точку",
-          "note": "ПО и камера «Рубитек», оценка команды"
+          "note": "ПО и\u00a0камера «Рубитек», оценка команды"
         }
       },
       "saving": {
         "value": "−89\u00a0%",
         "label": "затрат на точку"
       },
-      "savingNote": "Оценка команды: 26,7\u00a0млн\u00a0₽ на 100\u00a0приборах. Нужен пилот.",
+      "savingLegend": "Оценка команды",
+      "savingNote": "26,7\u00a0млн\u00a0₽ на 100\u00a0приборах. Подтвердить оценку должен пилот.",
       "timeline": {
         "caption": "Иллюстративный сценарий",
         "shiftHours": 12,
@@ -552,7 +542,7 @@
         "deviationLabel": "Отклонение",
         "drag": "Перетащите отклонение по смене или выберите час стрелками",
         "deviationAt": "Отклонение примерно в",
-        "deviationStart": "Отклонение в начале смены",
+        "deviationStart": "Отклонение в\u00a0начале смены",
         "hourForms": [
           "час",
           "часа",
@@ -561,7 +551,7 @@
         "beforeLead": "Обходчик заметит через",
         "afterLead": "Камера увидит на следующем кадре, через",
         "afterValue": "⅓ с",
-        "emaNote": "По формуле EMA показание догонит ≈\u00a090\u00a0% скачка за 8\u00a0кадров; это оценка, а не замер",
+        "emaNote": "По формуле EMA показание догонит ≈\u00a090\u00a0% скачка за 8\u00a0кадров; это оценка, а\u00a0не замер",
         "loupe": "Одна секунда смены: три кадра камеры"
       }
     }
@@ -616,9 +606,6 @@
     var NBSP = kit.NBSP;
 
     body.classList.add('gv-shift');
-
-    /* ---------- 0. строка-тезис ---------- */
-    body.appendChild(h('p', { class: 'gv-shift__lead', 'data-reveal': '' }, t.outside));
 
     /* ---------- 1. сцена с роликом ---------- */
 
@@ -813,7 +800,8 @@
     var va = num(t.after.cost.value);
     var giant = h('span', { class: 'gv-cost__giant gv-num' }, t.saving.value);
     var cost = h('div', { class: 'gv-cost', 'data-reveal': '' },
-      h('div', { class: 'gv-cost__total' },
+      h('div', { class: 'gv-cost__total gv-box' },
+        h('span', { class: 'gv-box__legend' }, t.savingLegend),
         h('p', { class: 'gv-cost__head' }, giant, h('span', { class: 'gv-cost__label' }, t.saving.label)),
         h('p', { class: 'gv-cost__qual' }, t.savingNote)),
       h('div', { class: 'gv-cost__rows' },

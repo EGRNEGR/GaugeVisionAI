@@ -338,6 +338,16 @@
   }
 
   /*
+   * Строка с пометкой маркером: accent — дословная часть text (совпадение сверяет tests/check.js).
+   * → [до, <mark class="gv-hl">, после] для GV.util.h; без accent или без совпадения — [text].
+   */
+  function marked(text, accent) {
+    var at = accent ? String(text).indexOf(accent) : -1;
+    if (at < 0) return [text];
+    return [text.slice(0, at) || null, GV.util.h('mark', { class: 'gv-hl' }, accent), text.slice(at + accent.length) || null];
+  }
+
+  /*
    * Навигация шапки страницы.
    * opts: { container, links:{id: <a>}, ids:[…], rootMargin, keepLast, onChange(id|null) }
    *   — клик по якорю «#id» внутри container: плавная прокрутка к секции и фокус на ней;
@@ -542,4 +552,5 @@
   kit.polar = polar;
   kit.icon = icon;
   kit.extLink = extLink;
+  kit.marked = marked;
 })();

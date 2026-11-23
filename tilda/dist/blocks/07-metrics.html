@@ -42,6 +42,16 @@
   color: var(--ink);
   border-bottom-color: var(--ink);
 }
+/* Выделенная строка протокола: главный замер своей группы лежит на светлой бумаге */
+.gvt .gv-proto__row.is-key {
+  background: var(--paper-lift);
+}
+.gvt .gv-proto__row.is-key > :first-child {
+  padding-left: var(--s1);
+}
+.gvt .gv-proto__row.is-key .gv-proto__label {
+  font-weight: 750;
+}
 .gvt .gv-proto__n {
   width: 3rem;
   font-family: var(--font-mono);
@@ -133,6 +143,7 @@
       border-bottom: 1px solid var(--rule-strong);
     }
   .gvt .gv-proto tr.gv-proto__row > * { border: 0; padding: 0; }
+  .gvt .gv-proto tr.gv-proto__row.is-key { padding-inline: var(--s1); }
   .gvt .gv-proto__label { width: auto; grid-column: 2 / -1; }
   .gvt .gv-proto__cond { grid-column: 2 / -1; grid-row: 2; margin-top: 0.25rem; }
   .gvt .gv-proto__value { grid-column: 2; grid-row: 3; text-align: left !important; margin-top: var(--s1); }
@@ -164,7 +175,8 @@
         "unit": "%",
         "label": "Максимальная ошибка шкалы",
         "condition": "28\u00a0сцен стенда, средняя ошибка 0,11\u00a0%",
-        "kind": "measured"
+        "kind": "measured",
+        "key": true
       },
       {
         "id": "infer-gpu",
@@ -221,7 +233,8 @@
         "unit": "к/с",
         "label": "25\u00a0камер на одном ноутбуке",
         "condition": "стенд команды: RTX 5060 Laptop 8\u00a0GB, 16\u00a0GB RAM, 4\u00a0к/с на камеру, загрузка GPU 72\u00a0%",
-        "kind": "measured"
+        "kind": "measured",
+        "key": true
       },
       {
         "id": "infer-cpu",
@@ -340,7 +353,7 @@
             h('span', { class: 'gv-proto__fill', style: { '--w': (m.value / scaleMax).toFixed(4) } })));
         }
         var cond = [h('span', { class: 'gv-proto__cond-t' }, m.condition)];
-        tbody.appendChild(h('tr', { class: 'gv-proto__row' },
+        tbody.appendChild(h('tr', { class: m.key ? 'gv-proto__row is-key' : 'gv-proto__row' },
           h('td', { class: 'gv-proto__n gv-num' }, (n < 10 ? '0' : '') + n),
           h('th', { scope: 'row', class: 'gv-proto__label' }, m.label),
           h('td', { class: 'gv-proto__cond' }, cond),

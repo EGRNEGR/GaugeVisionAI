@@ -6,7 +6,7 @@
  *   GV.page.render(root) → cleanup()
  *
  * Лист: <section class="gv-sheet"> с номером и строкой бланка в поле, заголовком h2 (у первого листа h1
- * рисует модуль) и телом-подсеткой на 12 колонок. Модуль получает mount(body, { section, sheet, reading })
+ * рисует модуль), выводом листа (sec.lede с пометкой маркером) и телом-подсеткой на 12 колонок. Модуль получает mount(body, { section, sheet, reading })
  * и сам решает, что идёт во всю ширину листа (sheet — элемент секции).
  * Общее показание стрелки (kit.createReading) связывает прибор первого листа и чертёж листа 03.
  * Модуля нет или mount бросил — console.error, лист остаётся с заголовком: это ошибка сборки.
@@ -103,7 +103,9 @@
         sheet.appendChild(h('div', { class: 'gv-sheet__head' },
           h('h2', { class: 'gv-h2', id: headId, 'data-reveal': 'words' }, sec.title.split('\n').map(function (part, i, all) {
             return all.length > 1 ? h('span', { class: 'gv-h2__l' }, part) : part;
-          }))));
+          })),
+          // вывод листа: одна фраза под маркером — то, что читатель уносит с листа
+          sec.lede ? h('p', { class: 'gv-lede', 'data-reveal': '' }, kit.marked(sec.lede, sec.accent)) : null));
       }
       var body = h('div', { class: 'gv-sheet__body' });
       sheet.appendChild(body);

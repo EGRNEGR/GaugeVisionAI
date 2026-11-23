@@ -56,7 +56,7 @@
     var title = h('h1', { class: 'gv-hero__title', id: opts.headId, 'data-reveal': 'words' },
       h('span', { class: 'gv-hero__l1' }, words.slice(0, cut).join(' ')), ' ',
       h('span', { class: 'gv-hero__l2' }, words.slice(cut).join(' ')));
-    var line = h('p', { class: 'gv-hero__line', 'data-reveal': '' }, t.line);
+    var line = h('p', { class: 'gv-hero__line', 'data-reveal': '' }, kit.marked(t.line, t.lineAccent));
 
     var cta = kit.extLink({ class: 'gv-stamp gv-hero__cta', href: c.meta.repoUrl }, kit.icon('github'), h('span', null, t.cta));
     var next = h('a', { class: 'gv-arrow-link', href: '#compare' }, h('span', null, t.ctaNext), kit.icon('arrow'));

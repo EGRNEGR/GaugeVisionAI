@@ -1,32 +1,32 @@
 {
   "head": {
     "file": "head.html",
-    "bytes": 37486
+    "bytes": 39697
   },
   "blocks": [
     {
       "file": "blocks/01-lib.html",
       "id": "lib",
       "anchor": "",
-      "bytes": 34599
+      "bytes": 36443
     },
     {
       "file": "blocks/02-top.html",
       "id": "top",
       "anchor": "",
-      "bytes": 36856
+      "bytes": 37657
     },
     {
       "file": "blocks/03-hero.html",
       "id": "hero",
       "anchor": "hero",
-      "bytes": 34697
+      "bytes": 34846
     },
     {
       "file": "blocks/04-compare.html",
       "id": "compare",
       "anchor": "compare",
-      "bytes": 29681
+      "bytes": 29343
     },
     {
       "file": "blocks/05-reading.html",
@@ -38,31 +38,31 @@
       "file": "blocks/06-pipeline.html",
       "id": "pipeline",
       "anchor": "pipeline",
-      "bytes": 36580
+      "bytes": 36752
     },
     {
       "file": "blocks/07-metrics.html",
       "id": "metrics",
       "anchor": "metrics",
-      "bytes": 12490
+      "bytes": 12996
     },
     {
       "file": "blocks/08-architecture.html",
       "id": "architecture",
       "anchor": "architecture",
-      "bytes": 24108
+      "bytes": 24133
     },
     {
       "file": "blocks/09-limits.html",
       "id": "limits",
       "anchor": "limits",
-      "bytes": 20897
+      "bytes": 21054
     },
     {
       "file": "blocks/10-contact.html",
       "id": "contact",
       "anchor": "contact",
-      "bytes": 6908
+      "bytes": 7026
     },
     {
       "file": "blocks/11-foot.html",

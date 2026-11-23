@@ -161,6 +161,7 @@
   --red: #B8321C;              /* красное поле и авария — 5,0 : 1 */
   --ok: #1D6640;               /* НОРМА — 5,8 : 1 */
   --warn: #7E5300;             /* ПРЕДУПРЕЖДЕНИЕ — 5,6 : 1 */
+  --marker: #EBD45A;           /* маркер-выделитель: ink на нём 11,8 : 1, ink-2 — 5,9 : 1 */
 
   /* вклеенные фотографии и кадры камеры — единственные тёмные поверхности */
   --plate: #141617;
@@ -746,6 +747,52 @@ html[data-paper='tracing'] {
   max-width: 15ch;
   text-wrap: balance;
 }
+/* Вывод листа под заголовком: то, что читатель уносит с листа, одна фраза — под маркером */
+.gvt .gv-lede {
+  max-width: 32ch;
+  margin-top: var(--s4);
+  font-size: var(--fs-xl);
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+/* Маркер-выделитель проверяющего: полоса по нижней части строки, на переносе — своя на каждой строке.
+   Одна пометка на лист и только на бумаге: на вклейке маркер не виден и не нужен. */
+.gvt .gv-hl {
+  padding: 0 0.12em;
+  margin: 0 -0.04em;
+  border-radius: 0.125rem 0.375rem;
+  color: var(--ink);
+  background: linear-gradient(transparent 40%, var(--marker) 40%, var(--marker) 94%, transparent 94%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+/* Графа бланка: главный вывод блока на светлой бумаге, подпись врезана в верхнюю линию рамки */
+.gvt .gv-box {
+  position: relative;
+  padding: var(--s4) var(--s4) var(--s3);
+  background: var(--paper-lift);
+  border: 1px solid var(--ink);
+  border-radius: 0.25rem;
+}
+.gvt .gv-box__legend {
+  position: absolute;
+  top: 0;
+  left: var(--s3);
+  transform: translateY(-50%);
+  padding: 0 var(--s1);
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--ink);
+  /* над линией — бумага листа, под ней — бумага графы: подпись разрывает рамку */
+  background: linear-gradient(var(--paper) 50%, var(--paper-lift) 50%);
+}
 /* Подпись к листу — рукописная пометка на полях справа от заголовка */
 .gvt .gv-note {
   font-family: var(--font-sans);
@@ -975,6 +1022,17 @@ html[data-paper='tracing'] {
   .gvt .gv-sheet__head {
       margin-bottom: var(--s5);
     }
+  .gvt .gv-lede {
+      margin-top: var(--s3);
+      font-size: var(--fs-l);
+      line-height: 1.36;
+    }
+  .gvt .gv-box {
+      padding: var(--s4) var(--s3) var(--s3);
+    }
+  .gvt .gv-box__legend {
+      left: var(--s2);
+    }
   .gvt .gv-mast__form {
       display: none;
     }
@@ -1137,7 +1195,7 @@ html.gvt-page ::-webkit-scrollbar-thumb {
       "trackShort": "Трек №3, Умное производство",
       "copyright": "© 2026 EGRNEGR. Все права защищены. Код опубликован только для ознакомления",
       "version": "1.0.0",
-      "form": "Журнал обхода и показаний КИП, котельный цех"
+      "form": "Журнал обхода и\u00a0показаний КИП, котельный цех"
     },
     "sections": [
       {
@@ -1150,43 +1208,55 @@ html.gvt-page ::-webkit-scrollbar-thumb {
         "id": "compare",
         "index": "02",
         "nav": "Смена",
-        "form": "Было и стало",
-        "title": "Двенадцать часов против трети секунды"
+        "form": "Было и\u00a0стало",
+        "title": "Двенадцать часов против трети секунды",
+        "lede": "По оценке команды, до 60\u00a0% приборов ТЭЦ не подключены к\u00a0АСУ ТП, и\u00a0их показания знает только журнал обхода.",
+        "accent": "до 60\u00a0% приборов ТЭЦ не подключены к\u00a0АСУ ТП"
       },
       {
         "id": "reading",
         "index": "03",
         "nav": "Показание",
         "form": "Калибровка",
-        "title": "От угла θ\nк мегапаскалям"
+        "title": "От угла θ\nк\u00a0мегапаскалям",
+        "lede": "Камера измеряет только угол стрелки, а\u00a0в\u00a0мегапаскали его переводит двухточечная калибровка шкалы.",
+        "accent": "двухточечная калибровка шкалы"
       },
       {
         "id": "pipeline",
         "index": "04",
         "nav": "Конвейер",
         "form": "Обработка кадра",
-        "title": "Четыре операции над одним кадром"
+        "title": "Четыре операции над одним кадром",
+        "lede": "Локализация, нормализация, угол стрелки и\u00a0сглаживание: путь от кадра до значения занимает 30–100\u00a0мс.",
+        "accent": "30–100\u00a0мс"
       },
       {
         "id": "metrics",
         "index": "05",
         "nav": "Протокол",
         "form": "Протокол",
-        "title": "Протокол испытаний"
+        "title": "Протокол испытаний",
+        "lede": "У\u00a0каждой цифры указаны стенд, железо и\u00a0выборка, а\u00a0расчёт подписан расчётом и\u00a0не выдаётся за замер.",
+        "accent": "стенд, железо и\u00a0выборка"
       },
       {
         "id": "architecture",
         "index": "06",
         "nav": "Схема",
         "form": "Схема соединений",
-        "title": "Один сервер в локальном контуре"
+        "title": "Один сервер в\u00a0локальном контуре",
+        "lede": "Захват, распознавание, архив и\u00a0пульт работают на одном сервере без единого исходящего запроса в\u00a0интернет.",
+        "accent": "без единого исходящего запроса в\u00a0интернет"
       },
       {
         "id": "limits",
         "index": "07",
         "nav": "Замечания",
         "form": "Замечания",
-        "title": "Компромиссы, ограничения и план"
+        "title": "Компромиссы, ограничения и\u00a0план",
+        "lede": "Ограничения стоят рядом с\u00a0возможностями: что сделано, что сделано частично и\u00a0что пока только в\u00a0плане.",
+        "accent": "рядом с\u00a0возможностями"
       },
       {
         "id": "contact",
@@ -1200,7 +1270,7 @@ html.gvt-page ::-webkit-scrollbar-thumb {
       "status": {
         "done": "реализовано",
         "partial": "частично",
-        "planned": "в плане"
+        "planned": "в\u00a0плане"
       },
       "kind": {
         "measured": "замер",
@@ -1222,12 +1292,12 @@ html.gvt-page ::-webkit-scrollbar-thumb {
       "source": "Где в коде",
       "condition": "Условие",
       "risk": "Риск",
-      "response": "Ответ в коде",
+      "response": "Ответ в\u00a0коде",
       "roadmapTitle": "План",
       "stackTitle": "Спецификация",
       "opsList": "Операции над кадром",
       "latency": "Задержка",
-      "inTotal": "Отдельного замера нет: входит в конвейер целиком",
+      "inTotal": "Отдельного замера нет: входит в\u00a0конвейер целиком",
       "opsFrame": {
         "box": "gauge, conf ≥\u00a00,35",
         "ellipse": "эллипс циферблата",
@@ -1240,10 +1310,10 @@ html.gvt-page ::-webkit-scrollbar-thumb {
         "catchUp": "≈\u00a090\u00a0% за 8\u00a0кадров"
       },
       "nav": "Листы журнала",
-      "home": "GaugeVision AI, к первому листу",
+      "home": "GaugeVision AI, к\u00a0первому листу",
       "sheet": "Лист",
-      "skip": "К содержанию",
-      "newTab": "откроется в новой вкладке"
+      "skip": "К\u00a0содержанию",
+      "newTab": "откроется в\u00a0новой вкладке"
     },
     "calibration": {
       "thetaMin": 45,
@@ -1274,15 +1344,15 @@ html.gvt-page ::-webkit-scrollbar-thumb {
       },
       "sliderLabel": "Показание прибора, МПа",
       "hint": "Ведите курсором по шкале; клик фиксирует, ← → двигают",
-      "hintTouch": "Коснитесь шкалы, и стрелка встанет в точку касания",
+      "hintTouch": "Коснитесь шкалы, и\u00a0стрелка встанет в\u00a0точку касания",
       "formulaLabel": "Формула из app/vision.py",
       "substitution": "Подстановка",
       "angleLabel": "Угол стрелки θ",
       "spanLabel": "Рабочий сектор шкалы",
-      "barLabel": "то же в барах",
+      "barLabel": "то же в\u00a0барах",
       "zoneLabel": "Зона уставок",
-      "write": "Записать в журнал",
-      "written": "Записано в журнал листа 01"
+      "write": "Записать в\u00a0журнал",
+      "written": "Записано в\u00a0журнал листа 01"
     }
   };
   Object.keys(part).forEach(function (k) { c[k] = part[k]; });
@@ -2365,6 +2435,16 @@ html.gvt-page ::-webkit-scrollbar-thumb {
   }
 
   /*
+   * Строка с пометкой маркером: accent — дословная часть text (совпадение сверяет tests/check.js).
+   * → [до, <mark class="gv-hl">, после] для GV.util.h; без accent или без совпадения — [text].
+   */
+  function marked(text, accent) {
+    var at = accent ? String(text).indexOf(accent) : -1;
+    if (at < 0) return [text];
+    return [text.slice(0, at) || null, GV.util.h('mark', { class: 'gv-hl' }, accent), text.slice(at + accent.length) || null];
+  }
+
+  /*
    * Навигация шапки страницы.
    * opts: { container, links:{id: <a>}, ids:[…], rootMargin, keepLast, onChange(id|null) }
    *   — клик по якорю «#id» внутри container: плавная прокрутка к секции и фокус на ней;
@@ -2569,6 +2649,7 @@ html.gvt-page ::-webkit-scrollbar-thumb {
   kit.polar = polar;
   kit.icon = icon;
   kit.extLink = extLink;
+  kit.marked = marked;
 })();
 
 /*
@@ -2688,6 +2769,7 @@ html.gvt-page ::-webkit-scrollbar-thumb {
   function mountSheet(box, sec, st) {
     var u = GV.util;
     var h = u.h;
+    var kit = GV.kit;
     var headId = 'gv-h-' + sec.id;
     var sheet = h('section', { class: 'gv-sheet gv-sheet--' + sec.id, id: sec.id, 'aria-labelledby': headId });
     var opened = h('time', { class: 'gv-sheet__time' });
@@ -2709,7 +2791,9 @@ html.gvt-page ::-webkit-scrollbar-thumb {
       sheet.appendChild(h('div', { class: 'gv-sheet__head' },
         h('h2', { class: 'gv-h2', id: headId, 'data-reveal': 'words' }, sec.title.split('\n').map(function (part, i, all) {
           return all.length > 1 ? h('span', { class: 'gv-h2__l' }, part) : part;
-        }))));
+        })),
+        // вывод листа: одна фраза под маркером, как в page.js
+        sec.lede ? h('p', { class: 'gv-lede', 'data-reveal': '' }, kit.marked(sec.lede, sec.accent)) : null));
     }
     var body = h('div', { class: 'gv-sheet__body' });
     sheet.appendChild(body);
@@ -3203,7 +3287,8 @@ window.GV && GV.tilda && GV.tilda.boot();
   var part = {
     "hero": {
       "title": "Прибор пишет журнал сам",
-      "line": "Камера снимает стрелку КИПиА снаружи контура: без врезки, останова и интернета.",
+      "line": "Камера снимает стрелку КИПиА снаружи контура: без врезки, останова и\u00a0интернета.",
+      "lineAccent": "без врезки, останова и\u00a0интернета",
       "columns": [
         "Время",
         "Прибор",
@@ -3213,13 +3298,13 @@ window.GV && GV.tilda && GV.tilda.boot();
       "hand": "обходчик",
       "machine": "камера",
       "demo": "Демонстрация: строки считает калибровка из кода для манометра на 0–10\u00a0МПа",
-      "rate": "3 обработки в секунду на камеру",
+      "rate": "3 обработки в\u00a0секунду на камеру",
       "dialLabel": "Кадр камеры",
-      "dialHint": "Потяните стрелку, и показание ляжет строкой в журнал",
-      "dialHintTouch": "Проведите по шкале, и показание ляжет строкой в журнал",
+      "dialHint": "Потяните стрелку, и\u00a0показание ляжет строкой в\u00a0журнал",
+      "dialHintTouch": "Проведите по шкале, и\u00a0показание ляжет строкой в\u00a0журнал",
       "cta": "Код на GitHub",
       "ctaNext": "Проверить механизм",
-      "fresh": "К новым записям"
+      "fresh": "К\u00a0новым записям"
     }
   };
   Object.keys(part).forEach(function (k) { c[k] = part[k]; });
@@ -3282,7 +3367,7 @@ window.GV && GV.tilda && GV.tilda.boot();
     var title = h('h1', { class: 'gv-hero__title', id: opts.headId, 'data-reveal': 'words' },
       h('span', { class: 'gv-hero__l1' }, words.slice(0, cut).join(' ')), ' ',
       h('span', { class: 'gv-hero__l2' }, words.slice(cut).join(' ')));
-    var line = h('p', { class: 'gv-hero__line', 'data-reveal': '' }, t.line);
+    var line = h('p', { class: 'gv-hero__line', 'data-reveal': '' }, kit.marked(t.line, t.lineAccent));
 
     var cta = kit.extLink({ class: 'gv-stamp gv-hero__cta', href: c.meta.repoUrl }, kit.icon('github'), h('span', null, t.cta));
     var next = h('a', { class: 'gv-arrow-link', href: '#compare' }, h('span', null, t.ctaNext), kit.icon('arrow'));
@@ -3696,15 +3781,6 @@ window.GV && GV.tilda && GV.tilda.boot();
  * Сцена с роликом во всю ширину окна (поля листа выходят за край), под ней шкала смены в масштабе,
  * затраты с полосами в точной пропорции и две колонки «Было / Стало».
  */
-.gvt .gv-shift__lead {
-  grid-column: 1 / span 7;
-  margin: calc(-1 * var(--s4)) 0 var(--s10);
-  font-size: var(--fs-xl);
-  line-height: 1.25;
-  font-weight: 500;
-  color: var(--ink-2);
-  text-wrap: balance;
-}
 /* ---------- сцена ---------- */
 .gvt .gv-shift__stage {
   grid-column: 1 / -1;
@@ -4039,6 +4115,7 @@ window.GV && GV.tilda && GV.tilda.boot();
   display: grid;
   gap: var(--s2);
   align-content: end;
+  padding: var(--s5) var(--s5) var(--s4);
 }
 .gvt .gv-cost__head {
   display: flex;
@@ -4154,7 +4231,6 @@ window.GV && GV.tilda && GV.tilda.boot();
   font-weight: 600;
 }
 @media (max-width: 900px) {
-  .gvt .gv-shift__lead { grid-column: 1 / -1; }
   .gvt .gv-ruler__out { grid-template-columns: minmax(0, 1fr); }
   .gvt .gv-cost { grid-template-columns: minmax(0, 1fr); }
   .gvt .gv-points--before,
@@ -4163,7 +4239,6 @@ window.GV && GV.tilda && GV.tilda.boot();
   .gvt .gv-shift__pair { grid-template-columns: 1fr; }
 }
 @media (max-width: 760px) {
-  .gvt .gv-shift__lead { margin-top: 0; }
   .gvt .gv-cost__row { grid-template-columns: minmax(0, 1fr); }
   .gvt .gv-cost__name { grid-row: 1; }
   .gvt .gv-cost__value { grid-row: 2; white-space: normal; }
@@ -4187,19 +4262,18 @@ window.GV && GV.tilda && GV.tilda.boot();
         "srcMobile": "https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@23e7775eb733323ace1f838a66125783f22c7390/site/assets/video/shift.scrub-m.mp4",
         "poster": "https://static.tildacdn.com/tila3937-6636-4230-a265-623335656337/shift-before.jpg",
         "posterAfter": "https://static.tildacdn.com/tila3634-3835-4565-a633-633762373466/shift-after.jpg",
-        "label": "Ролик: обходчик записывает показание манометра в журнал и уходит; на поручне остаётся камера, которая смотрит на шкалу"
+        "label": "Ролик: обходчик записывает показание манометра в\u00a0журнал и\u00a0уходит; на поручне остаётся камера, которая смотрит на шкалу"
       },
       "captions": {
-        "before": "Было: обход раз в смену, показание пишут в журнал от руки",
+        "before": "Было: обход раз в\u00a0смену, показание пишут в\u00a0журнал от руки",
         "after": "Стало: камера на поручне читает стрелку вместо обходчика"
       },
-      "outside": "По оценке команды, до 60\u00a0% приборов ТЭЦ не подключены к АСУ ТП",
       "before": {
         "title": "Было",
         "points": [
-          "Показания записывают в журнал раз в смену",
+          "Показания записывают в\u00a0журнал раз в\u00a0смену",
           "Отклонение между обходами незаметно",
-          "Диспетчер видит запись с задержкой",
+          "Диспетчер видит запись с\u00a0задержкой",
           "Смарт-датчик: барьеры, кабели, проект, останов котла"
         ],
         "cost": {
@@ -4211,22 +4285,23 @@ window.GV && GV.tilda && GV.tilda.boot();
       "after": {
         "title": "Стало",
         "points": [
-          "Камера снаружи контура: без врезки и останова",
-          "3 обработки в секунду на камеру",
+          "Камера снаружи контура: без врезки и\u00a0останова",
+          "3 обработки в\u00a0секунду на камеру",
           "Пятизонные уставки, сирена, квитирование",
-          "Архив SQLite и CSV с метками ISO 8601 UTC"
+          "Архив SQLite и\u00a0CSV с\u00a0метками ISO 8601 UTC"
         ],
         "cost": {
           "value": "33\u00a0000",
           "unit": "₽ на точку",
-          "note": "ПО и камера «Рубитек», оценка команды"
+          "note": "ПО и\u00a0камера «Рубитек», оценка команды"
         }
       },
       "saving": {
         "value": "−89\u00a0%",
         "label": "затрат на точку"
       },
-      "savingNote": "Оценка команды: 26,7\u00a0млн\u00a0₽ на 100\u00a0приборах. Нужен пилот.",
+      "savingLegend": "Оценка команды",
+      "savingNote": "26,7\u00a0млн\u00a0₽ на 100\u00a0приборах. Подтвердить оценку должен пилот.",
       "timeline": {
         "caption": "Иллюстративный сценарий",
         "shiftHours": 12,
@@ -4241,7 +4316,7 @@ window.GV && GV.tilda && GV.tilda.boot();
         "deviationLabel": "Отклонение",
         "drag": "Перетащите отклонение по смене или выберите час стрелками",
         "deviationAt": "Отклонение примерно в",
-        "deviationStart": "Отклонение в начале смены",
+        "deviationStart": "Отклонение в\u00a0начале смены",
         "hourForms": [
           "час",
           "часа",
@@ -4250,7 +4325,7 @@ window.GV && GV.tilda && GV.tilda.boot();
         "beforeLead": "Обходчик заметит через",
         "afterLead": "Камера увидит на следующем кадре, через",
         "afterValue": "⅓ с",
-        "emaNote": "По формуле EMA показание догонит ≈\u00a090\u00a0% скачка за 8\u00a0кадров; это оценка, а не замер",
+        "emaNote": "По формуле EMA показание догонит ≈\u00a090\u00a0% скачка за 8\u00a0кадров; это оценка, а\u00a0не замер",
         "loupe": "Одна секунда смены: три кадра камеры"
       }
     }
@@ -4305,9 +4380,6 @@ window.GV && GV.tilda && GV.tilda.boot();
     var NBSP = kit.NBSP;
 
     body.classList.add('gv-shift');
-
-    /* ---------- 0. строка-тезис ---------- */
-    body.appendChild(h('p', { class: 'gv-shift__lead', 'data-reveal': '' }, t.outside));
 
     /* ---------- 1. сцена с роликом ---------- */
 
@@ -4502,7 +4574,8 @@ window.GV && GV.tilda && GV.tilda.boot();
     var va = num(t.after.cost.value);
     var giant = h('span', { class: 'gv-cost__giant gv-num' }, t.saving.value);
     var cost = h('div', { class: 'gv-cost', 'data-reveal': '' },
-      h('div', { class: 'gv-cost__total' },
+      h('div', { class: 'gv-cost__total gv-box' },
+        h('span', { class: 'gv-box__legend' }, t.savingLegend),
         h('p', { class: 'gv-cost__head' }, giant, h('span', { class: 'gv-cost__label' }, t.saving.label)),
         h('p', { class: 'gv-cost__qual' }, t.savingNote)),
       h('div', { class: 'gv-cost__rows' },
@@ -5175,6 +5248,8 @@ window.GV && GV.tilda && GV.tilda.boot();
 .gvt .gv-ops__total {
   display: grid;
   gap: 0.25rem;
+  justify-self: start;
+  min-width: min(100%, 22rem);
 }
 .gvt .gv-ops__total-v {
   font-family: var(--font-mono);
@@ -5294,12 +5369,12 @@ window.GV && GV.tilda && GV.tilda.boot();
           {
             "name": "CAPTURE_BUFFERSIZE",
             "value": "1",
-            "note": "кадр в буфере драйвера"
+            "note": "кадр в\u00a0буфере драйвера"
           },
           {
             "name": "PROCESS_FPS",
             "value": "3,0",
-            "note": "обработок в секунду на камеру"
+            "note": "обработок в\u00a0секунду на камеру"
           },
           {
             "name": "VISION_EXECUTOR_WORKERS",
@@ -5314,7 +5389,7 @@ window.GV && GV.tilda && GV.tilda.boot();
           {
             "name": "Лимит кадра смартфона",
             "value": "8\u00a0МиБ",
-            "note": "проверка в ws_phone"
+            "note": "проверка в\u00a0ws_phone"
           }
         ],
         "formula": "cap.set(CAP_PROP_BUFFERSIZE, 1)",
@@ -5366,7 +5441,7 @@ window.GV && GV.tilda && GV.tilda.boot();
         "id": "normalize",
         "index": "02",
         "title": "Нормализация",
-        "short": "Эллипс циферблата аффинно выпрямляется в круг 640 ×\u00a0640",
+        "short": "Эллипс циферблата аффинно выпрямляется в\u00a0круг 640 ×\u00a0640",
         "params": [
           {
             "name": "DIAL_SIZE",
@@ -5396,7 +5471,7 @@ window.GV && GV.tilda && GV.tilda.boot();
       {
         "id": "light",
         "index": "03",
-        "title": "Свет и контраст",
+        "title": "Свет и\u00a0контраст",
         "short": "CLAHE для циферблата, «шляпы» Black-Hat / Top-Hat для стрелки",
         "params": [
           {
@@ -5438,7 +5513,7 @@ window.GV && GV.tilda && GV.tilda.boot();
           {
             "name": "Кольцо момента",
             "value": "0,06–0,36 размера",
-            "note": "внешние риски и цифры исключены"
+            "note": "внешние риски и\u00a0цифры исключены"
           },
           {
             "name": "Гистограмма",
@@ -5448,7 +5523,7 @@ window.GV && GV.tilda && GV.tilda.boot();
           {
             "name": "Второй максимум",
             "value": "за пределами ±\u00a025°",
-            "note": "входит в уверенность"
+            "note": "входит в\u00a0уверенность"
           },
           {
             "name": "HoughLinesP",
@@ -5456,7 +5531,7 @@ window.GV && GV.tilda && GV.tilda.boot();
             "note": "линия через ось"
           },
           {
-            "name": "Согласование Hough и момента",
+            "name": "Согласование Hough и\u00a0момента",
             "value": "≤\u00a012°",
             "note": "иначе уверенность ×\u00a00,9"
           }
@@ -5484,7 +5559,7 @@ window.GV && GV.tilda && GV.tilda.boot();
           {
             "name": "Направление",
             "value": "CW или CCW",
-            "note": "задаётся в окне «Настройка»"
+            "note": "задаётся в\u00a0окне «Настройка»"
           },
           {
             "name": "Выход за шкалу",
@@ -5494,13 +5569,13 @@ window.GV && GV.tilda && GV.tilda.boot();
         ],
         "formula": "V = Vmin + ((θ − θmin) mod 360) / span · (Vmax − Vmin)",
         "file": "app/vision.py",
-        "aspect": "Перевод в МПа / бар"
+        "aspect": "Перевод в\u00a0МПа / бар"
       },
       {
         "id": "stabilize",
         "index": "06",
         "title": "Стабилизация",
-        "short": "EMA α = 0,25 и порог уверенности 0,25",
+        "short": "EMA α = 0,25 и\u00a0порог уверенности 0,25",
         "params": [
           {
             "name": "EMA_ALPHA",
@@ -5546,7 +5621,7 @@ window.GV && GV.tilda && GV.tilda.boot();
           {
             "name": "Статусы",
             "value": "normal, warning, alert",
-            "note": "хранятся в БД"
+            "note": "хранятся в\u00a0БД"
           },
           {
             "name": "Порядок",
@@ -5567,7 +5642,7 @@ window.GV && GV.tilda && GV.tilda.boot();
         "id": "output",
         "index": "08",
         "title": "Выдача",
-        "short": "WebSocket на пульт, SQLite раз в секунду, CSV",
+        "short": "WebSocket на пульт, SQLite раз в\u00a0секунду, CSV",
         "params": [
           {
             "name": "DB_WRITE_INTERVAL",
@@ -5587,12 +5662,12 @@ window.GV && GV.tilda && GV.tilda.boot();
           {
             "name": "MJPEG_FPS",
             "value": "8",
-            "note": "превью с оверлеем"
+            "note": "превью с\u00a0оверлеем"
           },
           {
             "name": "CSV",
-            "value": "UTF-8\u00a0с BOM, разделитель «;»",
-            "note": "открывается в Excel"
+            "value": "UTF-8\u00a0с\u00a0BOM, разделитель «;»",
+            "note": "открывается в\u00a0Excel"
           }
         ],
         "formula": "запись, если valid и прошло ≥ 1 с с прошлой записи",
@@ -5606,7 +5681,7 @@ window.GV && GV.tilda && GV.tilda.boot();
         "index": "01",
         "step": "Локализация",
         "title": "Локализация: CLAHE + YOLOv8n",
-        "frame": "Бокс корпуса и эллипс циферблата",
+        "frame": "Бокс корпуса и\u00a0эллипс циферблата",
         "formula": [
           "CLAHE clip 3,0, сетка 8×8",
           "ROI = YOLOv8n(кадр)"
@@ -5636,7 +5711,7 @@ window.GV && GV.tilda && GV.tilda.boot();
         "index": "02",
         "step": "Эллипс → круг",
         "title": "Эллипс → круг: аффинная коррекция",
-        "frame": "Наклонный циферблат выпрямлен в круг 640\u00a0px",
+        "frame": "Наклонный циферблат выпрямлен в\u00a0круг 640\u00a0px",
         "formula": [
           "M = T(S/2)·R(φ)·diag(R/a, R/b)·R(−φ)·T(−c)"
         ],
@@ -5661,7 +5736,7 @@ window.GV && GV.tilda && GV.tilda.boot();
         "index": "03",
         "step": "Угол θ",
         "title": "Угол θ: радиальный момент + HoughLinesP",
-        "frame": "Гистограмма момента и линия Hough через ось",
+        "frame": "Гистограмма момента и\u00a0линия Hough через ось",
         "formula": [
           "θ = (atan2(y₁−y₀, x₁−x₀) − 90°) mod 360",
           "V = Vmin + ((θ−θmin) mod 360)/span·(Vmax−Vmin)"
@@ -5687,7 +5762,7 @@ window.GV && GV.tilda && GV.tilda.boot();
         "index": "04",
         "step": "Сглаживание",
         "title": "Сглаживание EMA α = 0,25",
-        "frame": "Сырые отсчёты с вибрацией и кривая EMA",
+        "frame": "Сырые отсчёты с\u00a0вибрацией и\u00a0кривая EMA",
         "formula": [
           "EMA(t) = α·V(t) + (1 − α)·EMA(t − 1)"
         ],
@@ -5913,8 +5988,8 @@ window.GV && GV.tilda && GV.tilda.boot();
       list.appendChild(h('li', { class: 'gv-ops__item' }, btn, panel));
     });
 
-    var total = h('p', { class: 'gv-ops__total' },
-      h('span', { class: 'gv-label' }, c.pipelineTotal.label),
+    var total = h('p', { class: 'gv-ops__total gv-box' },
+      h('span', { class: 'gv-box__legend' }, c.pipelineTotal.label),
       h('span', { class: 'gv-ops__total-v gv-num' }, c.pipelineTotal.value, h('span', { class: 'gv-ops__lat-u' }, ' ' + c.pipelineTotal.unit)),
       h('span', { class: 'gv-caption' }, c.pipelineTotal.condition));
 
@@ -6026,6 +6101,16 @@ window.GV && GV.tilda && GV.tilda.boot();
   color: var(--ink);
   border-bottom-color: var(--ink);
 }
+/* Выделенная строка протокола: главный замер своей группы лежит на светлой бумаге */
+.gvt .gv-proto__row.is-key {
+  background: var(--paper-lift);
+}
+.gvt .gv-proto__row.is-key > :first-child {
+  padding-left: var(--s1);
+}
+.gvt .gv-proto__row.is-key .gv-proto__label {
+  font-weight: 750;
+}
 .gvt .gv-proto__n {
   width: 3rem;
   font-family: var(--font-mono);
@@ -6117,6 +6202,7 @@ window.GV && GV.tilda && GV.tilda.boot();
       border-bottom: 1px solid var(--rule-strong);
     }
   .gvt .gv-proto tr.gv-proto__row > * { border: 0; padding: 0; }
+  .gvt .gv-proto tr.gv-proto__row.is-key { padding-inline: var(--s1); }
   .gvt .gv-proto__label { width: auto; grid-column: 2 / -1; }
   .gvt .gv-proto__cond { grid-column: 2 / -1; grid-row: 2; margin-top: 0.25rem; }
   .gvt .gv-proto__value { grid-column: 2; grid-row: 3; text-align: left !important; margin-top: var(--s1); }
@@ -6148,7 +6234,8 @@ window.GV && GV.tilda && GV.tilda.boot();
         "unit": "%",
         "label": "Максимальная ошибка шкалы",
         "condition": "28\u00a0сцен стенда, средняя ошибка 0,11\u00a0%",
-        "kind": "measured"
+        "kind": "measured",
+        "key": true
       },
       {
         "id": "infer-gpu",
@@ -6205,7 +6292,8 @@ window.GV && GV.tilda && GV.tilda.boot();
         "unit": "к/с",
         "label": "25\u00a0камер на одном ноутбуке",
         "condition": "стенд команды: RTX 5060 Laptop 8\u00a0GB, 16\u00a0GB RAM, 4\u00a0к/с на камеру, загрузка GPU 72\u00a0%",
-        "kind": "measured"
+        "kind": "measured",
+        "key": true
       },
       {
         "id": "infer-cpu",
@@ -6324,7 +6412,7 @@ window.GV && GV.tilda && GV.tilda.boot();
             h('span', { class: 'gv-proto__fill', style: { '--w': (m.value / scaleMax).toFixed(4) } })));
         }
         var cond = [h('span', { class: 'gv-proto__cond-t' }, m.condition)];
-        tbody.appendChild(h('tr', { class: 'gv-proto__row' },
+        tbody.appendChild(h('tr', { class: m.key ? 'gv-proto__row is-key' : 'gv-proto__row' },
           h('td', { class: 'gv-proto__n gv-num' }, (n < 10 ? '0' : '') + n),
           h('th', { scope: 'row', class: 'gv-proto__label' }, m.label),
           h('td', { class: 'gv-proto__cond' }, cond),
@@ -6649,7 +6737,7 @@ window.GV && GV.tilda && GV.tilda.boot();
         {
           "id": "streamer",
           "label": "streamer.py",
-          "sub": "захват в отдельных потоках, буфер 1\u00a0кадр, переподключение 1 → 15\u00a0с",
+          "sub": "захват в\u00a0отдельных потоках, буфер 1\u00a0кадр, переподключение 1 → 15\u00a0с",
           "group": "server",
           "file": "app/streamer.py"
         },
@@ -6740,17 +6828,17 @@ window.GV && GV.tilda && GV.tilda.boot();
         {
           "from": "main",
           "to": "dashboard",
-          "label": "WSS и MJPEG"
+          "label": "WSS и\u00a0MJPEG"
         },
         {
           "from": "main",
           "to": "db",
-          "label": "запись раз в 1\u00a0с"
+          "label": "запись раз в\u00a01\u00a0с"
         },
         {
           "from": "db",
           "to": "main",
-          "label": "история и CSV"
+          "label": "история и\u00a0CSV"
         },
         {
           "from": "cert",
@@ -6820,7 +6908,7 @@ window.GV && GV.tilda && GV.tilda.boot();
         "Компонент",
         "Версия"
       ],
-      "boundaryLabel": "Локальный контур: HTTPS / WSS, без исходящих запросов в интернет",
+      "boundaryLabel": "Локальный контур: HTTPS / WSS, без исходящих запросов в\u00a0интернет",
       "hint": "Наведите на узел или выберите его стрелками, чтобы подсветить путь сигнала",
       "hintTouch": "Коснитесь узла, чтобы подсветить путь сигнала"
     }
@@ -7377,13 +7465,13 @@ window.GV && GV.tilda && GV.tilda.boot();
         "id": "yolo-nano",
         "chose": "YOLOv8n только для поиска корпуса",
         "cost": "Стрелку ищет геометрия OpenCV, не нейросеть",
-        "why": "7,2\u00a0мс/кадр на GPU, 29\u00a0мс на CPU. Класс Needle в модели есть, конвейер его не использует.",
+        "why": "7,2\u00a0мс/кадр на GPU, 29\u00a0мс на CPU. Класс Needle в\u00a0модели есть, конвейер его не использует.",
         "source": "models/gauge_yolov8.pt, YOLO_CLASSES в app/config.py"
       },
       {
         "id": "affine",
         "chose": "Аффинная нормализация эллипса",
-        "cost": "Проверено до ≈\u00a041°, сильные наклоны запланированы в Roadmap 02",
+        "cost": "Проверено до ≈\u00a041°, сильные наклоны запланированы в\u00a0Roadmap 02",
         "why": "Эллипс по контуру находится на любом круглом приборе без разметки рисок.",
         "source": "roi_from_ellipse, normalize_dial в app/vision.py"
       },
@@ -7396,30 +7484,30 @@ window.GV && GV.tilda && GV.tilda.boot();
       },
       {
         "id": "process-fps",
-        "chose": "3 обработки в секунду на камеру",
+        "chose": "3 обработки в\u00a0секунду на камеру",
         "cost": "Мониторинг, не видеопоток: броски короче трети секунды не видны",
-        "why": "25\u00a0камер замерены при 4\u00a0к/с на камеру (100\u00a0к/с, GPU 72\u00a0%), так что у режима 3\u00a0к/с есть запас.",
+        "why": "25\u00a0камер замерены при 4\u00a0к/с на камеру (100\u00a0к/с, GPU 72\u00a0%), так что у\u00a0режима 3\u00a0к/с есть запас.",
         "source": "PROCESS_FPS = 3.0 в app/config.py"
       },
       {
         "id": "confidence",
-        "chose": "Порог уверенности 0,25 и удержание значения",
+        "chose": "Порог уверенности 0,25 и\u00a0удержание значения",
         "cost": "При грязном стекле пульт держит последнее достоверное значение; автоалерта нет",
-        "why": "Недостоверные точки не попадают в архив, и тренд не скачет. Автоалерт стоит в плане.",
+        "why": "Недостоверные точки не попадают в\u00a0архив, и\u00a0тренд не скачет. Автоалерт стоит в\u00a0плане.",
         "source": "MIN_NEEDLE_CONFIDENCE = 0.25 в app/config.py"
       },
       {
         "id": "local",
         "chose": "Самоподписанный сертификат, локальный контур",
-        "cost": "Браузер раз предупреждает о сертификате на каждом новом устройстве",
-        "why": "Ни одного исходящего запроса в интернет. Без HTTPS нет доступа к камере смартфона.",
+        "cost": "Браузер раз предупреждает о\u00a0сертификате на каждом новом устройстве",
+        "why": "Ни одного исходящего запроса в\u00a0интернет. Без HTTPS нет доступа к\u00a0камере смартфона.",
         "source": "app/cert_gen.py, run.py"
       },
       {
         "id": "sqlite",
-        "chose": "SQLite и CSV вместо интеграции со SCADA",
-        "cost": "Связи с АСУ ТП нет: Modbus TCP и OPC UA запланированы в Roadmap 02",
-        "why": "Запуск без проекта интеграции: архив и выгрузка в Excel работают сразу.",
+        "chose": "SQLite и\u00a0CSV вместо интеграции со SCADA",
+        "cost": "Связи с\u00a0АСУ ТП нет: Modbus TCP и\u00a0OPC UA запланированы в\u00a0Roadmap 02",
+        "why": "Запуск без проекта интеграции: архив и\u00a0выгрузка в\u00a0Excel работают сразу.",
         "source": "app/db.py"
       }
     ],
@@ -7427,9 +7515,9 @@ window.GV && GV.tilda && GV.tilda.boot();
       {
         "id": "glare",
         "condition": "Блики, тени, копоть",
-        "risk": "Ошибки выделения шкалы и стрелки",
+        "risk": "Ошибки выделения шкалы и\u00a0стрелки",
         "response": "CLAHE при поиске циферблата; Black-Hat / Top-Hat 31×31; Otsu по кольцу; фонарь смартфона",
-        "note": "Отдельной обработки копоти в коде нет",
+        "note": "Отдельной обработки копоти в\u00a0коде нет",
         "status": "done"
       },
       {
@@ -7443,15 +7531,15 @@ window.GV && GV.tilda && GV.tilda.boot();
         "id": "angle",
         "condition": "Съёмка под углом",
         "risk": "Искажение геометрии шкалы",
-        "response": "Аффинная нормализация в круг 640\u00a0px, проверена при наклоне до ≈\u00a041°",
-        "note": "Сильные наклоны запланированы в Roadmap 02",
+        "response": "Аффинная нормализация в\u00a0круг 640\u00a0px, проверена при наклоне до ≈\u00a041°",
+        "note": "Сильные наклоны запланированы в\u00a0Roadmap 02",
         "status": "partial"
       },
       {
         "id": "dirt",
         "condition": "Загрязнение стекла",
         "risk": "Падение достоверности",
-        "response": "Порог 0,25: недостоверный кадр не пишется, а после 3 промахов прибор ищется заново",
+        "response": "Порог 0,25: недостоверный кадр не пишется, а\u00a0после 3 промахов прибор ищется заново",
         "note": "Автоалерт запланирован",
         "status": "partial"
       },
@@ -7459,12 +7547,12 @@ window.GV && GV.tilda && GV.tilda.boot();
         "id": "network",
         "condition": "Обрыв сети или камеры",
         "risk": "Потеря телеметрии",
-        "response": "Переподключение 1 → 15\u00a0с, после 8 неудач статус «офлайн». Смартфон без кадров через 6\u00a0с получает «переподключение», через 30\u00a0с «офлайн»",
+        "response": "Переподключение 1 → 15\u00a0с, после 8 неудач статус «офлайн». Смартфон без кадров через 6\u00a0с\u00a0получает «переподключение», через 30\u00a0с\u00a0«офлайн»",
         "status": "done"
       }
     ],
     "untested": {
-      "title": "Не проверено в поле",
+      "title": "Не проверено в\u00a0поле",
       "text": "Нелинейные шкалы, многострелочные приборы, работа на станции. Испытания пока проходили только на стенде."
     },
     "roadmap": [
@@ -7476,7 +7564,7 @@ window.GV && GV.tilda && GV.tilda.boot();
           "6 классов приборов",
           "YOLOv8n на CUDA",
           "смартфон по QR-коду",
-          "уставки, сирена и экспорт в CSV"
+          "уставки, сирена и\u00a0экспорт в\u00a0CSV"
         ]
       },
       {
@@ -7484,10 +7572,10 @@ window.GV && GV.tilda && GV.tilda.boot();
         "title": "Связь со SCADA",
         "status": "planned",
         "items": [
-          "Modbus TCP и OPC UA",
+          "Modbus TCP и\u00a0OPC UA",
           "полевой пилот на станции",
           "полная гомография",
-          "нелинейные шкалы и многоточечная калибровка"
+          "нелинейные шкалы и\u00a0многоточечная калибровка"
         ]
       },
       {
@@ -7495,7 +7583,7 @@ window.GV && GV.tilda && GV.tilda.boot();
         "title": "Масштаб цеха",
         "status": "planned",
         "items": [
-          "PTZ-камеры с пресетами обхода: одна камера на десятки приборов",
+          "PTZ-камеры с\u00a0пресетами обхода: одна камера на десятки приборов",
           "нательные регистраторы обходчиков"
         ]
       }
@@ -7601,7 +7689,7 @@ window.GV && GV.tilda && GV.tilda.boot();
 
     /* ---------- не проверено в поле ---------- */
 
-    body.appendChild(h('aside', { class: 'gv-untested', 'data-reveal': '' },
+    body.appendChild(h('aside', { class: 'gv-untested gv-box', 'data-reveal': '' },
       h('h3', { class: 'gv-untested__t' }, c.untested.title),
       h('p', { class: 'gv-note' }, c.untested.text)));
 
@@ -7741,8 +7829,9 @@ window.GV && GV.tilda && GV.tilda.boot();
       "acceptedLabel": "Смену принял",
       "acceptedBy": "GaugeVision AI",
       "opened": "Лист открыт",
-      "yourEntries": "Ваших записей в журнале",
-      "lead": "Код, README с условиями замеров и историю коммитов можно посмотреть в репозитории.",
+      "yourEntries": "Ваших записей в\u00a0журнале",
+      "lead": "Код, README с\u00a0условиями замеров и\u00a0историю коммитов можно посмотреть в\u00a0репозитории.",
+      "leadAccent": "README с\u00a0условиями замеров",
       "links": [
         {
           "id": "repo",
@@ -7811,7 +7900,7 @@ window.GV && GV.tilda && GV.tilda.boot();
 
     body.appendChild(handover);
     body.appendChild(h('div', { class: 'gv-close__act', 'data-reveal': '' },
-      h('p', { class: 'gv-close__lead' }, t.lead),
+      h('p', { class: 'gv-close__lead' }, kit.marked(t.lead, t.leadAccent)),
       cta,
       kit.extLink({ class: 'gv-close__license', href: license.href }, license.label)));
 

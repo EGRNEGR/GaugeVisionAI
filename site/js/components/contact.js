@@ -49,7 +49,7 @@
 
     body.appendChild(handover);
     body.appendChild(h('div', { class: 'gv-close__act', 'data-reveal': '' },
-      h('p', { class: 'gv-close__lead' }, t.lead),
+      h('p', { class: 'gv-close__lead' }, kit.marked(t.lead, t.leadAccent)),
       cta,
       kit.extLink({ class: 'gv-close__license', href: license.href }, license.label)));
 

@@ -147,6 +147,8 @@
 .gvt .gv-ops__total {
   display: grid;
   gap: 0.25rem;
+  justify-self: start;
+  min-width: min(100%, 22rem);
 }
 .gvt .gv-ops__total-v {
   font-family: var(--font-mono);
@@ -266,12 +268,12 @@
           {
             "name": "CAPTURE_BUFFERSIZE",
             "value": "1",
-            "note": "кадр в буфере драйвера"
+            "note": "кадр в\u00a0буфере драйвера"
           },
           {
             "name": "PROCESS_FPS",
             "value": "3,0",
-            "note": "обработок в секунду на камеру"
+            "note": "обработок в\u00a0секунду на камеру"
           },
           {
             "name": "VISION_EXECUTOR_WORKERS",
@@ -286,7 +288,7 @@
           {
             "name": "Лимит кадра смартфона",
             "value": "8\u00a0МиБ",
-            "note": "проверка в ws_phone"
+            "note": "проверка в\u00a0ws_phone"
           }
         ],
         "formula": "cap.set(CAP_PROP_BUFFERSIZE, 1)",
@@ -338,7 +340,7 @@
         "id": "normalize",
         "index": "02",
         "title": "Нормализация",
-        "short": "Эллипс циферблата аффинно выпрямляется в круг 640 ×\u00a0640",
+        "short": "Эллипс циферблата аффинно выпрямляется в\u00a0круг 640 ×\u00a0640",
         "params": [
           {
             "name": "DIAL_SIZE",
@@ -368,7 +370,7 @@
       {
         "id": "light",
         "index": "03",
-        "title": "Свет и контраст",
+        "title": "Свет и\u00a0контраст",
         "short": "CLAHE для циферблата, «шляпы» Black-Hat / Top-Hat для стрелки",
         "params": [
           {
@@ -410,7 +412,7 @@
           {
             "name": "Кольцо момента",
             "value": "0,06–0,36 размера",
-            "note": "внешние риски и цифры исключены"
+            "note": "внешние риски и\u00a0цифры исключены"
           },
           {
             "name": "Гистограмма",
@@ -420,7 +422,7 @@
           {
             "name": "Второй максимум",
             "value": "за пределами ±\u00a025°",
-            "note": "входит в уверенность"
+            "note": "входит в\u00a0уверенность"
           },
           {
             "name": "HoughLinesP",
@@ -428,7 +430,7 @@
             "note": "линия через ось"
           },
           {
-            "name": "Согласование Hough и момента",
+            "name": "Согласование Hough и\u00a0момента",
             "value": "≤\u00a012°",
             "note": "иначе уверенность ×\u00a00,9"
           }
@@ -456,7 +458,7 @@
           {
             "name": "Направление",
             "value": "CW или CCW",
-            "note": "задаётся в окне «Настройка»"
+            "note": "задаётся в\u00a0окне «Настройка»"
           },
           {
             "name": "Выход за шкалу",
@@ -466,13 +468,13 @@
         ],
         "formula": "V = Vmin + ((θ − θmin) mod 360) / span · (Vmax − Vmin)",
         "file": "app/vision.py",
-        "aspect": "Перевод в МПа / бар"
+        "aspect": "Перевод в\u00a0МПа / бар"
       },
       {
         "id": "stabilize",
         "index": "06",
         "title": "Стабилизация",
-        "short": "EMA α = 0,25 и порог уверенности 0,25",
+        "short": "EMA α = 0,25 и\u00a0порог уверенности 0,25",
         "params": [
           {
             "name": "EMA_ALPHA",
@@ -518,7 +520,7 @@
           {
             "name": "Статусы",
             "value": "normal, warning, alert",
-            "note": "хранятся в БД"
+            "note": "хранятся в\u00a0БД"
           },
           {
             "name": "Порядок",
@@ -539,7 +541,7 @@
         "id": "output",
         "index": "08",
         "title": "Выдача",
-        "short": "WebSocket на пульт, SQLite раз в секунду, CSV",
+        "short": "WebSocket на пульт, SQLite раз в\u00a0секунду, CSV",
         "params": [
           {
             "name": "DB_WRITE_INTERVAL",
@@ -559,12 +561,12 @@
           {
             "name": "MJPEG_FPS",
             "value": "8",
-            "note": "превью с оверлеем"
+            "note": "превью с\u00a0оверлеем"
           },
           {
             "name": "CSV",
-            "value": "UTF-8\u00a0с BOM, разделитель «;»",
-            "note": "открывается в Excel"
+            "value": "UTF-8\u00a0с\u00a0BOM, разделитель «;»",
+            "note": "открывается в\u00a0Excel"
           }
         ],
         "formula": "запись, если valid и прошло ≥ 1 с с прошлой записи",
@@ -578,7 +580,7 @@
         "index": "01",
         "step": "Локализация",
         "title": "Локализация: CLAHE + YOLOv8n",
-        "frame": "Бокс корпуса и эллипс циферблата",
+        "frame": "Бокс корпуса и\u00a0эллипс циферблата",
         "formula": [
           "CLAHE clip 3,0, сетка 8×8",
           "ROI = YOLOv8n(кадр)"
@@ -608,7 +610,7 @@
         "index": "02",
         "step": "Эллипс → круг",
         "title": "Эллипс → круг: аффинная коррекция",
-        "frame": "Наклонный циферблат выпрямлен в круг 640\u00a0px",
+        "frame": "Наклонный циферблат выпрямлен в\u00a0круг 640\u00a0px",
         "formula": [
           "M = T(S/2)·R(φ)·diag(R/a, R/b)·R(−φ)·T(−c)"
         ],
@@ -633,7 +635,7 @@
         "index": "03",
         "step": "Угол θ",
         "title": "Угол θ: радиальный момент + HoughLinesP",
-        "frame": "Гистограмма момента и линия Hough через ось",
+        "frame": "Гистограмма момента и\u00a0линия Hough через ось",
         "formula": [
           "θ = (atan2(y₁−y₀, x₁−x₀) − 90°) mod 360",
           "V = Vmin + ((θ−θmin) mod 360)/span·(Vmax−Vmin)"
@@ -659,7 +661,7 @@
         "index": "04",
         "step": "Сглаживание",
         "title": "Сглаживание EMA α = 0,25",
-        "frame": "Сырые отсчёты с вибрацией и кривая EMA",
+        "frame": "Сырые отсчёты с\u00a0вибрацией и\u00a0кривая EMA",
         "formula": [
           "EMA(t) = α·V(t) + (1 − α)·EMA(t − 1)"
         ],
@@ -885,8 +887,8 @@
       list.appendChild(h('li', { class: 'gv-ops__item' }, btn, panel));
     });
 
-    var total = h('p', { class: 'gv-ops__total' },
-      h('span', { class: 'gv-label' }, c.pipelineTotal.label),
+    var total = h('p', { class: 'gv-ops__total gv-box' },
+      h('span', { class: 'gv-box__legend' }, c.pipelineTotal.label),
       h('span', { class: 'gv-ops__total-v gv-num' }, c.pipelineTotal.value, h('span', { class: 'gv-ops__lat-u' }, ' ' + c.pipelineTotal.unit)),
       h('span', { class: 'gv-caption' }, c.pipelineTotal.condition));
 

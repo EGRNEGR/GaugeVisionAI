@@ -115,6 +115,7 @@
   function mountSheet(box, sec, st) {
     var u = GV.util;
     var h = u.h;
+    var kit = GV.kit;
     var headId = 'gv-h-' + sec.id;
     var sheet = h('section', { class: 'gv-sheet gv-sheet--' + sec.id, id: sec.id, 'aria-labelledby': headId });
     var opened = h('time', { class: 'gv-sheet__time' });
@@ -136,7 +137,9 @@
       sheet.appendChild(h('div', { class: 'gv-sheet__head' },
         h('h2', { class: 'gv-h2', id: headId, 'data-reveal': 'words' }, sec.title.split('\n').map(function (part, i, all) {
           return all.length > 1 ? h('span', { class: 'gv-h2__l' }, part) : part;
-        }))));
+        })),
+        // вывод листа: одна фраза под маркером, как в page.js
+        sec.lede ? h('p', { class: 'gv-lede', 'data-reveal': '' }, kit.marked(sec.lede, sec.accent)) : null));
     }
     var body = h('div', { class: 'gv-sheet__body' });
     sheet.appendChild(body);

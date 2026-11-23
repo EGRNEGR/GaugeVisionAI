@@ -246,6 +246,55 @@
   text-wrap: balance;
 }
 
+/* Вывод листа под заголовком: то, что читатель уносит с листа, одна фраза — под маркером */
+.gv-lede {
+  max-width: 32ch;
+  margin-top: var(--s4);
+  font-size: var(--fs-xl);
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* Маркер-выделитель проверяющего: полоса по нижней части строки, на переносе — своя на каждой строке.
+   Одна пометка на лист и только на бумаге: на вклейке маркер не виден и не нужен. */
+.gv-hl {
+  padding: 0 0.12em;
+  margin: 0 -0.04em;
+  border-radius: 0.125rem 0.375rem;
+  color: var(--ink);
+  background: linear-gradient(transparent 40%, var(--marker) 40%, var(--marker) 94%, transparent 94%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Графа бланка: главный вывод блока на светлой бумаге, подпись врезана в верхнюю линию рамки */
+.gv-box {
+  position: relative;
+  padding: var(--s4) var(--s4) var(--s3);
+  background: var(--paper-lift);
+  border: 1px solid var(--ink);
+  border-radius: 0.25rem;
+}
+.gv-box__legend {
+  position: absolute;
+  top: 0;
+  left: var(--s3);
+  transform: translateY(-50%);
+  padding: 0 var(--s1);
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--ink);
+  /* над линией — бумага листа, под ней — бумага графы: подпись разрывает рамку */
+  background: linear-gradient(var(--paper) 50%, var(--paper-lift) 50%);
+}
+
 /* Подпись к листу — рукописная пометка на полях справа от заголовка */
 .gv-note {
   font-family: var(--font-sans);
@@ -484,6 +533,17 @@
   }
   .gv-sheet__head {
     margin-bottom: var(--s5);
+  }
+  .gv-lede {
+    margin-top: var(--s3);
+    font-size: var(--fs-l);
+    line-height: 1.36;
+  }
+  .gv-box {
+    padding: var(--s4) var(--s3) var(--s3);
+  }
+  .gv-box__legend {
+    left: var(--s2);
   }
   .gv-mast__form {
     display: none;

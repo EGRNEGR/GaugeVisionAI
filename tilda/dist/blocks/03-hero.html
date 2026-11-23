@@ -386,7 +386,8 @@
   var part = {
     "hero": {
       "title": "Прибор пишет журнал сам",
-      "line": "Камера снимает стрелку КИПиА снаружи контура: без врезки, останова и интернета.",
+      "line": "Камера снимает стрелку КИПиА снаружи контура: без врезки, останова и\u00a0интернета.",
+      "lineAccent": "без врезки, останова и\u00a0интернета",
       "columns": [
         "Время",
         "Прибор",
@@ -396,13 +397,13 @@
       "hand": "обходчик",
       "machine": "камера",
       "demo": "Демонстрация: строки считает калибровка из кода для манометра на 0–10\u00a0МПа",
-      "rate": "3 обработки в секунду на камеру",
+      "rate": "3 обработки в\u00a0секунду на камеру",
       "dialLabel": "Кадр камеры",
-      "dialHint": "Потяните стрелку, и показание ляжет строкой в журнал",
-      "dialHintTouch": "Проведите по шкале, и показание ляжет строкой в журнал",
+      "dialHint": "Потяните стрелку, и\u00a0показание ляжет строкой в\u00a0журнал",
+      "dialHintTouch": "Проведите по шкале, и\u00a0показание ляжет строкой в\u00a0журнал",
       "cta": "Код на GitHub",
       "ctaNext": "Проверить механизм",
-      "fresh": "К новым записям"
+      "fresh": "К\u00a0новым записям"
     }
   };
   Object.keys(part).forEach(function (k) { c[k] = part[k]; });
@@ -465,7 +466,7 @@
     var title = h('h1', { class: 'gv-hero__title', id: opts.headId, 'data-reveal': 'words' },
       h('span', { class: 'gv-hero__l1' }, words.slice(0, cut).join(' ')), ' ',
       h('span', { class: 'gv-hero__l2' }, words.slice(cut).join(' ')));
-    var line = h('p', { class: 'gv-hero__line', 'data-reveal': '' }, t.line);
+    var line = h('p', { class: 'gv-hero__line', 'data-reveal': '' }, kit.marked(t.line, t.lineAccent));
 
     var cta = kit.extLink({ class: 'gv-stamp gv-hero__cta', href: c.meta.repoUrl }, kit.icon('github'), h('span', null, t.cta));
     var next = h('a', { class: 'gv-arrow-link', href: '#compare' }, h('span', null, t.ctaNext), kit.icon('arrow'));

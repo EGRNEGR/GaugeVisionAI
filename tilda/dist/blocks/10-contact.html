@@ -105,8 +105,9 @@
       "acceptedLabel": "Смену принял",
       "acceptedBy": "GaugeVision AI",
       "opened": "Лист открыт",
-      "yourEntries": "Ваших записей в журнале",
-      "lead": "Код, README с условиями замеров и историю коммитов можно посмотреть в репозитории.",
+      "yourEntries": "Ваших записей в\u00a0журнале",
+      "lead": "Код, README с\u00a0условиями замеров и\u00a0историю коммитов можно посмотреть в\u00a0репозитории.",
+      "leadAccent": "README с\u00a0условиями замеров",
       "links": [
         {
           "id": "repo",
@@ -175,7 +176,7 @@
 
     body.appendChild(handover);
     body.appendChild(h('div', { class: 'gv-close__act', 'data-reveal': '' },
-      h('p', { class: 'gv-close__lead' }, t.lead),
+      h('p', { class: 'gv-close__lead' }, kit.marked(t.lead, t.leadAccent)),
       cta,
       kit.extLink({ class: 'gv-close__license', href: license.href }, license.label)));
 
