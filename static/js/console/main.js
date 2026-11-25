@@ -13,8 +13,18 @@ import { initDevices } from './devices.js';
 const BACKOFF = [1, 2, 4, 8, 15];   // переподключение, с — как у захвата камер
 let wsAttempt = 0;
 
+let selectionAnnounced = false;
 function ensureSelection() {
-  if (state.selectedId && state.cams.has(state.selectedId)) return;
+  if (state.selectedId && state.cams.has(state.selectedId)) {
+    // выбор, восстановленный из localStorage, объявляем модулям один раз: кадр, тренд, вкладки
+    if (!selectionAnnounced) {
+      selectionAnnounced = true;
+      emit('select', state.selectedId);
+      emit('stop', null);
+    }
+    return;
+  }
+  selectionAnnounced = true;
   select(state.order[0] || null);
 }
 
