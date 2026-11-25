@@ -17,6 +17,9 @@ REST (основное):
   GET    /api/cameras/{id}/frame.jpg    последний кадр (с оверлеем анализа)
   GET    /api/cameras/{id}/mjpeg        MJPEG-поток кадров с оверлеем
   GET    /api/cameras/{id}/history      история телеметрии
+  GET    /api/cameras/{id}/trend        агрегированный тренд (min/max/среднее) с момента since
+  GET    /api/events                    журнал событий пульта (срабатывания, связь, действия)
+  GET    /api/events/{id}/frame.jpg     стоп-кадр распознавания в момент срабатывания
   GET    /api/cameras/{id}/export.csv   экспорт истории в CSV (ISO 8601)
   POST   /api/phone/session             «Смартфон как камера»: токен + QR-код
   GET    /api/discover                  ONVIF WS-Discovery + скан подсети /24
@@ -27,6 +30,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
+import datetime as _dt
 import io
 import json
 import logging
@@ -44,6 +48,7 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
 from . import __app_name__, __version__, config, db, discovery, vision
+from .events import EventLog, crossed_setpoint
 from .streamer import FrameBroker, StreamManager, encode_jpeg
 
 logger = logging.getLogger("gaugevision.main")
@@ -225,6 +230,13 @@ class GaugeService:
         self._bg: list[asyncio.Task] = []
         self.lan_ip = config.get_lan_ip()
         self.started_at = time.time()
+        self.events = EventLog()
+
+    def emit(self, kind: str, **fields: Any) -> dict[str, Any]:
+        """Запись в журнал событий и рассылка её всем пультам."""
+        ev = self.events.add(kind, **fields)
+        self.hub.broadcast({"type": "event", "event": ev})
+        return ev
 
     # -- жизненный цикл ------------------------------------------------------
     async def start(self) -> None:
@@ -280,11 +292,12 @@ class GaugeService:
             logger.warning("DB status %s: %s", cam_id, exc)
         self.hub.broadcast({"type": "status", "cam_id": cam_id, "status": status,
                             "stream": self.streams.info(cam_id)})
+        self.emit("link", cam_id=cam_id, cam_name=cam["name"], text=status)
 
     # -- конвейер зрения ------------------------------------------------------
     @staticmethod
     def _run_pipeline(pipeline: vision.GaugePipeline, frame: np.ndarray,
-                      cam: dict[str, Any]) -> tuple[vision.GaugeReading, bytes | None]:
+                      cam: dict[str, Any]) -> tuple[vision.GaugeReading, bytes | None, bytes | None]:
         reading = pipeline.process(frame, cam["calibration"], cam["thresholds"], cam["unit"])
         jpeg = None
         if reading.overlay is not None:
@@ -295,7 +308,11 @@ class GaugeService:
                 ov = cv2.resize(ov, (int(w * k), int(h * k)), interpolation=cv2.INTER_AREA)
             jpeg = encode_jpeg(ov, 78)
             reading.overlay = None
-        return reading, jpeg
+        snap = None
+        if reading.snapshot is not None:
+            snap = encode_jpeg(reading.snapshot, config.SNAPSHOT_JPEG_QUALITY)
+            reading.snapshot = None
+        return reading, jpeg, snap
 
     async def _process_loop(self, cam_id: str) -> None:
         """Анализ свежих кадров камеры с частотой PROCESS_FPS."""
@@ -312,18 +329,19 @@ class GaugeService:
                 frame, frame_no = self.broker.latest_frame(cam_id)
                 if frame is not None and frame_no != last_no:
                     last_no = frame_no
-                    reading, jpeg = await loop.run_in_executor(
+                    reading, jpeg, snap = await loop.run_in_executor(
                         self.executor, self._run_pipeline, pipeline, frame, cam)
                     if jpeg:
                         self.broker.publish_overlay(cam_id, jpeg)
-                    self._on_reading(cam_id, cam, reading)
+                    self._on_reading(cam_id, cam, reading, snap)
             except asyncio.CancelledError:
                 raise
             except Exception as exc:
                 logger.exception("[%s] ошибка конвейера: %s", cam_id[:8], exc)
             await asyncio.sleep(max(0.02, interval - (time.monotonic() - t0)))
 
-    def _on_reading(self, cam_id: str, cam: dict[str, Any], r: vision.GaugeReading) -> None:
+    def _on_reading(self, cam_id: str, cam: dict[str, Any], r: vision.GaugeReading,
+                    snap: bytes | None = None) -> None:
         ts = db.utcnow_iso()
         prev = self.last.get(cam_id) or {}
         state = {
@@ -338,11 +356,22 @@ class GaugeService:
             "dial_source": r.dial_source,
             "method": r.debug.get("needle_method"),
             "process_ms": r.process_ms,
+            "geom": r.debug.get("geom"),
             # последнее достоверное значение и его время сохраняются при сбоях
             "last_valid_ts": ts if r.valid else prev.get("last_valid_ts"),
         }
         self.last[cam_id] = state
         self.hub.broadcast({"type": "reading", "cam_id": cam_id, **state})
+
+        prev_level = prev.get("level", "normal")
+        if r.status_level != prev_level:
+            # стоп-кадр — тот же кадр, по которому сменился уровень (рисует конвейер)
+            sp = crossed_setpoint(state["value"], cam["thresholds"])
+            self.emit("alarm", cam_id=cam_id, cam_name=cam["name"], level=r.status_level,
+                      prev_level=prev_level, value=state["value"], unit=cam["unit"],
+                      setpoint=sp, setpoint_value=vision._num(cam["thresholds"].get(
+                          {"LL": "ll_alert", "L": "l_warn", "H": "h_warn", "HH": "hh_alert"}.get(sp or "", ""))),
+                      snapshot=snap if r.status_level != "normal" else None)
 
         now = time.monotonic()
         if r.valid and r.ema_value is not None and \
@@ -411,6 +440,7 @@ class GaugeService:
         self._start_camera(cam)
         out = self.public_camera(cam)
         self.hub.broadcast({"type": "camera_added", "camera": out})
+        self.emit("config", cam_id=cam["id"], cam_name=cam["name"], text="added")
         return out
 
     async def update_camera(self, cam_id: str, data: CameraUpdate) -> dict[str, Any]:
@@ -449,10 +479,15 @@ class GaugeService:
             self.pipelines[cam_id].reset()
         out = self.public_camera(updated)
         self.hub.broadcast({"type": "camera_updated", "camera": out})
+        changed = [k for k in ("name", "type", "source_url", "gauge_type", "unit", "calibration", "thresholds")
+                   if k in patch and patch[k] != cam.get(k)]
+        if changed:
+            self.emit("config", cam_id=cam_id, cam_name=updated["name"], text=",".join(changed))
         return out
 
     async def delete_camera(self, cam_id: str) -> None:
-        if cam_id not in self.cameras:
+        cam = self.cameras.get(cam_id)
+        if cam is None:
             raise HTTPException(404, "Прибор не найден")
         await self._stop_camera(cam_id)
         self.streams.revoke_phone_token(cam_id)
@@ -463,6 +498,8 @@ class GaugeService:
         self._db_buffer = [r for r in self._db_buffer if r[0] != cam_id]
         await db.delete_camera(cam_id)
         self.hub.broadcast({"type": "camera_deleted", "cam_id": cam_id})
+        self.events.forget_camera(cam_id)
+        self.emit("config", cam_id=cam_id, cam_name=cam["name"], text="deleted")
 
     async def restart_camera(self, cam_id: str) -> dict[str, Any]:
         cam = self.cameras.get(cam_id)
@@ -683,6 +720,32 @@ async def api_history(cam_id: str, limit: int = Query(config.TREND_WINDOW_DEFAUL
     return await db.get_history(cam_id, limit)
 
 
+@app.get("/api/cameras/{cam_id}/trend")
+async def api_trend(cam_id: str, since: _dt.datetime,
+                    step: float = Query(60.0, gt=0, description="ширина корзины, с")
+                    ) -> list[dict[str, Any]]:
+    _get_cam(cam_id)
+    if since.tzinfo is None:
+        raise HTTPException(422, "since: нужна метка времени с часовым поясом (ISO 8601)")
+    span = max(1.0, (_dt.datetime.now(_dt.timezone.utc) - since).total_seconds())
+    step = max(step, config.DB_WRITE_INTERVAL, span / config.TREND_BUCKETS_MAX)
+    return await db.get_trend(cam_id, since, step)
+
+
+@app.get("/api/events")
+async def api_events(limit: int = Query(300, ge=1, le=config.EVENTS_MAX),
+                     cam_id: str | None = None) -> list[dict[str, Any]]:
+    return service.events.list(limit, cam_id)
+
+
+@app.get("/api/events/{ev_id}/frame.jpg")
+async def api_event_frame(ev_id: int) -> Response:
+    jpeg = service.events.snapshot(ev_id)
+    if jpeg is None:
+        raise HTTPException(404, "Стоп-кадр не сохранён")
+    return Response(jpeg, media_type="image/jpeg", headers={"Cache-Control": "private, max-age=86400"})
+
+
 @app.delete("/api/cameras/{cam_id}/history", status_code=204)
 async def api_clear_history(cam_id: str) -> Response:
     _get_cam(cam_id)
@@ -833,8 +896,10 @@ async def api_ack(request: Request) -> dict[str, Any]:
     client = request.client.host if request.client else "?"
     ts = db.utcnow_iso()
     logger.info("Аварии квитированы оператором (%s)", client)
-    service.hub.broadcast({"type": "ack", "ts": ts, "by": client})
-    return {"ok": True, "ts": ts}
+    ids = service.events.acknowledge(ts, client)
+    service.hub.broadcast({"type": "ack", "ts": ts, "by": client, "ids": ids})
+    service.emit("ack", text=client, value=float(len(ids)))
+    return {"ok": True, "ts": ts, "ids": ids}
 
 
 # -- сетевое обнаружение -----------------------------------------------------------

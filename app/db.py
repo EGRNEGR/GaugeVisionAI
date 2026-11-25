@@ -266,6 +266,32 @@ async def get_history(camera_id: str, limit: int = config.HISTORY_DEFAULT_LIMIT)
     return [dict(r) for r in reversed(rows)]
 
 
+async def get_trend(camera_id: str, since: _dt.datetime, step_s: float) -> list[dict[str, Any]]:
+    """
+    Агрегированный тренд с момента `since`: корзины по `step_s` секунд
+    с минимумом, максимумом, средним и худшим уровнем тревоги в корзине.
+    """
+    # допуск 1e-6 корзины: julianday — double, отсчёт ровно на границе не уходит в прошлую корзину
+    since = since.astimezone(_dt.timezone.utc)
+    since_iso = since.isoformat(timespec="milliseconds")
+    async with _lock:
+        conn = await _get_conn()
+        cur = await conn.execute(
+            """SELECT CAST((julianday(timestamp) - julianday(:since)) * 86400.0 / :step + 1e-6 AS INTEGER) AS b,
+                      MIN(value) AS vmin, MAX(value) AS vmax, AVG(value) AS vavg, COUNT(*) AS n,
+                      MAX(CASE status_level WHEN 'alert' THEN 2 WHEN 'warning' THEN 1 ELSE 0 END) AS lvl
+               FROM readings
+               WHERE camera_id = :cam AND timestamp >= :since AND value IS NOT NULL
+               GROUP BY b ORDER BY b""",
+            {"cam": camera_id, "since": since_iso, "step": float(step_s)},
+        )
+        rows = await cur.fetchall()
+    levels = ("normal", "warning", "alert")
+    return [{"t": (since + _dt.timedelta(seconds=r["b"] * step_s)).isoformat(timespec="seconds"),
+             "min": r["vmin"], "max": r["vmax"], "avg": r["vavg"], "n": r["n"],
+             "level": levels[int(r["lvl"] or 0)]} for r in rows]
+
+
 async def export_csv(camera_id: str, limit: int = 1_000_000) -> str:
     """Экспорт истории телеметрии в CSV (временные метки ISO 8601, UTC)."""
     cam = await get_camera(camera_id)
