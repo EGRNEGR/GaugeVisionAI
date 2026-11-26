@@ -1,0 +1,65 @@
+Running C:\Hakatons\GaugeVisionAIDesign DashBoard\reports\audit\tests\audit_05_soak_and_edge_cases.py
+Store-and-Forward: активирован режим автономной буферизации (bench)
+PERF & SOAK AUDIT COMPLETE -> C:\Users\Egoru\.gemini\antigravity-cli\brain\695f6dc6-c8f0-404f-bda5-7db189aa45a1\scratch\original_audit_rerun\perf_soak_fault_results.json
+{
+  "timestamp": "2026-11-26T21:21:04",
+  "sqlite_batch_write": {
+    "rows": 1000,
+    "elapsed_s": 0.01,
+    "rows_per_sec": 100489.4
+  },
+  "store_forward_throughput": {
+    "enqueue_200_s": 0.144,
+    "enqueue_rows_per_sec": 1386.3,
+    "drain_200_s": 0.005,
+    "drain_rows_per_sec": 40009.6,
+    "delivered": 200
+  },
+  "spec_generation_timing": {
+    "md_ms": 0.7,
+    "docx_ms": 34.7,
+    "docx_bytes": 135602
+  },
+  "adaptive_fps_cpu_comparison": {
+    "idle_1fps": {
+      "frames": 5,
+      "wall_s": 5.0,
+      "cpu_time_s": 1.141,
+      "cpu_core_pct": 22.8,
+      "avg_ms": 72.1
+    },
+    "burst_6fps": {
+      "frames": 30,
+      "wall_s": 5.01,
+      "cpu_time_s": 5.047,
+      "cpu_core_pct": 100.8,
+      "avg_ms": 70.4
+    },
+    "measured_cpu_reduction_pct": 77.4
+  },
+  "mini_soak_12s": {
+    "note": "Controlled 12s continuous CPU soak (30-60 min soak NOT VERIFIED due to session runtime budget).",
+    "frames_processed": 214,
+    "rss_start_mb": 754.72,
+    "rss_end_mb": 756.88,
+    "rss_delta_mb": 2.16,
+    "rss_samples_mb": [
+      755.96,
+      756.84,
+      756.87,
+      756.87,
+      756.87,
+      756.88,
+      756.88,
+      756.88,
+      756.88,
+      756.88
+    ]
+  },
+  "fault_injection_extra": {
+    "tiny_4x4_frame_handled_safely": true,
+    "tiny_frame_exception": null,
+    "unwritable_sf_db_error": "FileNotFoundError: [WinError 3] Системе не удается найти указанный путь: 'Z:\\\\'"
+  }
+}
+audit_05 exit=0

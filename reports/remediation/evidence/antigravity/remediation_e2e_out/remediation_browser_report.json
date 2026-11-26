@@ -1,0 +1,127 @@
+{
+  "baseUrl": "https://127.0.0.1:18450",
+  "airGappedBlockedExternalUrls": [],
+  "viewports": {
+    "1920x1080": {
+      "vw": 1920,
+      "vh": 1080,
+      "docScrollW": 1920,
+      "headScrollW": 1920,
+      "headClientW": 1920,
+      "maxRight": 1920,
+      "clipped": false,
+      "tilesCount": 36,
+      "middleDotCount": 0,
+      "linkText": "WSS",
+      "cAlarm": "2",
+      "cWarn": "3",
+      "cNoData": "2"
+    },
+    "1440x900": {
+      "vw": 1440,
+      "vh": 900,
+      "docScrollW": 1440,
+      "headScrollW": 1440,
+      "headClientW": 1440,
+      "maxRight": 1440,
+      "clipped": false,
+      "tilesCount": 36,
+      "middleDotCount": 0,
+      "linkText": "WSS",
+      "cAlarm": "2",
+      "cWarn": "3",
+      "cNoData": "2"
+    },
+    "1280x720": {
+      "vw": 1280,
+      "vh": 720,
+      "docScrollW": 1280,
+      "headScrollW": 1280,
+      "headClientW": 1280,
+      "maxRight": 1280,
+      "clipped": false,
+      "tilesCount": 36,
+      "middleDotCount": 0,
+      "linkText": "WSS",
+      "cAlarm": "2",
+      "cWarn": "3",
+      "cNoData": "2"
+    },
+    "arch_1280x720": {
+      "scrollW": 1280,
+      "vw": 1280,
+      "overflow": false
+    },
+    "dispatch_1280x720": {
+      "scrollW": 1280,
+      "vw": 1280,
+      "overflow": false
+    }
+  },
+  "steps": {
+    "step01_loginModalOpened": true,
+    "initialLoadMs": 760,
+    "step02_wrongPassError": "Неверное имя пользователя или пароль",
+    "step03_authUser": {
+      "label": "admin (Админ)",
+      "modalClosed": true,
+      "disclaimerText": "Вспомогательная система оптического мониторинга GaugeVision AI. Не является средством измерений по ФЗ-102 и не заменяет системы ПАЗ / АСУ ТП. Air-Gapped Local Loop"
+    },
+    "step06_inspector": {
+      "visible": true,
+      "trendInViewport": true,
+      "trendH": 200
+    },
+    "step07_archNormal": {
+      "streamCards": 3,
+      "sfPending": 0,
+      "sfDelivered": 10,
+      "modbusRows": 18
+    },
+    "step08_mqttRows": 10,
+    "step09_outage": {
+      "sfPending": 3,
+      "linkBroken": "true",
+      "banner": "Обрыв связи с верхним уровнем АСУ ТП — события и телеметрия накапливаются в SQLite WAL на Edge-узле (3 записей, 0,7 КБ)"
+    },
+    "step10_recovered": {
+      "sfPending": 0,
+      "sfDelivered": 16,
+      "batchRows": 3
+    },
+    "step11_faultCycle": {
+      "steam": "DEGRADED",
+      "partial_occlusion": "DEGRADED",
+      "recovered": "ONLINE"
+    },
+    "step12_dispatch": {
+      "avgHealth": "84,1%",
+      "matrixRows": 36,
+      "recsCount": 12,
+      "hasAutoSpecsSection": true,
+      "middleDotCount": 0
+    },
+    "step13_specPreview": {
+      "len": 29184,
+      "hasPlant": true,
+      "hasDocNum": true,
+      "hasDisclaimer": true,
+      "ecoSummary": "Позиций в ТЗ: 18 из 36\n      CAPEX: 1 884,4 тыс. ₽\n      Чистый эффект: 3 646,8 тыс. ₽/год\n      Окупаемость: 6 мес.\n      Охват БД: 0 зап.\n      Движок: deterministic"
+    },
+    "step14_docx": {
+      "filename": "ТЗ-РЕМЕДИАЦИЯ-2026-01_Дефектная_ведомость_и_ТЗ.docx",
+      "bytes": 134857
+    },
+    "step15_md": {
+      "filename": "ТЗ-РЕМЕДИАЦИЯ-2026-01_TZ_GaugeVision.md",
+      "bytes": 49320
+    },
+    "step25_logoutReopenedModal": true
+  },
+  "diagnostics": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "externalNetworkRequestsBlocked": 0
+  }
+}

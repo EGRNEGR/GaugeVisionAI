@@ -1,0 +1,194 @@
+=== 2. Post-remediation CV + 1/2/4/8-ch CPU Scaling + S&F + DOCX Benchmark ===
+Creating new Ultralytics Settings v0.0.8 file  
+View Ultralytics Settings with 'yolo settings' or at 'C:\Users\Egoru\AppData\Local\Temp\gv_bench_after_qdl90kq6\yolo_cfg\Ultralytics\settings.json'
+Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/usage/settings.
+Store-and-Forward: активирован режим автономной буферизации (bench)
+{
+  "device": "cpu",
+  "timestamp_utc": "2026-11-26T18:16:40Z",
+  "cv_regression": {
+    "clean_27_valid_count": 27,
+    "clean_27_mae_pct": 0.212,
+    "clean_27_max_err_pct": 0.344,
+    "perspective_tilt_072": {
+      "valid": true,
+      "pred": 11.479716064919193,
+      "err_pct": 0.127
+    },
+    "glare_spot": {
+      "valid": true,
+      "pred": 11.449543582869298
+    },
+    "blank_frame_rejected": true,
+    "partial_occlusion_44pct_rejected": true,
+    "partial_occlusion_reason": "partial_occlusion"
+  },
+  "cpu_scaling": [
+    {
+      "channels": 1,
+      "duration_s": 6.03,
+      "total_frames": 86,
+      "aggregate_fps": 14.27,
+      "per_channel_fps": 14.27,
+      "p50_ms": 66.1,
+      "p95_ms": 107.73,
+      "p99_ms": 163.33,
+      "rss_mb": 803.56
+    },
+    {
+      "channels": 2,
+      "duration_s": 6.03,
+      "total_frames": 172,
+      "aggregate_fps": 28.51,
+      "per_channel_fps": 14.25,
+      "p50_ms": 62.4,
+      "p95_ms": 119.4,
+      "p99_ms": 245.84,
+      "rss_mb": 852.41
+    },
+    {
+      "channels": 4,
+      "duration_s": 6.04,
+      "total_frames": 321,
+      "aggregate_fps": 53.18,
+      "per_channel_fps": 13.29,
+      "p50_ms": 65.85,
+      "p95_ms": 131.54,
+      "p99_ms": 274.88,
+      "rss_mb": 948.56
+    },
+    {
+      "channels": 8,
+      "duration_s": 6.35,
+      "total_frames": 344,
+      "aggregate_fps": 54.14,
+      "per_channel_fps": 6.77,
+      "p50_ms": 88.42,
+      "p95_ms": 327.07,
+      "p99_ms": 1252.34,
+      "rss_mb": 1097.83
+    }
+  ],
+  "subsystem_benchmarks": {
+    "sf_500_enqueue_s": 0.452,
+    "sf_500_drain_s": 0.016,
+    "sf_500_drain_msg_per_s": 30459.8,
+    "spec_md_ms": 0.8,
+    "spec_docx_ms": 23.1,
+    "spec_docx_bytes": 128957,
+    "adaptive_motion_wakeup_triggered": true,
+    "adaptive_motion_check_ms": 0.38
+  },
+  "rss_mb_end": 820.75
+}
+=== 3. Unmodified Original Audit Scripts Rerun (audit_01, audit_02_qos0, audit_03, audit_04_compat) ===
+CV AUDIT COMPLETE -> C:\Users\Egoru\.gemini\antigravity-cli\brain\695f6dc6-c8f0-404f-bda5-7db189aa45a1\scratch\original_audit_rerun\cv_regression_results.json
+{
+  "yolo_available": true,
+  "yolo_load_ms": 7482.3,
+  "cw_mae_mpa": 0.0125,
+  "cw_rmse_mpa": 0.0146,
+  "cw_missed": 0,
+  "ccw_mae_pct": 0.083,
+  "neg_mae_kpa": 0.093,
+  "tilt_err": 0.261,
+  "glare_err": null,
+  "occ_err": null,
+  "blank_valid": false
+}
+audit_01 exit=0
+Store-and-Forward: активирован режим автономной буферизации (Audit outage B)
+Store-and-Forward: активирован режим автономной буферизации (Audit outage E)
+Store-and-Forward: активирован режим автономной буферизации (Audit outage F)
+Store-and-Forward: активирован режим автономной буферизации (Audit outage G)
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+Store-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог
+[ WARN:0@26.981] global cap_ffmpeg_impl.hpp:453 _opencv_ffmpeg_interrupt_callback Stream timeout triggered after 6107.568000 ms
+TRACK 2 AUDIT COMPLETE -> C:\Users\Egoru\.gemini\antigravity-cli\brain\695f6dc6-c8f0-404f-bda5-7db189aa45a1\scratch\original_audit_rerun\track2_audit_results.json
+{
+  "sf_wal": "wal",
+  "sf_restart_ok": true,
+  "sf_frame_blob_delivered": true,
+  "sf_unbounded_outage": false,
+  "sf_race_dups": 0,
+  "mqtt_silent_drop_when_down": false,
+  "ring_concurrent_lost": false,
+  "static_zero_noise_fp_frozen": true,
+  "partial_occ_detected": "DEGRADED",
+  "scaling_4ch_fps": 22.99,
+  "scaling_8ch_fps": 27.16
+}
+audit_02(qos0) exit=0
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 63334)
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 766, in __init__
+    self.handle()
+  File "C:\Program Files\Python312\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "C:\Program Files\Python312\Lib\http\server.py", line 424, in handle_one_request
+    method()
+  File "C:\Hakatons\GaugeVisionAIDesign DashBoard\reports\audit\tests\audit_03_track1_dispatch_specs_security.py", line 398, in do_POST
+    self.wfile.write(b"{}")
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 845, in write
+    self._sock.sendall(b)
+ConnectionAbortedError: [WinError 10053] Программа на вашем хост-компьютере разорвала установленное подключение
+----------------------------------------
+C:\C1\GaugeVS\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+TRACK 1 & SECURITY AUDIT COMPLETE -> C:\Users\Egoru\.gemini\antigravity-cli\brain\695f6dc6-c8f0-404f-bda5-7db189aa45a1\scratch\original_audit_rerun\track1_security_audit_results.json
+{
+  "peak_rate_1hz_actual": 6.0,
+  "phantom_overload_min": 0.0,
+  "trips_24h_hardcoded_2x": false,
+  "health_score_bad_cam_confounding": 100.0,
+  "spec_forces_healthy_into_defects": false,
+  "spec_period_only_changes_label": true,
+  "llm_graceful_fallback": true,
+  "sec_abs_path_accepted": false,
+  "sec_rtsp_creds_leaked": false,
+  "sec_ssrf_accepted": false
+}
+audit_03(rbac=1) exit=0
+DRIVER STDOUT: BROWSER_AUDIT_DONE {"extBlocked":0,"consoleErrs":0,"pageErrs":0,"failedReqs":0,"docxBytes":134448,"mdBytes":45376,"v1920Clipped":false,"v1440Clipped":false,"v1280Clipped":false,"outagePending":3,"recoveredPending":0}
+E2E AUDIT COMPLETE -> C:\Users\Egoru\.gemini\antigravity-cli\brain\695f6dc6-c8f0-404f-bda5-7db189aa45a1\scratch\original_audit_rerun\hmi_e2e_audit_results.json
+audit_04(compat) exit=0
+=== 4. Tiny 5-frame CUDA Smoke Test (RTX 5060, <1s) ===
+Creating new Ultralytics Settings v0.0.8 file  
+View Ultralytics Settings with 'yolo settings' or at 'C:\Users\Egoru\AppData\Local\Temp\gv_cuda_smoke_xxfi5nrr\Ultralytics\settings.json'
+Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/usage/settings.
+CUDA_SMOKE_RESULT: {"torch_version": "2.14.1+cu130", "cuda_available": true, "device_name": "NVIDIA GeForce RTX 5060 Laptop GPU", "last_dial_source": "ellipse", "last_valid": true, "last_value": 12.142510350793161, "frames": 5, "latencies_ms": [4604.42, 57.65, 54.83, 50.29, 50.86]}

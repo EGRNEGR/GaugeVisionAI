@@ -175,6 +175,14 @@ def main() -> int:
             # Обрыв издателя RTSP и автоматическое восстановление
             rtsp.stop_publisher()
             checks["rtsp_publisher_down_detected_s"] = wait_for(lambda: cam_state()["status"] != "online", 60)
+            # Диагностика канала во время обрыва: реальные пропуски чтения кадров (REQ-VA-08)
+            drop_samples = []
+            for _ in range(8):
+                q = next((s.get("quality") or {} for s in api.get("/api/architecture/streams") if s["id"] == cid), {})
+                drop_samples.append({"frame_drop_pct": q.get("frame_drop_pct"), "health": q.get("health_status"),
+                                     "reasons": q.get("degradation_reasons")})
+                time.sleep(1.0)
+            checks["rtsp_outage_channel_diagnostics"] = drop_samples
             rtsp.start_publisher()
             checks["rtsp_publisher_recovered_s"] = wait_for(lambda: cam_state()["status"] == "online", 90)
             # Полная остановка RTSP-сервера и его повторный запуск
@@ -333,6 +341,8 @@ def main() -> int:
             "rtsp_cv_accuracy": c["rtsp_cv"]["share_within"] >= 0.9 and c["rtsp_cv"]["saw_6_0"] and c["rtsp_cv"]["saw_11_5"],
             "rtsp_auto_recovery": c["rtsp_publisher_recovered_s"] is not None and c["rtsp_server_recovered_s"] is not None,
             "rtsp_inference_resumed": c.get("rtsp_inference_resumed_s") is not None,
+            "rtsp_outage_degradation_reported": any((d.get("frame_drop_pct") or 0) > 0 or d.get("health") in ("DEGRADED", "OFFLINE")
+                                                    for d in c.get("rtsp_outage_channel_diagnostics", [])),
             "rtsp_password_masked": c["rtsp_url_masked_in_response"] and c["rtsp_password_leaks"] == {"api": 0, "server_log": 0},
         })
     verdict.update({
