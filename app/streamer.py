@@ -33,6 +33,7 @@ import cv2
 import numpy as np
 
 from . import config
+from .db import utcnow_iso
 
 logger = logging.getLogger("gaugevision.streamer")
 
@@ -356,6 +357,10 @@ class PhoneWorker(BaseWorker):
         super().__init__(*args, **kwargs)
         self._task: asyncio.Task | None = None
         self.connected_clients = 0
+        self.active_ws: Any = None
+        self.client_state: str = "waiting_phone"
+        self.client_error: str | None = None
+        self.last_frame_utc: str | None = None
 
     def start(self) -> None:
         if self._task is None or self._task.done():
@@ -367,12 +372,50 @@ class PhoneWorker(BaseWorker):
         if self._task:
             self._task.cancel()
 
-    def push_frame(self, frame: np.ndarray) -> None:
+    def attach_ws(self, ws: Any) -> Any:
+        """Привязывает новый WSS-клиент и возвращает прежний (для закрытия без смешивания кадров)."""
+        prev = self.active_ws if self.active_ws is not ws else None
+        self.active_ws = ws
+        self.connected_clients += 1
+        self.client_state = "awaiting_permission"
+        self.client_error = None
+        if self.status == "offline":
+            self._set_status("reconnecting")
+        return prev
+
+    def detach_ws(self, ws: Any) -> bool:
+        """Отвязывает закрытый WSS-клиент; True — если это был активный источник."""
+        self.connected_clients = max(0, self.connected_clients - 1)
+        if self.active_ws is ws:
+            self.active_ws = None
+            if self.frames_total == 0:
+                self.client_state = "waiting_phone"
+            else:
+                self.client_state = "disconnected"
+            return True
+        return False
+
+    def set_client_state(self, ws: Any, state: str, error: str | None = None) -> bool:
+        if self.active_ws is not None and ws is not self.active_ws:
+            return False
+        self.client_state = state
+        self.client_error = error
+        if error:
+            self.last_error = error
+        return True
+
+    def push_frame(self, frame: np.ndarray, ws: Any = None) -> bool:
+        if ws is not None and self.active_ws is not None and ws is not self.active_ws:
+            return False
         self.broker.publish(self.cam_id, frame)
         self._count_frame()
+        self.last_frame_utc = utcnow_iso()
+        self.client_state = "streaming"
+        self.client_error = None
         self.fail_count = 0
         self.last_error = None
         self._set_status("online")
+        return True
 
     def client_connected(self) -> None:
         self.connected_clients += 1
@@ -381,6 +424,17 @@ class PhoneWorker(BaseWorker):
 
     def client_disconnected(self) -> None:
         self.connected_clients = max(0, self.connected_clients - 1)
+
+    def info(self) -> dict[str, Any]:
+        base = super().info()
+        base.update({
+            "ws_connected": self.active_ws is not None,
+            "connected_clients": self.connected_clients,
+            "client_state": self.client_state,
+            "client_error": self.client_error,
+            "last_frame_utc": self.last_frame_utc,
+        })
+        return base
 
     async def _watchdog(self) -> None:
         try:
@@ -464,6 +518,15 @@ class StreamManager:
         token = secrets.token_urlsafe(24)
         self._phone_tokens[cam_id] = token
         return token
+
+    def get_or_issue_phone_token(self, cam_id: str, regenerate: bool = False) -> tuple[str, bool]:
+        existing = self._phone_tokens.get(cam_id)
+        if existing and not regenerate:
+            return existing, False
+        return self.issue_phone_token(cam_id), existing is not None
+
+    def has_phone_token(self, cam_id: str) -> bool:
+        return cam_id in self._phone_tokens
 
     def verify_phone_token(self, cam_id: str, token: str | None) -> bool:
         expected = self._phone_tokens.get(cam_id)

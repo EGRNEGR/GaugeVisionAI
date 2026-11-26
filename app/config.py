@@ -19,7 +19,39 @@ CERTS_DIR: Path = BASE_DIR / "certs"
 STATIC_DIR: Path = BASE_DIR / "static"
 DATA_DIR: Path = BASE_DIR / "data"
 MODELS_DIR: Path = BASE_DIR / "models"
-DB_PATH: Path = Path(os.environ.get("GAUGEVISION_DB", DATA_DIR / "gaugevision.db"))
+DEMO_MODE: bool = os.environ.get("GAUGEVISION_DEMO", "").strip().lower() in ("1", "true", "yes", "on", "demo")
+DEMO_DB_DEFAULT: Path = DATA_DIR / "gaugevision_demo.db"
+DB_PATH: Path = Path(os.environ.get("GAUGEVISION_DB", DEMO_DB_DEFAULT if DEMO_MODE else DATA_DIR / "gaugevision.db"))
+
+
+def is_demo_mode() -> bool:
+    env = os.environ.get("GAUGEVISION_DEMO")
+    if env is not None:
+        return env.strip().lower() in ("1", "true", "yes", "on", "demo")
+    return DEMO_MODE
+
+
+def get_db_path() -> Path:
+    explicit = os.environ.get("GAUGEVISION_DB")
+    if explicit:
+        return Path(explicit)
+    return DEMO_DB_DEFAULT if is_demo_mode() else (DATA_DIR / "gaugevision.db")
+
+
+def configure_runtime(*, demo: bool | None = None, db_path: str | None = None,
+                      device: str | None = None) -> None:
+    """Применяет параметры запуска из CLI до инициализации БД и конвейера."""
+    global DEMO_MODE, DB_PATH, YOLO_DEVICE
+    if demo is not None:
+        DEMO_MODE = bool(demo)
+        os.environ["GAUGEVISION_DEMO"] = "1" if demo else "0"
+    if db_path:
+        os.environ["GAUGEVISION_DB"] = db_path
+    DB_PATH = get_db_path()
+    if device:
+        os.environ["GAUGEVISION_DEVICE"] = device
+        YOLO_DEVICE = device
+
 
 # Веса YOLOv8 для детекции корпуса прибора (опционально, раздел 5.1 ТЗ).
 # Без файла весов конвейер автоматически работает на OpenCV-fallback
@@ -63,6 +95,19 @@ MIN_NEEDLE_CONFIDENCE: float = 0.25  # ниже — отсчёт недосто�
 EVENTS_MAX: int = 1000          # записей журнала событий пульта в памяти сервера
 EVENT_SNAPSHOTS_MAX: int = 150  # стоп-кадров срабатываний к последним событиям
 TREND_BUCKETS_MAX: int = 1000   # точек агрегированного тренда за смену
+READING_STALE_SECONDS: float = float(os.environ.get("GAUGEVISION_STALE_SECONDS", "6.0"))
+
+# ---------------------------------------------------------------------------
+# Демонстрационный профиль (36 приборов: 1 живая камера + 35 симуляция)
+# ---------------------------------------------------------------------------
+DEMO_LIVE_CAM_ID: str = "demo-mtp160-steam"
+DEMO_TOTAL_POSITIONS: int = 36
+DEMO_SEED: int = int(os.environ.get("GAUGEVISION_DEMO_SEED", "42"))
+DEMO_SIM_INTERVAL: float = 1.0
+SIMULATOR_URL: str = os.environ.get(
+    "GAUGEVISION_SIMULATOR_URL",
+    "https://gaugevision-simulator.goodlyoatmeal32.chatgpt.site/",
+)
 
 # ---------------------------------------------------------------------------
 # Захват потоков (раздел 2 ТЗ)

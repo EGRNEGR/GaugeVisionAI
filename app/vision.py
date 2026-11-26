@@ -93,6 +93,14 @@ def _load_yolo():
                 _YOLO = False
             else:
                 try:
+                    import os as _os
+                    if "YOLO_CONFIG_DIR" not in _os.environ:
+                        cfg_dir = config.DATA_DIR / ".ultralytics"
+                        try:
+                            cfg_dir.mkdir(parents=True, exist_ok=True)
+                            _os.environ["YOLO_CONFIG_DIR"] = str(cfg_dir)
+                        except OSError:
+                            pass
                     from ultralytics import YOLO  # type: ignore
                     model = YOLO(str(weights))
                     _YOLO_DEVICE, _YOLO_HALF, _YOLO_DEVICE_NAME = _resolve_device()
@@ -604,33 +612,40 @@ def _calib_parts(calib: dict[str, Any]) -> tuple[float, float, float, float, str
     return v_min, th_min, v_max, th_max, ("ccw" if direction == "ccw" else "cw")
 
 
-def angle_to_value(angle_deg: float, calib: dict[str, Any], clamp: float = 0.05) -> float | None:
+def angle_to_value(angle_deg: float, calib: dict[str, Any], clamp: float = 0.05,
+                   max_overshoot: float = 0.08) -> float | None:
     """
     CW:  Δθ = (θ − θmin) mod 360;  Δθspan = (θmax − θmin) mod 360;
     CCW: Δθ = (θmin − θ) mod 360;  Δθspan = (θmin − θmax) mod 360;
     V = Vmin + Δθ/Δθspan · (Vmax − Vmin).
 
-    Положения стрелки в «мёртвой зоне» шкалы относятся к ближайшему краю
-    (небольшой заход ниже нуля не превращается в максимум шкалы).
+    Положения стрелки в глубокой «мёртвой зоне» (за пределами ±max_overshoot
+    от рабочей дуги шкалы — например, при перепутанном направлении CW/CCW или
+    перевёрнутой камере) возвращают None (недостоверный отсчёт), не маскируясь
+    под корректный край шкалы.
     """
     parts = _calib_parts(calib)
     if parts is None:
         return None
     v_min, th_min, v_max, th_max, direction = parts
+    if v_max == v_min:
+        return None
     if direction == "cw":
         delta = (angle_deg - th_min) % 360.0
         span = (th_max - th_min) % 360.0
     else:
         delta = (th_min - angle_deg) % 360.0
         span = (th_min - th_max) % 360.0
-    if span < 1e-6:
-        span = 360.0
+    if span < 1.0:
+        return None
     if delta > span:
         over = delta - span           # перелёт за максимум
         under = 360.0 - delta         # недолёт до минимума
         delta = span + over if over <= under else -under
-    frac = delta / span
-    frac = max(-clamp, min(1.0 + clamp, frac))
+    raw_frac = delta / span
+    if raw_frac < -max_overshoot or raw_frac > 1.0 + max_overshoot:
+        return None
+    frac = max(-clamp, min(1.0 + clamp, raw_frac))
     return v_min + frac * (v_max - v_min)
 
 
@@ -666,14 +681,16 @@ def _num(v: Any) -> float | None:
 def classify_level(value: float | None, thresholds: dict[str, Any]) -> str:
     """
     normal | warning | alert:
-      V ≤ LL или V ≥ HH  -> alert   (красная зона)
-      V ≤ L  или V ≥ H   -> warning (жёлтая зона)
-      L < V < H          -> normal  (зелёный доверительный интервал)
+      V ≤ LL или V ≥ HH  -> alert   (красная зона, проверяется первой)
+      V ≤ L  или V ≥ H   -> warning (янтарная зона)
+      L < V < H          -> normal  (нормальная зона)
+    При lower_enabled=False нижние уставки (LL и L) отключены.
     """
     if value is None:
         return "normal"
-    ll = _num(thresholds.get("ll_alert"))
-    lw = _num(thresholds.get("l_warn"))
+    lower_on = thresholds.get("lower_enabled")
+    ll = None if lower_on is False else _num(thresholds.get("ll_alert"))
+    lw = None if lower_on is False else _num(thresholds.get("l_warn"))
     hw = _num(thresholds.get("h_warn"))
     hh = _num(thresholds.get("hh_alert"))
     if (ll is not None and value <= ll) or (hh is not None and value >= hh):
@@ -767,7 +784,9 @@ def _zone_segments(calib: dict[str, Any],
     v_min, _, v_max, _, _ = parts
     lo, hi = min(v_min, v_max), max(v_min, v_max)
     thr = thresholds or {}
-    ll, lw = _num(thr.get("ll_alert")), _num(thr.get("l_warn"))
+    lower_on = thr.get("lower_enabled")
+    ll = None if lower_on is False else _num(thr.get("ll_alert"))
+    lw = None if lower_on is False else _num(thr.get("l_warn"))
     hw, hh = _num(thr.get("h_warn")), _num(thr.get("hh_alert"))
     n_lo = lw if lw is not None else ll
     n_hi = hw if hw is not None else hh
@@ -989,24 +1008,31 @@ class GaugePipeline:
                 reading.angle = round(float(needle.angle_deg), 2)
                 reading.value = angle_to_value(needle.angle_deg, calibration)
                 reading.valid = reading.value is not None
+                if not reading.valid:
+                    reading.debug["out_of_scale"] = True
             else:
                 self._miss_streak += 1
 
             reading.ema_value = self.ema.update(reading.value if reading.valid else None)
-            reading.status_level = classify_level(reading.ema_value, thresholds)
+            reading.status_level = classify_level(reading.ema_value, thresholds) if reading.ema_value is not None else "normal"
             reading.debug["geom"] = overlay_geometry(
-                frame.shape, roi, needle if reading.valid else None, calibration, thresholds)
+                frame.shape, roi,
+                needle if (needle.angle_deg is not None and needle.confidence >= config.MIN_NEEDLE_CONFIDENCE) else None,
+                calibration, thresholds)
 
             if with_overlay:
                 reading.overlay = draw_overlay(
-                    frame, roi, needle if reading.valid else None, reading.ema_value,
+                    frame, roi,
+                    needle if (needle.angle_deg is not None and needle.confidence >= config.MIN_NEEDLE_CONFIDENCE) else None,
+                    reading.ema_value if reading.valid else None,
                     unit, reading.status_level, calibration, thresholds,
                 )
-            if reading.status_level != self._last_level and reading.status_level != "normal":
-                reading.snapshot = draw_overlay(
-                    frame, roi, needle if reading.valid else None, reading.ema_value,
-                    unit, reading.status_level, calibration, thresholds, labels=False,
-                )
-            self._last_level = reading.status_level
+            if reading.valid and reading.ema_value is not None and reading.status_level != self._last_level:
+                if reading.status_level != "normal":
+                    reading.snapshot = draw_overlay(
+                        frame, roi, needle, reading.ema_value,
+                        unit, reading.status_level, calibration, thresholds, labels=False,
+                    )
+                self._last_level = reading.status_level
             reading.process_ms = round((time.perf_counter() - t0) * 1000.0, 1)
             return reading

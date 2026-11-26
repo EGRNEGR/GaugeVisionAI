@@ -42,6 +42,9 @@ def print_banner(lan_ip: str, port: int, fingerprint: str | None) -> None:
     line = "═" * 78
     print(f"{c}{BANNER}{r}")
     print(f"  {b}{__app_name__} v{__version__}{r} — мультисенсорный мониторинг аналоговых КИПиА")
+    if config.is_demo_mode():
+        print(f"  {y}{b}ПРОФИЛЬ: ДЕМОНСТРАЦИЯ (36 позиций: #01 МТП-160 с камеры телефона + 35 симуляция){r}")
+        print(f"  {c}Симулятор прибора (открыть на экране для съёмки): {config.SIMULATOR_URL}{r}")
     print(f"  {line}")
     print(f"  {b}Дашборд оператора:{r}")
     print(f"    {g}➜  Этот ПК:          https://localhost:{port}{r}")
@@ -69,10 +72,24 @@ def main() -> None:
     parser.add_argument("--port", type=int, default=config.HTTPS_PORT, help="HTTPS-порт (по умолчанию 8443)")
     parser.add_argument("--lan-ip", default=None,
                         help="IP-адрес хоста для ссылок и QR-кодов (по умолчанию определяется автоматически)")
+    parser.add_argument("--demo", action="store_true", default=None,
+                        help="включить демонстрационный профиль (36 приборов, изолированная БД data/gaugevision_demo.db)")
+    parser.add_argument("--no-demo", action="store_true",
+                        help="принудительно отключить демонстрационный профиль")
+    parser.add_argument("--db", default=None,
+                        help="путь к файлу SQLite-базы (переопределяет GAUGEVISION_DB)")
+    parser.add_argument("--device", default=None, choices=["auto", "cpu", "cuda:0"],
+                        help="устройство инференса YOLOv8 (по умолчанию из GAUGEVISION_DEVICE или auto)")
     parser.add_argument("--log-level", default="info", choices=["debug", "info", "warning", "error"])
     args = parser.parse_args()
     if args.lan_ip:
         os.environ["GAUGEVISION_LAN_IP"] = args.lan_ip
+    demo_flag: bool | None = None
+    if args.no_demo:
+        demo_flag = False
+    elif args.demo:
+        demo_flag = True
+    config.configure_runtime(demo=demo_flag, db_path=args.db, device=args.device)
 
     _enable_ansi()
     logging.basicConfig(
