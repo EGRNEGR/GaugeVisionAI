@@ -253,13 +253,15 @@ async def init_db() -> None:
 
 
 async def close_db() -> None:
-    global _conn
+    global _conn, _lock
     async with _lock:
         if _conn is not None:
             try:
                 await _conn.close()
             finally:
                 _conn = None
+    # Новый замок для следующего запуска: asyncio.Lock привязывается к event loop
+    _lock = asyncio.Lock()
 
 
 def _row_to_camera(row: aiosqlite.Row) -> dict[str, Any]:

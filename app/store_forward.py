@@ -130,6 +130,7 @@ class StoreAndForwardBuffer:
         self._on_change: Callable[[dict[str, Any]], None] | None = None
         self._recent_batches: deque[dict[str, Any]] = deque(maxlen=20)
         self._task: asyncio.Task | None = None
+        self._recover_task: asyncio.Task | None = None
 
     @property
     def db_path(self) -> Path:
@@ -192,19 +193,25 @@ class StoreAndForwardBuffer:
             self._task = asyncio.create_task(self._sync_loop(), name="sf-sync-loop")
 
     async def close(self) -> None:
-        if self._task:
-            self._task.cancel()
-            try:
-                await self._task
-            except asyncio.CancelledError:
-                pass
-            self._task = None
-        async with self._lock:
-            if self._conn is not None:
+        for attr in ("_task", "_recover_task"):
+            t = getattr(self, attr)
+            if t is not None:
+                t.cancel()
                 try:
-                    await self._conn.close()
-                finally:
-                    self._conn = None
+                    await t
+                except asyncio.CancelledError:
+                    pass
+                setattr(self, attr, None)
+        async with self._deliver_lock:
+            async with self._lock:
+                if self._conn is not None:
+                    try:
+                        await self._conn.close()
+                    finally:
+                        self._conn = None
+        # Замки привязываются к event loop: следующий запуск получает новые
+        self._lock = asyncio.Lock()
+        self._deliver_lock = asyncio.Lock()
 
     @property
     def outage_active(self) -> bool:
@@ -233,7 +240,7 @@ class StoreAndForwardBuffer:
             self._consecutive_delivery_fails = 0
             logger.info("Store-and-Forward: связь с верхним уровнем восстановлена — запуск досылки пачками")
             if changed:
-                asyncio.create_task(self.flush_pending(max_batches=25), name="sf-recover-flush")
+                self._recover_task = asyncio.create_task(self.flush_pending(max_batches=25), name="sf-recover-flush")
         st = await self.stats()
         if self._on_change:
             self._on_change(st)

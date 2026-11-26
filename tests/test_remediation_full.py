@@ -869,19 +869,29 @@ def test_local_http_mjpeg_capture() -> dict[str, Any]:
 
         broker = FrameBroker()
         loop = asyncio.new_event_loop()
-        worker = CaptureWorker("mjpeg-test", "http_mjpeg", f"http://127.0.0.1:{port}/stream.mjpg", broker, loop, None)
-        worker.start()
-        deadline = time.time() + 10.0
-        got_frame = None
-        while time.time() < deadline:
-            frm, _ = broker.latest_frame("mjpeg-test")
-            if frm is not None:
-                got_frame = frm
-                break
-            time.sleep(0.1)
-        worker.stop()
-        worker.join(timeout=2.0)
-        loop.close()
+        # Стенд на 127.0.0.1: воркер перепроверяет SSRF-политику при подключении, поэтому
+        # loopback разрешается только на время этого прогона (как в документированном стенде)
+        prev_lb = os.environ.get("GAUGEVISION_ALLOW_LOOPBACK_STREAMS")
+        os.environ["GAUGEVISION_ALLOW_LOOPBACK_STREAMS"] = "1"
+        try:
+            worker = CaptureWorker("mjpeg-test", "http_mjpeg", f"http://127.0.0.1:{port}/stream.mjpg", broker, loop, None)
+            worker.start()
+            deadline = time.time() + 10.0
+            got_frame = None
+            while time.time() < deadline:
+                frm, _ = broker.latest_frame("mjpeg-test")
+                if frm is not None:
+                    got_frame = frm
+                    break
+                time.sleep(0.1)
+            worker.stop()
+            worker.join(timeout=2.0)
+            loop.close()
+        finally:
+            if prev_lb is None:
+                os.environ.pop("GAUGEVISION_ALLOW_LOOPBACK_STREAMS", None)
+            else:
+                os.environ["GAUGEVISION_ALLOW_LOOPBACK_STREAMS"] = prev_lb
         assert got_frame is not None, "Не удалось получить кадр из локального HTTP-MJPEG потока"
         cal = {"v_min": 0.0, "theta_min": 135.0, "v_max": 16.0, "theta_max": 45.0, "direction": "cw"}
         thr = {"ll_alert": 2.0, "l_warn": 4.0, "h_warn": 14.2, "hh_alert": 15.2, "lower_enabled": True}

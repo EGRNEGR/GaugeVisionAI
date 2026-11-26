@@ -34,7 +34,7 @@ import numpy as np
 
 from . import config
 from .db import utcnow_iso
-from .security import mask_url_credentials
+from .security import mask_url_credentials, validate_network_stream_url
 
 logger = logging.getLogger("gaugevision.streamer")
 
@@ -257,6 +257,14 @@ class CaptureWorker(BaseWorker):
                     cap.release()
                     cap = cv2.VideoCapture(src, cv2.CAP_ANY)
             else:
+                # Политика SSRF перепроверяется при каждом подключении: записи старых БД,
+                # принятые до введения проверки, и смена DNS-ответа после создания камеры
+                try:
+                    validate_network_stream_url(self.cam_type, url)
+                except ValueError as exc:
+                    self.last_error = f"источник заблокирован политикой безопасности: {exc}"
+                    logger.warning("[%s] %s", self.cam_id[:8], self.last_error)
+                    return None
                 # rtsp:// и http(s):// MJPEG — бэкенд FFMPEG
                 try:
                     cap = cv2.VideoCapture(url, cv2.CAP_FFMPEG, timeouts) if timeouts \

@@ -367,6 +367,7 @@ class GaugeService:
         self._db_buffer: list[tuple[Any, ...]] = []
         self._last_db_write: dict[str, float] = {}
         self._bg: list[asyncio.Task] = []
+        self._pending_io: set[asyncio.Task] = set()
         self.lan_ip = config.get_lan_ip()
         self.started_at = time.time()
         self.events = EventLog()
@@ -400,12 +401,11 @@ class GaugeService:
         self.hub.broadcast({"type": "event", "event": ev})
         self._broadcast_sse("event", ev)
         try:
-            loop = asyncio.get_running_loop()
             # Персистентное сохранение события и стоп-кадра в SQLite (DEF-20)
-            loop.create_task(db.save_event(ev, snap))
+            self._spawn_io(db.save_event(ev, snap))
             if kind in ("alarm", "link"):
                 sev = ev.get("level") or ("warning" if ev.get("text") in ("offline", "reconnecting") else "info")
-                loop.create_task(self.store_forward.enqueue(
+                self._spawn_io(self.store_forward.enqueue(
                     channel_id=str(ev.get("cam_id") or "station"),
                     payload_type="alarm" if kind == "alarm" else "health",
                     severity=str(sev),
@@ -415,6 +415,17 @@ class GaugeService:
         except RuntimeError:
             pass
         return ev
+
+    def _spawn_io(self, coro: Any) -> None:
+        """Фоновая запись с удержанием ссылки: задача не теряется сборщиком мусора,
+        а при остановке сервиса дожидается завершения до закрытия БД."""
+        try:
+            task = asyncio.get_running_loop().create_task(coro)
+        except RuntimeError:
+            coro.close()
+            raise
+        self._pending_io.add(task)
+        task.add_done_callback(self._pending_io.discard)
 
     # -- жизненный цикл ------------------------------------------------------
     async def start(self) -> None:
@@ -927,6 +938,9 @@ class GaugeService:
         self._bench_tasks.clear()
         self._bg.clear()
         await self.streams.stop_all()
+        if self._pending_io:
+            # последние события и тревоги сохраняются до закрытия БД и очереди
+            await asyncio.wait(list(self._pending_io), timeout=10.0)
         await self.scada.stop()
         await self.store_forward.close()
         await self._flush_db()
