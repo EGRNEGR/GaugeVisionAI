@@ -327,6 +327,17 @@ body.capture { overflow: hidden; height: 100vh; height: 100dvh; background: #000
 .cap-guide::before, .cap-guide::after { content: ""; position: absolute; background: rgba(255, 255, 255, .35); }
 .cap-guide::before { left: 50%; top: 46%; width: 1px; height: 8%; }
 .cap-guide::after { top: 50%; left: 46%; height: 1px; width: 8%; }
+.cap-focus-target {
+  position: absolute; inset: 0; z-index: 1; border: 0; padding: 0;
+  background: transparent; cursor: crosshair; touch-action: manipulation;
+}
+.cap-focus-target:focus-visible { outline: 2px solid var(--warn); outline-offset: -2px; }
+.cap-focus-marker {
+  position: absolute; z-index: 2; width: 3rem; height: 3rem; border: 2px solid var(--warn);
+  border-radius: .5rem; transform: translate(-50%, -50%); pointer-events: none;
+  box-shadow: 0 0 0 1px #000;
+}
+.cap-focus-hint { color: var(--text); font-size: .8125rem; }
 .cap-top {
   position: absolute; top: 0; left: 0; right: 0; z-index: 3;
   display: flex; align-items: flex-start; gap: 8px; padding: calc(10px + var(--safe-top)) 12px 10px;
