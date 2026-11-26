@@ -19,6 +19,7 @@ let lastFreshFlag = null;
 
 function ensureSelection() {
   if (state.selectedId && state.cams.has(state.selectedId)) {
+    // выбор, восстановленный из localStorage, объявляем модулям один раз: кадр, тренд, вкладки
     if (!selectionAnnounced) {
       selectionAnnounced = true;
       emit('select', state.selectedId);
