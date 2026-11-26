@@ -188,6 +188,7 @@ class GaugeReading:
     status_level: str = "normal"
     process_ms: float = 0.0
     overlay: np.ndarray | None = None
+    snapshot: np.ndarray | None = None  # стоп-кадр смены уровня: разметка без текста, тот же кадр
     debug: dict[str, Any] = field(default_factory=dict)
 
 
@@ -735,34 +736,124 @@ def _ray_points(roi: DialROI, angle_deg: float, r0: float, r1: float) -> tuple[t
     return (int(p[0][0]), int(p[0][1])), (int(p[1][0]), int(p[1][1]))
 
 
-def _draw_zone_arc(out: np.ndarray, roi: DialROI, calib: dict[str, Any],
-                   v_from: float, v_to: float, color: tuple[int, int, int]) -> None:
-    """Дуга зоны уставок вдоль шкалы (в координатах исходного кадра)."""
+def _zone_arc_points(roi: DialROI, calib: dict[str, Any],
+                     v_from: float, v_to: float) -> np.ndarray | None:
+    """Точки дуги зоны уставок вдоль шкалы (в координатах исходного кадра)."""
     a0 = value_to_angle(v_from, calib)
     a1 = value_to_angle(v_to, calib)
     if a0 is None or a1 is None:
-        return
+        return None
     parts = _calib_parts(calib)
     if parts is None:
-        return
+        return None
     direction = parts[4]
     sweep = (a1 - a0) % 360.0 if direction == "cw" else -((a0 - a1) % 360.0)
     if abs(sweep) < 0.5:
-        return
+        return None
     steps = max(4, int(abs(sweep) / 3))
     c = config.DIAL_SIZE / 2.0
     rr = c * 0.93
     angs = np.radians(a0 + np.linspace(0, sweep, steps))
     pts = np.stack([c + np.cos(angs) * rr, c + np.sin(angs) * rr], axis=1)
-    p = _dial_to_frame(roi, pts).astype(np.int32)
-    cv2.polylines(out, [p], False, color, 4, cv2.LINE_AA)
+    return _dial_to_frame(roi, pts)
+
+
+def _zone_segments(calib: dict[str, Any],
+                   thresholds: dict[str, Any] | None) -> list[tuple[float, float, str]]:
+    """Зоны шкалы (от, до, уровень) по пятизонной модели, обрезанные по Vmin…Vmax."""
+    parts = _calib_parts(calib)
+    if parts is None:
+        return []
+    v_min, _, v_max, _, _ = parts
+    lo, hi = min(v_min, v_max), max(v_min, v_max)
+    thr = thresholds or {}
+    ll, lw = _num(thr.get("ll_alert")), _num(thr.get("l_warn"))
+    hw, hh = _num(thr.get("h_warn")), _num(thr.get("hh_alert"))
+    n_lo = lw if lw is not None else ll
+    n_hi = hw if hw is not None else hh
+    zones = [(n_lo if n_lo is not None else lo, n_hi if n_hi is not None else hi, "normal")]
+    if ll is not None:
+        zones.append((lo, ll, "alert"))
+    if lw is not None:
+        zones.append((ll if ll is not None else lo, lw, "warning"))
+    if hw is not None:
+        zones.append((hw, hh if hh is not None else hi, "warning"))
+    if hh is not None:
+        zones.append((hh, hi, "alert"))
+    out = []
+    for z0, z1, level in zones:
+        z0, z1 = max(lo, min(hi, z0)), max(lo, min(hi, z1))
+        if z1 > z0:
+            out.append((z0, z1, level))
+    return out
+
+
+def _needle_points(roi: DialROI, needle: NeedleResult) -> np.ndarray:
+    """Ось вращения и острие стрелки в координатах исходного кадра."""
+    size = config.DIAL_SIZE
+    cc = size / 2.0
+    if needle.tip:
+        px, py = float(needle.tip[0]), float(needle.tip[1])
+    else:
+        rad = math.radians(needle.angle_deg or 0.0)
+        px, py = cc + math.cos(rad) * size * 0.42, cc + math.sin(rad) * size * 0.42
+    return _dial_to_frame(roi, np.array([[cc, cc], [px, py]]))
+
+
+def overlay_geometry(frame_shape: tuple[int, ...], roi: DialROI | None,
+                     needle: NeedleResult | None, calib: dict[str, Any] | None,
+                     thresholds: dict[str, Any] | None) -> dict[str, Any] | None:
+    """
+    Геометрия распознавания для векторной разметки на пульте — в пикселях
+    обработанного кадра (w × h): эллипс ROI и его габаритная рамка, дуги зон
+    уставок, лучи θmin / θmax, вектор стрелки. Пульт масштабирует её на кадр
+    любого разрешения с тем же соотношением сторон.
+    """
+    if roi is None:
+        return None
+    h, w = frame_shape[:2]
+    r1 = lambda v: round(float(v), 1)  # noqa: E731
+    cx, cy = roi.center
+    a, b = roi.axes
+    phi = math.radians(roi.angle_deg)
+    # габариты повёрнутого эллипса
+    hw_ = math.sqrt((a * math.cos(phi)) ** 2 + (b * math.sin(phi)) ** 2)
+    hh_ = math.sqrt((a * math.sin(phi)) ** 2 + (b * math.cos(phi)) ** 2)
+    geom: dict[str, Any] = {
+        "w": int(w), "h": int(h),
+        "source": roi.source, "score": round(float(roi.score), 3),
+        "ellipse": [r1(cx), r1(cy), r1(a), r1(b), r1(roi.angle_deg)],
+        "bbox": [r1(cx - hw_), r1(cy - hh_), r1(2 * hw_), r1(2 * hh_)],
+        "zones": [], "rays": [], "needle": None,
+    }
+    if calib:
+        parts = _calib_parts(calib)
+        if parts:
+            for z0, z1, level in _zone_segments(calib, thresholds):
+                pts = _zone_arc_points(roi, calib, z0, z1)
+                if pts is not None:
+                    geom["zones"].append({"level": level,
+                                          "points": [[r1(x), r1(y)] for x, y in pts]})
+            for name, th in (("min", parts[1]), ("max", parts[3])):
+                p0, p1 = _ray_points(roi, th, config.DIAL_SIZE * 0.40, config.DIAL_SIZE * 0.49)
+                geom["rays"].append({"name": name, "theta": round(th, 2),
+                                     "points": [list(p0), list(p1)]})
+    if needle is not None and needle.angle_deg is not None:
+        p = _needle_points(roi, needle)
+        geom["needle"] = [[r1(p[0][0]), r1(p[0][1])], [r1(p[1][0]), r1(p[1][1])]]
+    return geom
 
 
 def draw_overlay(frame_bgr: np.ndarray, roi: DialROI | None, needle: NeedleResult | None,
                  value: float | None, unit: str, level: str,
                  calib: dict[str, Any] | None = None,
-                 thresholds: dict[str, Any] | None = None) -> np.ndarray:
-    """Рисует контур циферблата, зоны уставок, стрелку и значение на кадре."""
+                 thresholds: dict[str, Any] | None = None,
+                 labels: bool = True) -> np.ndarray:
+    """
+    Рисует контур циферблата, зоны уставок, стрелку и значение на кадре.
+    labels=False — без текстовых плашек (стоп-кадр пульта: уровень и значение
+    пульт подписывает сам, по-русски, а камера сохраняет свою отметку времени).
+    """
     out = frame_bgr.copy()
     color = _LEVEL_COLORS.get(level, _LEVEL_COLORS["normal"])
     scale = max(0.5, min(out.shape[0], out.shape[1]) / 720.0)
@@ -775,46 +866,24 @@ def draw_overlay(frame_bgr: np.ndarray, roi: DialROI | None, needle: NeedleResul
         if calib:
             parts = _calib_parts(calib)
             if parts:
-                v_min, th_min, v_max, th_max, _ = parts
-                lo, hi = min(v_min, v_max), max(v_min, v_max)
-                thr = thresholds or {}
-                ll, lw = _num(thr.get("ll_alert")), _num(thr.get("l_warn"))
-                hw, hh = _num(thr.get("h_warn")), _num(thr.get("hh_alert"))
-                zones = []
-                n_lo = lw if lw is not None else ll
-                n_hi = hw if hw is not None else hh
-                zones.append((n_lo if n_lo is not None else lo, n_hi if n_hi is not None else hi,
-                              _LEVEL_COLORS["normal"]))
-                if ll is not None:
-                    zones.append((lo, ll, _LEVEL_COLORS["alert"]))
-                if lw is not None:
-                    zones.append((ll if ll is not None else lo, lw, _LEVEL_COLORS["warning"]))
-                if hw is not None:
-                    zones.append((hw, hh if hh is not None else hi, _LEVEL_COLORS["warning"]))
-                if hh is not None:
-                    zones.append((hh, hi, _LEVEL_COLORS["alert"]))
-                for z0, z1, zc in zones:
-                    z0, z1 = max(lo, min(hi, z0)), max(lo, min(hi, z1))
-                    if z1 > z0:
-                        _draw_zone_arc(out, roi, calib, z0, z1, zc)
+                for z0, z1, level in _zone_segments(calib, thresholds):
+                    pts = _zone_arc_points(roi, calib, z0, z1)
+                    if pts is not None:
+                        cv2.polylines(out, [pts.astype(np.int32)], False,
+                                      _LEVEL_COLORS[level], 4, cv2.LINE_AA)
                 # калибровочные лучи θmin / θmax
-                for th in (th_min, th_max):
+                for th in (parts[1], parts[3]):
                     p0, p1 = _ray_points(roi, th, config.DIAL_SIZE * 0.40, config.DIAL_SIZE * 0.49)
                     cv2.line(out, p0, p1, (255, 160, 60), 2, cv2.LINE_AA)
 
         if needle is not None and needle.angle_deg is not None:
-            size = config.DIAL_SIZE
-            cc = size / 2.0
-            if needle.tip:
-                px, py = float(needle.tip[0]), float(needle.tip[1])
-            else:
-                rad = math.radians(needle.angle_deg)
-                px, py = cc + math.cos(rad) * size * 0.42, cc + math.sin(rad) * size * 0.42
-            p = _dial_to_frame(roi, np.array([[cc, cc], [px, py]]))
+            p = _needle_points(roi, needle)
             cv2.arrowedLine(out, (int(p[0][0]), int(p[0][1])), (int(p[1][0]), int(p[1][1])),
                             color, max(2, int(3 * scale)), cv2.LINE_AA, tipLength=0.12)
             cv2.circle(out, (int(p[0][0]), int(p[0][1])), max(3, int(5 * scale)), color, -1)
 
+    if not labels:
+        return out
     unit_txt = UNIT_ASCII.get(unit, unit.encode("ascii", "ignore").decode() or "")
     label = f"{value:.2f} {unit_txt}" if value is not None else "NO READING"
     fs = 0.9 * scale
@@ -853,10 +922,12 @@ class GaugePipeline:
         self._miss_streak = 0
         self._lock = threading.Lock()
         self._calib_sig: str | None = None
+        self._last_level = "normal"
 
     def reset(self, keep_roi: bool = False) -> None:
         with self._lock:
             self.ema.reset()
+            self._last_level = "normal"
             if not keep_roi:
                 self.roi = None
             self._frames_since_detect = 0
@@ -923,11 +994,19 @@ class GaugePipeline:
 
             reading.ema_value = self.ema.update(reading.value if reading.valid else None)
             reading.status_level = classify_level(reading.ema_value, thresholds)
+            reading.debug["geom"] = overlay_geometry(
+                frame.shape, roi, needle if reading.valid else None, calibration, thresholds)
 
             if with_overlay:
                 reading.overlay = draw_overlay(
                     frame, roi, needle if reading.valid else None, reading.ema_value,
                     unit, reading.status_level, calibration, thresholds,
                 )
+            if reading.status_level != self._last_level and reading.status_level != "normal":
+                reading.snapshot = draw_overlay(
+                    frame, roi, needle if reading.valid else None, reading.ema_value,
+                    unit, reading.status_level, calibration, thresholds, labels=False,
+                )
+            self._last_level = reading.status_level
             reading.process_ms = round((time.perf_counter() - t0) * 1000.0, 1)
             return reading

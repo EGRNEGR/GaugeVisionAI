@@ -3,295 +3,387 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b1016">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>GaugeVision AI — Мониторинг КИПиА</title>
+  <meta name="theme-color" content="#0f1215">
+  <title>GaugeVision AI — пульт оператора</title>
   <link rel="icon" href="/favicon.ico" type="image/svg+xml">
-  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="preload" href="/static/fonts/jetbrains-mono-latin-500.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/static/fonts/ibm-plex-sans-cyrillic-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/static/css/console.css">
 </head>
 <body>
 
-<!-- ===================== Шапка ===================== -->
-<header class="topbar">
-  <div class="brand">
-    <div class="brand-logo" aria-hidden="true"></div>
-    <div>
-      <h1>Gauge<b>Vision</b> AI</h1>
-      <small id="brandSub">Мультисенсорный мониторинг аналоговых КИПиА</small>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-mark" viewBox="0 0 20 20"><path d="M3.5 15A7.5 7.5 0 1 1 16.5 15" /><path d="M10 11l4-5" /><path d="M9 11h2" /></symbol>
+  <symbol id="i-plus" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10" /></symbol>
+  <symbol id="i-search" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5L14 14" /></symbol>
+  <symbol id="i-phone" viewBox="0 0 16 16"><rect x="4.5" y="1.5" width="7" height="13" /><path d="M7 12.5h2" /></symbol>
+  <symbol id="i-sound" viewBox="0 0 16 16"><path d="M2.5 6h3l4-3v10l-4-3h-3z" /><path d="M11.5 5.5c1 1.4 1 3.6 0 5M13.5 3.5c2 2.5 2 6.5 0 9" /></symbol>
+  <symbol id="i-mute" viewBox="0 0 16 16"><path d="M2.5 6h3l4-3v10l-4-3h-3z" /><path d="M11.5 6l3 4M14.5 6l-3 4" /></symbol>
+  <symbol id="i-check" viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" /></symbol>
+  <symbol id="i-restart" viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.5-3.6" /><path d="M12 1.5v3h-3" /></symbol>
+  <symbol id="i-download" viewBox="0 0 16 16"><path d="M8 2v8M4.5 6.5L8 10l3.5-3.5M2.5 13.5h11" /></symbol>
+  <symbol id="i-trash" viewBox="0 0 16 16"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4" /></symbol>
+  <symbol id="i-external" viewBox="0 0 16 16"><path d="M9 2.5h4.5V7M13.5 2.5L7.5 8.5M11.5 9.5v4h-9v-9h4" /></symbol>
+  <symbol id="i-close" viewBox="0 0 16 16"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" /></symbol>
+  <symbol id="i-target" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" /><path d="M8 1v3M8 12v3M1 8h3M12 8h3" /></symbol>
+  <symbol id="i-frame" viewBox="0 0 16 16"><rect x="1.5" y="3" width="13" height="10" /><path d="M1.5 10.5l3.5-3 3 2.5 2-1.5 4.5 3" /></symbol>
+  <symbol id="i-live" viewBox="0 0 16 16"><path d="M5 3.5v9l7-4.5z" /></symbol>
+  <symbol id="i-prev" viewBox="0 0 16 16"><path d="M10 3.5L5.5 8l4.5 4.5" /></symbol>
+  <symbol id="i-next" viewBox="0 0 16 16"><path d="M6 3.5L10.5 8 6 12.5" /></symbol>
+  <symbol id="i-qr" viewBox="0 0 16 16"><path d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h2v2H9zM12 12h2v2h-2zM12 9h2M9 12v2" /></symbol>
+</svg>
+
+<div class="shell">
+  <!-- Шапка: состояние объекта за долю секунды -->
+  <header class="head">
+    <div class="brand">
+      <svg class="i" aria-hidden="true"><use href="#i-mark" /></svg>
+      <span>GaugeVision AI</span>
+      <small>Пульт оператора</small>
     </div>
-  </div>
-  <div class="summary">
-    <span class="chip conn-bad" id="connChip" title="Связь с сервером"><span class="dot"></span><span id="connText">Нет связи</span></span>
-    <span class="chip ok" title="Камер в сети"><span class="dot"></span><span id="cntOnline">0</span>&nbsp;в сети</span>
-    <span class="chip warn" title="Предупреждения"><span class="dot"></span><span id="cntWarn">0</span></span>
-    <span class="chip alert" title="Аварии"><span class="dot"></span><span id="cntAlert">0</span></span>
-  </div>
-  <div class="actions">
-    <button class="btn btn-primary" id="btnAdd"><span class="ico">＋</span><span class="lbl">Добавить камеру</span></button>
-    <button class="btn" id="btnDiscover"><span class="ico">⌕</span><span class="lbl">Поиск устройств</span></button>
-    <button class="btn" id="btnPhone"><span class="ico">📱</span><span class="lbl">Подключить смартфон как камеру</span></button>
-    <button class="btn sound-on" id="btnSound" title="Звуковая сигнализация"><span class="ico" id="soundIco">🔇</span><span class="lbl" id="soundLbl">Звук выкл.</span></button>
-  </div>
-</header>
-
-<!-- ===================== Аварийный баннер ===================== -->
-<div class="alarm-banner hidden" id="alarmBanner" role="alert" aria-live="assertive">
-  <span class="siren">🚨</span>
-  <span class="msg" id="alarmMsg">АВАРИЯ</span>
-  <button class="btn btn-danger" id="btnAck">✔ Квитировать аварию</button>
-</div>
-
-<!-- ===================== Подсказка по сертификату ===================== -->
-<div class="notice hidden" id="certNotice">
-  <span>🔒</span>
-  <div>
-    <b>Самоподписный сертификат.</b> На каждом новом устройстве (смартфоне, планшете, ПК) предупреждение браузера
-    нужно принять <b>один раз</b>: Chrome / Android — «Дополнительно» → «Перейти на сайт»; Safari / iOS —
-    «Подробнее» → «посетить этот веб-сайт». Без HTTPS мобильные браузеры запрещают доступ к камере.
-    <span class="muted">Отпечаток SHA-256: <span class="mono" id="certFp">—</span>.</span>
-    <a href="/api/cert.pem" download>Скачать сертификат</a>
-  </div>
-  <button class="btn btn-ghost btn-sm x" id="btnHideNotice">✕</button>
-</div>
-
-<!-- ===================== Сетка приборов ===================== -->
-<main class="grid" id="grid">
-  <div class="empty hidden" id="emptyState">
-    <h2>Приборы ещё не подключены</h2>
-    <div>Добавьте IP-камеру (RTSP / HTTP-MJPEG), найдите устройства в сети или подключите смартфон по QR-коду.</div>
+    <div class="counters" role="group" aria-label="Сводка тревог">
+      <button class="counter" data-kind="alarm" data-filter="alert" title="Приборы в аварийной зоне — показать в журнале">
+        <span class="lbl"><span class="lng">Авария</span><span class="sht">Авар.</span></span><span class="n" id="cAlarm">0</span>
+      </button>
+      <button class="counter" data-kind="warn" data-filter="warning" title="Приборы в зоне предупреждения — показать в журнале">
+        <span class="lbl"><span class="lng">Предупр.</span><span class="sht">Пред.</span></span><span class="n" id="cWarn">0</span>
+      </button>
+      <button class="counter" data-kind="unack" data-filter="unack" title="Неквитированные срабатывания — показать в журнале">
+        <span class="lbl">Неквит.</span><span class="n" id="cUnack">0</span>
+      </button>
+      <button class="counter" data-kind="link" data-filter="link" title="Камеры без связи">
+        <span class="lbl"><span class="lng">Нет связи</span><span class="sht">Обрыв</span></span><span class="n" id="cLink">0</span>
+      </button>
+    </div>
+    <div class="spacer"></div>
+    <div class="clock" title="Время пульта и текущая смена">
+      <span class="t mono" id="clockT">--:--:--</span>
+      <span class="d"><span id="clockD">—</span><br><span id="shiftLbl">Смена —</span></span>
+    </div>
+    <div class="link" id="linkCell" data-state="down" role="status">
+      <span class="sq" aria-hidden="true"></span><span id="linkText">Нет связи с сервером</span>
+    </div>
     <div class="actions">
-      <button class="btn btn-primary" data-action="add">＋ Добавить камеру</button>
-      <button class="btn" data-action="discover">⌕ Поиск устройств</button>
-      <button class="btn" data-action="phone">📱 Смартфон как камера</button>
+      <button class="btn icon" id="btnSound" aria-pressed="false" title="Звуковая сигнализация">
+        <svg class="i" aria-hidden="true"><use href="#i-mute" /></svg>
+      </button>
+      <button class="btn ack" id="btnAck" disabled title="Квитировать все срабатывания на всех пультах">
+        <svg class="i" aria-hidden="true"><use href="#i-check" /></svg><span>Квитировать</span>
+      </button>
     </div>
+  </header>
+
+  <div class="notice" id="certNotice" hidden>
+    <span><b>Самоподписанный сертификат.</b> На каждом новом устройстве предупреждение браузера принимается один раз, без HTTPS смартфон не даст доступ к камере. Отпечаток SHA-256: <span class="mono" id="certFp">—</span></span>
+    <span class="sp"></span>
+    <a href="/api/cert.pem" download>Скачать сертификат</a>
+    <button class="btn sm icon" id="btnHideNotice" title="Скрыть"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button>
   </div>
-</main>
 
-<!-- ===================== Шаблон карточки прибора ===================== -->
-<template id="tplCard">
-  <article class="card level-normal">
-    <div class="card-head">
-      <div class="card-title">
-        <h3 data-f="name">—</h3>
-        <div class="sub" data-f="sub">—</div>
-      </div>
-      <div class="badges">
-        <span class="badge st-offline" data-f="status"><span class="dot"></span><span data-f="statusText">Офлайн</span></span>
-        <span class="badge lv-normal" data-f="level">НОРМА</span>
-      </div>
-    </div>
-    <div class="preview">
-      <img data-f="img" alt="Кадр прибора" decoding="async">
-      <span class="overlay-tag" data-f="tag">—</span>
-      <button class="btn btn-sm btn-icon fs-btn" data-act="full" title="Открыть крупно">⤢</button>
-    </div>
-    <div class="values">
-      <div class="value-main"><span data-f="value">—</span><span class="unit" data-f="unit"></span></div>
-      <div class="value-meta">
-        <div>θ = <span data-f="angle">—</span>°</div>
-        <div>conf <span data-f="conf">—</span></div>
-        <div data-f="ts">—</div>
-      </div>
-    </div>
-    <div class="limits" data-f="limits"></div>
-    <div class="chart-wrap"><canvas data-f="chart"></canvas></div>
-    <div class="card-foot">
-      <div class="seg" data-f="win">
-        <button data-win="30">30</button><button data-win="60">60</button><button data-win="120">120</button>
-      </div>
-      <span class="spacer"></span>
-      <button class="btn btn-sm" data-act="csv" title="Экспорт истории в CSV">⇩ CSV</button>
-      <button class="btn btn-sm hidden" data-act="qr" title="Повторно показать QR-код смартфона">QR</button>
-      <button class="btn btn-sm" data-act="settings" title="Калибровка и уставки">⚙ Настройка</button>
-      <button class="btn btn-sm btn-icon" data-act="restart" title="Переподключить поток">↻</button>
-      <button class="btn btn-sm btn-icon btn-danger" data-act="delete" title="Удалить прибор">🗑</button>
-    </div>
-  </article>
-</template>
-
-<!-- ===================== Модальное окно: прибор (добавление/настройка) ===================== -->
-<div class="modal-backdrop hidden" id="mCamera">
-  <form class="modal wide" id="camForm" autocomplete="off">
-    <div class="modal-head">
-      <h2 id="camFormTitle">Добавить камеру</h2>
-      <button type="button" class="btn btn-ghost btn-icon" data-close>✕</button>
-    </div>
-    <div class="modal-body">
-      <fieldset class="section">
-        <legend>Прибор и источник видеопотока</legend>
-        <div class="grid-2">
-          <label class="field span-2"><span>Наименование прибора</span>
-            <input class="input" name="name" required maxlength="200" placeholder="Манометр питательного узла котла №2">
-          </label>
-          <label class="field"><span>Тип датчика</span>
-            <select class="input" name="gauge_type" id="fGaugeType"></select>
-          </label>
-          <label class="field"><span>Единица измерения</span>
-            <select class="input" name="unit" id="fUnit"></select>
-          </label>
-          <label class="field"><span>Тип источника</span>
-            <select class="input" name="type" id="fType">
-              <option value="rtsp">RTSP — IP-камера / NVR</option>
-              <option value="http_mjpeg">HTTP / MJPEG — веб-камера, IP Webcam, DroidCam, ESP32-CAM</option>
-              <option value="device">Локальная камера сервера (USB / встроенная)</option>
-              <option value="phone_ws">Смартфон (WSS, по QR-коду)</option>
-            </select>
-          </label>
-          <label class="field" id="fUrlWrap"><span id="fUrlLabel">Адрес потока</span>
-            <input class="input mono" name="source_url" id="fUrl" placeholder="rtsp://user:pass@192.168.1.64:554/Streaming/Channels/101">
-          </label>
-        </div>
-        <div class="hint" id="fUrlHint" style="margin-top:8px"></div>
-      </fieldset>
-
-      <fieldset class="section" id="calibSection">
-        <legend>Двухточечная калибровка шкалы</legend>
-        <div class="calib-live" id="calibLive">
-          <div>
-            <img id="calibImg" alt="Живой кадр">
-            <div class="hint">Голубые лучи на кадре — θmin / θmax, цветная дуга — зоны уставок. Углы: 0° — «3 часа», 90° — «6 часов», 180° — «9 часов», 270° — «12 часов».</div>
-          </div>
-          <div>
-            <div class="muted">Текущий угол стрелки θ</div>
-            <div class="angle-readout"><span id="calibAngle">—</span>°</div>
-            <div class="hint" id="calibConf">—</div>
-            <div class="hint" style="margin-top:8px">Установите стрелку (или дождитесь положения) на известную отметку шкалы и нажмите «Взять текущий угол».</div>
+  <main class="main">
+    <!-- Приборы: телеметрия всех точек -->
+    <section class="col col-left" aria-labelledby="hInst">
+      <div>
+        <div class="pane-head">
+          <h2 id="hInst">Приборы</h2><span class="count" id="instCount">0</span>
+          <span class="sp"></span>
+          <div class="seg" role="group" aria-label="Порядок списка">
+            <button data-sort="order" aria-pressed="true">По порядку</button>
+            <button data-sort="severity" aria-pressed="false">Тревоги сверху</button>
           </div>
         </div>
-        <div class="grid-4" style="margin-top:12px">
-          <label class="field"><span>V<sub>min</sub> (начало шкалы)</span><input class="input mono" name="v_min" type="number" step="any" value="0"></label>
-          <label class="field"><span>θ<sub>min</sub>, °</span>
-            <div class="input-group"><input class="input mono" name="theta_min" type="number" step="0.1" value="135"><button type="button" class="btn btn-sm" data-take="theta_min" title="Взять текущий угол">◎</button></div>
-          </label>
-          <label class="field"><span>V<sub>max</sub> (конец шкалы)</span><input class="input mono" name="v_max" type="number" step="any" value="10"></label>
-          <label class="field"><span>θ<sub>max</sub>, °</span>
-            <div class="input-group"><input class="input mono" name="theta_max" type="number" step="0.1" value="45"><button type="button" class="btn btn-sm" data-take="theta_max" title="Взять текущий угол">◎</button></div>
-          </label>
-          <label class="field span-2"><span>Направление шкалы</span>
-            <select class="input" name="direction">
-              <option value="cw">По часовой стрелке (CW)</option>
-              <option value="ccw">Против часовой стрелки (CCW)</option>
-            </select>
-          </label>
-          <label class="field span-2"><span>Область циферблата (ROI)</span>
-            <select class="input" name="roi_mode" id="fRoiMode">
-              <option value="auto">Автоматически (YOLO / HoughCircles + эллипс)</option>
-              <option value="manual">Вручную (центр и радиус в долях кадра)</option>
-            </select>
-          </label>
+        <div class="list-tools">
+          <button class="btn sm" data-act="add"><svg class="i" aria-hidden="true"><use href="#i-plus" /></svg>Камера</button>
+          <button class="btn sm" data-act="discover"><svg class="i" aria-hidden="true"><use href="#i-search" /></svg>Поиск в сети</button>
+          <button class="btn sm" data-act="phone"><svg class="i" aria-hidden="true"><use href="#i-phone" /></svg>Смартфон по QR</button>
         </div>
-        <div class="grid-3" id="roiManual" style="margin-top:12px">
-          <label class="field"><span>Центр X (0…1)</span><input class="input mono" name="roi_cx" type="number" min="0" max="1" step="0.01" value="0.5"></label>
-          <label class="field"><span>Центр Y (0…1)</span><input class="input mono" name="roi_cy" type="number" min="0" max="1" step="0.01" value="0.5"></label>
-          <label class="field"><span>Радиус (доля меньшей стороны)</span><input class="input mono" name="roi_r" type="number" min="0.05" max="1" step="0.01" value="0.45"></label>
-        </div>
-      </fieldset>
+      </div>
+      <ul class="inst-list" id="instList" aria-label="Список приборов"></ul>
+    </section>
 
-      <fieldset class="section">
-        <legend>Уставки — пятизонная модель (ISA-18.2 / ГОСТ Р МЭК 62682)</legend>
-        <div class="grid-4">
-          <label class="field"><span style="color:#fca5a5">LL — аварийный нижний</span><input class="input mono" name="ll_alert" type="number" step="any" placeholder="—"></label>
-          <label class="field"><span style="color:#fde68a">L — предупр. нижний</span><input class="input mono" name="l_warn" type="number" step="any" placeholder="—"></label>
-          <label class="field"><span style="color:#fde68a">H — предупр. верхний</span><input class="input mono" name="h_warn" type="number" step="any" placeholder="—"></label>
-          <label class="field"><span style="color:#fca5a5">HH — аварийный верхний</span><input class="input mono" name="hh_alert" type="number" step="any" placeholder="—"></label>
+    <!-- Видео, отсчёт и тренд выбранного прибора -->
+    <section class="col col-center" aria-label="Выбранный прибор">
+      <div class="view-bar">
+        <div class="cam-tabs" id="camTabs" role="tablist" aria-label="Камеры"></div>
+      </div>
+      <div class="stage" id="stage">
+        <div class="strip" id="strip">
+          <span class="live" id="liveInfo"></span>
+          <span class="sp"></span>
+          <span class="perf" id="perfInfo"></span>
+          <span class="layers" role="group" aria-label="Слои разметки">
+            <label class="chk"><input type="checkbox" data-layer="box" checked>Рамка</label>
+            <label class="chk"><input type="checkbox" data-layer="scale" checked>Шкала</label>
+            <label class="chk"><input type="checkbox" data-layer="needle" checked>Стрелка</label>
+            <label class="chk"><input type="checkbox" data-layer="labels" checked>Подписи</label>
+          </span>
+          <button class="btn sm" id="btnFilm" aria-pressed="false" title="Стоп-кадры срабатываний этого прибора">
+            <svg class="i" aria-hidden="true"><use href="#i-frame" /></svg>Стоп-кадры <span class="mono" id="filmCount">0</span>
+          </button>
+          <a class="btn sm icon" id="lnkMjpeg" target="_blank" rel="noopener" title="Поток MJPEG с разметкой сервера в новой вкладке">
+            <svg class="i" aria-hidden="true"><use href="#i-external" /></svg>
+          </a>
         </div>
-        <div class="zone-bar" id="zoneBar" style="margin-top:12px" title="Распределение зон по шкале"></div>
-        <div class="hint" style="margin-top:6px">Зелёная зона L…H — доверительный рабочий интервал нормы. Пустое поле — уставка не контролируется.</div>
-      </fieldset>
-    </div>
-    <div class="modal-foot">
-      <button type="button" class="btn btn-ghost hidden" id="btnRedetect">Найти циферблат заново</button>
-      <button type="button" class="btn btn-danger hidden" id="btnClearHist">Очистить историю</button>
-      <span style="flex:1"></span>
-      <button type="button" class="btn" data-close>Отмена</button>
-      <button type="submit" class="btn btn-primary" id="camFormSubmit">Сохранить</button>
-    </div>
-  </form>
+        <div class="stopbar" id="stopbar" hidden>
+          <span class="tag" id="stopTag"></span>
+          <span class="what" id="stopWhat"></span>
+          <span class="sp"></span>
+          <button class="btn sm icon" id="stopPrev" title="Предыдущий стоп-кадр"><svg class="i" aria-hidden="true"><use href="#i-prev" /></svg></button>
+          <button class="btn sm icon" id="stopNext" title="Следующий стоп-кадр"><svg class="i" aria-hidden="true"><use href="#i-next" /></svg></button>
+          <button class="btn sm primary" id="stopLive"><svg class="i" aria-hidden="true"><use href="#i-live" /></svg>Живой поток</button>
+        </div>
+        <div class="media" id="media">
+          <img id="frame" alt="Кадр выбранной камеры" decoding="async">
+          <svg class="ov" id="overlay" aria-hidden="true"></svg>
+          <div class="stale-note" id="staleNote" hidden></div>
+          <div class="veil" id="veil" hidden></div>
+        </div>
+        <div class="film" id="film" hidden></div>
+      </div>
+      <div class="readout" id="readout">
+        <div class="ro-main" id="roMain">
+          <div class="lbl"><span>Показание</span><span class="tag" id="roTag">—</span></div>
+          <div class="big"><span id="roValue">—</span><small id="roUnit"></small></div>
+        </div>
+        <div class="ro-ruler" id="roRuler"></div>
+        <dl class="ro-grid" id="roGrid"></dl>
+      </div>
+      <section class="trend" aria-labelledby="hTrend">
+        <div class="pane-head">
+          <h2 id="hTrend">Тренд</h2>
+          <div class="seg" role="group" aria-label="Окно тренда">
+            <button data-range="900" aria-pressed="false">15 мин</button>
+            <button data-range="3600" aria-pressed="false">1 ч</button>
+            <button data-range="shift" aria-pressed="true">Смена</button>
+          </div>
+          <span class="sp"></span>
+          <div class="legend" aria-hidden="true">
+            <span><i></i>среднее</span><span><i class="env"></i>мин – макс</span><span><i class="sp"></i>уставки</span><span><i class="ev"></i>срабатывания</span>
+          </div>
+          <a class="btn sm" id="lnkCsv" download title="Весь архив показаний прибора, CSV"><svg class="i" aria-hidden="true"><use href="#i-download" /></svg>CSV</a>
+        </div>
+        <div class="trend-body" id="trendBody">
+          <canvas id="trendCanvas"></canvas>
+          <div class="trend-tip" id="trendTip" hidden></div>
+        </div>
+      </section>
+    </section>
+
+    <!-- Журнал событий и управление -->
+    <section class="col col-right" aria-label="Журнал и управление">
+      <section class="journal" aria-labelledby="hJournal">
+        <div class="pane-head">
+          <h2 id="hJournal">Журнал событий</h2><span class="count" id="jCount">0</span>
+        </div>
+        <div class="j-filters">
+          <div class="seg" role="group" aria-label="Уровень события" id="jLevels">
+            <button data-f="all" aria-pressed="true">Все</button>
+            <button data-f="alert" aria-pressed="false">Авария<span class="c" id="jcAlert">0</span></button>
+            <button data-f="warning" aria-pressed="false">Предупр.<span class="c" id="jcWarn">0</span></button>
+            <button data-f="link" aria-pressed="false">Связь</button>
+            <button data-f="action" aria-pressed="false">Действия</button>
+          </div>
+          <label class="chk"><input type="checkbox" id="jUnack">Неквитированные</label>
+          <label class="chk"><input type="checkbox" id="jMine">Только выбранный</label>
+        </div>
+        <ul class="j-list" id="jList" aria-label="События"></ul>
+      </section>
+
+      <section class="control" aria-label="Управление и диагностика">
+        <div class="tabs" role="tablist" aria-label="Разделы управления">
+          <button role="tab" id="tab-sp" aria-controls="pane-sp" aria-selected="true">Уставки</button>
+          <button role="tab" id="tab-roi" aria-controls="pane-roi" aria-selected="false" tabindex="-1">ROI и шкала</button>
+          <button role="tab" id="tab-diag" aria-controls="pane-diag" aria-selected="false" tabindex="-1">Диагностика</button>
+          <button role="tab" id="tab-src" aria-controls="pane-src" aria-selected="false" tabindex="-1">Источник</button>
+        </div>
+
+        <!-- Уставки -->
+        <form class="tabpanel" role="tabpanel" id="pane-sp" aria-labelledby="tab-sp" autocomplete="off" novalidate>
+          <div class="sub" id="spFor">Прибор не выбран</div>
+          <div class="grid4">
+            <label class="field sp-field" data-kind="alert"><span><b>LL</b> нижн. авар.</span><input class="input num mono" name="ll_alert" inputmode="decimal" placeholder="нет"></label>
+            <label class="field sp-field" data-kind="warning"><span><b>L</b> нижн. предупр.</span><input class="input num mono" name="l_warn" inputmode="decimal" placeholder="нет"></label>
+            <label class="field sp-field" data-kind="warning"><span><b>H</b> верхн. предупр.</span><input class="input num mono" name="h_warn" inputmode="decimal" placeholder="нет"></label>
+            <label class="field sp-field" data-kind="alert"><span><b>HH</b> верхн. авар.</span><input class="input num mono" name="hh_alert" inputmode="decimal" placeholder="нет"></label>
+          </div>
+          <div id="spRuler"></div>
+          <div class="hint">Пятизонная модель ISA-18.2 / ГОСТ Р МЭК 62682. Пустое поле — уставка не контролируется. Уставки возрастают: LL ≤ L ≤ H ≤ HH, в пределах шкалы <span class="mono" id="spScale">—</span>.</div>
+          <div class="err-text" id="spErr" role="alert"></div>
+          <div class="foot">
+            <button class="btn primary" type="submit" id="spSave" disabled>Применить уставки</button>
+            <button class="btn" type="button" id="spReset" disabled>Отменить правку</button>
+          </div>
+        </form>
+
+        <!-- ROI и шкала -->
+        <form class="tabpanel" role="tabpanel" id="pane-roi" aria-labelledby="tab-roi" autocomplete="off" novalidate hidden>
+          <div class="sub" id="roiFor">Прибор не выбран</div>
+          <div class="block">
+            <header><span>Область циферблата (ROI)</span><span class="mono" id="roiSrc">—</span></header>
+            <div class="body">
+              <div class="seg" role="radiogroup" aria-label="Режим ROI" id="roiMode">
+                <button type="button" data-mode="auto" aria-pressed="true">Автоматически</button>
+                <button type="button" data-mode="manual" aria-pressed="false">Вручную</button>
+              </div>
+              <div class="grid3" id="roiManual">
+                <label class="field"><span>Центр X, доля кадра</span><input class="input num mono" name="roi_cx" inputmode="decimal"></label>
+                <label class="field"><span>Центр Y, доля кадра</span><input class="input num mono" name="roi_cy" inputmode="decimal"></label>
+                <label class="field"><span>Радиус, доля меньшей стороны</span><input class="input num mono" name="roi_r" inputmode="decimal"></label>
+              </div>
+              <div class="foot">
+                <button type="button" class="btn sm" id="roiEdit" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-target" /></svg>Править на кадре</button>
+                <button type="button" class="btn sm" id="roiRedetect">Найти циферблат заново</button>
+              </div>
+              <div class="hint" id="roiHint"></div>
+            </div>
+          </div>
+          <div class="block">
+            <header><span>Двухточечная калибровка шкалы</span><span class="angle-now"><span>θ сейчас</span><span class="a mono" id="calAngle">—</span></span></header>
+            <div class="body">
+              <div class="grid4">
+                <label class="field"><span>V<sub>min</sub></span><input class="input num mono" name="v_min" inputmode="decimal"></label>
+                <label class="field"><span>θ<sub>min</sub>, °</span><span class="input-row"><input class="input num mono" name="theta_min" inputmode="decimal"><button type="button" class="btn icon" data-take="theta_min" title="Взять текущий угол стрелки"><svg class="i" aria-hidden="true"><use href="#i-target" /></svg></button></span></label>
+                <label class="field"><span>V<sub>max</sub></span><input class="input num mono" name="v_max" inputmode="decimal"></label>
+                <label class="field"><span>θ<sub>max</sub>, °</span><span class="input-row"><input class="input num mono" name="theta_max" inputmode="decimal"><button type="button" class="btn icon" data-take="theta_max" title="Взять текущий угол стрелки"><svg class="i" aria-hidden="true"><use href="#i-target" /></svg></button></span></label>
+              </div>
+              <div class="seg" role="radiogroup" aria-label="Направление шкалы" id="calDir">
+                <button type="button" data-dir="cw" aria-pressed="true">По часовой (CW)</button>
+                <button type="button" data-dir="ccw" aria-pressed="false">Против часовой (CCW)</button>
+              </div>
+              <div class="hint">Углы в системе кадра: 0° — на 3 часа, 90° — на 6, 180° — на 9, 270° — на 12. Поставьте стрелку на известную отметку и возьмите текущий угол.</div>
+            </div>
+          </div>
+          <div class="err-text" id="roiErr" role="alert"></div>
+          <div class="foot">
+            <button class="btn primary" type="submit" id="roiSave" disabled>Применить калибровку</button>
+            <button class="btn" type="button" id="roiReset" disabled>Отменить правку</button>
+          </div>
+        </form>
+
+        <!-- Диагностика -->
+        <div class="tabpanel" role="tabpanel" id="pane-diag" aria-labelledby="tab-diag" hidden>
+          <div class="sys" id="diagSys"></div>
+          <div style="overflow:auto">
+            <table class="diag" id="diagTable">
+              <thead><tr><th>Прибор</th><th title="Кадров в секунду с камеры">Захват</th><th title="Обработано кадров конвейером в секунду, измерено пультом">Обраб.</th><th title="Время конвейера на кадр: медиана / 95-й процентиль, мс">p50 / p95</th><th title="В сети непрерывно">Аптайм</th><th title="Неудачных подключений подряд">Сбои</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div id="diagErr"></div>
+          <div class="hint">Захват и обработка — кадров в секунду, конвейер — миллисекунд на кадр. Обработку и конвейер пульт измеряет по последним 30 с телеметрии, захват и сбои сообщает сервер.</div>
+        </div>
+
+        <!-- Источник -->
+        <form class="tabpanel" role="tabpanel" id="pane-src" aria-labelledby="tab-src" autocomplete="off" novalidate hidden>
+          <div class="sub" id="srcFor">Прибор не выбран</div>
+          <div class="grid2">
+            <label class="field span2"><span>Наименование прибора</span><input class="input" name="name" maxlength="200" required></label>
+            <label class="field"><span>Тип прибора</span><select class="input" name="gauge_type"></select></label>
+            <label class="field"><span>Единица измерения</span><select class="input" name="unit"></select></label>
+            <label class="field"><span>Тип источника</span><select class="input" name="type"></select></label>
+            <label class="field" data-url><span>Адрес потока</span><input class="input mono" name="source_url"></label>
+          </div>
+          <div class="hint" data-url-hint></div>
+          <div class="err-text" id="srcErr" role="alert"></div>
+          <div class="foot">
+            <button class="btn primary" type="submit" id="srcSave" disabled>Сохранить</button>
+            <span class="sp"></span>
+            <button class="btn sm" type="button" id="srcRestart"><svg class="i" aria-hidden="true"><use href="#i-restart" /></svg>Переподключить</button>
+            <button class="btn sm" type="button" id="srcQr" hidden><svg class="i" aria-hidden="true"><use href="#i-qr" /></svg>QR</button>
+          </div>
+          <div class="foot">
+            <button class="btn sm danger" type="button" id="srcClear">Очистить архив</button>
+            <button class="btn sm danger" type="button" id="srcDelete"><svg class="i" aria-hidden="true"><use href="#i-trash" /></svg>Удалить прибор</button>
+          </div>
+        </form>
+      </section>
+    </section>
+  </main>
 </div>
 
-<!-- ===================== Модальное окно: поиск устройств ===================== -->
-<div class="modal-backdrop hidden" id="mDiscover">
-  <div class="modal wide">
-    <div class="modal-head">
-      <h2>Поиск устройств в сети</h2>
-      <button type="button" class="btn btn-ghost btn-icon" data-close>✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="hint">ONVIF WS-Discovery (мультикаст 239.255.255.250:3702) + асинхронное сканирование подсети /24 по портам 554, 80, 8080, 4747 (DroidCam), 8554.</div>
-      <div class="input-group">
-        <input class="input mono" id="discSubnet" placeholder="IP из подсети, напр. 192.168.1.1 (по умолчанию — подсеть сервера)">
-        <button class="btn btn-primary" id="btnScan">⌕ Сканировать</button>
+<!-- Добавление камеры -->
+<dialog class="dlg" id="dlgAdd">
+  <form method="dialog" id="addForm" autocomplete="off" novalidate>
+    <header><h2>Добавить камеру</h2><button class="btn icon" value="cancel" formnovalidate title="Закрыть"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button></header>
+    <div class="body">
+      <div class="grid2">
+        <label class="field span2"><span>Наименование прибора</span><input class="input" name="name" maxlength="200" required placeholder="Манометр питательной воды котла №2"></label>
+        <label class="field"><span>Тип прибора</span><select class="input" name="gauge_type"></select></label>
+        <label class="field"><span>Единица измерения</span><select class="input" name="unit"></select></label>
+        <label class="field"><span>Тип источника</span><select class="input" name="type"></select></label>
+        <label class="field" data-url><span>Адрес потока</span><input class="input mono" name="source_url"></label>
       </div>
-      <div id="discStatus" class="muted"></div>
+      <div class="hint" data-url-hint></div>
+      <div class="hint">Калибровка шкалы и уставки задаются после добавления, на вкладках «ROI и шкала» и «Уставки».</div>
+      <div class="err-text" role="alert" data-err></div>
+    </div>
+    <footer><button class="btn" value="cancel" formnovalidate>Отмена</button><button class="btn primary" value="ok">Добавить</button></footer>
+  </form>
+</dialog>
+
+<!-- Поиск устройств -->
+<dialog class="dlg wide" id="dlgDiscover">
+  <div class="wrap">
+    <header><h2>Поиск устройств в сети</h2><button class="btn icon" data-close title="Закрыть"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button></header>
+    <div class="body">
+      <div class="hint">ONVIF WS-Discovery (мультикаст 239.255.255.250:3702) и сканирование подсети /24 по портам 554, 80, 8080, 4747 (DroidCam), 8554.</div>
+      <div class="input-row">
+        <input class="input mono" id="discSubnet" placeholder="IP из подсети, например 192.168.1.1; пусто — подсеть сервера">
+        <button class="btn primary" id="btnScan"><svg class="i" aria-hidden="true"><use href="#i-search" /></svg>Сканировать</button>
+      </div>
+      <div class="hint" id="discStatus" role="status"></div>
       <div style="overflow-x:auto">
-        <table class="table hidden" id="discTable">
-          <thead><tr><th>IP-адрес</th><th>Устройство</th><th>Порты</th><th style="min-width:260px">Адрес потока (можно дописать логин/пароль)</th><th></th></tr></thead>
+        <table class="disc" id="discTable" hidden>
+          <thead><tr><th>IP-адрес</th><th>Устройство</th><th>Порты</th><th>Адрес потока (можно дописать логин и пароль)</th><th></th></tr></thead>
           <tbody id="discBody"></tbody>
         </table>
       </div>
     </div>
+    <footer><button class="btn" data-close>Закрыть</button></footer>
   </div>
-</div>
+</dialog>
 
-<!-- ===================== Модальное окно: смартфон как камера ===================== -->
-<div class="modal-backdrop hidden" id="mPhone">
-  <div class="modal">
-    <div class="modal-head">
-      <h2>Смартфон как Wi-Fi камера</h2>
-      <button type="button" class="btn btn-ghost btn-icon" data-close>✕</button>
-    </div>
-    <div class="modal-body">
-      <div id="phoneSetup">
-        <div class="grid-2">
-          <label class="field span-2"><span>Наименование прибора</span><input class="input" id="pName" maxlength="200" placeholder="Напр. «Тягомер топки котла №1»"></label>
-          <label class="field"><span>Тип датчика</span><select class="input" id="pGaugeType"></select></label>
-          <label class="field"><span>Единица измерения</span><select class="input" id="pUnit"></select></label>
-        </div>
-        <div class="hint" style="margin-top:10px">Установка приложений не требуется — используется браузер смартфона (Safari / Chrome).</div>
+<!-- Смартфон как камера -->
+<dialog class="dlg" id="dlgPhone">
+  <div class="wrap">
+    <header><h2>Смартфон как Wi-Fi камера</h2><button class="btn icon" data-close title="Закрыть"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button></header>
+    <div class="body">
+      <div id="phoneSetup" class="grid2">
+        <label class="field span2"><span>Наименование прибора</span><input class="input" id="pName" maxlength="200" placeholder="Тягомер топки котла №1"></label>
+        <label class="field"><span>Тип прибора</span><select class="input" id="pGaugeType"></select></label>
+        <label class="field"><span>Единица измерения</span><select class="input" id="pUnit"></select></label>
+        <div class="hint span2">Приложение не нужно: трансляцию ведёт браузер смартфона (Safari или Chrome).</div>
       </div>
-      <div id="phoneResult" class="hidden">
-        <div class="qr-box">
-          <div class="qr" id="pQr"></div>
-          <div>
-            <ol class="steps">
-              <li>Смартфон и сервер должны быть в одной сети Wi-Fi / LAN.</li>
-              <li>Отсканируйте QR-код штатной камерой телефона и откройте ссылку.</li>
-              <li>При первом входе примите самоподписный сертификат («Дополнительно» → «Перейти на сайт» / «Подробнее» → «посетить веб-сайт»).</li>
-              <li>Разрешите доступ к камере, выберите объектив и нажмите «Начать трансляцию».</li>
-            </ol>
-            <div class="field" style="margin-top:10px"><span>Ссылка</span><div class="url-box" id="pUrl"></div></div>
-            <div style="margin-top:8px"><button class="btn btn-sm" id="btnCopyUrl">⧉ Копировать ссылку</button></div>
-            <div class="hint" style="margin-top:8px">Ссылка содержит одноразовый токен сессии. После перезапуска сервера сгенерируйте QR заново (кнопка «QR» на карточке).</div>
-          </div>
+      <div id="phoneResult" class="qr-box" hidden>
+        <div class="qr" id="pQr"></div>
+        <div style="display:grid;gap:.625rem">
+          <ol class="steps">
+            <li>Смартфон и сервер в одной сети Wi-Fi или LAN.</li>
+            <li>Отсканируйте QR-код камерой телефона и откройте ссылку.</li>
+            <li>При первом входе примите самоподписанный сертификат.</li>
+            <li>Разрешите доступ к камере и нажмите «Начать трансляцию».</li>
+          </ol>
+          <div class="url-box" id="pUrl"></div>
+          <div><button class="btn sm" id="btnCopyUrl">Копировать ссылку</button></div>
+          <div class="hint">Ссылка содержит одноразовый токен. После перезапуска сервера создайте QR заново: вкладка «Источник», кнопка «QR».</div>
         </div>
       </div>
     </div>
-    <div class="modal-foot">
-      <button type="button" class="btn" data-close>Закрыть</button>
-      <button type="button" class="btn btn-primary" id="btnMakeQr">Сгенерировать QR-код</button>
-    </div>
+    <footer><button class="btn" data-close>Закрыть</button><button class="btn primary" id="btnMakeQr">Создать QR-код</button></footer>
   </div>
-</div>
+</dialog>
 
-<!-- ===================== Полноэкранный просмотр ===================== -->
-<div class="modal-backdrop hidden" id="mFull">
-  <div class="modal wide">
-    <div class="modal-head">
-      <h2 id="fullTitle">—</h2>
-      <a class="btn btn-sm" id="fullMjpeg" target="_blank" rel="noopener">MJPEG ↗</a>
-      <button type="button" class="btn btn-ghost btn-icon" data-close>✕</button>
-    </div>
-    <div class="modal-body">
-      <img id="fullImg" alt="" style="width:100%;border-radius:8px;background:#000">
-      <div class="hint mono" id="fullInfo"></div>
-    </div>
-  </div>
-</div>
+<!-- Подтверждение -->
+<dialog class="dlg narrow" id="dlgConfirm">
+  <form method="dialog">
+    <header><h2 id="confTitle">Подтвердите действие</h2></header>
+    <div class="body"><p id="confText" style="margin:0;line-height:1.5"></p></div>
+    <footer><button class="btn" value="cancel">Отмена</button><button class="btn danger" value="ok" id="confOk">Удалить</button></footer>
+  </form>
+</dialog>
 
-<div class="toasts" id="toasts"></div>
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
 
-<script src="/static/js/vendor/chart.umd.min.js"></script>
-<script src="/static/js/app.js"></script>
+<script type="module" src="/static/js/console/main.js"></script>
 </body>
 </html>

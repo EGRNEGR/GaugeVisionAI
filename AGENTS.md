@@ -21,7 +21,8 @@
 ## Где что
 
 - `app/main.py` — REST/WebSocket и оркестрация камер; `app/vision.py` — CV-конвейер; `app/config.py` — константы, типы приборов, env-переменные
-- `static/` — пульт оператора сервиса (отдельно от лендинга)
+- `static/` — пульт оператора сервиса (отдельно от лендинга): `static/js/console/` — ES-модули (их отдаёт сервер по HTTPS, file:// не нужен), `static/css/console.css`; `style.css` остался только у `capture.html`
+- `app/events.py` — журнал событий пульта в памяти сервера (срабатывания со стоп-кадрами, связь, квитирование, правки); `db.get_trend` — агрегаты тренда за смену
 - `site/js/content.js` — `GV.content`, единственный источник фактов лендинга
 - `site/js/page.js` — `GV.page`, строит единственную страницу из 8 секций; `site/js/motion.js` — `GV.motion` (единственный rAF); `site/js/components/` — модули секций; `site/css/` — по файлу на секцию
 - `site/assets/video/README.md` — перекодирование видео hero и путь к ffmpeg; `archive/site-variants-a-c/` — снятые варианты A и C (не часть сайта)

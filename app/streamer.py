@@ -138,6 +138,7 @@ class BaseWorker(ABC):
         self.last_error: str | None = None
         self.frames_total = 0
         self.fps = 0.0
+        self.online_since: float | None = None   # UNIX-время перехода в «В сети»
         self._fps_t0 = time.monotonic()
         self._fps_n = 0
         self._stop = threading.Event()
@@ -156,6 +157,7 @@ class BaseWorker(ABC):
         if self.status == status:
             return
         self.status = status
+        self.online_since = time.time() if status == "online" else None
         logger.info("[%s] статус: %s", self.cam_id[:8], status)
         if self._on_status is None:
             return
@@ -186,6 +188,7 @@ class BaseWorker(ABC):
             "frames_total": self.frames_total,
             "fail_count": self.fail_count,
             "last_error": self.last_error,
+            "online_since": self.online_since,
             "frame_age": None if self.broker.age(self.cam_id) == float("inf")
             else round(self.broker.age(self.cam_id), 2),
         }
@@ -453,7 +456,8 @@ class StreamManager:
     def info(self, cam_id: str) -> dict[str, Any]:
         w = self._workers.get(cam_id)
         return w.info() if w else {"status": "offline", "fps": 0.0, "frames_total": 0,
-                                   "fail_count": 0, "last_error": None, "frame_age": None}
+                                   "fail_count": 0, "last_error": None, "online_since": None,
+                                   "frame_age": None}
 
     # -- смартфон-нода: токены сессий ------------------------------------------
     def issue_phone_token(self, cam_id: str) -> str:
