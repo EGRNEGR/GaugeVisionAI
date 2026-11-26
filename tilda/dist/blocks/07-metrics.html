@@ -1,0 +1,384 @@
+<!-- GaugeVision AI для Tilda: сгенерировано tilda/build.mjs из site/. Правьте site/ и пересобирайте. -->
+<!-- Лист 05 «Протокол»: тексты, стили и модуль components/metrics.js -->
+<div class="gvt" data-gv-block="metrics"></div>
+<style>
+/* ---------- протокол ---------- */
+.gvt .gv-proto__scroll {
+  grid-column: 1 / -1;
+}
+.gvt .gv-proto {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.gvt .gv-proto th,
+.gvt .gv-proto td {
+  padding: var(--s2) var(--s2) var(--s2) 0;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--rule-strong);
+}
+.gvt .gv-proto thead th {
+  padding-block: var(--s1);
+  font-family: var(--font-mono);
+  font-stretch: 75%;
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom-color: var(--ink);
+}
+.gvt .gv-proto__h--3 {
+  text-align: right !important;
+}
+.gvt .gv-proto__gh th {
+  padding-top: var(--s5);
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: var(--fs-xl);
+  line-height: 1;
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+/* Выделенная строка протокола: главный замер своей группы лежит на светлой бумаге */
+.gvt .gv-proto__row.is-key {
+  background: var(--paper-lift);
+}
+.gvt .gv-proto__row.is-key > :first-child {
+  padding-left: var(--s1);
+}
+.gvt .gv-proto__row.is-key .gv-proto__label {
+  font-weight: 750;
+}
+.gvt .gv-proto__n {
+  width: 3rem;
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+}
+.gvt .gv-proto__label {
+  width: 26%;
+  font-weight: 650;
+  font-size: var(--fs-m);
+  line-height: 1.3;
+}
+.gvt .gv-proto__cond {
+  color: var(--ink-2);
+  font-size: var(--fs-s);
+  line-height: 1.4;
+}
+.gvt .gv-proto__value {
+  text-align: right !important;
+  white-space: nowrap;
+}
+.gvt .gv-proto__v {
+  font-family: var(--font-mono);
+  font-stretch: 112.5%;
+  font-weight: 500;
+  font-size: var(--fs-2xl);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.gvt .gv-proto__v--pair {
+  display: block;
+}
+.gvt .gv-proto__v--pair + .gv-proto__v--pair {
+  margin-top: 0.25rem;
+}
+.gvt .gv-proto__axis {
+  margin-left: var(--s2);
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-2xs);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+.gvt .gv-proto__u {
+  margin-left: 0.375rem;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+}
+.gvt .gv-proto__kind {
+  width: 7rem;
+  text-align: right !important;
+  padding-right: 0 !important;
+}
+.gvt .gv-proto__bar {
+  display: block;
+  width: 14rem;
+  height: 0.5rem;
+  margin: var(--s1) 0 0 auto;
+  border-bottom: 1px solid var(--rule-strong);
+}
+.gvt .gv-proto__fill {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  transition: transform 1200ms var(--ease-out);
+}
+.gvt .gv-proto__bar--calculated .gv-proto__fill {
+  background: repeating-linear-gradient(135deg, var(--warn) 0 1px, transparent 1px 0.3125rem);
+  border: 1px dashed var(--warn);
+}
+.gvt .gv-proto.is-drawn .gv-proto__fill {
+  transform: scaleX(var(--w));
+}
+.gvt .gv-proto__group--scale tr:nth-child(3) .gv-proto__fill { transition-delay: 140ms; }
+.gvt .gv-proto__group--scale tr:nth-child(4) .gv-proto__fill { transition-delay: 280ms; }
+@media (max-width: 900px) {
+  /* протокол — стопкой строк: пять колонок не помещаются */
+  .gvt .gv-proto thead { display: none; }
+  .gvt .gv-proto tr.gv-proto__row {
+      display: grid;
+      grid-template-columns: 2rem minmax(0, 1fr) auto;
+      column-gap: var(--s1);
+      padding: var(--s2) 0;
+      border-bottom: 1px solid var(--rule-strong);
+    }
+  .gvt .gv-proto tr.gv-proto__row > * { border: 0; padding: 0; }
+  .gvt .gv-proto tr.gv-proto__row.is-key { padding-inline: var(--s1); }
+  .gvt .gv-proto__label { width: auto; grid-column: 2 / -1; }
+  .gvt .gv-proto__cond { grid-column: 2 / -1; grid-row: 2; margin-top: 0.25rem; }
+  .gvt .gv-proto__value { grid-column: 2; grid-row: 3; text-align: left !important; margin-top: var(--s1); }
+  .gvt .gv-proto__kind { grid-column: 3; grid-row: 3; width: auto; align-self: end; }
+  .gvt .gv-proto__gh th { display: block; }
+}
+@media (max-width: 760px) {
+  .gvt .gv-proto__v { font-size: var(--fs-2xl); }
+  .gvt .gv-proto__value { white-space: normal; }
+  .gvt .gv-proto__bar { margin-left: 0; width: 100%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gvt .gv-proto__fill { transition: none; }
+}
+</style>
+<script>
+/* Тексты листа 05 — данные из site/js/content.js после типографа */
+(function () {
+  var GV = (window.GV = window.GV || {});
+  var c = (GV.content = GV.content || {});
+  var part = {
+    "metrics": [
+      {
+        "id": "scale-error",
+        "group": "quality",
+        "value": 0.38,
+        "digits": 2,
+        "display": "0,38",
+        "unit": "%",
+        "label": "Максимальная ошибка шкалы",
+        "condition": "28\u00a0сцен стенда, средняя ошибка 0,11\u00a0%",
+        "kind": "measured",
+        "key": true
+      },
+      {
+        "id": "infer-gpu",
+        "group": "speed",
+        "value": 7.2,
+        "digits": 1,
+        "display": "7,2",
+        "unit": "мс/кадр",
+        "label": "Инференс YOLOv8n на GPU",
+        "condition": "RTX 5060 Laptop, FP16, кадр 1280×720",
+        "kind": "measured"
+      },
+      {
+        "id": "pipeline-latency",
+        "group": "speed",
+        "value": 30,
+        "valueTo": 100,
+        "digits": 0,
+        "display": "30–100",
+        "unit": "мс/кадр",
+        "label": "Полный конвейер",
+        "condition": "локализация, нормализация, стрелка, EMA",
+        "kind": "measured"
+      },
+      {
+        "id": "map50",
+        "group": "quality",
+        "value": 90.1,
+        "digits": 1,
+        "display": "90,1",
+        "unit": "%",
+        "label": "mAP₅₀ детектора",
+        "condition": "YOLOv8n, 25\u00a0эпох, валидация обучения",
+        "kind": "measured"
+      },
+      {
+        "id": "phone-stream",
+        "group": "speed",
+        "value": 3,
+        "valueTo": 4,
+        "digits": 0,
+        "display": "3–4",
+        "unit": "к/с",
+        "label": "Поток со смартфона",
+        "condition": "WebP, 1280\u00a0px",
+        "kind": "measured"
+      },
+      {
+        "id": "bench-25",
+        "group": "scale",
+        "value": 100,
+        "digits": 0,
+        "display": "100",
+        "unit": "к/с",
+        "label": "25\u00a0камер на одном ноутбуке",
+        "condition": "стенд команды: RTX 5060 Laptop 8\u00a0GB, 16\u00a0GB RAM, 4\u00a0к/с на камеру, загрузка GPU 72\u00a0%",
+        "kind": "measured",
+        "key": true
+      },
+      {
+        "id": "infer-cpu",
+        "group": "speed",
+        "value": 29,
+        "digits": 0,
+        "display": "29",
+        "unit": "мс/кадр",
+        "label": "Инференс YOLOv8n на CPU",
+        "condition": "FP32, без видеокарты",
+        "kind": "measured"
+      },
+      {
+        "id": "recall-precision",
+        "group": "quality",
+        "value": 1,
+        "digits": 2,
+        "display": "1,00 / 1,00",
+        "unit": "",
+        "label": "Recall Gauge / Precision Needle",
+        "condition": "валидация обучения",
+        "kind": "measured"
+      },
+      {
+        "id": "scale-50",
+        "group": "scale",
+        "value": 200,
+        "digits": 0,
+        "display": "200",
+        "unit": "к/с",
+        "label": "50\u00a0камер",
+        "condition": "расчёт: RTX 4070 Ti Super 16\u00a0GB, узел ≈\u00a0230–260\u00a0тыс.\u00a0₽",
+        "kind": "calculated"
+      },
+      {
+        "id": "scale-100",
+        "group": "scale",
+        "value": 400,
+        "digits": 0,
+        "display": "400",
+        "unit": "к/с",
+        "label": "100\u00a0камер",
+        "condition": "расчёт: RTX 4090 24\u00a0GB, узел ≈\u00a0580–680\u00a0тыс.\u00a0₽",
+        "kind": "calculated"
+      }
+    ],
+    "metricsColumns": [
+      "№",
+      "Показатель",
+      "Условия замера",
+      "Значение",
+      "Вид"
+    ],
+    "metricsAxis": "к/с, шкала 0–400"
+  };
+  Object.keys(part).forEach(function (k) { c[k] = part[k]; });
+})();
+/*
+ * GV.components.metrics — лист 05 «Протокол испытаний».
+ * Таблица протокола: № · показатель · условия замера · значение · вид (штамп «замер» или «расчёт»).
+ * Строки сгруппированы «Точность · Скорость · Масштаб»; у масштаба в колонке условий — полоса
+ * в одной шкале (к/с): замер залит, расчёт заштрихован. Цифры докручиваются при первом показе,
+ * диапазоны (30–100, 3–4) печатаются сразу. Пометка о стенде — рукой на полях.
+ *
+ *   mount(body) → { destroy }
+ */
+(function () {
+  'use strict';
+
+  var GV = (window.GV = window.GV || {});
+  var GROUPS = ['quality', 'speed', 'scale'];
+
+  function mount(body) {
+    var u = GV.util;
+    var kit = GV.kit;
+    var motion = GV.motion;
+    var h = u.h;
+    var c = GV.content;
+    var L = c.labels;
+    var cols = c.metricsColumns;
+    var sc = kit.scope();
+    var fmt = u.formatNumber;
+
+    body.classList.add('gv-proto-wrap');
+
+    var scaleMax = 0;
+    c.metrics.forEach(function (m) { if (m.group === 'scale') scaleMax = Math.max(scaleMax, m.value); });
+
+    var n = 0;
+    var table = h('table', { class: 'gv-proto' },
+      h('caption', { class: 'gv-visually-hidden' }, c.sections.filter(function (s) { return s.id === 'metrics'; })[0].title),
+      h('thead', null, h('tr', null, cols.map(function (col, i) {
+        return h('th', { scope: 'col', class: 'gv-proto__h gv-proto__h--' + i }, col);
+      }))));
+
+    GROUPS.forEach(function (g) {
+      var rows = c.metrics.filter(function (m) { return m.group === g; });
+      if (!rows.length) return;
+      var tbody = h('tbody', { class: 'gv-proto__group gv-proto__group--' + g });
+      tbody.appendChild(h('tr', { class: 'gv-proto__gh' },
+        h('th', { scope: 'colgroup', colspan: '5' }, L.metricGroups[g])));
+      if (g === 'scale') {
+        tbody.firstChild.firstChild.appendChild(h('span', { class: 'gv-proto__axis' }, c.metricsAxis));
+      }
+      rows.forEach(function (m) {
+        n += 1;
+        var parts = String(m.display).split(' / ');
+        var valueEl = h('span', { class: 'gv-proto__v gv-num' }, parts[0]);
+        var value = [valueEl];
+        if (parts.length > 1) {
+          value = parts.map(function (p) { return h('span', { class: 'gv-proto__v gv-proto__v--pair gv-num' }, p); });
+        }
+        if (m.unit) value.push(h('span', { class: 'gv-proto__u' }, m.unit));
+        if (g === 'scale') {
+          value.push(h('span', { class: 'gv-proto__bar gv-proto__bar--' + m.kind, title: c.metricsAxis },
+            h('span', { class: 'gv-proto__fill', style: { '--w': (m.value / scaleMax).toFixed(4) } })));
+        }
+        var cond = [h('span', { class: 'gv-proto__cond-t' }, m.condition)];
+        tbody.appendChild(h('tr', { class: m.key ? 'gv-proto__row is-key' : 'gv-proto__row' },
+          h('td', { class: 'gv-proto__n gv-num' }, (n < 10 ? '0' : '') + n),
+          h('th', { scope: 'row', class: 'gv-proto__label' }, m.label),
+          h('td', { class: 'gv-proto__cond' }, cond),
+          h('td', { class: 'gv-proto__value' }, value),
+          h('td', { class: 'gv-proto__kind' }, h('span', { class: 'gv-mark gv-mark--stamp', 'data-tone': m.kind }, L.kind[m.kind]))));
+        if (m.valueTo === undefined && parts.length === 1) {
+          sc.add(motion.counter(valueEl, { to: m.value, digits: m.digits, display: m.display, duration: 1200 }));
+        }
+      });
+      table.appendChild(tbody);
+    });
+
+    body.appendChild(h('div', { class: 'gv-proto__scroll', 'data-reveal': '' }, table));
+
+    sc.observe(u.onVisible(table, function () { table.classList.add('gv-stamped', 'is-drawn'); }, { once: true, threshold: 0.15 }));
+    Array.prototype.forEach.call(table.querySelectorAll('.gv-mark--stamp'), function (el, i) {
+      el.style.setProperty('--gv-stamp-delay', Math.min(i, 10) * 70 + 'ms');
+    });
+
+    return { destroy: sc.destroy };
+  }
+
+  GV.components = GV.components || {};
+  GV.components.metrics = { mount: mount };
+})();
+
+window.GV && GV.tilda && GV.tilda.boot();
+</script>

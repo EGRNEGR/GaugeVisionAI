@@ -1,0 +1,250 @@
+/*
+ * Лист 06 — схема соединений на миллиметровке (поле чертежа, а не декоративная сетка) и спецификация стека.
+ * Несвязанные узлы гаснут рамкой и фоном, а не opacity: текст держит контраст.
+ */
+.gv-schema__sheet {
+  grid-column: 1 / -1;
+  padding: var(--s3);
+  background-color: var(--paper-lift);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 0.5rem 0.5rem, 0.5rem 0.5rem, 2.5rem 2.5rem, 2.5rem 2.5rem;
+  border: 1px solid var(--ink);
+}
+.gv-schema__scroll {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.gv-schema__svg {
+  width: 100%;
+  min-width: 46rem;
+  height: auto;
+  font-family: var(--font-mono);
+}
+.gv-schema__bound,
+.gv-flow {
+  display: none;
+}
+.gv-schema__boundary rect {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.2;
+  stroke-dasharray: 18 5 3 5;
+}
+.gv-schema__boundary text {
+  fill: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+.gv-schema__edge {
+  fill: none;
+  stroke: var(--ink-2);
+  stroke-width: 1.2;
+}
+.gv-schema__head {
+  fill: var(--ink-2);
+}
+.gv-schema__elabel {
+  fill: var(--ink-2);
+  paint-order: stroke;
+  stroke: var(--paper-lift);
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+.gv-schema__n {
+  cursor: pointer;
+  outline: none;
+}
+.gv-schema__box {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 1.2;
+}
+.gv-schema__n--server .gv-schema__box {
+  stroke-width: 2.2;
+}
+.gv-schema__label {
+  fill: var(--ink);
+  font-weight: 600;
+}
+.gv-schema__group {
+  fill: var(--ink-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.gv-schema__svg.has-active .gv-schema__n:not(.is-on) .gv-schema__box {
+  fill: var(--paper-lift);
+  stroke: var(--rule-strong);
+}
+.gv-schema__svg.has-active .gv-schema__e:not(.is-on) .gv-schema__edge {
+  stroke: var(--rule-strong);
+}
+.gv-schema__svg.has-active .gv-schema__e:not(.is-on) .gv-schema__elabel {
+  fill: var(--ink-3);
+}
+.gv-schema__e.is-on .gv-schema__edge {
+  stroke: var(--red);
+  stroke-width: 2;
+}
+.gv-schema__e.is-on .gv-schema__elabel {
+  fill: var(--red);
+  font-weight: 600;
+}
+.gv-schema__n.is-current .gv-schema__box {
+  fill: var(--ink);
+  stroke: var(--ink);
+}
+.gv-schema__n.is-current .gv-schema__label {
+  fill: var(--paper);
+}
+.gv-schema__n.is-current .gv-schema__group {
+  fill: var(--plate-ink-2);
+}
+.gv-schema__n:focus-visible .gv-schema__box {
+  stroke: var(--violet);
+  stroke-width: 3;
+}
+
+.gv-schema__callout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s1) var(--s3);
+  min-height: 3.5rem;
+  margin-top: var(--s2);
+  padding-top: var(--s2);
+  border-top: 1px solid var(--ink);
+}
+.gv-schema__hint {
+  font-size: var(--fs-s);
+  color: var(--ink-3);
+}
+.gv-schema__c-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-xl);
+  line-height: 1;
+}
+.gv-schema__c-sub {
+  font-size: var(--fs-m);
+}
+.gv-schema__c-file {
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+}
+
+/* ---------- спецификация ---------- */
+.gv-spec {
+  grid-column: 5 / -1;
+  margin-top: var(--s8);
+  border-collapse: collapse;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.gv-spec__cap {
+  caption-side: top;
+  text-align: left;
+  padding-bottom: var(--s2);
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+.gv-spec th,
+.gv-spec td {
+  padding: 0.5rem var(--s2) 0.5rem 0;
+  text-align: left;
+  border-bottom: 1px solid var(--rule-strong);
+  font-size: var(--fs-s);
+}
+.gv-spec thead th {
+  font-family: var(--font-mono);
+  font-stretch: 75%;
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom-color: var(--ink);
+}
+.gv-spec tbody th {
+  font-weight: 650;
+}
+.gv-spec__pos {
+  width: 3rem;
+  font-family: var(--font-mono);
+  color: var(--ink-3);
+}
+.gv-spec__ver {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  color: var(--ink-2);
+}
+
+@media (max-width: 900px) {
+  .gv-spec { grid-column: 1 / -1; }
+}
+
+/* Телефон: вертикальный поток вместо чертежа — вся топология видна без горизонтальной прокрутки */
+@media (max-width: 760px) {
+  .gv-schema__sheet { padding: var(--s2); }
+  .gv-schema__scroll { display: none; }
+  .gv-schema__bound {
+    display: block;
+    padding-bottom: var(--s2);
+    border-bottom: 1px dashed var(--ink);
+  }
+  .gv-flow {
+    display: grid;
+    gap: var(--s3);
+    margin: var(--s2) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .gv-flow__step {
+    position: relative;
+    display: grid;
+    gap: var(--s1);
+  }
+  .gv-flow__step + .gv-flow__step::before {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    top: calc(-1 * var(--s3));
+    height: var(--s3);
+    border-left: 1px solid var(--ink);
+  }
+  .gv-flow__title {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: var(--fs-l);
+    line-height: 1;
+  }
+  .gv-flow__nodes {
+    display: grid;
+    gap: 0.375rem;
+  }
+  .gv-flow__node {
+    display: grid;
+    gap: 0.125rem;
+    padding: var(--s1) 0.75rem;
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    border-radius: 0.1875rem;
+  }
+  .gv-flow__node--server { border-width: 0.125rem; }
+  .gv-flow__label {
+    font-family: var(--font-mono);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+  }
+  .gv-flow__sub {
+    font-size: var(--fs-xs);
+    line-height: 1.35;
+    color: var(--ink-2);
+  }
+  .gv-schema__callout { display: none; }
+}

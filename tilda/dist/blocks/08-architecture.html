@@ -1,0 +1,716 @@
+<!-- GaugeVision AI для Tilda: сгенерировано tilda/build.mjs из site/. Правьте site/ и пересобирайте. -->
+<!-- Лист 06 «Схема»: тексты, стили и модуль components/architecture.js -->
+<div class="gvt" data-gv-block="architecture"></div>
+<style>
+/*
+ * Лист 06 — схема соединений на миллиметровке (поле чертежа, а не декоративная сетка) и спецификация стека.
+ * Несвязанные узлы гаснут рамкой и фоном, а не opacity: текст держит контраст.
+ */
+.gvt .gv-schema__sheet {
+  grid-column: 1 / -1;
+  padding: var(--s3);
+  background-color: var(--paper-lift);
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+    linear-gradient(var(--rule) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+  background-size: 0.5rem 0.5rem, 0.5rem 0.5rem, 2.5rem 2.5rem, 2.5rem 2.5rem;
+  border: 1px solid var(--ink);
+}
+.gvt .gv-schema__scroll {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.gvt .gv-schema__svg {
+  width: 100%;
+  min-width: 46rem;
+  height: auto;
+  font-family: var(--font-mono);
+}
+.gvt .gv-schema__bound,
+.gvt .gv-flow {
+  display: none;
+}
+.gvt .gv-schema__boundary rect {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.2;
+  stroke-dasharray: 18 5 3 5;
+}
+.gvt .gv-schema__boundary text {
+  fill: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+.gvt .gv-schema__edge {
+  fill: none;
+  stroke: var(--ink-2);
+  stroke-width: 1.2;
+}
+.gvt .gv-schema__head {
+  fill: var(--ink-2);
+}
+.gvt .gv-schema__elabel {
+  fill: var(--ink-2);
+  paint-order: stroke;
+  stroke: var(--paper-lift);
+  stroke-width: 5;
+  stroke-linejoin: round;
+}
+.gvt .gv-schema__n {
+  cursor: pointer;
+  outline: none;
+}
+.gvt .gv-schema__box {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 1.2;
+}
+.gvt .gv-schema__n--server .gv-schema__box {
+  stroke-width: 2.2;
+}
+.gvt .gv-schema__label {
+  fill: var(--ink);
+  font-weight: 600;
+}
+.gvt .gv-schema__group {
+  fill: var(--ink-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.gvt .gv-schema__svg.has-active .gv-schema__n:not(.is-on) .gv-schema__box {
+  fill: var(--paper-lift);
+  stroke: var(--rule-strong);
+}
+.gvt .gv-schema__svg.has-active .gv-schema__e:not(.is-on) .gv-schema__edge {
+  stroke: var(--rule-strong);
+}
+.gvt .gv-schema__svg.has-active .gv-schema__e:not(.is-on) .gv-schema__elabel {
+  fill: var(--ink-3);
+}
+.gvt .gv-schema__e.is-on .gv-schema__edge {
+  stroke: var(--red);
+  stroke-width: 2;
+}
+.gvt .gv-schema__e.is-on .gv-schema__elabel {
+  fill: var(--red);
+  font-weight: 600;
+}
+.gvt .gv-schema__n.is-current .gv-schema__box {
+  fill: var(--ink);
+  stroke: var(--ink);
+}
+.gvt .gv-schema__n.is-current .gv-schema__label {
+  fill: var(--paper);
+}
+.gvt .gv-schema__n.is-current .gv-schema__group {
+  fill: var(--plate-ink-2);
+}
+.gvt .gv-schema__n:focus-visible .gv-schema__box {
+  stroke: var(--violet);
+  stroke-width: 3;
+}
+.gvt .gv-schema__callout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s1) var(--s3);
+  min-height: 3.5rem;
+  margin-top: var(--s2);
+  padding-top: var(--s2);
+  border-top: 1px solid var(--ink);
+}
+.gvt .gv-schema__hint {
+  font-size: var(--fs-s);
+  color: var(--ink-3);
+}
+.gvt .gv-schema__c-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-xl);
+  line-height: 1;
+}
+.gvt .gv-schema__c-sub {
+  font-size: var(--fs-m);
+}
+.gvt .gv-schema__c-file {
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+}
+/* ---------- спецификация ---------- */
+.gvt .gv-spec {
+  grid-column: 5 / -1;
+  margin-top: var(--s8);
+  border-collapse: collapse;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.gvt .gv-spec__cap {
+  caption-side: top;
+  text-align: left;
+  padding-bottom: var(--s2);
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+.gvt .gv-spec th,
+.gvt .gv-spec td {
+  padding: 0.5rem var(--s2) 0.5rem 0;
+  text-align: left;
+  border-bottom: 1px solid var(--rule-strong);
+  font-size: var(--fs-s);
+}
+.gvt .gv-spec thead th {
+  font-family: var(--font-mono);
+  font-stretch: 75%;
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom-color: var(--ink);
+}
+.gvt .gv-spec tbody th {
+  font-weight: 650;
+}
+.gvt .gv-spec__pos {
+  width: 3rem;
+  font-family: var(--font-mono);
+  color: var(--ink-3);
+}
+.gvt .gv-spec__ver {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  color: var(--ink-2);
+}
+@media (max-width: 900px) {
+  .gvt .gv-spec { grid-column: 1 / -1; }
+}
+/* Телефон: вертикальный поток вместо чертежа — вся топология видна без горизонтальной прокрутки */
+@media (max-width: 760px) {
+  .gvt .gv-schema__sheet { padding: var(--s2); }
+  .gvt .gv-schema__scroll { display: none; }
+  .gvt .gv-schema__bound {
+      display: block;
+      padding-bottom: var(--s2);
+      border-bottom: 1px dashed var(--ink);
+    }
+  .gvt .gv-flow {
+      display: grid;
+      gap: var(--s3);
+      margin: var(--s2) 0 0;
+      padding: 0;
+      list-style: none;
+    }
+  .gvt .gv-flow__step {
+      position: relative;
+      display: grid;
+      gap: var(--s1);
+    }
+  .gvt .gv-flow__step + .gv-flow__step::before {
+      content: '';
+      position: absolute;
+      left: 1rem;
+      top: calc(-1 * var(--s3));
+      height: var(--s3);
+      border-left: 1px solid var(--ink);
+    }
+  .gvt .gv-flow__title {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: var(--fs-l);
+      line-height: 1;
+    }
+  .gvt .gv-flow__nodes {
+      display: grid;
+      gap: 0.375rem;
+    }
+  .gvt .gv-flow__node {
+      display: grid;
+      gap: 0.125rem;
+      padding: var(--s1) 0.75rem;
+      background: var(--paper);
+      border: 1px solid var(--ink);
+      border-radius: 0.1875rem;
+    }
+  .gvt .gv-flow__node--server { border-width: 0.125rem; }
+  .gvt .gv-flow__label {
+      font-family: var(--font-mono);
+      font-size: var(--fs-xs);
+      font-weight: 600;
+    }
+  .gvt .gv-flow__sub {
+      font-size: var(--fs-xs);
+      line-height: 1.35;
+      color: var(--ink-2);
+    }
+  .gvt .gv-schema__callout { display: none; }
+}
+</style>
+<script>
+/* Тексты листа 06 — данные из site/js/content.js после типографа */
+(function () {
+  var GV = (window.GV = window.GV || {});
+  var c = (GV.content = GV.content || {});
+  var part = {
+    "architecture": {
+      "nodes": [
+        {
+          "id": "rtsp",
+          "label": "RTSP / NVR",
+          "sub": "IP-камеры, транспорт TCP",
+          "group": "source"
+        },
+        {
+          "id": "onvif",
+          "label": "ONVIF",
+          "sub": "камеры, найденные WS-Discovery",
+          "group": "source"
+        },
+        {
+          "id": "mjpeg",
+          "label": "HTTP / MJPEG",
+          "sub": "IP Webcam, DroidCam, ESP32-CAM",
+          "group": "source"
+        },
+        {
+          "id": "usb",
+          "label": "USB",
+          "sub": "камера сервера",
+          "group": "source"
+        },
+        {
+          "id": "phone",
+          "label": "Смартфон",
+          "sub": "браузер по QR-коду, WebP / JPEG по WSS",
+          "group": "source"
+        },
+        {
+          "id": "streamer",
+          "label": "streamer.py",
+          "sub": "захват в\u00a0отдельных потоках, буфер 1\u00a0кадр, переподключение 1 → 15\u00a0с",
+          "group": "server",
+          "file": "app/streamer.py"
+        },
+        {
+          "id": "vision",
+          "label": "vision.py",
+          "sub": "YOLOv8n CUDA FP16 / CPU, резерв OpenCV, EMA",
+          "group": "server",
+          "file": "app/vision.py"
+        },
+        {
+          "id": "main",
+          "label": "main.py",
+          "sub": "FastAPI: REST, WebSocket, оркестрация камер",
+          "group": "server",
+          "file": "app/main.py"
+        },
+        {
+          "id": "db",
+          "label": "db.py",
+          "sub": "aiosqlite, WAL → CSV",
+          "group": "storage",
+          "file": "app/db.py"
+        },
+        {
+          "id": "dashboard",
+          "label": "Пульт оператора",
+          "sub": "static/, Chart.js локально",
+          "group": "client",
+          "file": "static/index.html"
+        },
+        {
+          "id": "discovery",
+          "label": "discovery.py",
+          "sub": "ONVIF WS-Discovery, скан подсети /24",
+          "group": "service",
+          "file": "app/discovery.py"
+        },
+        {
+          "id": "cert",
+          "label": "cert_gen.py",
+          "sub": "самоподписанный сертификат, HTTPS / WSS",
+          "group": "service",
+          "file": "app/cert_gen.py"
+        }
+      ],
+      "edges": [
+        {
+          "from": "rtsp",
+          "to": "streamer",
+          "label": "RTSP"
+        },
+        {
+          "from": "mjpeg",
+          "to": "streamer",
+          "label": "HTTP"
+        },
+        {
+          "from": "usb",
+          "to": "streamer",
+          "label": "USB"
+        },
+        {
+          "from": "phone",
+          "to": "streamer",
+          "label": "WSS"
+        },
+        {
+          "from": "onvif",
+          "to": "discovery",
+          "label": "WS-Discovery"
+        },
+        {
+          "from": "discovery",
+          "to": "main",
+          "label": "найденные камеры"
+        },
+        {
+          "from": "streamer",
+          "to": "vision",
+          "label": "последний кадр"
+        },
+        {
+          "from": "vision",
+          "to": "main",
+          "label": "значение, θ, уверенность"
+        },
+        {
+          "from": "main",
+          "to": "dashboard",
+          "label": "WSS и\u00a0MJPEG"
+        },
+        {
+          "from": "main",
+          "to": "db",
+          "label": "запись раз в\u00a01\u00a0с"
+        },
+        {
+          "from": "db",
+          "to": "main",
+          "label": "история и\u00a0CSV"
+        },
+        {
+          "from": "cert",
+          "to": "main",
+          "label": "TLS"
+        }
+      ],
+      "groups": {
+        "source": "Источники видео",
+        "server": "Сервер",
+        "storage": "Архив",
+        "client": "Пульт",
+        "service": "Служебные модули"
+      },
+      "stack": [
+        {
+          "name": "Python",
+          "version": "3.12"
+        },
+        {
+          "name": "FastAPI",
+          "version": "≥\u00a00.110, async"
+        },
+        {
+          "name": "Uvicorn",
+          "version": "≥\u00a00.29, только HTTPS"
+        },
+        {
+          "name": "aiosqlite",
+          "version": "≥\u00a00.20"
+        },
+        {
+          "name": "OpenCV",
+          "version": "≥\u00a04.9"
+        },
+        {
+          "name": "NumPy",
+          "version": "≥\u00a01.26"
+        },
+        {
+          "name": "Ultralytics YOLOv8n",
+          "version": "≥\u00a08.1"
+        },
+        {
+          "name": "PyTorch",
+          "version": "CUDA FP16 или CPU"
+        },
+        {
+          "name": "cryptography",
+          "version": "≥\u00a042"
+        },
+        {
+          "name": "qrcode",
+          "version": "≥\u00a07.4"
+        },
+        {
+          "name": "Chart.js",
+          "version": "локально, без CDN"
+        },
+        {
+          "name": "HTML / CSS / JS",
+          "version": "без фреймворков"
+        }
+      ],
+      "stackColumns": [
+        "Поз.",
+        "Компонент",
+        "Версия"
+      ],
+      "boundaryLabel": "Локальный контур: HTTPS / WSS, без исходящих запросов в\u00a0интернет",
+      "hint": "Наведите на узел или выберите его стрелками, чтобы подсветить путь сигнала",
+      "hintTouch": "Коснитесь узла, чтобы подсветить путь сигнала"
+    }
+  };
+  Object.keys(part).forEach(function (k) { c[k] = part[k]; });
+})();
+/*
+ * GV.components.architecture — лист 06 «Один сервер в локальном контуре».
+ * Схема соединений на миллиметровке: источники видео → streamer.py → vision.py → main.py → пульт и архив;
+ * служебные discovery.py и cert_gen.py снизу. Граница локального контура — штрихпунктир, как на чертеже.
+ * Узел выбирают наведением, касанием или стрелками (roving tabindex: одна остановка Tab на всю схему);
+ * выбранный узел подсвечивает свои связи, остальные гаснут рамкой, подпись узла — в выноске под схемой.
+ * Ниже — спецификация стека: поз. · компонент · версия.
+ *
+ *   mount(body) → { destroy }
+ */
+(function () {
+  'use strict';
+
+  var GV = (window.GV = window.GV || {});
+
+  /* Положение узлов в единицах viewBox 0 0 1400 560: источники слева, сервер в строку, пульт справа,
+     архив под main.py, служебные модули снизу. Зазоры между узлами сервера ≥ 120 — подписи связей
+     помещаются целиком. */
+  var VB = [1400, 560];
+  var LAYOUT = {
+    rtsp: [40, 64], mjpeg: [40, 140], usb: [40, 216], phone: [40, 292], onvif: [40, 452],
+    streamer: [300, 178], vision: [590, 178], main: [880, 178],
+    dashboard: [1170, 178], db: [880, 352],
+    discovery: [330, 452], cert: [1170, 452]
+  };
+  var W = 170;
+  var NH = 52;
+  /* Порядок обхода стрелками: слева направо, сверху вниз */
+  var ORDER = ['rtsp', 'mjpeg', 'usb', 'phone', 'onvif', 'streamer', 'discovery', 'vision', 'main', 'cert', 'dashboard', 'db'];
+
+  function mount(body) {
+    var u = GV.util;
+    var kit = GV.kit;
+    var h = u.h;
+    var s = u.svg;
+    var c = GV.content;
+    var A = c.architecture;
+    var L = c.labels;
+    var sc = kit.scope();
+    var fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    body.classList.add('gv-schema');
+
+    var nodesById = {};
+    A.nodes.forEach(function (n) { nodesById[n.id] = n; });
+
+    function box(id) {
+      var p = LAYOUT[id];
+      var w = id === 'dashboard' ? 196 : W;
+      return { x: p[0], y: p[1], w: w, h: NH, cx: p[0] + w / 2, cy: p[1] + NH / 2 };
+    }
+
+    /* ---------- связи: ортогональные ломаные ---------- */
+    /* Ломаная и место подписи: { pts, lx, ly, anchor } */
+    function route(e) {
+      var a = box(e.from);
+      var b = box(e.to);
+      if (e.from === 'main' && e.to === 'db') {
+        var x0 = a.cx - 28;
+        return { pts: [[x0, a.y + a.h], [x0, b.y]], lx: x0 - 8, ly: (a.y + a.h + b.y) / 2 + 4, anchor: 'end' };
+      }
+      if (e.from === 'db' && e.to === 'main') {
+        var x1 = a.cx + 28;
+        return { pts: [[x1, a.y], [x1, b.y + b.h]], lx: x1 + 8, ly: (a.y + b.y + b.h) / 2 + 4, anchor: 'start' };
+      }
+      if (e.from === 'discovery') {
+        var xd = b.x - 36;
+        return { pts: [[a.x + a.w, a.cy], [xd, a.cy], [xd, b.cy + 16], [b.x, b.cy + 16]], lx: (a.x + a.w + xd) / 2, ly: a.cy - 8, anchor: 'middle' };
+      }
+      if (e.from === 'cert') {
+        // в обход пульта: влево до середины зазора main.py → пульт, вверх, в правый бок main.py
+        var xc = b.x + b.w + 60;
+        return { pts: [[a.x, a.cy], [xc, a.cy], [xc, b.cy + 16], [b.x + b.w, b.cy + 16]], lx: xc + 8, ly: (a.cy + b.cy) / 2 + 20, anchor: 'start' };
+      }
+      if (e.from === 'onvif') {
+        return { pts: [[a.x + a.w, a.cy], [b.x, b.cy]], lx: (a.x + a.w + b.x) / 2, ly: a.cy - 8, anchor: 'middle' };
+      }
+      if (a.cy === b.cy) {
+        return { pts: [[a.x + a.w, a.cy], [b.x, b.cy]], lx: (a.x + a.w + b.x) / 2, ly: a.cy - 10, anchor: 'middle' };
+      }
+      // источники → streamer.py: общий коллектор слева от узла, подпись у входа в коллектор
+      var mx = b.x - 34;
+      var ty = b.cy + (a.cy - b.cy) * 0.12;
+      return { pts: [[a.x + a.w, a.cy], [mx, a.cy], [mx, ty], [b.x, ty]], lx: a.x + a.w + 10, ly: a.cy - 6, anchor: 'start' };
+    }
+    function d(pts) {
+      return pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0] + ' ' + p[1]; }).join(' ');
+    }
+
+    var defs = s('defs', null,
+      s('marker', { id: 'gv-arrow', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' },
+        s('path', { d: 'M0 1 L9 5 L0 9 z', class: 'gv-schema__head' })));
+
+    var edgeEls = [];
+    var edgesG = s('g', { class: 'gv-schema__edges' });
+    A.edges.forEach(function (e) {
+      var r = route(e);
+      var path = s('path', { class: 'gv-schema__edge', d: d(r.pts), 'marker-end': 'url(#gv-arrow)' });
+      var lx = r.lx;
+      var label = s('text', { class: 'gv-schema__elabel', x: lx, y: r.ly, 'font-size': 11, 'text-anchor': r.anchor });
+      var words = e.label.split(' ');
+      if (e.label.length > 16 && words.length > 1) {
+        var cut = Math.ceil(words.length / 2);
+        label.appendChild(s('tspan', { x: lx, dy: '-1.1em' }, words.slice(0, cut).join(' ')));
+        label.appendChild(s('tspan', { x: lx, dy: '1.15em' }, words.slice(cut).join(' ')));
+      } else {
+        label.textContent = e.label;
+      }
+      var g = s('g', { class: 'gv-schema__e', 'data-from': e.from, 'data-to': e.to }, path, label);
+      edgeEls.push(g);
+      edgesG.appendChild(g);
+    });
+
+    var nodeEls = {};
+    var nodesG = s('g', { class: 'gv-schema__nodes' });
+    ORDER.forEach(function (id) {
+      var n = nodesById[id];
+      if (!n) return;
+      var b = box(id);
+      var g = s('g', {
+        class: 'gv-schema__n gv-schema__n--' + n.group,
+        tabindex: '-1',
+        role: 'button',
+        'data-id': id,
+        'aria-label': n.label + ': ' + n.sub
+      },
+        s('rect', { class: 'gv-schema__box', x: b.x, y: b.y, width: b.w, height: b.h, rx: 3 }),
+        s('text', { class: 'gv-schema__label', x: b.x + 12, y: b.y + 22, 'font-size': 15 }, n.label),
+        s('text', { class: 'gv-schema__group', x: b.x + 12, y: b.y + 40, 'font-size': 10 }, A.groups[n.group]));
+      nodeEls[id] = g;
+      nodesG.appendChild(g);
+    });
+
+    var boundary = s('g', { class: 'gv-schema__boundary' },
+      s('rect', { x: 14, y: 22, width: VB[0] - 28, height: VB[1] - 38, rx: 6 }),
+      s('text', { x: 30, y: 16, 'font-size': 12 }, A.boundaryLabel));
+
+    var svgEl = s('svg', { class: 'gv-schema__svg', viewBox: '0 0 ' + VB[0] + ' ' + VB[1], role: 'group', 'aria-label': A.boundaryLabel },
+      defs, boundary, edgesG, nodesG);
+
+    var callout = h('p', { class: 'gv-schema__callout', 'aria-live': 'polite' });
+    var hint = fine ? A.hint : A.hintTouch;
+    function setCallout(id) {
+      callout.textContent = '';
+      if (!id) {
+        callout.appendChild(h('span', { class: 'gv-schema__hint' }, hint));
+        return;
+      }
+      var n = nodesById[id];
+      callout.appendChild(h('span', { class: 'gv-schema__c-name' }, n.label));
+      callout.appendChild(h('span', { class: 'gv-schema__c-sub' }, n.sub));
+      if (n.file) callout.appendChild(h('code', { class: 'gv-schema__c-file' }, n.file));
+    }
+    setCallout(null);
+
+    function item(id) {
+      var n = nodesById[id];
+      return h('li', { class: 'gv-flow__node gv-flow__node--' + n.group },
+        h('span', { class: 'gv-flow__label' }, n.label), h('span', { class: 'gv-flow__sub' }, n.sub));
+    }
+    function step(title, ids) {
+      return h('li', { class: 'gv-flow__step' },
+        h('p', { class: 'gv-flow__title' }, title),
+        h('ul', { class: 'gv-flow__nodes', role: 'list' }, ids.map(item)));
+    }
+    var flow = h('ol', { class: 'gv-flow', role: 'list', 'aria-label': A.boundaryLabel },
+      step(A.groups.source, ['rtsp', 'mjpeg', 'usb', 'phone', 'onvif']),
+      step(A.groups.server, ['streamer', 'vision', 'main']),
+      step(A.groups.client + ', ' + A.groups.storage.toLowerCase(), ['dashboard', 'db']),
+      step(A.groups.service, ['discovery', 'cert']));
+
+    var sheet = h('figure', { class: 'gv-schema__sheet', 'data-reveal': '' },
+      h('p', { class: 'gv-schema__bound gv-label' }, A.boundaryLabel),
+      h('div', { class: 'gv-schema__scroll' }, svgEl),
+      flow,
+      h('figcaption', null, callout));
+    body.appendChild(sheet);
+
+    /* ---------- выбор узла ---------- */
+    var active = null;
+    function select(id) {
+      active = id;
+      svgEl.classList.toggle('has-active', !!id);
+      var linked = {};
+      if (id) linked[id] = true;
+      edgeEls.forEach(function (g) {
+        var on = !!id && (g.getAttribute('data-from') === id || g.getAttribute('data-to') === id);
+        g.classList.toggle('is-on', on);
+        if (on) { linked[g.getAttribute('data-from')] = true; linked[g.getAttribute('data-to')] = true; }
+      });
+      Object.keys(nodeEls).forEach(function (k) {
+        nodeEls[k].classList.toggle('is-on', !!linked[k]);
+        nodeEls[k].classList.toggle('is-current', k === id);
+      });
+      setCallout(id);
+    }
+
+    var focusIndex = 0;
+    function setTab(i) {
+      focusIndex = (i + ORDER.length) % ORDER.length;
+      ORDER.forEach(function (id, j) { nodeEls[id].setAttribute('tabindex', j === focusIndex ? '0' : '-1'); });
+    }
+    setTab(0);
+
+    ORDER.forEach(function (id, i) {
+      var g = nodeEls[id];
+      sc.on(g, 'pointerenter', function (e) { if (e.pointerType === 'mouse') select(id); });
+      sc.on(g, 'click', function () { setTab(i); select(active === id && !fine ? null : id); });
+      sc.on(g, 'focus', function () { setTab(i); select(id); });
+      sc.on(g, 'keydown', function (e) {
+        var step = 0;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') step = 1;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') step = -1;
+        else if (e.key === 'Home') { e.preventDefault(); setTab(0); nodeEls[ORDER[0]].focus(); return; }
+        else if (e.key === 'End') { e.preventDefault(); setTab(ORDER.length - 1); nodeEls[ORDER[ORDER.length - 1]].focus(); return; }
+        else if (e.key === 'Escape') { select(null); return; }
+        if (!step) return;
+        e.preventDefault();
+        setTab(focusIndex + step);
+        nodeEls[ORDER[focusIndex]].focus();
+      });
+    });
+    sc.on(svgEl, 'pointerleave', function (e) { if (e.pointerType === 'mouse' && !svgEl.contains(document.activeElement)) select(null); });
+    sc.on(svgEl, 'focusout', function (e) { if (!svgEl.contains(e.relatedTarget)) select(null); });
+
+    /* ---------- спецификация ---------- */
+    var cols = A.stackColumns;
+    var spec = h('table', { class: 'gv-spec', 'data-reveal': '' },
+      h('caption', { class: 'gv-spec__cap' }, L.stackTitle),
+      h('thead', null, h('tr', null, cols.map(function (col) { return h('th', { scope: 'col' }, col); }))),
+      h('tbody', null, A.stack.map(function (item, i) {
+        return h('tr', null,
+          h('td', { class: 'gv-spec__pos gv-num' }, String(i + 1)),
+          h('th', { scope: 'row' }, item.name),
+          h('td', { class: 'gv-spec__ver' }, item.version));
+      })));
+    body.appendChild(spec);
+
+    return { destroy: sc.destroy };
+  }
+
+  GV.components = GV.components || {};
+  GV.components.architecture = { mount: mount };
+})();
+
+window.GV && GV.tilda && GV.tilda.boot();
+</script>

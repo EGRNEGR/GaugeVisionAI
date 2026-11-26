@@ -1,408 +1,244 @@
 /*
- * GV.components.architecture — схема архитектуры и чипы стека.
- * mount(el, options) → { destroy() }   (раскладка выбирается сама по ширине контейнера)
- *   ≥ 62rem — горизонтальная: источники → streamer → vision → main → пульт и архив, служебные модули снизу;
- *   уже     — вертикальная в две дорожки: цепочка данных слева, служебные модули справа.
- * Связи (ломаные из прямых отрезков) и граница «локальный контур» — инлайн-SVG; узлы — нативные <button>
- * поверх него (фокусируемы, aria-pressed закрепляет подсветку). Наведение или фокус подсвечивает связи узла
- * и показывает подпись (aria-live). По связям бегут импульсы: точки двигаются только transform вдоль
- * отрезков, пока схема на экране; при «уменьшить движение» их нет. Перекладка — по ResizeObserver и
- * событию gv:tweaks (масштаб). Порядок кнопок в DOM (Tab) = порядок, в котором узлы нарисованы:
- * на широкой — по колонкам слева направо, в колонке сверху вниз; на узкой — по строкам сверху вниз,
- * в строке слева направо.
+ * GV.components.architecture — лист 06 «Один сервер в локальном контуре».
+ * Схема соединений на миллиметровке: источники видео → streamer.py → vision.py → main.py → пульт и архив;
+ * служебные discovery.py и cert_gen.py снизу. Граница локального контура — штрихпунктир, как на чертеже.
+ * Узел выбирают наведением, касанием или стрелками (roving tabindex: одна остановка Tab на всю схему);
+ * выбранный узел подсвечивает свои связи, остальные гаснут рамкой, подпись узла — в выноске под схемой.
+ * Ниже — спецификация стека: поз. · компонент · версия.
+ *
+ *   mount(body) → { destroy }
  */
 (function () {
   'use strict';
 
   var GV = (window.GV = window.GV || {});
-  GV.components = GV.components || {};
 
-  var NODE_W = 10.5;   // rem
-  var NODE_H = 3.25;
-  var WIDE_MIN = 62;
-  var PULSE_SPEED = 5;    // rem/с
-  var PULSE_GAP = 7;      // rem паузы между пробегами
-  var PULSE_FADE = 1;     // rem появления и затухания на концах
-  var T = {
-    diagram: 'Схема архитектуры GaugeVision AI',
-    incoming: 'Получает',
-    outgoing: 'Передаёт',
-    file: 'Файл'
+  /* Положение узлов в единицах viewBox 0 0 1400 560: источники слева, сервер в строку, пульт справа,
+     архив под main.py, служебные модули снизу. Зазоры между узлами сервера ≥ 120 — подписи связей
+     помещаются целиком. */
+  var VB = [1400, 560];
+  var LAYOUT = {
+    rtsp: [40, 64], mjpeg: [40, 140], usb: [40, 216], phone: [40, 292], onvif: [40, 452],
+    streamer: [300, 178], vision: [590, 178], main: [880, 178],
+    dashboard: [1170, 178], db: [880, 352],
+    discovery: [330, 452], cert: [1170, 452]
   };
+  var W = 170;
+  var NH = 52;
+  /* Порядок обхода стрелками: слева направо, сверху вниз */
+  var ORDER = ['rtsp', 'mjpeg', 'usb', 'phone', 'onvif', 'streamer', 'discovery', 'vision', 'main', 'cert', 'dashboard', 'db'];
 
-  function mount(el) {
-    var u = GV.util, kit = GV.kit, motion = GV.motion, h = u.h, s = u.svg;
+  function mount(body) {
+    var u = GV.util;
+    var kit = GV.kit;
+    var h = u.h;
+    var s = u.svg;
     var c = GV.content;
-    var arch = c.architecture;
+    var A = c.architecture;
+    var L = c.labels;
     var sc = kit.scope();
-    var nodes = arch.nodes;
-    var edges = arch.edges;
-    var byId = {};
-    nodes.forEach(function (n) { byId[n.id] = n; });
-    var captionId = u.uid('gv-arch-caption');
-    // Касание без наведения: подсказка говорит о касании, а не о курсоре и Tab
-    var coarse = typeof window.matchMedia === 'function' && !window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-    var markerId = u.uid('gv-arch-arrow');
-    var active = null;
-    var pinned = null;
-    var lastKey = null;
+    var fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
-    /* Источники: сначала те, что ведут в сервер, затем — в служебные модули. */
-    function outGroup(n) {
-      var e = edges.filter(function (x) { return x.from === n.id; })[0];
-      return e && byId[e.to] ? byId[e.to].group : '';
-    }
-    var sources = nodes.filter(function (n) { return n.group === 'source'; })
-      .sort(function (a, b) { return (outGroup(a) === 'server' ? 0 : 1) - (outGroup(b) === 'server' ? 0 : 1); });
-    var server = nodes.filter(function (n) { return n.group === 'server'; });
-    var services = nodes.filter(function (n) { return n.group === 'service'; });
-    var sinks = nodes.filter(function (n) { return n.group === 'client'; })
-      .concat(nodes.filter(function (n) { return n.group === 'storage'; }));
+    body.classList.add('gv-schema');
 
-    /* ---------- раскладки (единица — rem) ---------- */
+    var nodesById = {};
+    A.nodes.forEach(function (n) { nodesById[n.id] = n; });
 
-    function wide(W) {
-      var pos = {};
-      var top = 3;
-      var gap = (W - 5 * NODE_W - 2) / 4;
-      var col = function (i) { return 1 + i * (NODE_W + gap); };
-      var rowStep = NODE_H + 0.9;
-      sources.forEach(function (n, i) { pos[n.id] = { x: col(0), y: top + i * rowStep, w: NODE_W }; });
-      var chainY = top + 1.5 * rowStep;
-      server.forEach(function (n, i) { pos[n.id] = { x: col(1 + Math.min(i, 2)), y: chainY, w: NODE_W }; });
-      sinks.forEach(function (n, i) { pos[n.id] = { x: col(4), y: chainY + (i === 0 ? -2.25 : 2.25) * 1.15, w: NODE_W }; });
-      var lastSourceY = top + (sources.length - 1) * rowStep;
-      services.forEach(function (n, i) { pos[n.id] = { x: col(2 + Math.min(i, 2)), y: lastSourceY, w: NODE_W }; });
-      return { pos: pos, W: W, H: lastSourceY + NODE_H + 1.5 };
+    function box(id) {
+      var p = LAYOUT[id];
+      var w = id === 'dashboard' ? 196 : W;
+      return { x: p[0], y: p[1], w: w, h: NH, cx: p[0] + w / 2, cy: p[1] + NH / 2 };
     }
 
-    function narrow(W) {
-      var pos = {};
-      var g = 1;
-      var lane = (W - 2 - g) / 2;
-      var xL = 1, xR = 1 + lane + g;
-      var y = 4.25;
-      var rowStep = NODE_H + 0.75;
-      sources.forEach(function (n, i) {
-        pos[n.id] = { x: i % 2 === 0 ? xL : xR, y: y + Math.floor(i / 2) * rowStep, w: lane, col: i % 2 };
-      });
-      y += Math.ceil(sources.length / 2) * rowStep + 1.25;
-      var busY = y - 0.85;
-      var gutter = xL + lane + g / 2;
-      /* Источники соединяются ортогонально: по краю схемы к общей шине над цепочкой. */
-      var route = function (e) {
-        var a = pos[e.from], b = pos[e.to];
-        if (!a || !b || byId[e.from].group !== 'source') return null;
-        var mid = a.y + NODE_H / 2;
-        var bx = b.x + b.w / 2;
-        if (byId[e.to].group === 'server') {
-          var edgeX = a.col === 0 ? 0.6 : W - 0.6;
-          var sx = a.col === 0 ? a.x : a.x + a.w;
-          return [[sx, mid], [edgeX, mid], [edgeX, busY], [bx, busY], [bx, b.y]];
-        }
-        var fromX = a.col === 0 ? a.x + a.w : a.x;
-        var toX = b.x > gutter ? b.x : b.x + b.w;
-        return [[fromX, mid], [gutter, mid], [gutter, b.y + NODE_H / 2], [toX, b.y + NODE_H / 2]];
-      };
-      var chainStep = NODE_H + 1.5;
-      server.forEach(function (n, i) { pos[n.id] = { x: xL, y: y + i * chainStep, w: lane }; });
-      services.forEach(function (n, i) {
-        var row = i === 0 ? 0 : Math.max(0, server.length - 1);
-        pos[n.id] = { x: xR, y: y + row * chainStep, w: lane };
-      });
-      y += Math.max(1, server.length) * chainStep + 0.25;
-      sinks.forEach(function (n, i) { pos[n.id] = { x: i % 2 === 0 ? xL : xR, y: y + Math.floor(i / 2) * chainStep, w: lane }; });
-      y += Math.ceil(sinks.length / 2) * chainStep;
-      return { pos: pos, W: W, H: y + 0.5, route: route };
-    }
-
-    /*
-     * Связь — ломаная из горизонтальных и вертикальных отрезков (точки в rem).
-     * По горизонтали — боковые стороны узлов, по вертикали — верх и низ.
-     */
-    function anchors(a, b) {
-      var ax = a.x + a.w / 2, ay = a.y + NODE_H / 2;
-      var bx = b.x + b.w / 2, by = b.y + NODE_H / 2;
-      var dx = bx - ax, dy = by - ay;
-      var horizontal = Math.abs(dx) > Math.max(a.w, b.w) * 0.75;
-      if (horizontal) {
-        var sx = dx > 0 ? a.x + a.w : a.x;
-        var ex = dx > 0 ? b.x : b.x + b.w;
-        if (Math.abs(ay - by) < 0.01) return [[sx, ay], [ex, by]];
-        var mx = (sx + ex) / 2;
-        return [[sx, ay], [mx, ay], [mx, by], [ex, by]];
+    /* ---------- связи: ортогональные ломаные ---------- */
+    /* Ломаная и место подписи: { pts, lx, ly, anchor } */
+    function route(e) {
+      var a = box(e.from);
+      var b = box(e.to);
+      if (e.from === 'main' && e.to === 'db') {
+        var x0 = a.cx - 28;
+        return { pts: [[x0, a.y + a.h], [x0, b.y]], lx: x0 - 8, ly: (a.y + a.h + b.y) / 2 + 4, anchor: 'end' };
       }
-      var sy = dy > 0 ? a.y + NODE_H : a.y;
-      var ey = dy > 0 ? b.y : b.y + NODE_H;
-      if (Math.abs(ax - bx) < 0.01) return [[ax, sy], [bx, ey]];
-      var my = (sy + ey) / 2;
-      return [[ax, sy], [ax, my], [bx, my], [bx, ey]];
+      if (e.from === 'db' && e.to === 'main') {
+        var x1 = a.cx + 28;
+        return { pts: [[x1, a.y], [x1, b.y + b.h]], lx: x1 + 8, ly: (a.y + b.y + b.h) / 2 + 4, anchor: 'start' };
+      }
+      if (e.from === 'discovery') {
+        var xd = b.x - 36;
+        return { pts: [[a.x + a.w, a.cy], [xd, a.cy], [xd, b.cy + 16], [b.x, b.cy + 16]], lx: (a.x + a.w + xd) / 2, ly: a.cy - 8, anchor: 'middle' };
+      }
+      if (e.from === 'cert') {
+        // в обход пульта: влево до середины зазора main.py → пульт, вверх, в правый бок main.py
+        var xc = b.x + b.w + 60;
+        return { pts: [[a.x, a.cy], [xc, a.cy], [xc, b.cy + 16], [b.x + b.w, b.cy + 16]], lx: xc + 8, ly: (a.cy + b.cy) / 2 + 20, anchor: 'start' };
+      }
+      if (e.from === 'onvif') {
+        return { pts: [[a.x + a.w, a.cy], [b.x, b.cy]], lx: (a.x + a.w + b.x) / 2, ly: a.cy - 8, anchor: 'middle' };
+      }
+      if (a.cy === b.cy) {
+        return { pts: [[a.x + a.w, a.cy], [b.x, b.cy]], lx: (a.x + a.w + b.x) / 2, ly: a.cy - 10, anchor: 'middle' };
+      }
+      // источники → streamer.py: общий коллектор слева от узла, подпись у входа в коллектор
+      var mx = b.x - 34;
+      var ty = b.cy + (a.cy - b.cy) * 0.12;
+      return { pts: [[a.x + a.w, a.cy], [mx, a.cy], [mx, ty], [b.x, ty]], lx: a.x + a.w + 10, ly: a.cy - 6, anchor: 'start' };
+    }
+    function d(pts) {
+      return pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0] + ' ' + p[1]; }).join(' ');
     }
 
-    function pathOf(pts) {
-      return 'M' + pts.map(function (p) { return Math.round(p[0] * 1000) / 1000 + ' ' + Math.round(p[1] * 1000) / 1000; }).join(' L');
-    }
+    var defs = s('defs', null,
+      s('marker', { id: 'gv-arrow', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' },
+        s('path', { d: 'M0 1 L9 5 L0 9 z', class: 'gv-schema__head' })));
 
-    /* ---------- разметка ---------- */
-
-    var edgeEls = edges.map(function (e) {
-      return s('path', { class: 'gv-architecture__edge', 'data-from': e.from, 'data-to': e.to, 'marker-end': 'url(#' + markerId + ')' });
+    var edgeEls = [];
+    var edgesG = s('g', { class: 'gv-schema__edges' });
+    A.edges.forEach(function (e) {
+      var r = route(e);
+      var path = s('path', { class: 'gv-schema__edge', d: d(r.pts), 'marker-end': 'url(#gv-arrow)' });
+      var lx = r.lx;
+      var label = s('text', { class: 'gv-schema__elabel', x: lx, y: r.ly, 'font-size': 11, 'text-anchor': r.anchor });
+      var words = e.label.split(' ');
+      if (e.label.length > 16 && words.length > 1) {
+        var cut = Math.ceil(words.length / 2);
+        label.appendChild(s('tspan', { x: lx, dy: '-1.1em' }, words.slice(0, cut).join(' ')));
+        label.appendChild(s('tspan', { x: lx, dy: '1.15em' }, words.slice(cut).join(' ')));
+      } else {
+        label.textContent = e.label;
+      }
+      var g = s('g', { class: 'gv-schema__e', 'data-from': e.from, 'data-to': e.to }, path, label);
+      edgeEls.push(g);
+      edgesG.appendChild(g);
     });
-    var boundary = s('rect', { class: 'gv-architecture__boundary', rx: 0.5 });
-    var svgEl = s('svg', { class: 'gv-architecture__links', 'aria-hidden': 'true', focusable: 'false', preserveAspectRatio: 'none' },
-      s('defs', null, s('marker', { id: markerId, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 0.55, markerHeight: 0.55, markerUnits: 'userSpaceOnUse', orient: 'auto-start-reverse' },
-        s('path', { class: 'gv-architecture__arrowhead', d: 'M0 0 L10 5 L0 10 z' }))),
-      boundary, edgeEls);
 
-    /* Кнопки узлов в DOM — в порядке раскладки, чтобы Tab шёл так же, как читается схема. */
     var nodeEls = {};
-    var nodeButtons = sources.concat(server, sinks, services).map(function (n) {
-      var b = h('button', {
-        type: 'button', class: 'gv-architecture__node', 'data-id': n.id, 'data-group': n.group,
-        'aria-pressed': 'false', 'aria-describedby': captionId
+    var nodesG = s('g', { class: 'gv-schema__nodes' });
+    ORDER.forEach(function (id) {
+      var n = nodesById[id];
+      if (!n) return;
+      var b = box(id);
+      var g = s('g', {
+        class: 'gv-schema__n gv-schema__n--' + n.group,
+        tabindex: '-1',
+        role: 'button',
+        'data-id': id,
+        'aria-label': n.label + ': ' + n.sub
       },
-        h('span', { class: 'gv-architecture__group' }, arch.groups[n.group] || n.group),
-        h('span', { class: 'gv-architecture__label' }, n.label));
-      nodeEls[n.id] = b;
-      return b;
+        s('rect', { class: 'gv-schema__box', x: b.x, y: b.y, width: b.w, height: b.h, rx: 3 }),
+        s('text', { class: 'gv-schema__label', x: b.x + 12, y: b.y + 22, 'font-size': 15 }, n.label),
+        s('text', { class: 'gv-schema__group', x: b.x + 12, y: b.y + 40, 'font-size': 10 }, A.groups[n.group]));
+      nodeEls[id] = g;
+      nodesG.appendChild(g);
     });
 
-    var logicalOrder = nodeButtons.slice();
-    var pulseEls = edges.map(function () {
-      return h('span', { class: 'gv-architecture__pulse', 'aria-hidden': 'true' });
-    });
-    var boundaryLabel = h('p', { class: 'gv-architecture__boundary-label' }, arch.boundaryLabel);
-    var canvas = h('div', { class: 'gv-architecture__canvas', role: 'group', 'aria-label': T.diagram }, svgEl, boundaryLabel, pulseEls, nodeButtons);
-    var caption = h('div', { class: 'gv-architecture__caption', id: captionId, 'aria-live': 'polite' });
-    var stack = h('div', { class: 'gv-architecture__stack' },
-      h('h3', { class: 'gv-architecture__stack-title' }, c.labels.stackTitle),
-      h('ul', { class: 'gv-architecture__chips', role: 'list' }, arch.stack.map(function (it) {
-        return h('li', { class: 'gv-architecture__chip' },
-          h('span', { class: 'gv-architecture__chip-name' }, it.name),
-          it.version ? h('span', { class: 'gv-architecture__chip-ver' }, it.version) : null);
-      })));
+    var boundary = s('g', { class: 'gv-schema__boundary' },
+      s('rect', { x: 14, y: 22, width: VB[0] - 28, height: VB[1] - 38, rx: 6 }),
+      s('text', { x: 30, y: 16, 'font-size': 12 }, A.boundaryLabel));
 
-    var rootEl = h('div', { class: 'gv-architecture' },
-      h('div', { class: 'gv-architecture__viewport' }, canvas),
-      caption,
-      stack);
-    el.appendChild(rootEl);
+    var svgEl = s('svg', { class: 'gv-schema__svg', viewBox: '0 0 ' + VB[0] + ' ' + VB[1], role: 'group', 'aria-label': A.boundaryLabel },
+      defs, boundary, edgesG, nodesG);
 
-    /* ---------- подпись и подсветка ---------- */
-
-    function renderCaption(id) {
-      caption.textContent = '';
+    var callout = h('p', { class: 'gv-schema__callout', 'aria-live': 'polite' });
+    var hint = fine ? A.hint : A.hintTouch;
+    function setCallout(id) {
+      callout.textContent = '';
       if (!id) {
-        caption.appendChild(h('p', { class: 'gv-architecture__hint' }, coarse ? arch.hintTouch : arch.hint));
+        callout.appendChild(h('span', { class: 'gv-schema__hint' }, hint));
         return;
       }
-      var n = byId[id];
-      var ins = edges.filter(function (e) { return e.to === id; });
-      var outs = edges.filter(function (e) { return e.from === id; });
-      function list(title, arr, key) {
-        if (!arr.length) return null;
-        return h('div', { class: 'gv-architecture__links-list' },
-          h('p', { class: 'gv-architecture__links-title' }, title),
-          h('ul', { role: 'list' }, arr.map(function (e) {
-            return h('li', null, h('span', { class: 'gv-architecture__peer' }, byId[e[key]] ? byId[e[key]].label : e[key]),
-              e.label ? h('span', { class: 'gv-architecture__via' }, e.label) : null);
-          })));
-      }
-      caption.appendChild(h('div', { class: 'gv-architecture__caption-main' },
-        h('p', { class: 'gv-architecture__caption-title' }, n.label,
-          h('span', { class: 'gv-architecture__caption-group' }, arch.groups[n.group] || '')),
-        h('p', { class: 'gv-architecture__caption-sub' }, n.sub),
-        n.file ? h('p', { class: 'gv-architecture__caption-file' }, h('span', null, T.file), h('code', null, n.file)) : null));
-      /* У источников нет входящих связей, у пульта — исходящих: пустой список не выводим. */
-      [list(T.incoming, ins, 'from'), list(T.outgoing, outs, 'to')].forEach(function (part) {
-        if (part) caption.appendChild(part);
-      });
+      var n = nodesById[id];
+      callout.appendChild(h('span', { class: 'gv-schema__c-name' }, n.label));
+      callout.appendChild(h('span', { class: 'gv-schema__c-sub' }, n.sub));
+      if (n.file) callout.appendChild(h('code', { class: 'gv-schema__c-file' }, n.file));
     }
+    setCallout(null);
 
-    function highlight(id) {
+    function item(id) {
+      var n = nodesById[id];
+      return h('li', { class: 'gv-flow__node gv-flow__node--' + n.group },
+        h('span', { class: 'gv-flow__label' }, n.label), h('span', { class: 'gv-flow__sub' }, n.sub));
+    }
+    function step(title, ids) {
+      return h('li', { class: 'gv-flow__step' },
+        h('p', { class: 'gv-flow__title' }, title),
+        h('ul', { class: 'gv-flow__nodes', role: 'list' }, ids.map(item)));
+    }
+    var flow = h('ol', { class: 'gv-flow', role: 'list', 'aria-label': A.boundaryLabel },
+      step(A.groups.source, ['rtsp', 'mjpeg', 'usb', 'phone', 'onvif']),
+      step(A.groups.server, ['streamer', 'vision', 'main']),
+      step(A.groups.client + ', ' + A.groups.storage.toLowerCase(), ['dashboard', 'db']),
+      step(A.groups.service, ['discovery', 'cert']));
+
+    var sheet = h('figure', { class: 'gv-schema__sheet', 'data-reveal': '' },
+      h('p', { class: 'gv-schema__bound gv-label' }, A.boundaryLabel),
+      h('div', { class: 'gv-schema__scroll' }, svgEl),
+      flow,
+      h('figcaption', null, callout));
+    body.appendChild(sheet);
+
+    /* ---------- выбор узла ---------- */
+    var active = null;
+    function select(id) {
       active = id;
-      if (id) rootEl.setAttribute('data-active', id);
-      else rootEl.removeAttribute('data-active');
+      svgEl.classList.toggle('has-active', !!id);
       var linked = {};
       if (id) linked[id] = true;
-      edgeEls.forEach(function (p) {
-        var on = !!id && (p.getAttribute('data-from') === id || p.getAttribute('data-to') === id);
-        p.classList.toggle('is-active', on);
-        if (on) { linked[p.getAttribute('data-from')] = true; linked[p.getAttribute('data-to')] = true; }
+      edgeEls.forEach(function (g) {
+        var on = !!id && (g.getAttribute('data-from') === id || g.getAttribute('data-to') === id);
+        g.classList.toggle('is-on', on);
+        if (on) { linked[g.getAttribute('data-from')] = true; linked[g.getAttribute('data-to')] = true; }
       });
       Object.keys(nodeEls).forEach(function (k) {
-        nodeEls[k].classList.toggle('is-linked', !!linked[k]);
-        nodeEls[k].classList.toggle('is-active', k === id);
+        nodeEls[k].classList.toggle('is-on', !!linked[k]);
+        nodeEls[k].classList.toggle('is-current', k === id);
       });
-      if ((id || '') !== lastKey) { lastKey = id || ''; renderCaption(id); }
+      setCallout(id);
     }
 
-    function pin(id) {
-      pinned = id;
-      nodeButtons.forEach(function (o) { o.setAttribute('aria-pressed', o.getAttribute('data-id') === pinned ? 'true' : 'false'); });
+    var focusIndex = 0;
+    function setTab(i) {
+      focusIndex = (i + ORDER.length) % ORDER.length;
+      ORDER.forEach(function (id, j) { nodeEls[id].setAttribute('tabindex', j === focusIndex ? '0' : '-1'); });
     }
+    setTab(0);
 
-    /* Узел, к которому схема возвращается, когда курсор уходит: закреплённый, иначе узел с фокусом. */
-    function resting() {
-      var f = document.activeElement;
-      return pinned || (f && canvas.contains(f) && f.getAttribute('data-id')) || null;
-    }
-
-    /*
-     * Подсвечен всегда один узел. Закреплённый кликом узел наведение не перебивает (иначе после клика
-     * и прокрутки под неподвижным курсором подпись уезжала на соседа). Фокус на другом узле снимает
-     * закрепление — подсветка и подпись переходят к нему.
-     */
-    nodeButtons.forEach(function (b) {
-      var id = b.getAttribute('data-id');
-      sc.on(b, 'mouseenter', function () { if (!pinned) highlight(id); });
-      sc.on(b, 'focus', function () {
-        if (pinned && pinned !== id) pin(null);
-        highlight(id);
-      });
-      sc.on(b, 'click', function () {
-        pin(pinned === id ? null : id);
-        highlight(id);
+    ORDER.forEach(function (id, i) {
+      var g = nodeEls[id];
+      sc.on(g, 'pointerenter', function (e) { if (e.pointerType === 'mouse') select(id); });
+      sc.on(g, 'click', function () { setTab(i); select(active === id && !fine ? null : id); });
+      sc.on(g, 'focus', function () { setTab(i); select(id); });
+      sc.on(g, 'keydown', function (e) {
+        var step = 0;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') step = 1;
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') step = -1;
+        else if (e.key === 'Home') { e.preventDefault(); setTab(0); nodeEls[ORDER[0]].focus(); return; }
+        else if (e.key === 'End') { e.preventDefault(); setTab(ORDER.length - 1); nodeEls[ORDER[ORDER.length - 1]].focus(); return; }
+        else if (e.key === 'Escape') { select(null); return; }
+        if (!step) return;
+        e.preventDefault();
+        setTab(focusIndex + step);
+        nodeEls[ORDER[focusIndex]].focus();
       });
     });
-    sc.on(canvas, 'mouseleave', function () { highlight(resting()); });
-    sc.on(canvas, 'focusout', function (e) {
-      if (!e.relatedTarget || !canvas.contains(e.relatedTarget)) highlight(pinned);
-    });
+    sc.on(svgEl, 'pointerleave', function (e) { if (e.pointerType === 'mouse' && !svgEl.contains(document.activeElement)) select(null); });
+    sc.on(svgEl, 'focusout', function (e) { if (!svgEl.contains(e.relatedTarget)) select(null); });
 
-    /* ---------- перекладка ---------- */
+    /* ---------- спецификация ---------- */
+    var cols = A.stackColumns;
+    var spec = h('table', { class: 'gv-spec', 'data-reveal': '' },
+      h('caption', { class: 'gv-spec__cap' }, L.stackTitle),
+      h('thead', null, h('tr', null, cols.map(function (col) { return h('th', { scope: 'col' }, col); }))),
+      h('tbody', null, A.stack.map(function (item, i) {
+        return h('tr', null,
+          h('td', { class: 'gv-spec__pos gv-num' }, String(i + 1)),
+          h('th', { scope: 'row' }, item.name),
+          h('td', { class: 'gv-spec__ver' }, item.version));
+      })));
+    body.appendChild(spec);
 
-    var lastLayout = '';
-    function layout() {
-      var rem = parseFloat(window.getComputedStyle(document.documentElement).fontSize) || 16;
-      var avail = rootEl.clientWidth / rem;
-      if (!avail) return;
-      var isWide = avail >= WIDE_MIN;
-      var W = isWide ? avail : Math.max(19, Math.min(avail, 40));
-      var key = (isWide ? 'w' : 'n') + Math.round(W * 4) + '@' + rem;
-      if (key === lastLayout) return;
-      lastLayout = key;
-      var L = isWide ? wide(W) : narrow(W);
-      rootEl.setAttribute('data-layout', isWide ? 'wide' : 'narrow');
-      canvas.style.width = L.W + 'rem';
-      canvas.style.height = L.H + 'rem';
-      svgEl.setAttribute('viewBox', '0 0 ' + L.W + ' ' + L.H);
-      boundary.setAttribute('x', 0.25);
-      boundary.setAttribute('y', 0.25);
-      boundary.setAttribute('width', Math.max(0, L.W - 0.5));
-      boundary.setAttribute('height', Math.max(0, L.H - 0.5));
-      boundaryLabel.style.maxWidth = (L.W - 2) + 'rem';
-      nodes.forEach(function (n) {
-        var p = L.pos[n.id];
-        var b = nodeEls[n.id];
-        if (!b) return;
-        if (!p) { b.hidden = true; return; }
-        b.hidden = false;
-        b.style.left = p.x + 'rem';
-        b.style.top = p.y + 'rem';
-        b.style.width = p.w + 'rem';
-        b.style.height = NODE_H + 'rem';
-      });
-      edges.forEach(function (e, i) {
-        var a = L.pos[e.from], b = L.pos[e.to];
-        var pts = a && b ? ((L.route && L.route(e)) || anchors(a, b)) : null;
-        if (pts) edgeEls[i].setAttribute('d', pathOf(pts));
-        setRoute(i, pts);
-      });
-      orderDom(L.pos, isWide);
-    }
-
-    /*
-     * Кнопки в DOM идут в порядке рисунка. Широкая схема читается колонками (поток данных слева направо):
-     * колонка за колонкой, в колонке сверху вниз. Узкая — строками: сверху вниз, в строке слева направо.
-     */
-    function orderDom(pos, byColumn) {
-      var list = logicalOrder.slice();
-      var q = function (v) { return Math.round(v * 4); };
-      list.sort(function (a, b) {
-        var pa = pos[a.getAttribute('data-id')], pb = pos[b.getAttribute('data-id')];
-        if (!pa || !pb) return 0;
-        return byColumn
-          ? (q(pa.x) - q(pb.x)) || (pa.y - pb.y)
-          : (q(pa.y) - q(pb.y)) || (pa.x - pb.x);
-      });
-      var current = Array.prototype.filter.call(canvas.children, function (n) { return n.classList.contains('gv-architecture__node'); });
-      var same = list.every(function (b, i) { return current[i] === b; });
-      if (same) return;
-      var focused = document.activeElement;
-      var keep = focused && canvas.contains(focused) ? focused : null;
-      list.forEach(function (b) { canvas.appendChild(b); });
-      if (keep && document.activeElement !== keep) keep.focus({ preventScroll: true });
-    }
-
-    /* ---------- импульсы по связям ---------- */
-
-    var routes = [];      // { pts, cum: [накопленная длина], len } для каждой связи или null
-
-    function setRoute(i, pts) {
-      if (!pts) { routes[i] = null; return; }
-      var cum = [0];
-      for (var k = 1; k < pts.length; k++) {
-        cum.push(cum[k - 1] + Math.abs(pts[k][0] - pts[k - 1][0]) + Math.abs(pts[k][1] - pts[k - 1][1]));
-      }
-      routes[i] = { pts: pts, cum: cum, len: cum[cum.length - 1] };
-    }
-
-    function pulseFrame(dt, now) {
-      var t = now / 1000;
-      for (var i = 0; i < pulseEls.length; i++) {
-        var r = routes[i];
-        var el = pulseEls[i];
-        if (!r || r.len <= 0) { el.style.opacity = '0'; continue; }
-        var cycle = r.len + PULSE_GAP;
-        var d = (t * PULSE_SPEED + i * 2.9) % cycle;
-        if (d > r.len) { el.style.opacity = '0'; continue; }
-        var k = 1;
-        while (k < r.cum.length - 1 && r.cum[k] < d) k++;
-        var seg = r.cum[k] - r.cum[k - 1] || 1;
-        var u1 = (d - r.cum[k - 1]) / seg;
-        var x = r.pts[k - 1][0] + (r.pts[k][0] - r.pts[k - 1][0]) * u1;
-        var y = r.pts[k - 1][1] + (r.pts[k][1] - r.pts[k - 1][1]) * u1;
-        var fade = Math.min(1, d / PULSE_FADE, (r.len - d) / PULSE_FADE);
-        var on = !active || edges[i].from === active || edges[i].to === active;
-        el.style.transform = 'translate3d(' + x.toFixed(3) + 'rem,' + y.toFixed(3) + 'rem,0)';
-        el.style.opacity = (Math.max(0, fade) * (on ? 1 : 0.18)).toFixed(3);
-      }
-    }
-
-    layout();
-    highlight(null);
-    if ('ResizeObserver' in window) {
-      var ro = new ResizeObserver(function () { layout(); });
-      ro.observe(rootEl);
-      sc.add(function () { ro.disconnect(); });
-    } else {
-      sc.on(window, 'resize', layout);
-    }
-    kit.onTweaks(sc, function () { lastLayout = ''; layout(); });
-
-    /* Импульсы идут, пока схема на экране; без движения (reduced) их нет вовсе. */
-    var offPulse = null;
-    function stopPulse() {
-      if (offPulse) { offPulse(); offPulse = null; }
-    }
-    if (motion.reduced()) {
-      pulseEls.forEach(function (p) { p.hidden = true; });
-    } else {
-      sc.add(u.onVisible(rootEl, function (visible) {
-        if (visible && !offPulse) offPulse = motion.onFrame(pulseFrame);
-        else if (!visible) stopPulse();
-      }, { threshold: 0, rootMargin: '10% 0px' }));
-      sc.add(stopPulse);
-    }
-
-    return {
-      destroy: function () {
-        sc.destroy();
-        if (rootEl.parentNode) rootEl.parentNode.removeChild(rootEl);
-      }
-    };
+    return { destroy: sc.destroy };
   }
 
+  GV.components = GV.components || {};
   GV.components.architecture = { mount: mount };
 })();

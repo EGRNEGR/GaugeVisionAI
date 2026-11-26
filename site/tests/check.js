@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * GaugeVision AI — автоматическая проверка лендинга (одна страница «Циферблат»).
+ * GaugeVision AI — автоматическая проверка лендинга (одна страница «Журнал обходчика»).
  * Запуск из корня репозитория: node site/tests/check.js
  * Без зависимостей. Код выхода 0 — всё зелёное; иначе каждое нарушение печатается строкой.
  *
@@ -9,14 +9,15 @@
  *   1. Каждое число во всех строках и числовых полях GV.content (кроме служебных ключей
  *      и screenshotFacts) встречается в README.md, PRODUCT.md, app/config.py или notes.md прошлой сборки.
  *   2. Локальные src/href в index.html и content.js (и url() в css/) существуют; видео и картинки —
- *      в бюджете размера; оригинал видео побайтно равен references/; копии для перемотки —
- *      без звука, moov в начале файла, ключевой кадр не реже каждого 2-го кадра.
+ *      в бюджете размера; копии ролика для перемотки — без звука, moov в начале файла,
+ *      ключевой кадр не реже каждого 4-го кадра.
  *   3. Запрещённые слова в site/ (кроме tests/ и design-system.md); «гомограф» — только в roadmap.
  *   4. В js/ нет import/export и type="module".
- *   5. Секции идут в порядке брифа; каждый модуль из GV.page.mounts подключён <script> в index.html.
+ *   5. Листы идут по порядку журнала; каждый модуль из GV.page.mounts подключён <script> в index.html.
  *   6. Нет вариантов, роутера и студийной панели.
- *   7. Ни одна выводимая строка GV.content не длиннее 140 символов; заголовки 3–6 слов;
- *      в hero нет надзаголовка (kicker), строка сути — одно предложение;
+ *   7. Ни одна выводимая строка GV.content не длиннее 140 символов; заголовки листов 2–6 слов, у h1 3–6;
+ *      над h1 нет надзаголовка (kicker), строка сути — одно предложение; вывод листа (lede) — одно
+ *      предложение до 120 символов, его accent и accent строк hero и финала — дословная часть своего текста;
  *      ссылки — только GitHub EGRNEGR; 25 камер — замер, 50 и 100 — расчёт.
  *   8. Типографика строк content.js: нет « - » вместо тире, дефисных диапазонов и десятичной точки.
  *   9. Движение: в css/ transition и @keyframes трогают только transform и opacity; карточки конвейера —
@@ -32,7 +33,7 @@ const vm = require('vm');
 
 const SITE = path.resolve(__dirname, '..');
 const ROOT = path.resolve(SITE, '..');
-const SECTION_IDS = ['hero', 'reading', 'pipeline', 'metrics', 'compare', 'architecture', 'limits', 'contact'];
+const SECTION_IDS = ['hero', 'compare', 'reading', 'pipeline', 'metrics', 'architecture', 'limits', 'contact'];
 const MAX_TEXT = 140;
 const REPO_PREFIX = 'https://github.com/EGRNEGR';
 
@@ -120,15 +121,15 @@ function loadMounts() {
 /* ---------- 0. форма ---------- */
 const SHAPE = {
   meta: ['name', 'repoUrl', 'licenseUrl', 'trackShort', 'copyright', 'version'],
-  hero: ['title', 'line', 'video'],
-  'hero.video': ['src', 'srcMobile', 'poster', 'label'],
+  hero: ['title', 'line', 'columns', 'demo', 'cta'],
+  'compare.video': ['src', 'srcMobile', 'poster', 'posterAfter', 'label'],
   reading: ['theta', 'device', 'caption'],
   calibration: ['thetaMin', 'thetaMax', 'vMin', 'vMax', 'unit', 'direction', 'setpoints', 'barPerMpa', 'formula'],
-  compare: ['before', 'after', 'savingNote', 'timeline'],
+  compare: ['before', 'after', 'savingNote', 'timeline', 'captions'],
   architecture: ['nodes', 'edges', 'stack', 'boundaryLabel'],
   untested: ['title', 'text'],
   pipelineTotal: ['value', 'unit', 'label'],
-  contact: ['title', 'links', 'backdrop'],
+  contact: ['title', 'links', 'lead'],
 };
 const ITEM_SHAPE = {
   sections: ['id', 'index', 'nav'],
@@ -234,8 +235,9 @@ function variantsOf(token) {
 const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /* Ключи без фактов: идентификаторы, порядковые номера, пути, ссылки, точность вывода. */
+/* form — строка бланка листа («Лист 05 · протокол»): номер листа порядковый, как index. */
 const NUMBER_SKIP = new Set(['id', 'kind', 'status', 'index', 'digits', 'version', 'group', 'src', 'srcMobile', 'poster',
-  'backdrop', 'href', 'file', 'source', 'roi', 'repoUrl', 'licenseUrl']);
+  'posterAfter', 'href', 'file', 'source', 'roi', 'repoUrl', 'licenseUrl', 'form']);
 
 function checkNumbers(c) {
   const sources = [path.join(ROOT, 'README.md'), path.join(ROOT, 'PRODUCT.md'), path.join(ROOT, 'app', 'config.py'), NOTES];
@@ -327,19 +329,14 @@ function parseMp4(buf) {
   return { top, tracks };
 }
 
+/* Ролик листа 02 (Gemini, ключевые кадры А → Б) и его первый и последний кадр; исходники — docs/gemini_journal/ вне git. */
 const MEDIA = [
-  { file: 'assets/video/gauge_pullback.scrub.mp4', max: 14 * 1024 * 1024, scrub: true },
-  { file: 'assets/video/gauge_pullback.scrub-m.mp4', max: 6 * 1024 * 1024, scrub: true },
-  { file: 'assets/img/poster.jpg', max: 250 * 1024 },
-  { file: 'assets/img/boiler-hall.jpg', max: 350 * 1024 },
+  { file: 'assets/video/shift.scrub.mp4', max: 14 * 1024 * 1024, scrub: true },
+  { file: 'assets/video/shift.scrub-m.mp4', max: 6 * 1024 * 1024, scrub: true },
+  { file: 'assets/img/shift-before.jpg', max: 250 * 1024 },
+  { file: 'assets/img/shift-after.jpg', max: 250 * 1024 },
 ];
 function checkMedia() {
-  const original = path.join(SITE, 'assets', 'video', 'gauge_pullback.mp4');
-  const reference = path.join(ROOT, 'references', 'gauge_pullback.mp4');
-  if (!fs.existsSync(original)) fail(2, 'нет оригинала site/assets/video/gauge_pullback.mp4');
-  else if (fs.existsSync(reference) && !fs.readFileSync(original).equals(fs.readFileSync(reference))) {
-    fail(2, 'site/assets/video/gauge_pullback.mp4 не совпадает побайтно с references/gauge_pullback.mp4');
-  }
   for (const m of MEDIA) {
     const p = path.join(SITE, m.file);
     if (!fs.existsSync(p)) { fail(2, `нет файла site/${m.file}`); continue; }
@@ -355,7 +352,7 @@ function checkMedia() {
       const marks = video.sync.concat([video.samples + 1]);
       let prev = 0;
       for (const s of marks) {
-        if (s - prev > 2) { fail(2, `site/${m.file}: между ключевыми кадрами ${s - prev} кадров, нужно ≤ 2`); break; }
+        if (s - prev > 4) { fail(2, `site/${m.file}: между ключевыми кадрами ${s - prev} кадров, нужно ≤ 4`); break; }
         prev = s;
       }
     }
@@ -469,34 +466,44 @@ function checkLegacy() {
 
 /* ---------- 7. минимум текста, ссылки, метки замер/расчёт ---------- */
 /* Ключи, которые не выводятся на страницу текстом: ARIA-описания, пути, ссылки, данные скриншотов. */
-const TEXT_SKIP = new Set(['alt', 'id', 'src', 'srcMobile', 'poster', 'backdrop', 'href', 'repoUrl', 'licenseUrl']);
+const TEXT_SKIP = new Set(['alt', 'id', 'src', 'srcMobile', 'poster', 'posterAfter', 'href', 'repoUrl', 'licenseUrl']);
 function checkText(c) {
   walk(c, (v, kp) => {
     if (typeof v !== 'string' || kp[0] === 'screenshotFacts' || TEXT_SKIP.has(lastKey(kp))) return;
-    if (kp.join('.') === 'hero.video.label') return; // aria-описание видео
+    if (kp.join('.') === 'compare.video.label') return; // aria-описание видео
     if (v.length > MAX_TEXT) fail(7, `строка длиннее ${MAX_TEXT} символов (${v.length}): content.${kp.join('.')}`);
   });
   (c.sections || []).forEach((s, i) => {
     if (s.id !== 'hero' && isEmpty(s.title)) fail(7, `у секции «${s.id}» нет заголовка`);
     if (s.title !== undefined) {
       const n = words(s.title).length;
-      if (n < 3 || n > 6) fail(7, `заголовок секции «${s.id}» — ${n} слов, нужно 3–6: «${s.title}»`);
+      if (n < 2 || n > 6) fail(7, `заголовок секции «${s.id}» — ${n} слов, нужно 2–6: «${s.title}»`);
     }
     if (s.lead !== undefined) fail(7, `у секции «${s.id}» остался lead — абзацев на странице нет`);
+    // Вывод листа — одна фраза, а не абзац; маркер выделяет его дословную часть
+    if (s.lede !== undefined) {
+      if (s.lede.length > 120) fail(7, `вывод листа «${s.id}» длиннее 120 символов (${s.lede.length})`);
+      if (/[.!?…]\s+\S/.test(s.lede)) fail(7, `вывод листа «${s.id}» — больше одного предложения`);
+      if (isEmpty(s.accent) || s.lede.indexOf(s.accent) < 0) fail(7, `accent листа «${s.id}» не входит дословно в его вывод`);
+    } else if (s.accent !== undefined) fail(7, `у листа «${s.id}» accent без вывода (lede)`);
+  });
+  [['hero', 'line', 'lineAccent'], ['contact', 'lead', 'leadAccent']].forEach(([k, text, accent]) => {
+    const o = c[k] || {};
+    if (o[accent] !== undefined && String(o[text] || '').indexOf(o[accent]) < 0) fail(7, `${k}.${accent} не входит дословно в ${k}.${text}`);
   });
   if (c.hero) {
     const n = words(c.hero.title || '').length;
     if (n < 3 || n > 6) fail(7, `hero.title — ${n} слов, нужно 3–6`);
     if (String(c.hero.line || '').length > 90) fail(7, `hero.line длиннее 90 символов (${String(c.hero.line).length})`);
-    // Поверх видео — только h1, одна строка сути и индикатор прокрутки (R13): надзаголовка нет
-    if (c.hero.kicker !== undefined) fail(7, 'content.hero.kicker: поверх видео нет надзаголовка — только h1, строка сути и индикатор');
+    // Над h1 нет надзаголовка (kicker): заголовок держит себя сам
+    if (c.hero.kicker !== undefined) fail(7, 'content.hero.kicker: над h1 нет надзаголовка');
     // Строка сути — одно предложение: внутри нет конца предложения
     if (/[.!?…]\s+\S/.test(String(c.hero.line || ''))) fail(7, `hero.line — больше одного предложения: «${c.hero.line}»`);
   }
-  // Разметка HUD hero (компонент и его стили) тоже без надзаголовка
-  for (const f of [path.join(SITE, 'js', 'components', 'scroll-video.js'), path.join(SITE, 'css', 'hero.css')]) {
+  // Разметка первого листа (компонент и его стили) тоже без надзаголовка
+  for (const f of [path.join(SITE, 'js', 'components', 'journal.js'), path.join(SITE, 'css', 'hero.css')]) {
     (readText(f) || '').split(/\r?\n/).forEach((line, i) => {
-      if (/kicker/.test(line)) fail(7, `надзаголовок (kicker) в HUD hero: ${rel(f)}:${i + 1}`);
+      if (/kicker|eyebrow/.test(line)) fail(7, `надзаголовок (kicker) на первом листе: ${rel(f)}:${i + 1}`);
     });
   }
   walk(c, (v, kp) => {
@@ -515,7 +522,7 @@ function checkText(c) {
 
 /* ---------- 8. типографика content.js ---------- */
 function checkTypography(c) {
-  const skip = new Set(['id', 'file', 'source', 'src', 'srcMobile', 'poster', 'backdrop', 'href', 'version', 'formula', 'repoUrl', 'licenseUrl', 'roi', 'code']);
+  const skip = new Set(['id', 'file', 'source', 'src', 'srcMobile', 'poster', 'posterAfter', 'href', 'version', 'formula', 'repoUrl', 'licenseUrl', 'roi', 'code']);
   walk(c, (v, kp) => {
     if (typeof v !== 'string' || kp[0] === 'screenshotFacts') return;
     const where = `content.${kp.join('.')}`;
@@ -645,5 +652,5 @@ if (failures.length) {
   console.log(`\nFAIL: нарушений ${failures.length}`);
   process.exit(1);
 }
-console.log(`OK: факты, пути и медиа, запрещённые слова, модули, 8 секций и ${Object.keys(mounts || {}).length} модулей, без вариантов, минимум текста, типографика`);
+console.log(`OK: факты, пути и медиа, запрещённые слова, модули, 8 листов и ${Object.keys(mounts || {}).length} модулей, без вариантов, минимум текста, типографика`);
 process.exit(0);

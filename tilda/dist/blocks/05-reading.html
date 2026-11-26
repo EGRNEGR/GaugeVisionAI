@@ -1,0 +1,480 @@
+<!-- GaugeVision AI для Tilda: сгенерировано tilda/build.mjs из site/. Правьте site/ и пересобирайте. -->
+<!-- Лист 03 «Показание»: тексты, стили и модуль components/precision-dial.js -->
+<div class="gvt" data-gv-block="reading"></div>
+<style>
+/*
+ * Лист 03 — «От угла θ к мегапаскалям». Колонки 1–7: прибор-чертёж с размерными дугами;
+ * 8–12: значение крупно (Martian Mono, широкое начертание), зона, формула и подстановка, управление.
+ */
+.gvt .gv-dial__drawing {
+  grid-column: 1 / span 7;
+  grid-row: 1;
+}
+.gvt .gv-dial__svg {
+  width: min(100%, 36rem);
+  margin-inline: auto;
+}
+.gvt .gv-dial__svg svg {
+  cursor: crosshair;
+  touch-action: none;
+}
+.gvt .gv-dial__cap {
+  margin-top: var(--s2);
+  max-width: 44ch;
+}
+.gvt .gv-dial__ext {
+  stroke: var(--ink-2);
+  stroke-width: 0.8;
+}
+.gvt .gv-dial__span {
+  fill: none;
+  stroke: var(--ink-2);
+  stroke-width: 0.8;
+  marker-start: none;
+}
+.gvt .gv-dial__delta {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+}
+.gvt .gv-dial__ray {
+  stroke: var(--ink-2);
+  stroke-width: 1;
+  stroke-dasharray: 6 4;
+}
+.gvt .gv-dial__dim-t {
+  font-family: var(--font-mono);
+  fill: var(--ink-2);
+  letter-spacing: 0.02em;
+}
+.gvt .gv-dial__dim-t--span {
+  fill: var(--ink-3);
+}
+.gvt .gv-dial__panel {
+  grid-column: 8 / span 5;
+  grid-row: 1;
+  display: grid;
+  gap: var(--s4);
+  align-content: start;
+  padding-top: var(--s4);
+}
+.gvt .gv-dial__value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s2);
+  line-height: 0.9;
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: var(--s2);
+}
+.gvt .gv-dial__v {
+  font-family: var(--font-mono);
+  font-stretch: 112.5%;
+  font-weight: 500;
+  font-size: clamp(4rem, 2rem + 4.6vw, 7.5rem);
+  letter-spacing: -0.03em;
+}
+.gvt .gv-dial__unit {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-2xl);
+}
+.gvt .gv-dial__meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: var(--s2) var(--s4);
+}
+.gvt .gv-dial__bar,
+.gvt .gv-dial__zone {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s1);
+  font-family: var(--font-mono);
+  font-size: var(--fs-l);
+}
+.gvt .gv-dial__zone {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.375rem;
+}
+.gvt .gv-dial__zone .gv-mark {
+  font-size: var(--fs-xs);
+  padding: 0.25rem 0.625rem 0.1875rem;
+}
+.gvt .gv-dial__f {
+  display: grid;
+  gap: 0.375rem;
+}
+.gvt .gv-dial__f dd {
+  margin: 0 0 var(--s2);
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-s);
+  line-height: 1.5;
+}
+.gvt .gv-dial__f dd:last-child {
+  margin-bottom: 0;
+}
+.gvt .gv-dial__subst {
+  color: var(--ink);
+  font-weight: 600;
+}
+.gvt .gv-dial__f .gv-math {
+  display: inline-block;
+  padding-block: 0.25rem;
+}
+@media (max-width: 400px) {
+  .gvt .gv-dial__f .gv-math { font-size: var(--fs-xs); }
+}
+.gvt .gv-dial__angles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem var(--s2);
+}
+.gvt .gv-dial__delta-k {
+  color: var(--ink-3);
+}
+.gvt .gv-dial__delta-v {
+  font-weight: 600;
+}
+.gvt .gv-dial__ctl {
+  display: grid;
+  gap: var(--s1);
+}
+.gvt .gv-dial__range {
+  width: 100%;
+  height: 2.75rem;
+  margin: 0;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+.gvt .gv-dial__hint {
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+}
+.gvt .gv-dial__act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s2) var(--s3);
+}
+.gvt .gv-dial__write {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  min-height: 3rem;
+  padding: 0 var(--s3);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-l);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 0.1875rem;
+  box-shadow: inset 0 0 0 0.1875rem var(--paper), inset 0 0 0 calc(0.1875rem + 1px) var(--ink);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.gvt .gv-dial__write:hover {
+  background: var(--ink);
+  color: var(--paper);
+  box-shadow: inset 0 0 0 0.1875rem var(--ink), inset 0 0 0 calc(0.1875rem + 1px) var(--paper);
+}
+.gvt .gv-dial__write:active {
+  transform: scale(0.97);
+}
+.gvt .gv-dial__written {
+  font-family: var(--font-hand);
+  color: var(--violet);
+  font-size: var(--fs-l);
+  opacity: 0;
+  transform: translate3d(-0.5rem, 0, 0);
+  transition: opacity var(--dur-med) var(--ease-out), transform var(--dur-med) var(--ease-out);
+}
+.gvt .gv-dial__written.is-on {
+  opacity: 1;
+  transform: none;
+}
+.gvt .gv-dial__written a {
+  text-decoration-color: currentColor;
+}
+@media (max-width: 1100px) {
+  .gvt .gv-dial__drawing { grid-column: 1 / span 6; }
+  .gvt .gv-dial__panel { grid-column: 7 / span 6; }
+}
+@media (max-width: 900px) {
+  .gvt .gv-dial__drawing,
+  .gvt .gv-dial__panel { grid-column: 1 / -1; grid-row: auto; }
+  .gvt .gv-dial__panel { padding-top: var(--s5); }
+}
+</style>
+<script>
+/*
+ * GV.components.precisionDial — лист 03 «От угла θ к мегапаскалям».
+ * Прибор-чертёж тушью с размерными дугами: θmin и θmax, рабочий сектор 270°, текущий угол от θmin.
+ * Справа — значение крупно, штамп зоны уставок, формула angle_to_value и та же формула с подставленными
+ * числами. Мышь: стрелка следует за курсором по шкале, клик фиксирует, уход курсора возвращает
+ * зафиксированное. Палец: касание и ведение ставят стрелку. Клавиатура: ползунок ← → (Shift — шаг 1 МПа).
+ * «Записать в журнал» отправляет показание на лист 01 строкой «ваша запись».
+ *
+ *   mount(body, { reading }) → { destroy }
+ *   angleFromPointer(dx, dy) → θ           угол точки относительно центра (0° — «6 часов», по часовой, ось Y вниз)
+ *   clampAngle(θ, calib, prev?) → θ        угол в «мёртвом» секторе под шкалой прижимается к краю: к ближнему,
+ *                                          а при ведении (prev — где стрелка сейчас) — к тому, у которого она стоит
+ *
+ * Шов 0° / 360° смотрит вниз, в пустой сектор между θmax и θmin: стрелка, упёршись в край шкалы,
+ * остаётся на нём и никогда не проходит через шов — пружина не крутит её обратным кругом.
+ */
+(function () {
+  'use strict';
+
+  var GV = (window.GV = window.GV || {});
+
+  function mod(a, n) {
+    return ((a % n) + n) % n;
+  }
+
+  function angleFromPointer(dx, dy) {
+    return mod((Math.atan2(dy, dx) * 180) / Math.PI - 90, 360);
+  }
+
+  /* Рабочий сектор идёт по часовой от θmin до θmax (CW) или против (CCW). Вне его — ближний край;
+     при ведении курсор, ушедший под шкалу, не перебрасывает стрелку через всю шкалу к другому краю. */
+  function clampAngle(theta, calib, prev) {
+    var a0 = Number(calib.thetaMin);
+    var a1 = Number(calib.thetaMax);
+    var ccw = String(calib.direction || 'CW').toLowerCase() === 'ccw';
+    var span = ccw ? mod(a0 - a1, 360) : mod(a1 - a0, 360);
+    var d = ccw ? mod(a0 - theta, 360) : mod(theta - a0, 360);
+    if (d <= span) return mod(theta, 360);
+    if (typeof prev === 'number') {
+      var dp = ccw ? mod(a0 - prev, 360) : mod(prev - a0, 360);
+      if (dp <= span) return dp > span / 2 ? a1 : a0;
+    }
+    var toMax = d - span;
+    var toMin = 360 - d;
+    return toMax <= toMin ? a1 : a0;
+  }
+
+  function mount(body, opts) {
+    var u = GV.util;
+    var kit = GV.kit;
+    var motion = GV.motion;
+    var h = u.h;
+    var s = u.svg;
+    var c = GV.content;
+    var t = c.reading;
+    var calib = c.calibration;
+    var reading = opts.reading;
+    var sc = kit.scope();
+    var fmt = u.formatNumber;
+    var fine = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    body.classList.add('gv-dial');
+
+    /* ---------- чертёж ---------- */
+
+    var g = kit.gauge({ kind: 'drawing' });
+    var svgEl = g.el;
+    var dims = s('g', { class: 'gv-dial__dims' });
+    function ray(theta, r0, r1, cls) {
+      var p0 = kit.polar(0, 0, r0, theta);
+      var p1 = kit.polar(0, 0, r1, theta);
+      return s('line', { class: cls, x1: p0[0].toFixed(1), y1: p0[1].toFixed(1), x2: p1[0].toFixed(1), y2: p1[1].toFixed(1) });
+    }
+    function label(theta, r, text, cls, center) {
+      var p = kit.polar(0, 0, r, theta);
+      var cx = Math.cos(((theta + 90) * Math.PI) / 180);
+      var anchor = center ? 'middle' : (cx > 0.2 ? 'start' : (cx < -0.2 ? 'end' : 'middle'));
+      return s('text', { class: cls || 'gv-dial__dim-t', x: p[0].toFixed(1), y: p[1].toFixed(1), 'font-size': 13, 'text-anchor': anchor, 'dominant-baseline': 'central' }, text);
+    }
+    dims.appendChild(ray(calib.thetaMin, 186, 236, 'gv-dial__ext'));
+    dims.appendChild(ray(calib.thetaMax, 186, 236, 'gv-dial__ext'));
+    dims.appendChild(s('path', { class: 'gv-dial__span', d: kit.arcPath(0, 0, 226, calib.thetaMin, calib.thetaMax) }));
+    // подписи краёв — по центру под концом выносной линии: целиком внутри чертежа и на узком экране
+    dims.appendChild(label(calib.thetaMin, 264, 'θmin ' + calib.thetaMin + '° → ' + calib.vMin, null, true));
+    dims.appendChild(label(calib.thetaMax, 264, 'θmax ' + calib.thetaMax + '° → ' + calib.vMax, null, true));
+    dims.appendChild(label(180, 244, t.spanLabel.toLowerCase() + ' ' + calib.span + '°', 'gv-dial__dim-t gv-dial__dim-t--span'));
+    var deltaArc = s('path', { class: 'gv-dial__delta' });
+    var thetaRay = s('line', { class: 'gv-dial__ray' });
+    dims.appendChild(deltaArc);
+    dims.appendChild(thetaRay);
+    svgEl.insertBefore(dims, g.needle);
+    svgEl.setAttribute('viewBox', '-280 -262 560 524');
+
+    var drawing = h('figure', { class: 'gv-dial__drawing' },
+      h('div', { class: 'gv-dial__svg' }, svgEl),
+      h('figcaption', { class: 'gv-caption gv-dial__cap' }, t.device + '. ' + t.caption));
+
+    /* ---------- показания ---------- */
+
+    var valueEl = h('span', { class: 'gv-dial__v gv-num' });
+    var barEl = h('span', { class: 'gv-num' });
+    var zone = h('span', { class: 'gv-mark gv-mark--stamp' });
+    var thetaEl = h('span', { class: 'gv-num' });
+    var deltaEl = h('span', { class: 'gv-num gv-dial__delta-v' });
+    /* формулы вёрсткой: дробь в два этажа; в подстановке живут только θ и V */
+    var formula = kit.math(calib.formula);
+    var subst = kit.math('V = ' + fmt(calib.vMin, 0) + ' + (({theta} − ' + calib.thetaMin + '°) mod 360) / ' + calib.span +
+      ' · (' + calib.vMax + ' − ' + calib.vMin + ') = {V}');
+    subst.el.classList.add('gv-dial__subst');
+    var deltaK = kit.math('(θ − θmin) mod 360 =');
+
+    var slider = h('input', {
+      class: 'gv-dial__range',
+      type: 'range',
+      id: u.uid('gv-range'),
+      min: String(calib.vMin),
+      max: String(calib.vMax),
+      step: '0.01'
+    });
+    var sliderLabel = h('label', { class: 'gv-label', for: slider.id }, t.sliderLabel);
+
+    var writeBtn = h('button', { class: 'gv-dial__write', type: 'button' }, kit.icon('right'), h('span', null, t.write));
+    var written = h('p', { class: 'gv-dial__written', role: 'status' });
+
+    var panel = h('div', { class: 'gv-dial__panel' },
+      h('p', { class: 'gv-dial__value' }, valueEl, h('span', { class: 'gv-dial__unit' }, calib.unit)),
+      h('div', { class: 'gv-dial__meta' },
+        h('span', { class: 'gv-dial__bar' }, barEl, h('span', { class: 'gv-label' }, t.barLabel)),
+        h('span', { class: 'gv-dial__zone' }, h('span', { class: 'gv-label' }, t.zoneLabel), zone)),
+      h('dl', { class: 'gv-dial__f' },
+        h('dt', { class: 'gv-label' }, t.formulaLabel),
+        h('dd', null, formula.el),
+        h('dt', { class: 'gv-label' }, t.substitution),
+        h('dd', null, subst.el),
+        h('dt', { class: 'gv-label' }, t.angleLabel),
+        h('dd', { class: 'gv-dial__angles' }, thetaEl, h('span', { class: 'gv-dial__delta-k' }, deltaK.el), deltaEl)),
+      h('div', { class: 'gv-dial__ctl' }, sliderLabel, slider,
+        h('p', { class: 'gv-dial__hint' }, fine ? t.hint : t.hintTouch)),
+      h('div', { class: 'gv-dial__act' }, writeBtn, written));
+
+    body.appendChild(drawing);
+    body.appendChild(panel);
+
+    /* ---------- рисование по углу ---------- */
+
+    function paint(theta) {
+      // перелёт пружины не выносит стрелку за упор шкалы
+      theta = clampAngle(theta, calib);
+      g.setAngle(theta);
+      var v = kit.angleToValue(theta, calib);
+      var level = kit.levelOf(v, calib.setpoints);
+      var delta = mod(theta - calib.thetaMin, 360);
+      valueEl.textContent = fmt(v, 2);
+      barEl.textContent = fmt(kit.toBar(v, calib), 1) + kit.NBSP + 'бар';
+      if (zone.getAttribute('data-tone') !== level) {
+        zone.setAttribute('data-tone', level);
+        zone.textContent = t.zones[level];
+      }
+      thetaEl.textContent = fmt(mod(theta, 360), 1) + '°';
+      subst.slots.theta.textContent = fmt(mod(theta, 360), 1) + '°';
+      subst.slots.V.textContent = fmt(v, 2);
+      subst.label.textContent = 'V = ' + fmt(calib.vMin, 0) + ' + ((' + fmt(mod(theta, 360), 1) + '° − ' + calib.thetaMin + '°) mod 360) / ' +
+        calib.span + ' · (' + calib.vMax + ' − ' + calib.vMin + ') = ' + fmt(v, 2);
+      deltaArc.setAttribute('d', kit.arcPath(0, 0, 204, calib.thetaMin, calib.thetaMin + Math.max(delta, 0.01)));
+      var p0 = kit.polar(0, 0, 18, theta);
+      var p1 = kit.polar(0, 0, 212, theta);
+      thetaRay.setAttribute('x1', p0[0].toFixed(1));
+      thetaRay.setAttribute('y1', p0[1].toFixed(1));
+      thetaRay.setAttribute('x2', p1[0].toFixed(1));
+      thetaRay.setAttribute('y2', p1[1].toFixed(1));
+      deltaEl.textContent = fmt(delta, 1) + '°';
+      if (document.activeElement !== slider) slider.value = v.toFixed(2);
+      slider.setAttribute('aria-valuetext', fmt(v, 2) + ' ' + calib.unit + ', ' + t.zones[level]);
+    }
+
+    var spring = motion.spring({ stiffness: 170, damping: 18, value: reading.get(), precision: 0.02 });
+    var offSpring = null;
+    function wake() {
+      if (offSpring) return;
+      offSpring = motion.onFrame(function (dt) {
+        paint(spring.step(dt));
+        if (spring.settled()) { offSpring(); offSpring = null; }
+      });
+    }
+    sc.add(function () { if (offSpring) offSpring(); });
+    function aim(theta) {
+      spring.target(theta);
+      wake();
+    }
+    paint(reading.get());
+    sc.add(reading.on(function (theta) { aim(theta); }));
+
+    /* ---------- управление ---------- */
+
+    var fixed = reading.get();
+    /* follow — курсор ведут: под шкалой стрелка держится края, у которого стоит */
+    function pointerTheta(e, follow) {
+      var box = svgEl.getBoundingClientRect();
+      // центр прибора — точка (0, 0) viewBox −280 −262 560 524
+      var cx = box.left + (280 / 560) * box.width;
+      var cy = box.top + (262 / 524) * box.height;
+      return clampAngle(angleFromPointer(e.clientX - cx, e.clientY - cy), calib, follow ? reading.get() : undefined);
+    }
+    var pressing = false;
+    sc.on(svgEl, 'pointerdown', function (e) {
+      pressing = true;
+      svgEl.setPointerCapture(e.pointerId);
+      fixed = pointerTheta(e);
+      reading.set(fixed, 'dial');
+    });
+    sc.on(svgEl, 'pointermove', function (e) {
+      if (pressing) {
+        fixed = pointerTheta(e, true);
+        reading.set(fixed, 'dial');
+      } else if (e.pointerType === 'mouse') {
+        reading.set(pointerTheta(e, true), 'dial');
+      }
+    });
+    function release() { pressing = false; }
+    sc.on(svgEl, 'pointerup', release);
+    sc.on(svgEl, 'pointercancel', release);
+    sc.on(svgEl, 'pointerleave', function (e) {
+      if (!pressing && e.pointerType === 'mouse') reading.set(fixed, 'dial');
+    });
+    sc.add(reading.on(function (theta, from) {
+      if (from !== 'dial') fixed = theta;
+    }));
+
+    sc.on(slider, 'input', function () {
+      var v = Number(slider.value);
+      fixed = kit.valueToAngle(v, calib);
+      reading.set(fixed, 'dial');
+    });
+    sc.on(slider, 'keydown', function (e) {
+      if (!e.shiftKey || (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) return;
+      e.preventDefault();
+      var dir = e.key === 'ArrowRight' || e.key === 'ArrowUp' ? 1 : -1;
+      var v = Math.max(calib.vMin, Math.min(calib.vMax, Number(slider.value) + dir));
+      slider.value = String(v);
+      fixed = kit.valueToAngle(v, calib);
+      reading.set(fixed, 'dial');
+    });
+
+    var cancelNote = null;
+    sc.on(writeBtn, 'click', function () {
+      reading.commit(fixed);
+      written.textContent = '';
+      written.appendChild(h('a', { href: '#hero' }, t.written));
+      written.classList.remove('is-on');
+      void written.offsetWidth;
+      written.classList.add('is-on');
+      if (cancelNote) cancelNote();
+      cancelNote = sc.timeout(function () { written.classList.remove('is-on'); }, 6000);
+    });
+
+    /* штамп зоны падает, когда лист в кадре */
+    sc.observe(u.onVisible(panel, function () { panel.classList.add('gv-stamped'); }, { once: true, threshold: 0.4 }));
+
+    return { destroy: sc.destroy };
+  }
+
+  GV.components = GV.components || {};
+  GV.components.precisionDial = { mount: mount, angleFromPointer: angleFromPointer, clampAngle: clampAngle };
+})();
+
+window.GV && GV.tilda && GV.tilda.boot();
+</script>
