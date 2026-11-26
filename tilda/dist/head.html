@@ -1,0 +1,1168 @@
+<!-- GaugeVision AI для Tilda: сгенерировано tilda/build.mjs из site/. Правьте site/ и пересобирайте. -->
+<meta name="theme-color" content="#E9EBE4">
+<meta name="color-scheme" content="light">
+<script>
+/* Tilda: класс gvt-page включает стили уровня страницы (масштаб, линовка, красное поле, скроллбар) —
+   везде, кроме редактора Tilda. Настройки Tweaks — до первой отрисовки, без скачка вёрстки, как в site/index.html.
+   Кнопку Tweaks видит только автор: адрес с ?tweaks включает её на этом устройстве, ?tweaks=off — выключает. */
+(function () {
+  var d = document.documentElement;
+  var editor = /(^|\.)tilda\.(ru|cc)$/.test(location.hostname) && !/\/preview\//.test(location.pathname);
+  if (editor) return;
+  d.classList.add('gvt-page');
+  var q = location.search;
+  var on = /[?&]tweaks(=on|=1)?(&|$)/.test(q);
+  var off = /[?&]tweaks=off(&|$)/.test(q);
+  try {
+    if (on) localStorage.setItem('gv.tweaks.on', '1');
+    if (off) localStorage.removeItem('gv.tweaks.on');
+    if (localStorage.getItem('gv.tweaks.on') === '1') d.setAttribute('data-tweaks', 'on');
+    var t = JSON.parse(localStorage.getItem('gv.tweaks') || '{}');
+    if ([0.9, 1, 1.1, 1.25].indexOf(t.scale) >= 0) d.style.setProperty('--ui-scale', String(t.scale));
+    if (['ledger', 'graph', 'tracing'].indexOf(t.paper) >= 0) d.setAttribute('data-paper', t.paper);
+  } catch (e) {
+    if (on) d.setAttribute('data-tweaks', 'on');
+  }
+})();
+</script>
+<style>
+/*
+ * Локальные шрифты (fontsource, SIL OFL 1.1), вариативные woff2 — работают по file:// без сети.
+ *   Sofia Sans Extra Condensed — заголовки в кегле плаката (вес 800–900)
+ *   Sofia Sans                 — текст и интерфейс (400–700), курсив — подписи иллюстраций
+ *   Martian Mono               — машинные строки журнала, цифры, формулы (ось ширины 75–112,5 %)
+ *   Bad Script                 — рука обходчика и рукописные пометки на полях
+ * Греческого подмножества у Martian Mono нет: θ, φ, α берёт Sofia Sans через стек --font-mono.
+ */
+@font-face {
+  font-family: 'Sofia Sans Extra Condensed';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans-extra-condensed@5.3.0/files/sofia-sans-extra-condensed-cyrillic-wght-normal.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans Extra Condensed';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans-extra-condensed@5.3.0/files/sofia-sans-extra-condensed-latin-wght-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Sofia Sans';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-cyrillic-wght-normal.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-greek-wght-normal.woff2') format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Sofia Sans';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-latin-wght-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Sofia Sans';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-cyrillic-wght-italic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Sofia Sans';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-latin-wght-italic.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Martian Mono';
+  font-style: normal;
+  font-weight: 100 800;
+  font-stretch: 75% 112.5%;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource-variable/martian-mono@5.3.0/files/martian-mono-cyrillic-standard-normal.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Martian Mono';
+  font-style: normal;
+  font-weight: 100 800;
+  font-stretch: 75% 112.5%;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource-variable/martian-mono@5.3.0/files/martian-mono-latin-standard-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Bad Script';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/bad-script@5.3.0/files/bad-script-cyrillic-400-normal.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Bad Script';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/npm/@fontsource/bad-script@5.3.0/files/bad-script-latin-400-normal.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+<style>
+/*
+ * Токены мира «Журнал обходчика». Источник истины для значений; правила — DESIGN.md.
+ * Модуль сетки — 8 px (0,5rem при масштабе 100 %), строка линовки — 2rem (4 модуля).
+ * Все размеры в rem: масштаб Tweaks умножает корневой кегль через --ui-scale.
+ */
+:root {
+  --ui-scale: 1;
+
+  /* ---------- бумага и чернила ---------- */
+  --paper: #E9EBE4;            /* серо-зелёная журнальная бумага */
+  --paper-deep: #DDE1D6;       /* поле слева, шапка таблиц */
+  --paper-lift: #F1F2EC;       /* выделенная строка */
+  --rule: rgba(66, 104, 150, 0.2);         /* голубая линовка */
+  --rule-strong: rgba(66, 104, 150, 0.42); /* линия таблицы */
+  --grid: rgba(66, 104, 150, 0.1);         /* миллиметровка схемы */
+
+  --ink: #17191C;              /* графит печати — 14,6 : 1 */
+  --ink-press: #0B0C0D;        /* штамп-кнопка под курсором */
+  --ink-2: #454B53;            /* вторичный текст — 7,3 : 1 */
+  --ink-3: #5C626A;            /* метаданные — 5,1 : 1 */
+  --violet: #3A2C9C;           /* шариковая ручка обходчика — 8,6 : 1 */
+  --red: #B8321C;              /* красное поле и авария — 5,0 : 1 */
+  --ok: #1D6640;               /* НОРМА — 5,8 : 1 */
+  --warn: #7E5300;             /* ПРЕДУПРЕЖДЕНИЕ — 5,6 : 1 */
+  --marker: #EBD45A;           /* маркер-выделитель: ink на нём 11,8 : 1, ink-2 — 5,9 : 1 */
+
+  /* вклеенные фотографии и кадры камеры — единственные тёмные поверхности */
+  --plate: #141617;
+  --plate-ink: #E9EBE4;        /* 15,1 : 1 */
+  --plate-ink-2: #A9AFA6;      /* 8,1 : 1 */
+  --plate-red: #F06A4E;        /* 5,9 : 1 */
+
+  /* ---------- шрифты ---------- */
+  --font-display: 'Sofia Sans Extra Condensed', 'Sofia Sans', 'Arial Narrow', sans-serif;
+  --font-sans: 'Sofia Sans', 'Segoe UI', sans-serif;
+  --font-mono: 'Martian Mono', 'Sofia Sans', ui-monospace, monospace;
+  --font-hand: 'Bad Script', 'Segoe Script', cursive;
+
+  /* кегли — шкала 1,25 от основного 1,125rem; заголовки — плакат */
+  --fs-2xs: 0.75rem;
+  --fs-xs: 0.875rem;
+  --fs-s: 1rem;
+  --fs-m: 1.125rem;            /* основной текст */
+  --fs-l: 1.375rem;
+  --fs-xl: 1.75rem;
+  --fs-2xl: 2.5rem;
+  --fs-h2: clamp(3.25rem, 1.6rem + 5.2vw, 7rem);
+  --fs-h1: clamp(4rem, 1.2rem + 8.4vw, 10.5rem);
+  --fs-figure: clamp(2.25rem, 1.4rem + 2.6vw, 4rem); /* цифры протокола */
+
+  --lh-display: 0.84;
+  --lh-text: 1.5;
+  --tracking-display: -0.01em;
+  --tracking-caps: 0.08em;
+
+  /* ---------- сетка 8 px ---------- */
+  --s1: 0.5rem;
+  --s2: 1rem;
+  --s3: 1.5rem;
+  --s4: 2rem;
+  --s5: 2.5rem;
+  --s6: 3rem;
+  --s8: 4rem;
+  --s10: 5rem;
+  --s12: 6rem;
+  --s16: 8rem;
+  --s20: 10rem;
+  --row: 2rem;                                   /* строка линовки */
+  --margin: clamp(4rem, 1rem + 7vw, 9rem);       /* поле журнала слева до красной линии */
+  --tabs: 3.5rem;                                /* колонка ярлыков листов справа */
+  --gutter: clamp(1rem, 0.5rem + 1.2vw, 2rem);
+  --sheet-pad: clamp(6rem, 3rem + 8vw, 12rem);   /* воздух над заголовком листа */
+  --hair: 1px;
+
+  /* ---------- движение ---------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 160ms;
+  --dur-med: 320ms;
+  --dur-slow: 700ms;
+  --dur-write: 1100ms;
+
+  color-scheme: light;
+}
+/* Бумага Tweaks: «миллиметровка» — линовка гуще и сеткой, «калька» — холоднее и светлее. */
+html[data-paper='graph'] {
+  --paper: #E8EBE6;
+  --rule: rgba(66, 104, 150, 0.16);
+}
+html[data-paper='tracing'] {
+  --paper: #EEF0EE;
+  --paper-deep: #E2E6E4;
+  --rule: rgba(66, 104, 150, 0.16);
+}
+/*
+ * База: лист журнала. Линовка — строка 2rem по всей странице (бумага журнала, а не декоративная сетка),
+ * двойное красное поле — единственная вертикаль, идёт через всю страницу поверх бумаги.
+ * Браузерные поверхности (выделение, каретка, скроллбар, фокус, подчёркивание) — из палитры чернил.
+ */
+.gvt,
+.gvt *,
+.gvt::before,
+.gvt *::before,
+.gvt::after,
+.gvt *::after {
+  box-sizing: border-box;
+}
+.gvt {
+  font-family: var(--font-sans);
+  font-size: var(--fs-m);
+  line-height: var(--lh-text);
+  color: var(--ink);
+  caret-color: var(--violet);
+  font-kerning: normal;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+/* Красное поле журнала: две линии, неподвижны относительно окна — горизонт, который не кончается. */
+.gvt h1,
+.gvt h2,
+.gvt h3,
+.gvt h4,
+.gvt p,
+.gvt ul,
+.gvt ol,
+.gvt dl,
+.gvt dd,
+.gvt figure,
+.gvt table {
+  margin: 0;
+}
+/* hidden сильнее любого display модуля: раскрытие строк и шагов держится на атрибуте */
+.gvt [hidden] {
+  display: none !important;
+}
+.gvt ul[role='list'],
+.gvt ol[role='list'] {
+  padding: 0;
+  list-style: none;
+}
+.gvt img,
+.gvt video,
+.gvt svg {
+  display: block;
+  max-width: 100%;
+}
+.gvt button,
+.gvt input,
+.gvt select {
+  font: inherit;
+  color: inherit;
+}
+.gvt button {
+  cursor: pointer;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.gvt a {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.22em;
+  text-decoration-color: var(--rule-strong);
+}
+.gvt a:hover {
+  text-decoration-color: currentColor;
+}
+.gvt :focus-visible {
+  outline: 0.125rem solid var(--violet);
+  outline-offset: 0.1875rem;
+  border-radius: 0.125rem;
+}
+.gvt .gv-plate :focus-visible {
+  outline-color: var(--plate-ink);
+}
+/* Цифры — всегда моноширинные по ширине знака */
+.gvt .gv-num,
+.gvt .gv-mono,
+.gvt code,
+.gvt table {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+.gvt .gv-mono,
+.gvt code {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+}
+.gvt .gv-hand {
+  font-family: var(--font-hand);
+  color: var(--violet);
+  font-weight: 400;
+}
+.gvt .gv-visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+/* Формула вёрсткой (kit.math): дробь в два этажа с чертой по оси знаков, индексы min / max мельче и ниже,
+   знаки операций с воздухом. Строка не переносится — дробь укорачивает запись настолько, что она входит. */
+.gvt .gv-math {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.gvt .gv-math__op {
+  margin-inline: 0.3em;
+}
+.gvt .gv-math__op--u {
+  margin-inline: 0;
+}
+.gvt .gv-math__sub {
+  margin-left: 0.04em;
+  font-size: 0.66em;
+  font-stretch: 75%;
+  line-height: 0;
+  vertical-align: -0.3em;
+}
+.gvt .gv-math__frac {
+  display: inline-flex;
+  flex-direction: column;
+  margin-inline: 0.15em;
+  line-height: 1.3;
+  text-align: center;
+  vertical-align: middle;
+}
+.gvt .gv-math__num {
+  padding: 0 0.3em 0.12em;
+  border-bottom: 1px solid currentColor;
+}
+.gvt .gv-math__den {
+  padding: 0.12em 0.3em 0;
+}
+/* Разрыв строки после первого «·» и повтор знака в начале второй строки — только на телефоне */
+.gvt .gv-math__br,
+.gvt .gv-math__rep {
+  display: none;
+}
+@media (max-width: 760px) {
+  .gvt .gv-math__br { display: block; }
+  .gvt .gv-math__rep {
+      display: inline;
+      margin-inline: 0 0.3em;
+    }
+}
+.gvt .gv-skip {
+  position: absolute;
+  left: var(--s2);
+  top: var(--s2);
+  z-index: 50;
+  padding: var(--s1) var(--s2);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+.gvt .gv-skip:focus {
+  transform: none;
+}
+.gvt .gv-icon {
+  width: 1em;
+  height: 1em;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.gvt .gv-icon--fill {
+  fill: currentColor;
+  stroke: none;
+}
+.gvt .gv-noscript {
+  padding: var(--s8) var(--s4) var(--s8) calc(var(--margin) + var(--s4));
+  max-width: 48rem;
+}
+.gvt .gv-noscript h1 {
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-display);
+  margin: var(--s2) 0;
+}
+/*
+ * Грамматика движения журнала — только transform и opacity.
+ *   «печать»  — заголовок листа: слова поднимаются со строки линовки по очереди (GV.motion.reveal);
+ *   «рука»    — рукописная запись проявляется слева направо: бумажная шторка уезжает scaleX;
+ *   «штамп»   — статус падает на бумагу: scale 1,3 → 1 с перелётом, поворот −8° → −3°;
+ *   «строка»  — машинная строка журнала въезжает сверху (js/components/journal.js).
+ * Начальное скрытое состояние ставит JS (класс .gv-reveal), без скрипта всё видно.
+ */
+.gvt .gv-reveal {
+  opacity: 0;
+  transform: translate3d(0, 1.25rem, 0);
+  transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
+  transition-delay: var(--gv-reveal-delay, 0ms);
+}
+.gvt .gv-reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+/* Заголовок по словам: контейнер виден, слова поднимаются из-под строки */
+.gvt .gv-reveal[data-reveal='words'] {
+  opacity: 1;
+  transform: none;
+}
+.gvt .gv-reveal__w {
+  display: inline-block;
+  opacity: 0;
+  transform: translate3d(0, 0.45em, 0);
+  transition: opacity 900ms var(--ease-out), transform 900ms var(--ease-out);
+  transition-delay: calc(var(--gv-reveal-delay, 0ms) + var(--i, 0) * 70ms);
+}
+.gvt .gv-reveal.is-in .gv-reveal__w {
+  opacity: 1;
+  transform: none;
+}
+/* Рука: шторка цвета бумаги над рукописной строкой уезжает вправо */
+.gvt .gv-write {
+  position: relative;
+  display: inline-block;
+}
+.gvt .gv-write::after {
+  content: '';
+  position: absolute;
+  inset: -0.125rem -0.25rem;
+  background: var(--paper);
+  transform-origin: 100% 50%;
+  transform: scaleX(1);
+  transition: transform var(--dur-write) cubic-bezier(0.45, 0.05, 0.4, 1);
+  transition-delay: var(--gv-write-delay, 200ms);
+}
+.gvt .gv-write.is-written::after {
+  transform: scaleX(0);
+}
+/* Штамп */
+@keyframes gv-stamp {
+  0% { opacity: 0; transform: scale(1.32) rotate(-8deg); }
+  60% { opacity: 1; transform: scale(0.97) rotate(-2.5deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-3deg); }
+}
+.gvt .gv-stamped .gv-mark--stamp {
+  animation: gv-stamp 420ms var(--ease-out) both;
+  animation-delay: var(--gv-stamp-delay, 0ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .gvt .gv-reveal,
+  .gvt .gv-reveal__w,
+  .gvt .gv-write::after {
+      transition: none;
+    }
+  .gvt .gv-write::after {
+      transform: scaleX(0);
+    }
+  .gvt .gv-stamped .gv-mark--stamp {
+      animation: none;
+    }
+}
+/*
+ * Страница-журнал: шапка бланка, ярлыки листов у правого края, сетка листа, общие элементы.
+ * Сетка листа: [поле] var(--margin) | 12 колонок | [ярлыки] var(--tabs). Поле — колонка времени журнала:
+ * в нём номер листа и печатная строка бланка, сбоку от заголовка, а не над ним.
+ */
+/* ---------- шапка бланка ---------- */
+.gvt .gv-mast {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: var(--margin) minmax(0, 1fr) var(--tabs);
+  column-gap: var(--gutter);
+  align-items: center;
+  min-height: calc(var(--row) * 2);
+  border-bottom: 1px solid var(--ink);
+  box-shadow: 0 0.25rem 0 -0.1875rem var(--ink);
+  background: var(--paper);
+}
+.gvt .gv-mast__home {
+  justify-self: end;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-right: var(--s2);
+  color: var(--ink);
+}
+.gvt .gv-mast__mark {
+  width: 2rem;
+  height: 2rem;
+}
+.gvt .gv-mast__mark .arc { fill: none; stroke: currentColor; stroke-width: 1.5; }
+.gvt .gv-mast__mark .tick { stroke: currentColor; stroke-width: 1.2; }
+.gvt .gv-mast__mark .needle { stroke: var(--red); stroke-width: 2; stroke-linecap: round; }
+.gvt .gv-mast__mark .hub { fill: currentColor; }
+.gvt .gv-mast__row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s3);
+  min-width: 0;
+}
+.gvt .gv-mast__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-xl);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.gvt .gv-mast__form {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.gvt .gv-mast__gh {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  min-height: 2.75rem;
+  padding-inline: var(--s2);
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-xs);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.gvt .gv-mast__gh:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+/* ---------- ярлыки листов ---------- */
+.gvt .gv-tabs {
+  position: fixed;
+  z-index: 20;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.gvt .gv-tabs__list {
+  display: grid;
+  gap: 0.25rem;
+}
+.gvt .gv-tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 3rem;
+  width: var(--tabs);
+  padding-right: var(--s2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--ink-2);
+  text-decoration: none;
+  background: var(--paper-deep);
+  border: 1px solid var(--rule-strong);
+  border-right: 0;
+  border-radius: 0.375rem 0 0 0.375rem;
+  transition: transform var(--dur-med) var(--ease-out);
+}
+.gvt .gv-tab__label {
+  position: absolute;
+  right: calc(100% + var(--s1));
+  top: 50%;
+  padding: 0.25rem var(--s1);
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  font-size: var(--fs-s);
+  font-weight: 600;
+  color: var(--paper);
+  background: var(--ink);
+  border-radius: 0.25rem;
+  opacity: 0;
+  transform: translate3d(0.5rem, -50%, 0);
+  pointer-events: none;
+  transition: opacity var(--dur-fast) var(--ease-out), transform var(--dur-med) var(--ease-out);
+}
+.gvt .gv-tab:hover,
+.gvt .gv-tab:focus-visible {
+  transform: translateX(-0.375rem);
+  color: var(--ink);
+}
+.gvt .gv-tab:hover .gv-tab__label,
+.gvt .gv-tab:focus-visible .gv-tab__label {
+  opacity: 1;
+  transform: translate3d(0, -50%, 0);
+}
+.gvt .gv-tab[aria-current='true'] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  transform: translateX(-0.75rem);
+}
+/* ---------- лист ---------- */
+.gvt .gv-sheet {
+  position: relative;
+  display: grid;
+  grid-template-columns: [margin] var(--margin) [main] repeat(12, minmax(0, 1fr)) [tabs] var(--tabs);
+  column-gap: var(--gutter);
+  padding-block: var(--sheet-pad) var(--s10);
+  scroll-margin-top: 0;
+}
+.gvt .gv-sheet > * {
+  grid-column: main / tabs;
+  min-width: 0;
+}
+.gvt .gv-sheet__margin {
+  grid-column: margin;
+  grid-row: 1;
+  justify-self: end;
+  align-self: start;
+  display: grid;
+  justify-items: end;
+  gap: var(--s1);
+  padding: 0.625rem var(--s2) 0 0;
+  text-align: right;
+}
+.gvt .gv-sheet__no {
+  font-family: var(--font-mono);
+  font-stretch: 112.5%;
+  font-weight: 600;
+  font-size: var(--fs-xl);
+  line-height: 1;
+  color: var(--ink);
+}
+.gvt .gv-sheet__time {
+  font-family: var(--font-hand);
+  font-size: var(--fs-l);
+  line-height: 1;
+  color: var(--violet);
+  opacity: 0;
+  transform: translate3d(-0.25rem, 0, 0);
+  transition: opacity var(--dur-slow) var(--ease-out), transform var(--dur-slow) var(--ease-out);
+}
+.gvt .gv-sheet__time.is-written {
+  opacity: 1;
+  transform: none;
+}
+.gvt .gv-sheet__form {
+  max-width: calc(var(--margin) - var(--s2));
+  font-family: var(--font-mono);
+  font-stretch: 75%;
+  font-size: var(--fs-2xs);
+  line-height: 1.35;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+.gvt .gv-sheet__head {
+  grid-row: 1;
+  grid-column: main / span 11;
+  margin-bottom: var(--s8);
+}
+/* Заголовки листов стоят на разных вертикалях сетки: композиция листа меняется, поле — нет */
+.gvt .gv-sheet--reading .gv-sheet__head { grid-column: 6 / tabs; }
+.gvt .gv-sheet--pipeline .gv-sheet__head { grid-column: 4 / tabs; }
+.gvt .gv-sheet--architecture .gv-sheet__head { grid-column: 7 / tabs; }
+.gvt .gv-sheet--contact .gv-sheet__head { grid-column: 5 / tabs; }
+.gvt .gv-sheet--contact .gv-h2 { font-size: var(--fs-h1); max-width: 12ch; }
+/* Заголовок с явным переносом: каждая смысловая часть — своей строкой */
+.gvt .gv-h2__l { display: block; }
+/* «Протокол испытаний» — одной строкой: на узком экране кегль уменьшается по ширине колонки
+   (ширина строки ≈ 6,7 кегля, колонка = экран минус поле и ярлыки) */
+.gvt .gv-sheet--metrics .gv-h2 {
+  max-width: none;
+  white-space: nowrap;
+  font-size: min(var(--fs-h2), calc((100vw - 4.75rem) / 6.9));
+}
+/* Тело листа — подсетка на те же 12 колонок: модули ставят блоки по колонкам листа */
+.gvt .gv-sheet__body {
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  column-gap: var(--gutter);
+  align-items: start;
+}
+@supports (grid-template-columns: subgrid) {
+  .gvt .gv-sheet__body {
+      grid-template-columns: subgrid;
+    }
+}
+.gvt .gv-sheet__body > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+.gvt .gv-h2 {
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: var(--fs-h2);
+  line-height: var(--lh-display);
+  letter-spacing: var(--tracking-display);
+  max-width: 15ch;
+  text-wrap: balance;
+}
+/* Вывод листа под заголовком: то, что читатель уносит с листа, одна фраза — под маркером */
+.gvt .gv-lede {
+  max-width: 32ch;
+  margin-top: var(--s4);
+  font-size: var(--fs-xl);
+  line-height: 1.3;
+  font-weight: 500;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+/* Маркер-выделитель проверяющего: полоса по нижней части строки, на переносе — своя на каждой строке.
+   Одна пометка на лист и только на бумаге: на вклейке маркер не виден и не нужен. */
+.gvt .gv-hl {
+  padding: 0 0.12em;
+  margin: 0 -0.04em;
+  border-radius: 0.125rem 0.375rem;
+  color: var(--ink);
+  background: linear-gradient(transparent 40%, var(--marker) 40%, var(--marker) 94%, transparent 94%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+/* Графа бланка: главный вывод блока на светлой бумаге, подпись врезана в верхнюю линию рамки */
+.gvt .gv-box {
+  position: relative;
+  padding: var(--s4) var(--s4) var(--s3);
+  background: var(--paper-lift);
+  border: 1px solid var(--ink);
+  border-radius: 0.25rem;
+}
+.gvt .gv-box__legend {
+  position: absolute;
+  top: 0;
+  left: var(--s3);
+  transform: translateY(-50%);
+  padding: 0 var(--s1);
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--ink);
+  /* над линией — бумага листа, под ней — бумага графы: подпись разрывает рамку */
+  background: linear-gradient(var(--paper) 50%, var(--paper-lift) 50%);
+}
+/* Подпись к листу — рукописная пометка на полях справа от заголовка */
+.gvt .gv-note {
+  font-family: var(--font-sans);
+  font-style: italic;
+  color: var(--ink-2);
+  font-size: var(--fs-m);
+  line-height: 1.45;
+  text-wrap: pretty;
+}
+.gvt .gv-caption {
+  font-family: var(--font-sans);
+  font-style: italic;
+  font-size: var(--fs-xs);
+  color: var(--ink-3);
+}
+.gvt .gv-label {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-2xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-caps);
+  color: var(--ink-3);
+}
+/* ---------- штамп-кнопка и стрелка ---------- */
+.gvt .gv-stamp {
+  --mx: 0rem;
+  --my: 0rem;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s2);
+  min-height: 3.5rem;
+  padding: var(--s2) var(--s3);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-xl);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--paper);
+  background: var(--ink);
+  border-radius: 0.1875rem;
+  box-shadow: inset 0 0 0 0.25rem var(--ink), inset 0 0 0 calc(0.25rem + 1px) var(--paper);
+  transform: translate3d(var(--mx), var(--my), 0);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.gvt .gv-stamp:hover {
+  color: var(--paper);
+  background: var(--ink-press);
+  box-shadow: inset 0 0 0 0.25rem var(--ink-press), inset 0 0 0 calc(0.25rem + 1px) var(--paper);
+}
+.gvt .gv-stamp:active {
+  transform: translate3d(var(--mx), var(--my), 0) scale(0.97);
+}
+.gvt .gv-stamp .gv-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.gvt .gv-stamp__sub {
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-weight: 400;
+  font-size: var(--fs-2xs);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--plate-ink-2);
+}
+.gvt .gv-arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  min-height: 2.75rem;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  color: var(--ink);
+}
+.gvt .gv-arrow-link .gv-icon {
+  transition: transform var(--dur-med) var(--ease-out);
+}
+.gvt .gv-arrow-link:hover .gv-icon {
+  transform: translateY(0.25rem);
+}
+/* ---------- отметки статуса: штамп и метка ---------- */
+.gvt .gv-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.1875rem 0.5rem 0.125rem;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-weight: 600;
+  font-size: var(--fs-2xs);
+  line-height: 1.4;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  border: 0.1875rem double currentColor;
+  border-radius: 0.25rem;
+}
+.gvt .gv-mark--stamp {
+  transform: rotate(-3deg);
+}
+.gvt .gv-mark[data-tone='done'],
+.gvt .gv-mark[data-tone='normal'] { color: var(--ok); }
+.gvt .gv-mark[data-tone='partial'],
+.gvt .gv-mark[data-tone='warning'] { color: var(--warn); }
+.gvt .gv-mark[data-tone='alert'] { color: var(--red); }
+.gvt .gv-mark[data-tone='planned'] {
+  color: var(--ink-3);
+  border-style: dashed;
+  border-width: 1px;
+}
+.gvt .gv-mark[data-tone='measured'] { color: var(--ink); }
+.gvt .gv-mark[data-tone='calculated'] {
+  color: var(--warn);
+  border-style: dashed;
+  border-width: 1px;
+}
+/* ---------- вклеенная фотография ---------- */
+.gvt .gv-plate {
+  position: relative;
+  background: var(--plate);
+  color: var(--plate-ink);
+}
+/* ---------- футер ---------- */
+.gvt .gv-foot {
+  display: grid;
+  grid-template-columns: [margin] var(--margin) [main] repeat(12, minmax(0, 1fr)) [tabs] var(--tabs);
+  column-gap: var(--gutter);
+  padding-block: var(--s4) var(--s6);
+  border-top: 1px solid var(--ink);
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-2xs);
+  color: var(--ink-3);
+}
+.gvt .gv-foot__body {
+  grid-column: main / tabs;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--s1) var(--s4);
+}
+.gvt .gv-foot a {
+  color: var(--ink-2);
+}
+/* ---------- узкие окна ---------- */
+@media (max-width: 1100px) {
+  :root {
+      --tabs: 0rem;
+    }
+  .gvt .gv-sheet__head,
+  .gvt .gv-sheet--reading .gv-sheet__head,
+  .gvt .gv-sheet--pipeline .gv-sheet__head,
+  .gvt .gv-sheet--architecture .gv-sheet__head,
+  .gvt .gv-sheet--contact .gv-sheet__head {
+      grid-column: main / tabs;
+    }
+}
+@media (max-width: 900px) {
+  /* ярлыки уходят вниз: полоса указателя по краю листа */
+  .gvt .gv-tabs {
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      transform: none;
+      background: var(--paper);
+      border-top: 1px solid var(--ink);
+      padding: 0.25rem var(--s1) calc(0.25rem + env(safe-area-inset-bottom));
+    }
+  .gvt .gv-tabs__list {
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+      gap: 0.25rem;
+    }
+  .gvt .gv-tab {
+      width: auto;
+      height: 2.75rem;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid var(--rule-strong);
+      border-radius: 0.25rem;
+    }
+  .gvt .gv-tab:hover,
+  .gvt .gv-tab:focus-visible,
+  .gvt .gv-tab[aria-current='true'] {
+      transform: none;
+    }
+  .gvt .gv-tab__label {
+      display: none;
+    }
+  .gvt .gv-foot {
+      padding-bottom: calc(var(--s12) + env(safe-area-inset-bottom));
+    }
+}
+@media (max-width: 760px) {
+  :root {
+      --margin: 2.75rem;
+      --gutter: 0.75rem;
+      --sheet-pad: 5rem;
+    }
+  .gvt .gv-sheet {
+      grid-template-columns: [margin] var(--margin) [main] repeat(4, minmax(0, 1fr)) [tabs] 0.5rem;
+      padding-bottom: var(--s10);
+    }
+  .gvt .gv-foot {
+      grid-template-columns: [margin] var(--margin) [main] repeat(4, minmax(0, 1fr)) [tabs] 0.5rem;
+    }
+  .gvt .gv-sheet__margin {
+      padding-right: 0.625rem;
+    }
+  .gvt .gv-sheet__no {
+      font-size: var(--fs-m);
+      font-stretch: 87.5%;
+    }
+  .gvt .gv-sheet__form {
+      display: none;
+    }
+  .gvt .gv-sheet__time {
+      font-size: var(--fs-xs);
+    }
+  .gvt .gv-sheet__head {
+      margin-bottom: var(--s5);
+    }
+  .gvt .gv-lede {
+      margin-top: var(--s3);
+      font-size: var(--fs-l);
+      line-height: 1.36;
+    }
+  .gvt .gv-box {
+      padding: var(--s4) var(--s3) var(--s3);
+    }
+  .gvt .gv-box__legend {
+      left: var(--s2);
+    }
+  .gvt .gv-mast__form {
+      display: none;
+    }
+  .gvt .gv-mast {
+      grid-template-columns: var(--margin) minmax(0, 1fr) 0.5rem;
+    }
+  .gvt .gv-mast__home {
+      margin-right: 0.375rem;
+    }
+  .gvt .gv-mast__gh span:not(.gv-visually-hidden) {
+      display: none;
+    }
+}
+/*
+ * Прибор 0–10 МПа (kit.gauge) в двух исполнениях.
+ *   enamel  — эмалевый циферблат в кадре камеры первого листа: тёплая белая эмаль, чёрная печать шкалы;
+ *   drawing — чертёж тушью на бумаге листа 03: контур, осевые штрихпунктиром, стрелка красная —
+ *             единственный красный центр листа.
+ * Единицы — viewBox −200…200: толщины линий здесь в единицах SVG, кегли — атрибутом font-size в kit.gauge.
+ */
+.gvt .gv-gauge {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-variant-numeric: tabular-nums;
+}
+.gvt .gv-gauge__arc,
+.gvt .gv-gauge__zone {
+  fill: none;
+}
+.gvt .gv-gauge__tick {
+  stroke-linecap: butt;
+}
+.gvt .gv-gauge__num {
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+.gvt .gv-gauge__unit {
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+}
+.gvt .gv-gauge__cap {
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+}
+.gvt .gv-gauge__zone {
+  stroke-width: 9;
+}
+/* ---------- эмаль ---------- */
+.gvt .gv-gauge--enamel .gv-gauge__case { fill: #2B2E30; }
+.gvt .gv-gauge--enamel .gv-gauge__face { fill: #F3F1E9; }
+.gvt .gv-gauge--enamel .gv-gauge__arc { stroke: #1A1B1C; stroke-width: 2; }
+.gvt .gv-gauge--enamel .gv-gauge__tick { stroke: #1A1B1C; stroke-width: 1.6; }
+.gvt .gv-gauge--enamel .gv-gauge__tick.is-major { stroke-width: 3.4; }
+.gvt .gv-gauge--enamel .gv-gauge__num { fill: #1A1B1C; }
+.gvt .gv-gauge--enamel .gv-gauge__unit { fill: #1A1B1C; }
+.gvt .gv-gauge--enamel .gv-gauge__cap { fill: #5C626A; }
+.gvt .gv-gauge--enamel .gv-gauge__zone--alert { stroke: #B8321C; }
+.gvt .gv-gauge--enamel .gv-gauge__zone--warning { stroke: #C7962E; }
+.gvt .gv-gauge--enamel .gv-gauge__needle path { fill: #141516; }
+.gvt .gv-gauge--enamel .gv-gauge__hub { fill: #141516; }
+.gvt .gv-gauge--enamel .gv-gauge__pin { fill: #8B8F93; }
+.gvt .gv-gauge--enamel .gv-gauge__glass { fill: #FFFFFF; opacity: 0.1; }
+/* ---------- чертёж ---------- */
+.gvt .gv-gauge--drawing .gv-gauge__case { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+.gvt .gv-gauge--drawing .gv-gauge__face { fill: var(--paper); stroke: var(--ink); stroke-width: 0.8; }
+.gvt .gv-gauge--drawing .gv-gauge__axis { stroke: var(--ink-3); stroke-width: 0.8; stroke-dasharray: 14 4 2 4; }
+.gvt .gv-gauge--drawing .gv-gauge__arc { stroke: var(--ink); stroke-width: 1.4; }
+.gvt .gv-gauge--drawing .gv-gauge__tick { stroke: var(--ink); stroke-width: 1; }
+.gvt .gv-gauge--drawing .gv-gauge__tick.is-major { stroke-width: 2.2; }
+.gvt .gv-gauge--drawing .gv-gauge__num { fill: var(--ink); font-weight: 700; }
+.gvt .gv-gauge--drawing .gv-gauge__unit { fill: var(--ink-2); }
+.gvt .gv-gauge--drawing .gv-gauge__zone { stroke-width: 6; }
+.gvt .gv-gauge--drawing .gv-gauge__zone--alert { stroke: var(--red); }
+.gvt .gv-gauge--drawing .gv-gauge__zone--warning { stroke: var(--warn); opacity: 0.7; }
+.gvt .gv-gauge--drawing .gv-gauge__needle path { fill: var(--red); }
+.gvt .gv-gauge--drawing .gv-gauge__hub { fill: var(--paper); stroke: var(--ink); stroke-width: 1.4; }
+.gvt .gv-gauge--drawing .gv-gauge__pin { fill: var(--ink); }
+/* Tilda: в редакторе нет бумаги страницы — блок сам кладёт цвет бумаги под лист */
+#allrecords[data-tilda-mode='edit'] .gvt { background-color: var(--paper); }
+</style>
+<style>
+/* Уровень страницы (site/css/base.css): только с классом html.gvt-page, редактор Tilda его не получает */
+html.gvt-page {
+  font-size: calc(100% * var(--ui-scale));
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  background: var(--paper);
+  scrollbar-color: var(--ink-3) var(--paper-deep);
+  scroll-padding-top: var(--s4);
+}
+html.gvt-page body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-sans);
+  font-size: var(--fs-m);
+  line-height: var(--lh-text);
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: linear-gradient(to bottom, transparent calc(var(--row) - 1px), var(--rule) calc(var(--row) - 1px));
+  background-size: 100% var(--row);
+  caret-color: var(--violet);
+  font-kerning: normal;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+html.gvt-page body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: var(--margin);
+  width: 0.25rem;
+  border-left: 1px solid var(--red);
+  border-right: 1px solid var(--red);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 3;
+}
+html.gvt-page ::selection {
+  background: var(--violet);
+  color: var(--paper);
+}
+html.gvt-page::-webkit-scrollbar,
+html.gvt-page ::-webkit-scrollbar {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+html.gvt-page::-webkit-scrollbar-track,
+html.gvt-page ::-webkit-scrollbar-track {
+  background: var(--paper-deep);
+}
+html.gvt-page::-webkit-scrollbar-thumb,
+html.gvt-page ::-webkit-scrollbar-thumb {
+  background: var(--ink-3);
+  border: 0.1875rem solid var(--paper-deep);
+  border-radius: 0.375rem;
+}
+</style>

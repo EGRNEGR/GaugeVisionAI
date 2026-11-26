@@ -6,6 +6,8 @@
  * angle_to_value / classify_level в app/vision.py (notes.md §1.6, §1.8).
  * GV.motion: пружина стрелки (жёсткость 170, демпфирование 18 — спецификация, история 15)
  * и поведение при «уменьшить движение» (interfaces.md, правило 9).
+ * Лист 02: время ролика по прокрутке и окно, в котором обходчик не видит отклонение;
+ * лист 04: шаг операции по прокрутке; лист 01: время строк журнала и общее показание стрелки.
  */
 'use strict';
 
@@ -15,7 +17,7 @@ const vm = require('vm');
 
 const SITE = path.resolve(__dirname, '..');
 const FILES = ['js/content.js', 'js/util.js', 'js/motion.js', 'js/components/kit.js',
-  'js/components/scroll-video.js', 'js/components/precision-dial.js'];
+  'js/components/shift.js', 'js/components/precision-dial.js', 'js/components/operations.js'];
 
 function load(box) {
   vm.createContext(box);
@@ -45,20 +47,23 @@ if (!kit || typeof kit.angleToValue !== 'function') {
 const r2 = (v) => Math.round(v * 100) / 100;
 const calib = sandbox.GV.content.calibration;
 
-// Шкала 0–10 МПа, θmin = 135°, θmax = 45°, по часовой (спецификация, история 12)
-eq('θ = 253,4° → МПа', r2(kit.angleToValue(253.4, calib)), 4.39);
-eq('θ = 135° → МПа', r2(kit.angleToValue(135, calib)), 0);
-eq('θ = 45° → МПа', r2(kit.angleToValue(45, calib)), 10);
-eq('θ = 270° → МПа', r2(kit.angleToValue(270, calib)), 5);
+// Шкала 0–10 МПа по часовой. Углы сайта — от «6 часов»: θmin = 45°, θmax = 315°
+// (в кадре приложения те же точки — 135° и 45°, история 12)
+eq('θ = 163,4° → МПа', r2(kit.angleToValue(163.4, calib)), 4.39);
+eq('θ = 45° → МПа', r2(kit.angleToValue(45, calib)), 0);
+eq('θ = 315° → МПа', r2(kit.angleToValue(315, calib)), 10);
+eq('θ = 180° → МПа', r2(kit.angleToValue(180, calib)), 5);
 // «Мёртвая зона»: ближе к максимуму — перелёт, ограниченный +5 % диапазона
-eq('θ = 60° → МПа (перелёт, clamp)', r2(kit.angleToValue(60, calib)), 10.5);
+eq('θ = 330° → МПа (перелёт, clamp)', r2(kit.angleToValue(330, calib)), 10.5);
 // ближе к минимуму — недолёт, ограниченный −5 %
-eq('θ = 120° → МПа (недолёт, clamp)', r2(kit.angleToValue(120, calib)), -0.5);
+eq('θ = 30° → МПа (недолёт, clamp)', r2(kit.angleToValue(30, calib)), -0.5);
 // Против часовой: та же шкала зеркально
-eq('CCW θ = 45° → МПа', r2(kit.angleToValue(45, Object.assign({}, calib, { direction: 'CCW', thetaMin: 45, thetaMax: 135 }))), 0);
+eq('CCW θ = 315° → МПа', r2(kit.angleToValue(315, Object.assign({}, calib, { direction: 'CCW', thetaMin: 315, thetaMax: 45 }))), 0);
+// Отсчёт сайта — это угол кадра минус 90°: формула не зависит от того, откуда считать
+eq('кадр 253,4° / 135° / 45° → МПа', r2(kit.angleToValue(253.4, Object.assign({}, calib, { thetaMin: 135, thetaMax: 45 }))), 4.39);
 
 // Бары: 1 МПа = 10 бар
-eq('4,39 МПа → бар', r2(kit.toBar(kit.angleToValue(253.4, calib), calib)), 43.85);
+eq('4,39 МПа → бар', r2(kit.toBar(kit.angleToValue(163.4, calib), calib)), 43.85);
 
 // Зоны уставок LL 1 · L 2 · H 8 · HH 9 (classify_level: границы включены)
 const sp = calib.setpoints;
@@ -77,8 +82,21 @@ eq('V = 9,4 → статус', kit.levelOf(9.4, sp), 'alert');
 eq('EMA первый отсчёт', kit.emaStep(null, 4, 0.25), 4);
 eq('EMA шаг 4 → 8', kit.emaStep(4, 8, 0.25), 5);
 
-// Обратное преобразование для дуг уставок: 5 МПа → 270°
-eq('5 МПа → θ', r2(kit.valueToAngle(5, calib)), 270);
+// Обратное преобразование для дуг уставок: 5 МПа → 180° (стрелка вверх)
+eq('5 МПа → θ', r2(kit.valueToAngle(5, calib)), 180);
+
+// Формула вёрсткой: «a / b» — дробь, у скобочной группы скобки снимаются, Vmin → V с индексом min
+const tree = kit.mathTree('V = Vmin + ((θ − θmin) mod 360) / span · (Vmax − Vmin)');
+const fracs = tree.filter((n) => n.t === 'frac');
+eq('формула: одна дробь', fracs.length, 1);
+eq('формула: знаменатель — span', fracs.length && fracs[0].den.map((n) => n.v).join(''), 'span');
+eq('формула: числитель без внешних скобок', fracs.length && fracs[0].num[0].t, 'group');
+eq('формула: индексы min / max', (JSON.stringify(tree).match(/"t":"sub"/g) || []).length, 4);
+eq('формула без пробелов у «/»', kit.mathTree('((θ−θmin) mod 360)/span·(Vmax−Vmin)').filter((n) => n.t === 'frac').length, 1);
+const slotTree = kit.mathTree('V = (({theta} − 45°) mod 360) / 270 = {V}');
+eq('формула: слоты', slotTree.filter((n) => n.t === 'slot').map((n) => n.name).join(','), 'V');
+eq('формула: слот в числителе', JSON.stringify(slotTree).indexOf('"name":"theta"') > 0, true);
+eq('формула: дроби внутри скобок', JSON.stringify(kit.mathTree('diag(R/a, R/b)')).split('"frac"').length - 1, 2);
 
 /* ---------- GV.motion ---------- */
 
@@ -117,38 +135,89 @@ if (!motion || typeof motion.spring !== 'function') {
   eq('spring.set(5) → step()', jump.step(1 / 60), 5);
 }
 
-/* ---------- Сцены hero и «Показание» (тикет 02) ---------- */
+/* ---------- Лист 03 «Показание» и прибор первого листа ---------- */
 
 const comps = sandbox.GV.components || {};
 const dialApi = comps.precisionDial;
 if (!dialApi || typeof dialApi.clampAngle !== 'function' || typeof dialApi.angleFromPointer !== 'function') {
   failures.push('нет GV.components.precisionDial.clampAngle / angleFromPointer (site/js/components/precision-dial.js)');
 } else {
-  // Значение сцены: θ 253,4° из reading.theta → 4,39 МПа (спецификация, история 11)
+  // Значение сцены: θ 163,4° из reading.theta → 4,39 МПа (в кадре приложения 253,4°, история 11)
   const readingTheta = sandbox.GV.content.reading.theta;
   eq('reading.theta → МПа', r2(kit.angleToValue(dialApi.clampAngle(readingTheta, calib), calib)), 4.39);
-  // Курсор: угол в системе кадра (0° — «3 часа», по часовой, ось Y вниз)
-  eq('курсор вверх → θ', r2(dialApi.angleFromPointer(0, -1)), 270);
-  eq('курсор влево → θ', r2(dialApi.angleFromPointer(-1, 0)), 180);
-  eq('курсор вниз-вправо → θ', r2(dialApi.angleFromPointer(1, 1)), 45);
-  // Внутри шкалы угол не меняется
+  // Курсор: 0° — «6 часов», по часовой, ось Y вниз; 360° = 0° смотрит вниз
+  eq('курсор вниз → θ', r2(dialApi.angleFromPointer(0, 1)), 0);
+  eq('курсор влево → θ', r2(dialApi.angleFromPointer(-1, 0)), 90);
+  eq('курсор вверх → θ', r2(dialApi.angleFromPointer(0, -1)), 180);
+  eq('курсор вправо → θ', r2(dialApi.angleFromPointer(1, 0)), 270);
+  eq('курсор вниз-вправо → θ', r2(dialApi.angleFromPointer(1, 1)), 315);
+  // Внутри шкалы угол не меняется, и вся шкала лежит в одном куске 45°…315° — без шва 360 → 0
   eq('θ 200° внутри шкалы', r2(dialApi.clampAngle(200, calib)), 200);
-  eq('θ 30° внутри шкалы', r2(dialApi.clampAngle(30, calib)), 30);
-  // За шкалой (нижний сектор 45°…135°) угол зажимается к ближнему краю [θmin, θmax]
-  eq('θ 60° за шкалой → θmax', r2(dialApi.clampAngle(60, calib)), 45);
-  eq('θ 120° за шкалой → θmin', r2(dialApi.clampAngle(120, calib)), 135);
-  eq('θ 90° за шкалой → МПа в пределах шкалы', [0, 10].indexOf(r2(kit.angleToValue(dialApi.clampAngle(90, calib), calib))) >= 0, true);
+  eq('θ 300° внутри шкалы', r2(dialApi.clampAngle(300, calib)), 300);
+  let seam = false;
+  for (let a = 0; a < 360; a += 0.5) {
+    const c2 = dialApi.clampAngle(a, calib);
+    if (c2 < 45 || c2 > 315) seam = true;
+  }
+  eq('любой угол курсора → θ в 45°…315°', seam, false);
+  // За шкалой (нижний сектор 315°…45° через 0°) угол зажимается к ближнему краю
+  eq('θ 330° за шкалой → θmax', r2(dialApi.clampAngle(330, calib)), 315);
+  eq('θ 20° за шкалой → θmin', r2(dialApi.clampAngle(20, calib)), 45);
+  eq('θ 0° за шкалой → МПа в пределах шкалы', [0, 10].indexOf(r2(kit.angleToValue(dialApi.clampAngle(0, calib), calib))) >= 0, true);
+  // При ведении стрелка держится края, у которого стоит: курсор прошёл низ — перелёта через шкалу нет
+  eq('ведение у θmax, курсор на 20° → θmax', r2(dialApi.clampAngle(20, calib, 312)), 315);
+  eq('ведение у θmin, курсор на 340° → θmin', r2(dialApi.clampAngle(340, calib, 50)), 45);
+  eq('ведение: курсор вернулся на шкалу', r2(dialApi.clampAngle(60, calib, 315)), 60);
 }
 
-const videoApi = comps.scrollVideo;
-if (!videoApi || typeof videoApi.timeFor !== 'function') {
-  failures.push('нет GV.components.scrollVideo.timeFor (site/js/components/scroll-video.js)');
+const videoApi = comps.shift;
+if (!videoApi || typeof videoApi.timeFor !== 'function' || typeof videoApi.delayHours !== 'function') {
+  failures.push('нет GV.components.shift.timeFor / delayHours (site/js/components/shift.js)');
 } else {
   // Цель currentTime = прогресс × (длительность − 0,05) — interfaces.md, scrollVideo
   eq('видео: прогресс 0 → 0 с', videoApi.timeFor(0, 10), 0);
   eq('видео: прогресс 1 → 9,95 с', r2(videoApi.timeFor(1, 10)), 9.95);
   eq('видео: прогресс 0,5 → 4,975 с', Math.round(videoApi.timeFor(0.5, 10) * 1000) / 1000, 4.975);
   eq('видео: длительность неизвестна → 0', videoApi.timeFor(0.5, NaN), 0);
+  eq('видео: прогресс за пределами → 0', videoApi.timeFor(-0.2, 10), 0);
+  // Шкала смены: обходы в 0 и 12 ч (content.compare.timeline)
+  const tl = sandbox.GV.content.compare.timeline;
+  eq('отклонение в 5 ч → обходчик заметит через 7 ч', videoApi.delayHours(5, tl.rounds, tl.shiftHours), 7);
+  eq('отклонение сразу после обхода → 12 ч', videoApi.delayHours(0, tl.rounds, tl.shiftHours), 12);
+  eq('отклонение в 11,75 ч → 0,25 ч', videoApi.delayHours(11.75, tl.rounds, tl.shiftHours), 0.25);
+  eq('три обхода за смену: 7 ч → 1 ч', videoApi.delayHours(7, [0, 4, 8, 12], 12), 1);
+}
+
+const opsApi = comps.operations;
+if (!opsApi || typeof opsApi.stepFor !== 'function') {
+  failures.push('нет GV.components.operations.stepFor (site/js/components/operations.js)');
+} else {
+  eq('операции: прогресс 0 → шаг 0', opsApi.stepFor(0, 4), 0);
+  eq('операции: прогресс 0,3 → шаг 1', opsApi.stepFor(0.3, 4), 1);
+  eq('операции: прогресс 1 → последний шаг', opsApi.stepFor(1, 4), 3);
+  eq('операции: прогресс за пределами → шаг 0', opsApi.stepFor(-1, 4), 0);
+}
+
+// Время строки журнала: 08:00 + ⅓ с, 3 обработки в секунду
+eq('журнал: 08:00 + ⅓ с', kit.clockText(8 * 3600000 + 1000 / 3), '08:00:00,333');
+eq('журнал: 08:00 + 2⅔ с', kit.clockText(8 * 3600000 + 8000 / 3), '08:00:02,667');
+eq('журнал: переход через сутки', kit.clockText(24 * 3600000 + 5), '00:00:00,005');
+
+// Общее показание: подписчики получают угол и источник, свой же set без изменения — тишина
+{
+  const r = kit.createReading(253.4);
+  const seen = [];
+  const commits = [];
+  const off = r.on((theta, from) => seen.push(theta + ':' + from));
+  r.onCommit((theta) => commits.push(theta));
+  r.set(270, 'dial');
+  r.set(270, 'dial');
+  r.commit();
+  off();
+  r.set(200, 'hero');
+  eq('общее показание: get()', r.get(), 200);
+  eq('общее показание: уведомления', seen.join(','), '270:dial');
+  eq('общее показание: запись в журнал', commits.join(','), '270');
 }
 
 // «Уменьшить движение»: закреплённая секция сразу в конечном состоянии, пружина сразу у цели.
@@ -215,4 +284,4 @@ if (failures.length) {
   console.log(`\nFAIL: ${failures.length}`);
   process.exit(1);
 }
-console.log('OK: калибровка, бары, зоны уставок, EMA, пружина и reduced motion GV.motion, угол курсора прибора, время видео hero');
+console.log('OK: калибровка, бары, зоны уставок, EMA, пружина и reduced motion GV.motion, угол курсора прибора, ролик и шкала смены, шаги операций, журнал и общее показание');
