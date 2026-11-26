@@ -1,0 +1,48 @@
+[96m
+   ____                        __     ___     _                  _    ___
+  / ___| __ _ _   _  __ _  ___ \ \   / (_)___(_) ___  _ __      / \  |_ _|
+ | |  _ / _` | | | |/ _` |/ _ \ \ \ / /| / __| |/ _ \| '_ \    / _ \  | |
+ | |_| | (_| | |_| | (_| |  __/  \ V / | \__ \ | (_) | | | |  / ___ \ | |
+  \____|\__,_|\__,_|\__, |\___|   \_/  |_|___/_|\___/|_| |_| /_/   \_\___|
+                    |___/
+[0m
+  [1mGaugeVision AI v1.0.0[0m — мультисенсорный мониторинг аналоговых КИПиА
+  [93m[1mПРОФИЛЬ: ДЕМОНСТРАЦИЯ (36 позиций: #01 МТП-160 с камеры телефона + 35 симуляция)[0m
+  [96mСимулятор прибора (открыть на экране для съёмки): https://gaugevision-simulator.goodlyoatmeal32.chatgpt.site/[0m
+  ══════════════════════════════════════════════════════════════════════════════
+  [1mДашборд оператора:[0m
+    [92m➜  Этот ПК:          https://localhost:18443[0m
+    [92m➜  Сеть Wi-Fi / LAN: https://10.110.190.239:18443[0m
+  ══════════════════════════════════════════════════════════════════════════════
+  [93m[1mПервый вход со смартфона или другого ПК (самоподписный сертификат):[0m
+  [93m  • Android / Chrome: «Дополнительно» → «Перейти на сайт 10.110.190.239 (небезопасно)».[0m
+  [93m  • iOS / Safari: «Подробнее» → «посетить этот веб-сайт» → «Посетить веб-сайт».[0m
+  [93m  • Принять сертификат нужно один раз; без HTTPS браузеры запрещают доступ к камере.[0m
+    SHA-256 сертификата: CA:B1:91:93:62:E6:1D:5A:96:F5:E7:B7:B4:29:EC:5E
+                         F6:08:3C:5B:A0:84:87:18:E4:B9:D1:28:66:B6:29:0A
+  ══════════════════════════════════════════════════════════════════════════════
+  Смартфон как камера: «Подключить смартфон» на дашборде → сканировать QR-код.
+  БД: C:\Users\Egoru\AppData\Local\Temp\gv_audit_e2e_l5_9p9xh\e2e.db
+  Остановка сервера: Ctrl+C
+
+INFO:     Started server process [19952]
+INFO:     Waiting for application startup.
+23:44:59  INFO    gaugevision.scada: Modbus TCP сервер запущен на 127.0.0.1:15543 (Unit ID 1)
+Creating new Ultralytics Settings v0.0.8 file  
+View Ultralytics Settings with 'yolo settings' or at 'C:\Users\Egoru\AppData\Local\Temp\gv_audit_e2e_l5_9p9xh\yolo_cfg\Ultralytics\settings.json'
+Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/usage/settings.
+23:45:03  INFO    gaugevision.vision: YOLOv8 загружена: C:\Hakatons\GaugeVisionAIDesign DashBoard\.claude\worktrees\remediation-acceptance\models\gauge_yolov8.pt · устройство cpu (CPU)
+23:45:03  INFO    gaugevision.streamer: [edge-ben] статус: online
+23:45:03  INFO    gaugevision.streamer: [edge-ben] статус: online
+23:45:03  INFO    gaugevision.main: Загружено камер: 1 (деморежим: True, Edge-узел: edge-ktc-01)
+INFO:     Application startup complete.
+INFO:     Uvicorn running on https://0.0.0.0:18443 (Press CTRL+C to quit)
+INFO:     127.0.0.1:54939 - "WebSocket /ws/phone/demo-mtp160-steam?token=***" [accepted]
+INFO:     connection open
+23:45:03  INFO    gaugevision.streamer: [demo-mtp] статус: reconnecting
+23:45:03  INFO    gaugevision.streamer: [demo-mtp] статус: online
+INFO:     127.0.0.1:62092 - "WebSocket /ws/dashboard" [accepted]
+INFO:     connection open
+23:45:17  INFO    gaugevision.streamer: [demo-mtp] статус: reconnecting
+23:45:19  WARNING gaugevision.store_forward: Store-and-Forward: активирован режим автономной буферизации (Демонстрация обрыва связи Edge — АСУ ТП)
+23:45:25  INFO    gaugevision.store_forward: Store-and-Forward: связь с верхним уровнем восстановлена — запуск досылки пачками

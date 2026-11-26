@@ -1,0 +1,302 @@
+{
+  "duration_s": 3603.3,
+  "samples": 239,
+  "rss_mb": {
+    "start": 947.8,
+    "end": 598.3,
+    "max": 1021.0,
+    "slope_mb_per_h_after_warmup": -686.03
+  },
+  "private_mb": {
+    "start": 1870.8,
+    "end": 1919.6,
+    "max": 1946.2,
+    "slope_mb_per_h_after_warmup": 20.72
+  },
+  "docx": {
+    "expected": 5,
+    "ok": 5,
+    "bad": 0
+  },
+  "threads": {
+    "start": 124,
+    "end": 116,
+    "slope_per_h": -0.7
+  },
+  "handles": {
+    "start": 910,
+    "end": 796,
+    "slope_per_h": -160.4
+  },
+  "tcp_conns": {
+    "start": 14,
+    "end": 7,
+    "slope_per_h": -0.21
+  },
+  "health_latency_p50_ms": {
+    "first_quarter": 2.1500000000000004,
+    "last_quarter": 2.2
+  },
+  "streams": {
+    "demo-mtp160-steam": {
+      "fps_median": 2.9,
+      "fps_min": 2.8,
+      "inference_ms_median": 55.2,
+      "online_share": 1.0,
+      "frames_progress": 8819
+    },
+    "6fa38c28-81e6-40ac": {
+      "fps_median": 10.0,
+      "fps_min": 3.3,
+      "inference_ms_median": 54.7,
+      "online_share": 0.965,
+      "frames_progress": 29120
+    },
+    "400f7224-3529-4680": {
+      "fps_median": 7.3,
+      "fps_min": 7.2,
+      "inference_ms_median": 55.0,
+      "online_share": 1.0,
+      "frames_progress": 22108
+    },
+    "edge-bench-k1t01": {
+      "fps_median": 6.1,
+      "fps_min": 5.8,
+      "inference_ms_median": 57.2,
+      "online_share": 1.0,
+      "frames_progress": 18255
+    },
+    "edge-bench-ta2t02": {
+      "fps_median": 6.1,
+      "fps_min": 5.7,
+      "inference_ms_median": 54.5,
+      "online_share": 1.0,
+      "frames_progress": 18236
+    }
+  },
+  "sf_pending": {
+    "max": 63,
+    "end": 0
+  },
+  "rows": {
+    "readings_end": 9486,
+    "events_end": 490
+  },
+  "sqlite_mb_end": {
+    "main": 12.711,
+    "main_wal": 4.145,
+    "sf": 1.547,
+    "sf_wal": 3.996
+  },
+  "incident_files_end": 986,
+  "clients": {
+    "ws_msgs": 111977,
+    "ws_reconnects": 0,
+    "sse_events": 2289,
+    "phone_frames": 10594,
+    "phone_errors": 0,
+    "api_calls": 5413,
+    "api_errors": 0,
+    "keepalive_retries": 0,
+    "api_lat_p95_ms": 14.1,
+    "specs_preview": 59,
+    "docx_ok": 5,
+    "docx_bad": 0,
+    "mqtt_received": 2537
+  },
+  "faults": [
+    {
+      "t": 300.5,
+      "fault": "mqtt_broker",
+      "down": true
+    },
+    {
+      "t": 360.7,
+      "fault": "mqtt_broker",
+      "down": false
+    },
+    {
+      "t": 450.8,
+      "fault": "rtsp_publisher",
+      "down": true
+    },
+    {
+      "t": 480.0,
+      "fault": "rtsp_publisher",
+      "down": false
+    },
+    {
+      "t": 900.8,
+      "fault": "mqtt_broker",
+      "down": true
+    },
+    {
+      "t": 900.8,
+      "fault": "ui_outage_and_steam",
+      "down": true
+    },
+    {
+      "t": 930.9,
+      "fault": "ui_outage_and_steam",
+      "down": false
+    },
+    {
+      "t": 960.2,
+      "fault": "mqtt_broker",
+      "down": false
+    },
+    {
+      "t": 1350.4,
+      "fault": "rtsp_publisher",
+      "down": true
+    },
+    {
+      "t": 1380.6,
+      "fault": "rtsp_publisher",
+      "down": false
+    },
+    {
+      "t": 1500.1,
+      "fault": "mqtt_broker",
+      "down": true
+    },
+    {
+      "t": 1560.5,
+      "fault": "mqtt_broker",
+      "down": false
+    },
+    {
+      "t": 2100.4,
+      "fault": "mqtt_broker",
+      "down": true
+    },
+    {
+      "t": 2100.4,
+      "fault": "ui_outage_and_steam",
+      "down": true
+    },
+    {
+      "t": 2130.6,
+      "fault": "ui_outage_and_steam",
+      "down": false
+    },
+    {
+      "t": 2160.7,
+      "fault": "mqtt_broker",
+      "down": false
+    },
+    {
+      "t": 2250.9,
+      "fault": "rtsp_publisher",
+      "down": true
+    },
+    {
+      "t": 2280.1,
+      "fault": "rtsp_publisher",
+      "down": false
+    },
+    {
+      "t": 2700.9,
+      "fault": "mqtt_broker",
+      "down": true
+    },
+    {
+      "t": 2760.2,
+      "fault": "mqtt_broker",
+      "down": false
+    },
+    {
+      "t": 3151.0,
+      "fault": "rtsp_publisher",
+      "down": true
+    },
+    {
+      "t": 3180.1,
+      "fault": "rtsp_publisher",
+      "down": false
+    },
+    {
+      "t": 3300.6,
+      "fault": "mqtt_broker",
+      "down": true
+    },
+    {
+      "t": 3300.6,
+      "fault": "ui_outage_and_steam",
+      "down": true
+    },
+    {
+      "t": 3330.6,
+      "fault": "ui_outage_and_steam",
+      "down": false
+    },
+    {
+      "t": 3360.7,
+      "fault": "mqtt_broker",
+      "down": false
+    }
+  ],
+  "api_errors_sample": [],
+  "remote_non_loopback_connections": [],
+  "mqtt_reconciliation": {
+    "sf_rows": 2282,
+    "sent": 2282,
+    "pending": 0,
+    "received_unique": 2282,
+    "sent_but_not_received": 0,
+    "duplicates": 0
+  },
+  "criteria": {
+    "server_alive_whole_run": true,
+    "rss_growth_mb_per_h_below_50": true,
+    "private_bytes_growth_mb_per_h_below_50": true,
+    "threads_stable": true,
+    "handles_stable": true,
+    "tcp_connections_stable": true,
+    "api_latency_no_degradation": true,
+    "all_cv_streams_progressing": true,
+    "sf_queue_drains": true,
+    "sf_blob_bytes_not_accumulating": true,
+    "readings_persisted_monotonic": true,
+    "events_persisted": true,
+    "no_server_log_errors": true,
+    "no_api_errors": true,
+    "docx_generated_valid": true,
+    "mqtt_no_loss": true,
+    "no_external_connections": true
+  },
+  "passed": true,
+  "server_exit_code": 3,
+  "graceful_shutdown_logged": true,
+  "meta": {
+    "started_utc": "2026-11-26T19:40:52Z",
+    "duration_target_s": 3600,
+    "sample_s": 15,
+    "device": "cpu",
+    "rtsp": true,
+    "server_pid": 14900,
+    "finished_utc": "2026-11-26T20:41:35Z"
+  },
+  "reanalysis": {
+    "source": "summary.json + samples.jsonl",
+    "original_passed": false,
+    "original_criteria": {
+      "server_alive_whole_run": true,
+      "rss_growth_mb_per_h_below_50": true,
+      "threads_stable": true,
+      "handles_stable": true,
+      "tcp_connections_stable": true,
+      "api_latency_no_degradation": true,
+      "all_cv_streams_progressing": true,
+      "sf_queue_drains": true,
+      "sf_blob_bytes_not_accumulating": true,
+      "readings_persisted_monotonic": true,
+      "events_persisted": true,
+      "no_server_log_errors": true,
+      "no_api_errors": true,
+      "docx_generated_valid": false,
+      "mqtt_no_loss": true,
+      "no_external_connections": true
+    }
+  }
+}

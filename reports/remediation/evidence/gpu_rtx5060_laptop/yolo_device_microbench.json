@@ -1,0 +1,38 @@
+{
+  "torch": "2.14.1+cu130",
+  "imgsz": 640,
+  "cpu": {
+    "n": 200,
+    "p50_ms": 21.35,
+    "p95_ms": 28.44,
+    "mean_ms": 22.16,
+    "detector_fps": 45.1,
+    "bbox": [
+      135,
+      138,
+      416,
+      273
+    ],
+    "device": "CPU",
+    "half": false
+  },
+  "cuda": {
+    "n": 200,
+    "p50_ms": 8.5,
+    "p95_ms": 11.15,
+    "mean_ms": 8.68,
+    "detector_fps": 115.2,
+    "bbox": [
+      135,
+      138,
+      416,
+      272
+    ],
+    "device": "NVIDIA GeForce RTX 5060 Laptop GPU",
+    "half": true,
+    "torch_peak_vram_mb": 17.8,
+    "torch_reserved_vram_mb": 34.0
+  },
+  "speedup_p50": 2.51,
+  "bbox_equal": false
+}

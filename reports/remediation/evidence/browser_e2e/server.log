@@ -11,8 +11,8 @@
   [96mСимулятор прибора (открыть на экране для съёмки): https://gaugevision-simulator.goodlyoatmeal32.chatgpt.site/[0m
   ══════════════════════════════════════════════════════════════════════════════
   [1mДашборд оператора:[0m
-    [92m➜  Этот ПК:          https://localhost:49813[0m
-    [92m➜  Сеть Wi-Fi / LAN: https://127.0.0.1:49813[0m
+    [92m➜  Этот ПК:          https://localhost:51024[0m
+    [92m➜  Сеть Wi-Fi / LAN: https://127.0.0.1:51024[0m
   ══════════════════════════════════════════════════════════════════════════════
   [93m[1mПервый вход со смартфона или другого ПК (самоподписный сертификат):[0m
   [93m  • Android / Chrome: «Дополнительно» → «Перейти на сайт 127.0.0.1 (небезопасно)».[0m
@@ -22,25 +22,27 @@
                          F6:08:3C:5B:A0:84:87:18:E4:B9:D1:28:66:B6:29:0A
   ══════════════════════════════════════════════════════════════════════════════
   Смартфон как камера: «Подключить смартфон» на дашборде → сканировать QR-код.
-  БД: C:\Users\Egoru\AppData\Local\Temp\gv_browser_e2e_ju9nyn6y\server\gaugevision.db
+  БД: C:\Users\Egoru\AppData\Local\Temp\gv_browser_e2e_2869m1hd\server\gaugevision.db
   Остановка сервера: Ctrl+C
 
-INFO:     Started server process [26640]
+INFO:     Started server process [49332]
 INFO:     Waiting for application startup.
-22:30:25  INFO    gaugevision.scada: Modbus TCP сервер запущен на 127.0.0.1:49812 (Unit ID 1)
+01:02:37  INFO    gaugevision.scada: Modbus TCP сервер запущен на 127.0.0.1:51023 (Unit ID 1)
 Creating new Ultralytics Settings v0.0.8 file  
-View Ultralytics Settings with 'yolo settings' or at 'C:\Users\Egoru\AppData\Local\Temp\gv_browser_e2e_ju9nyn6y\server\yolo_cfg\Ultralytics\settings.json'
+View Ultralytics Settings with 'yolo settings' or at 'C:\Users\Egoru\AppData\Local\Temp\gv_browser_e2e_2869m1hd\server\yolo_cfg\Ultralytics\settings.json'
 Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/usage/settings.
-22:30:30  INFO    gaugevision.vision: YOLOv8 загружена: C:\Hakatons\GaugeVisionAIDesign DashBoard\.claude\worktrees\remediation-acceptance\models\gauge_yolov8.pt · устройство cpu (CPU)
-22:30:30  INFO    gaugevision.streamer: [edge-ben] статус: online
-22:30:30  INFO    gaugevision.streamer: [edge-ben] статус: online
-22:30:30  INFO    gaugevision.main: Загружено камер: 1 (деморежим: True, Edge-узел: edge-ktc-01)
+01:02:41  INFO    gaugevision.vision: YOLOv8 загружена: C:\Hakatons\GaugeVisionAIDesign DashBoard\.claude\worktrees\remediation-acceptance\models\gauge_yolov8.pt · устройство cpu (CPU)
+01:02:41  INFO    gaugevision.streamer: [edge-ben] статус: online
+01:02:41  INFO    gaugevision.streamer: [edge-ben] статус: online
+01:02:41  INFO    gaugevision.main: Загружено камер: 1 (деморежим: True, Edge-узел: edge-ktc-01)
 INFO:     Application startup complete.
-INFO:     Uvicorn running on https://127.0.0.1:49813 (Press CTRL+C to quit)
-INFO:     127.0.0.1:57506 - "WebSocket /ws/dashboard" [accepted]
+INFO:     Uvicorn running on https://127.0.0.1:51024 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56721 - "WebSocket /ws/dashboard" [accepted]
 INFO:     connection open
-22:30:47  WARNING gaugevision.store_forward: Store-and-Forward: активирован режим автономной буферизации (Демонстрация обрыва связи Edge — АСУ ТП)
-22:30:48  INFO    gaugevision.store_forward: Store-and-Forward: связь с верхним уровнем восстановлена — запуск досылки пачками
-INFO:     127.0.0.1:55602 - "WebSocket /ws/dashboard" [accepted]
+01:02:58  WARNING gaugevision.store_forward: Store-and-Forward: активирован режим автономной буферизации (Демонстрация обрыва связи Edge — АСУ ТП)
+01:02:59  INFO    gaugevision.store_forward: Store-and-Forward: связь с верхним уровнем восстановлена — запуск досылки пачками
+INFO:     127.0.0.1:57995 - "WebSocket /ws/dashboard" [accepted]
+INFO:     connection open
+INFO:     127.0.0.1:60005 - "WebSocket /ws/dashboard" [accepted]
 INFO:     connection open
 INFO:     Shutting down

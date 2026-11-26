@@ -228,19 +228,30 @@ def main() -> int:
         while time.time() - t_down < 45:
             sf = api.get("/api/architecture/store-forward")
             pend_series.append({"t": round(time.time() - t_down, 1), "pending": sf["pending_count"],
-                                "pending_alarms": sf["pending_alarms"], "sync_state": sf["sync_state"]})
+                                "pending_alarms": sf["pending_alarms"], "sync_state": sf["sync_state"],
+                                "link_down": sf.get("link_down")})
             time.sleep(3)
         phone.value = 13.0
         sc_down = api.get("/api/scada/status")["mqtt"]
         checks["mqtt_during_outage"] = {"pending_series": pend_series, "mode": sc_down["mode"],
                                         "publish_failures": sc_down["publish_failures"]}
         peak_pending = max(p["pending"] for p in pend_series)
+        # NEW-12: отказ обнаруживается, когда истекает ожидание PUBACK первой доставки;
+        # с этого момента и до восстановления пульт должен видеть буферизацию
+        first_buf = next((i for i, p in enumerate(pend_series) if p["sync_state"] == "BUFFERING" and p["link_down"]), None)
+        checks["mqtt_outage_detection"] = {
+            "detected_after_s": pend_series[first_buf]["t"] if first_buf is not None else None,
+            "buffering_held_until_recovery": first_buf is not None and all(
+                p["sync_state"] == "BUFFERING" and p["link_down"] for p in pend_series[first_buf:]),
+            "mqtt_ack_timeout_s": float(server.extra_env.get("GAUGEVISION_MQTT_ACK_TIMEOUT", "0") or 0),
+        }
 
         broker.start()
         t_up = time.time()
         drained = wait_for(lambda: api.get("/api/architecture/store-forward")["pending_count"] == 0, 180, step=1.0)
         checks["mqtt_recovery"] = {"peak_pending": peak_pending, "drain_s": drained,
                                    "reconnect_s": wait_for(lambda: api.get("/api/scada/status")["mqtt"]["connected"], 30)}
+        checks["mqtt_sync_state_after_recovery"] = api.get("/api/architecture/store-forward")["sync_state"]
         time.sleep(4)
 
         # Сверка доставки: каждое событие очереди получено подписчиком
@@ -349,6 +360,11 @@ def main() -> int:
         "no_tokens_in_server_log": res.get("token_leaks_in_server_log", 1) == 0,
         "mqtt_buffered_during_outage": c["mqtt_recovery"]["peak_pending"] > 0,
         "mqtt_drained_after_recovery": c["mqtt_recovery"]["drain_s"] is not None,
+        # NEW-12: реальный отказ брокера виден оператору как буферизация, а не «досылка»
+        "mqtt_outage_reported_as_buffering": c["mqtt_outage_detection"]["detected_after_s"] is not None
+            and c["mqtt_outage_detection"]["detected_after_s"] <= 10.0
+            and c["mqtt_outage_detection"]["buffering_held_until_recovery"],
+        "mqtt_state_connected_after_drain": c.get("mqtt_sync_state_after_recovery") in ("CONNECTED", "SYNCING"),
         "mqtt_no_loss": rec["sent_but_not_received"] == 0 and rec["sf_rows_pending_older_10s"] == 0,
         "mqtt_frames_intact": rec["frames_received"] > 0 and rec["frames_sha256_ok"],
         "modbus_values_match": c["modbus_pymodbus"]["matched_api_values"] >= int(0.9 * max(1, c["modbus_pymodbus"]["instruments_compared"])),

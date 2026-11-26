@@ -1,0 +1,180 @@
+{
+  "connect_s": 2.02,
+  "samples": [
+    {
+      "status": "online",
+      "fps": 0.0,
+      "frames": 2,
+      "process_ms": null,
+      "dial_found": null,
+      "valid": null
+    },
+    {
+      "status": "online",
+      "fps": 1.5,
+      "frames": 12,
+      "process_ms": 35.7,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 1.5,
+      "frames": 22,
+      "process_ms": 36.9,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 32,
+      "process_ms": 33.3,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 42,
+      "process_ms": 74.2,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 52,
+      "process_ms": 53.6,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 62,
+      "process_ms": 43.3,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 72,
+      "process_ms": 40.4,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 82,
+      "process_ms": 32.4,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.8,
+      "frames": 92,
+      "process_ms": 37.7,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.8,
+      "frames": 102,
+      "process_ms": 32.7,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 112,
+      "process_ms": 36.4,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 122,
+      "process_ms": 39.1,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 132,
+      "process_ms": 60.0,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 142,
+      "process_ms": 48.8,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 152,
+      "process_ms": 51.6,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 161,
+      "process_ms": 73.1,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 171,
+      "process_ms": 45.1,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 181,
+      "process_ms": 67.5,
+      "dial_found": false,
+      "valid": false
+    },
+    {
+      "status": "online",
+      "fps": 9.9,
+      "frames": 191,
+      "process_ms": 40.4,
+      "dial_found": false,
+      "valid": false
+    }
+  ],
+  "frames_progress": 189,
+  "fps_median": 9.9,
+  "cv_processed": true,
+  "restart_status": 200,
+  "restart_online_s": 0.51,
+  "delete_status": 204,
+  "device_released_after_delete": true,
+  "verdict": {
+    "connected": true,
+    "frames_flowing": true,
+    "cv_pipeline_ran": true,
+    "restart_ok": true,
+    "device_released": true
+  },
+  "passed": true
+}

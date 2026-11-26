@@ -1,0 +1,103 @@
+{
+  "directions": {
+    "Архитектурная видеоаналитика": {
+      "PASS": 10,
+      "PARTIAL": 1,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 11,
+      "max": 12,
+      "points": 11.45
+    },
+    "Store-and-Forward и отказоустойчивость": {
+      "PASS": 12,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 12,
+      "max": 15,
+      "points": 15.0
+    },
+    "API и промышленные интеграции": {
+      "PASS": 6,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 1,
+      "n": 7,
+      "max": 8,
+      "points": 6.86
+    },
+    "Аналитика и умная диспетчеризация": {
+      "PASS": 9,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 9,
+      "max": 15,
+      "points": 15.0
+    },
+    "Генерация инженерной документации": {
+      "PASS": 10,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 10,
+      "max": 15,
+      "points": 15.0
+    },
+    "Корректность и сохранение CV-инференса": {
+      "PASS": 5,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 1,
+      "n": 6,
+      "max": 10,
+      "points": 8.33
+    },
+    "Функциональность и качество HMI": {
+      "PASS": 7,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 7,
+      "max": 10,
+      "points": 10.0
+    },
+    "Безопасность и автономность": {
+      "PASS": 6,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 6,
+      "max": 8,
+      "points": 8.0
+    },
+    "Архитектура и качество кода": {
+      "PASS": 4,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 4,
+      "max": 4,
+      "points": 4.0
+    },
+    "Тестирование и воспроизводимость": {
+      "PASS": 3,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 3,
+      "max": 3,
+      "points": 3.0
+    }
+  },
+  "total": 96.65,
+  "counts": {
+    "PASS": 72,
+    "PARTIAL": 1,
+    "FAIL": 0,
+    "NOT VERIFIED": 2
+  },
+  "compliance_pct": 96.7,
+  "verified_pct": 97.3
+}

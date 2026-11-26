@@ -5,7 +5,7 @@
 по исходным критериям аудита (reports/audit/DEFECT_REGISTER.md) и ТЗ, а не текущее
 поведение кода. Компенсируют ослабленные проверки test_remediation_full.py
 (SHA-256 кадра, идентичность клипов кольцевого буфера) и покрывают дефекты,
-найденные при повторной приёмке (NEW-01…NEW-09).
+найденные при повторной приёмке (NEW-01…NEW-13).
 
 Запуск (строго CPU):
   CUDA_VISIBLE_DEVICES="" GAUGEVISION_DEVICE=cpu python -B tests/test_acceptance_independent.py
@@ -392,6 +392,109 @@ async def t_sf_overflow() -> dict[str, Any]:
         return {"pending": st["pending_count"], "evicted": st["evicted_total"], "alarms_kept": len(kept)}
     finally:
         config.SF_MAX_QUEUE_ROWS = saved
+
+
+@case("store_forward_real_link_failure_reported", "NEW-12, REQ-SF-06")
+async def t_sf_link_state() -> dict[str, Any]:
+    from app.store_forward import StoreAndForwardBuffer
+
+    link = {"up": False}
+    got: list[str] = []
+
+    async def sink(items: list[dict[str, Any]]) -> bool:
+        if not link["up"]:
+            return False
+        got.extend(it["event_uuid"] for it in items)
+        return True
+
+    sf = StoreAndForwardBuffer(db_path=_TMP / "sf_link.db")
+    sf.configure(deliver_cb=sink)
+    await sf.init()
+    st0 = await sf.stats()
+    assert st0["sync_state"] == "CONNECTED" and st0["link_down"] is False, st0["sync_state"]
+    # брокер недоступен без симуляции обрыва: доставка не подтверждается
+    uuids = [(await sf.enqueue(channel_id="c", payload_type="telemetry", payload={"i": i}))["event_uuid"]
+             for i in range(5)]
+    st1 = await sf.stats()
+    assert st1["outage_active"] is False
+    assert st1["link_down"] is True and st1["sync_state"] == "BUFFERING", (st1["sync_state"], st1["link_down"])
+    assert st1["pending_count"] == 5 and st1["delivery_fail_streak"] >= 1
+    # канал восстановлен: очередь досылается, состояние возвращается в CONNECTED
+    link["up"] = True
+    sf._retry_backoff_until = 0.0
+    await sf.flush_pending(max_batches=5)
+    st2 = await sf.stats()
+    assert st2["pending_count"] == 0 and st2["link_down"] is False and st2["sync_state"] == "CONNECTED"
+    assert set(uuids) <= set(got)
+    # симуляция обрыва из пульта по-прежнему даёт BUFFERING, но не link_down
+    await sf.set_outage(True, "accept")
+    await sf.enqueue(channel_id="c", payload_type="telemetry", payload={"i": 99})
+    st3 = await sf.stats()
+    assert st3["sync_state"] == "BUFFERING" and st3["outage_active"] is True and st3["link_down"] is False
+    await sf.close()
+    return {"failing": {"sync_state": st1["sync_state"], "pending": st1["pending_count"],
+                        "fail_streak": st1["delivery_fail_streak"]},
+            "recovered": st2["sync_state"], "simulated_outage": st3["sync_state"]}
+
+
+@case("llm_reasoning_model_empty_content_handled", "NEW-13, REQ-DOC-10")
+async def t_llm_reasoning() -> dict[str, Any]:
+    import threading
+    from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+
+    from app import config
+    from app.spec_generator import _try_llm_enrichment
+
+    seen: list[dict[str, Any]] = []
+    mode = {"m": "empty"}
+
+    class H(BaseHTTPRequestHandler):
+        def log_message(self, *a: Any) -> None:
+            pass
+
+        def do_POST(self) -> None:  # noqa: N802
+            body = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
+            seen.append(body)
+            if mode["m"] == "strict" and "reasoning_effort" in body:
+                self.send_response(400)
+                self.end_headers()
+                self.wfile.write(b'{"error":"unknown field reasoning_effort"}')
+                return
+            content = {"empty": "", "think": "<think>скрытое рассуждение 99,9</think>Итоговое резюме.",
+                       "strict": "Ответ строгого сервера."}[mode["m"]]
+            msg = {"role": "assistant", "content": content}
+            if mode["m"] == "empty":
+                msg["reasoning"] = "длинное рассуждение " * 50
+            out = json.dumps({"choices": [{"message": msg, "finish_reason": "length" if mode["m"] == "empty" else "stop"}]})
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.end_headers()
+            self.wfile.write(out.encode("utf-8"))
+
+    srv = ThreadingHTTPServer(("127.0.0.1", 0), H)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    saved = (config.LLM_BASE_URL, config.LLM_DISABLE_REASONING)
+    config.LLM_BASE_URL = f"http://127.0.0.1:{srv.server_address[1]}/v1"
+    config.LLM_DISABLE_REASONING = True
+    try:
+        # (а) рассуждающая модель исчерпала лимит: откат с честной причиной, не «недоступна»
+        t1, e1 = await _try_llm_enrichment("факты")
+        assert t1 is None and e1.startswith("deterministic") and "fallback" in e1 and "пустой ответ" in e1, e1
+        assert seen[-1].get("reasoning_effort") == "none" and seen[-1]["max_tokens"] == config.LLM_MAX_TOKENS
+        # (б) блок <think> в content не попадает в документ
+        mode["m"] = "think"
+        t2, e2 = await _try_llm_enrichment("факты")
+        assert e2.startswith("llm_enhanced") and t2 == "Итоговое резюме.", (e2, t2)
+        # (в) сервер без поддержки reasoning_effort: повтор без параметра
+        mode["m"] = "strict"
+        n0 = len(seen)
+        t3, e3 = await _try_llm_enrichment("факты")
+        assert e3.startswith("llm_enhanced") and t3 == "Ответ строгого сервера."
+        assert len(seen) - n0 == 2 and "reasoning_effort" not in seen[-1]
+        return {"empty_reason": e1, "think_stripped": t2, "strict_retry_requests": len(seen) - n0}
+    finally:
+        config.LLM_BASE_URL, config.LLM_DISABLE_REASONING = saved
+        srv.shutdown()
 
 
 # ===========================================================================
@@ -900,7 +1003,7 @@ def main() -> int:
         return _production_child()
     if MODE == "--migration-child":
         return _migration_child()
-    for fn in (t_dispatch_polling, t_dispatch_math, t_period_stats, t_store_forward, t_sf_overflow,
+    for fn in (t_dispatch_polling, t_dispatch_math, t_period_stats, t_store_forward, t_sf_overflow, t_sf_link_state, t_llm_reasoning,
                t_ring, t_spec_trips):
         fn()
     _api_checks()

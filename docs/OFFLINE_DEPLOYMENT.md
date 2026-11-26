@@ -57,7 +57,7 @@ python -m venv .venv_offline
 | `GAUGEVISION_ALLOW_FAULT_INJECTION` | `0` — симуляция отказов из интерфейса запрещена |
 | `GAUGEVISION_MQTT_ENABLED`, `GAUGEVISION_MQTT_HOST`, `GAUGEVISION_MQTT_PORT`, `GAUGEVISION_MQTT_QOS=1`, `GAUGEVISION_MQTT_USERNAME`, `GAUGEVISION_MQTT_PASSWORD`, `GAUGEVISION_MQTT_TLS` | Доставка в SCADA с подтверждением PUBACK |
 | `GAUGEVISION_MODBUS_ENABLED`, `GAUGEVISION_MODBUS_HOST`, `GAUGEVISION_MODBUS_PORT` (по умолчанию 15020), `GAUGEVISION_MODBUS_UNIT_ID` | Регистровая карта для SCADA |
-| `GAUGEVISION_LLM_BASE_URL`, `GAUGEVISION_LLM_MODEL`, `GAUGEVISION_LLM_TIMEOUT` | Необязательное обогащение формулировок ТЗ локальной LLM (Ollama, vLLM, llama.cpp). Пусто — детерминированный режим. На CPU ответ модели 7–9 млрд параметров занимает минуты, тайм-аут задаётся соответственно |
+| `GAUGEVISION_LLM_BASE_URL`, `GAUGEVISION_LLM_MODEL`, `GAUGEVISION_LLM_TIMEOUT`, `GAUGEVISION_LLM_MAX_TOKENS`, `GAUGEVISION_LLM_DISABLE_REASONING` | Необязательное обогащение формулировок ТЗ локальной LLM (Ollama, vLLM, llama.cpp). Пусто — детерминированный режим. На CPU ответ модели 7–9 млрд параметров занимает минуты, тайм-аут задаётся соответственно. Для рассуждающих моделей (Qwen3, DeepSeek-R1) рассуждения по умолчанию отключаются (`reasoning_effort=none`), иначе ответ приходит пустым |
 
 Если в промышленном режиме пароль не задан или совпадает со стендовым из `.env.example`, при первом запуске для учётной записи создаётся случайный пароль. Он однократно записывается в `data/initial_credentials.txt` (права 0600); файл нужно перенести в защищённое хранилище и удалить. Стендовые пароли вне деморежима отклоняются при входе даже для ранее созданных учётных записей.
 

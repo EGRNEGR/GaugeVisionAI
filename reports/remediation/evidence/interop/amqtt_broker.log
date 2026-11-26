@@ -1,29 +1,26 @@
-[2026-11-26 22:13:54,812] :: INFO - Loading plugins from config
-[2026-11-26 22:13:54,933] :: INFO - Listener 'default' bind to 127.0.0.1:64881 (max_connections=0)
-[2026-11-26 22:13:54,934] :: INFO - Starting session expiration monitor.
-[2026-11-26 22:13:55,305] :: INFO - Listener 'default': Connection acquired; 1/∞ connections in use
-[2026-11-26 22:13:55,305] :: INFO - Connection from 127.0.0.1:64902 on listener 'default'
-[2026-11-26 22:13:55,305] :: ERROR - No data from (client @=127.0.0.1:64902) : No data to decode MQTT packet fixed header
-[2026-11-26 22:13:55,305] :: WARNING - Failed to initialize client session > No data to decode MQTT packet fixed header
-[2026-11-26 22:13:55,313] :: INFO - Listener 'default': Connection released; 0/∞ connections in use
-[2026-11-26 22:13:55,950] :: INFO - Listener 'default': Connection acquired; 1/∞ connections in use
-[2026-11-26 22:13:55,950] :: INFO - Connection from 127.0.0.1:64905 on listener 'default'
-[2026-11-26 22:13:59,211] :: INFO - Listener 'default': Connection acquired; 2/∞ connections in use
-[2026-11-26 22:13:59,211] :: INFO - Connection from 127.0.0.1:64935 on listener 'default'
-[2026-11-26 22:16:31,684] :: INFO - Loading plugins from config
-[2026-11-26 22:16:31,782] :: INFO - Listener 'default' bind to 127.0.0.1:64881 (max_connections=0)
-[2026-11-26 22:16:31,782] :: INFO - Starting session expiration monitor.
-[2026-11-26 22:16:31,783] :: INFO - Listener 'default': Connection acquired; 1/∞ connections in use
-[2026-11-26 22:16:31,783] :: INFO - Connection from 127.0.0.1:57245 on listener 'default'
-[2026-11-26 22:16:32,249] :: INFO - Listener 'default': Connection acquired; 2/∞ connections in use
-[2026-11-26 22:16:32,249] :: INFO - Connection from 127.0.0.1:57256 on listener 'default'
-[2026-11-26 22:16:32,264] :: ERROR - No data from (client @=127.0.0.1:57256) : No data to decode MQTT packet fixed header
-[2026-11-26 22:16:32,264] :: WARNING - Failed to initialize client session > No data to decode MQTT packet fixed header
-[2026-11-26 22:16:32,264] :: INFO - Listener 'default': Connection released; 1/∞ connections in use
-[2026-11-26 22:16:34,260] :: INFO - Listener 'default': Connection acquired; 2/∞ connections in use
-[2026-11-26 22:16:34,260] :: INFO - Connection from 127.0.0.1:57266 on listener 'default'
-[2026-11-26 22:16:50,415] :: INFO - Listener 'default': Connection released; 1/∞ connections in use
-[2026-11-26 22:17:04,927] :: INFO - Listener 'default': Connection released; 0/∞ connections in use
-[2026-11-26 22:17:05,942] :: INFO - Listener 'default': Connection acquired; 1/∞ connections in use
-[2026-11-26 22:17:05,943] :: INFO - Connection from 127.0.0.1:57371 on listener 'default'
-[2026-11-26 22:17:35,221] :: INFO - Listener 'default': Connection released; 0/∞ connections in use
+[2026-11-26 23:53:32,389] :: INFO - Loading plugins from config
+[2026-11-26 23:53:32,438] :: INFO - Listener 'default' bind to 127.0.0.1:53278 (max_connections=0)
+[2026-11-26 23:53:32,438] :: INFO - Starting session expiration monitor.
+[2026-11-26 23:53:32,658] :: INFO - Listener 'default': Connection acquired; 1/∞ connections in use
+[2026-11-26 23:53:32,658] :: INFO - Connection from 127.0.0.1:53294 on listener 'default'
+[2026-11-26 23:53:32,675] :: ERROR - No data from (client @=127.0.0.1:53294) : No data to decode MQTT packet fixed header
+[2026-11-26 23:53:32,675] :: WARNING - Failed to initialize client session > No data to decode MQTT packet fixed header
+[2026-11-26 23:53:32,682] :: INFO - Listener 'default': Connection released; 0/∞ connections in use
+[2026-11-26 23:53:32,974] :: INFO - Listener 'default': Connection acquired; 1/∞ connections in use
+[2026-11-26 23:53:32,974] :: INFO - Connection from 127.0.0.1:53297 on listener 'default'
+[2026-11-26 23:53:35,303] :: INFO - Listener 'default': Connection acquired; 2/∞ connections in use
+[2026-11-26 23:53:35,303] :: INFO - Connection from 127.0.0.1:53302 on listener 'default'
+[2026-11-26 23:56:15,408] :: INFO - Loading plugins from config
+[2026-11-26 23:56:15,533] :: INFO - Listener 'default' bind to 127.0.0.1:53278 (max_connections=0)
+[2026-11-26 23:56:15,533] :: INFO - Starting session expiration monitor.
+[2026-11-26 23:56:15,599] :: INFO - Listener 'default': Connection acquired; 1/∞ connections in use
+[2026-11-26 23:56:15,599] :: INFO - Connection from 127.0.0.1:54681 on listener 'default'
+[2026-11-26 23:56:15,599] :: ERROR - No data from (client @=127.0.0.1:54681) : No data to decode MQTT packet fixed header
+[2026-11-26 23:56:15,599] :: WARNING - Failed to initialize client session > No data to decode MQTT packet fixed header
+[2026-11-26 23:56:15,599] :: INFO - Listener 'default': Connection released; 0/∞ connections in use
+[2026-11-26 23:56:15,632] :: INFO - Listener 'default': Connection acquired; 1/∞ connections in use
+[2026-11-26 23:56:15,632] :: INFO - Connection from 127.0.0.1:54677 on listener 'default'
+[2026-11-26 23:56:20,201] :: INFO - Listener 'default': Connection acquired; 2/∞ connections in use
+[2026-11-26 23:56:20,201] :: INFO - Connection from 127.0.0.1:54701 on listener 'default'
+[2026-11-26 23:56:29,015] :: INFO - Listener 'default': Connection released; 1/∞ connections in use
+[2026-11-26 23:56:34,248] :: INFO - Listener 'default': Connection released; 0/∞ connections in use

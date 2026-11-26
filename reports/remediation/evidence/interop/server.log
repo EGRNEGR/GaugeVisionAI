@@ -11,9 +11,8 @@
   [96mСимулятор прибора (открыть на экране для съёмки): https://gaugevision-simulator.goodlyoatmeal32.chatgpt.site/[0m
   ══════════════════════════════════════════════════════════════════════════════
   [1mДашборд оператора:[0m
-    [92m➜  Этот ПК:          https://localhost:64883[0m
-    [92m➜  Сеть Wi-Fi / LAN: https://127.0.0.1:64883[0m
-    Другие адреса хоста: 10.110.190.239  (выбор: python run.py --lan-ip <IP>)
+    [92m➜  Этот ПК:          https://localhost:53280[0m
+    [92m➜  Сеть Wi-Fi / LAN: https://127.0.0.1:53280[0m
   ══════════════════════════════════════════════════════════════════════════════
   [93m[1mПервый вход со смартфона или другого ПК (самоподписный сертификат):[0m
   [93m  • Android / Chrome: «Дополнительно» → «Перейти на сайт 127.0.0.1 (небезопасно)».[0m
@@ -23,46 +22,52 @@
                          F6:08:3C:5B:A0:84:87:18:E4:B9:D1:28:66:B6:29:0A
   ══════════════════════════════════════════════════════════════════════════════
   Смартфон как камера: «Подключить смартфон» на дашборде → сканировать QR-код.
-  БД: C:\Users\Egoru\AppData\Local\Temp\gv_interop_x7t9jjn1\server\gaugevision.db
+  БД: C:\Users\Egoru\AppData\Local\Temp\gv_interop_u5mxjte9\server\gaugevision.db
   Остановка сервера: Ctrl+C
 
-INFO:     Started server process [33220]
+INFO:     Started server process [12228]
 INFO:     Waiting for application startup.
-22:13:59  INFO    gaugevision.scada: Modbus TCP сервер запущен на 127.0.0.1:64882 (Unit ID 1)
+23:53:35  INFO    gaugevision.scada: Modbus TCP сервер запущен на 127.0.0.1:53279 (Unit ID 1)
 Creating new Ultralytics Settings v0.0.8 file  
-View Ultralytics Settings with 'yolo settings' or at 'C:\Users\Egoru\AppData\Local\Temp\gv_interop_x7t9jjn1\server\yolo_cfg\Ultralytics\settings.json'
+View Ultralytics Settings with 'yolo settings' or at 'C:\Users\Egoru\AppData\Local\Temp\gv_interop_u5mxjte9\server\yolo_cfg\Ultralytics\settings.json'
 Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/usage/settings.
-22:14:06  INFO    gaugevision.vision: YOLOv8 загружена: C:\Hakatons\GaugeVisionAIDesign DashBoard\.claude\worktrees\remediation-acceptance\models\gauge_yolov8.pt · устройство cpu (CPU)
-22:14:06  INFO    gaugevision.streamer: [edge-ben] статус: online
-22:14:06  INFO    gaugevision.streamer: [edge-ben] статус: online
-22:14:06  INFO    gaugevision.main: Загружено камер: 1 (деморежим: True, Edge-узел: edge-ktc-01)
+23:53:38  INFO    gaugevision.vision: YOLOv8 загружена: C:\Hakatons\GaugeVisionAIDesign DashBoard\.claude\worktrees\remediation-acceptance\models\gauge_yolov8.pt · устройство cpu (CPU)
+23:53:38  INFO    gaugevision.streamer: [edge-ben] статус: online
+23:53:38  INFO    gaugevision.streamer: [edge-ben] статус: online
+23:53:38  INFO    gaugevision.main: Загружено камер: 1 (деморежим: True, Edge-узел: edge-ktc-01)
 INFO:     Application startup complete.
-INFO:     Uvicorn running on https://127.0.0.1:64883 (Press CTRL+C to quit)
-22:14:07  INFO    gaugevision.streamer: [abb22ded] статус: reconnecting
-22:14:09  INFO    gaugevision.streamer: [abb22ded] поток подключён: rtsp://***:***@127.0.0.1:64879/gauge
-22:14:09  INFO    gaugevision.streamer: [abb22ded] статус: online
-22:14:56  INFO    gaugevision.streamer: [abb22ded] статус: reconnecting
-22:14:56  INFO    gaugevision.streamer: [abb22ded] переподключение через 1с (попытка 1)
-22:15:01  INFO    gaugevision.streamer: [abb22ded] поток подключён: rtsp://***:***@127.0.0.1:64879/gauge
-22:15:01  INFO    gaugevision.streamer: [abb22ded] статус: online
-22:15:07  INFO    gaugevision.streamer: [abb22ded] статус: reconnecting
-22:15:07  INFO    gaugevision.streamer: [abb22ded] переподключение через 1с (попытка 1)
-22:15:08  INFO    gaugevision.streamer: [abb22ded] переподключение через 2с (попытка 2)
-22:15:10  INFO    gaugevision.streamer: [abb22ded] переподключение через 4с (попытка 3)
-[rtsp @ 000001b946005d40] method DESCRIBE failed: 404 Not Found
-[rtsp @ 000001b946005d40] method DESCRIBE failed: 404 Not Found
-[ WARN:0@72.989] global cap_ffmpeg_impl.hpp:453 _opencv_ffmpeg_interrupt_callback Stream timeout triggered after 6000.195000 ms
-22:15:20  INFO    gaugevision.streamer: [abb22ded] переподключение через 8с (попытка 4)
-22:15:31  INFO    gaugevision.streamer: [abb22ded] поток подключён: rtsp://***:***@127.0.0.1:64879/gauge
-22:15:31  INFO    gaugevision.streamer: [abb22ded] статус: online
-INFO:     127.0.0.1:51681 - "WebSocket /ws/phone/demo-mtp160-steam?token=***" [accepted]
+INFO:     Uvicorn running on https://127.0.0.1:53280 (Press CTRL+C to quit)
+23:53:38  INFO    gaugevision.streamer: [6da18ba1] статус: reconnecting
+23:53:41  INFO    gaugevision.streamer: [6da18ba1] поток подключён: rtsp://***:***@127.0.0.1:53276/gauge
+23:53:41  INFO    gaugevision.streamer: [6da18ba1] статус: online
+23:54:28  INFO    gaugevision.streamer: [6da18ba1] статус: reconnecting
+23:54:28  INFO    gaugevision.streamer: [6da18ba1] переподключение через 1с (попытка 1)
+23:54:29  INFO    gaugevision.streamer: [6da18ba1] переподключение через 2с (попытка 2)
+23:54:31  INFO    gaugevision.streamer: [6da18ba1] переподключение через 4с (попытка 3)
+23:54:35  INFO    gaugevision.streamer: [6da18ba1] переподключение через 8с (попытка 4)
+23:54:46  INFO    gaugevision.streamer: [6da18ba1] поток подключён: rtsp://***:***@127.0.0.1:53276/gauge
+23:54:46  INFO    gaugevision.streamer: [6da18ba1] статус: online
+23:54:51  INFO    gaugevision.streamer: [6da18ba1] статус: reconnecting
+23:54:51  INFO    gaugevision.streamer: [6da18ba1] переподключение через 1с (попытка 1)
+23:54:52  INFO    gaugevision.streamer: [6da18ba1] переподключение через 2с (попытка 2)
+23:54:54  INFO    gaugevision.streamer: [6da18ba1] переподключение через 4с (попытка 3)
+[rtsp @ 000001721b40a040] method DESCRIBE failed: 404 Not Found
+[rtsp @ 000001721b40a040] method DESCRIBE failed: 404 Not Found
+[rtsp @ 000001721b40a040] method DESCRIBE failed: 404 Not Found
+[rtsp @ 000001721b65ec80] method DESCRIBE failed: 404 Not Found
+[rtsp @ 000001721b65ec80] method DESCRIBE failed: 404 Not Found
+[ WARN:0@85.993] global cap_ffmpeg_impl.hpp:453 _opencv_ffmpeg_interrupt_callback Stream timeout triggered after 6099.955000 ms
+23:55:04  INFO    gaugevision.streamer: [6da18ba1] переподключение через 8с (попытка 4)
+23:55:16  INFO    gaugevision.streamer: [6da18ba1] поток подключён: rtsp://***:***@127.0.0.1:53276/gauge
+23:55:16  INFO    gaugevision.streamer: [6da18ba1] статус: online
+INFO:     127.0.0.1:54571 - "WebSocket /ws/phone/demo-mtp160-steam?token=***" [accepted]
 INFO:     connection open
-22:15:31  INFO    gaugevision.streamer: [demo-mtp] статус: reconnecting
-22:15:31  INFO    gaugevision.streamer: [demo-mtp] статус: online
+23:55:16  INFO    gaugevision.streamer: [demo-mtp] статус: reconnecting
+23:55:16  INFO    gaugevision.streamer: [demo-mtp] статус: online
 INFO:     Shutting down
 INFO:     Waiting for application shutdown.
-22:16:50  INFO    gaugevision.streamer: [edge-ben] статус: offline
-22:16:50  INFO    gaugevision.streamer: [edge-ben] статус: offline
-22:16:50  INFO    gaugevision.streamer: [abb22ded] статус: offline
+23:56:28  INFO    gaugevision.streamer: [edge-ben] статус: offline
+23:56:28  INFO    gaugevision.streamer: [edge-ben] статус: offline
+23:56:29  INFO    gaugevision.streamer: [6da18ba1] статус: offline
 INFO:     Application shutdown complete.
-INFO:     Finished server process [33220]
+INFO:     Finished server process [12228]

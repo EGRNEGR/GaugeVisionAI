@@ -15,7 +15,12 @@
     автодокументы; задержка API; сообщения WS/SSE/MQTT; ошибки журнала.
 По завершении — анализ трендов (утечки, деградация, накопление очередей) в summary.json.
 
+Утечка памяти оценивается по private bytes (commit) процесса: рабочий набор (RSS) Windows
+урезает по своей политике, и его наклон утечку не показывает.
+
   python reports/remediation/tests/soak_real_pipeline.py --out reports/remediation/evidence/soak
+  python reports/remediation/tests/soak_real_pipeline.py --reanalyze reports/remediation/evidence/soak
+      — пересчёт критериев по сохранённым samples.jsonl и summary.json в summary_reanalyzed.json
 Переменные: SOAK_DURATION_S (3600), SOAK_SAMPLE_S (15).
 """
 from __future__ import annotations
@@ -24,6 +29,7 @@ import argparse
 import asyncio
 import io
 import json
+import math
 import os
 import sqlite3
 import statistics
@@ -325,11 +331,21 @@ async def sampler(server: H.GaugeServer, base: str, token: str, c: Counters, sub
                   f"lat={rec.get('health_lat_ms_p50')}ms err={rec['log_errors']}", flush=True)
 
 
-def analyze(samples: list[dict[str, Any]], c: Counters, recon: dict[str, Any], duration: float) -> dict[str, Any]:
+DOCX_PERIOD_S = 600
+
+
+def expected_docx(target_s: float) -> int:
+    """Генерации идут на отметках 600, 1200, … строго внутри прогона: при 3600 с их пять."""
+    return max(0, math.ceil(target_s / DOCX_PERIOD_S) - 1)
+
+
+def analyze(samples: list[dict[str, Any]], c: Counters, recon: dict[str, Any], duration: float,
+            target_s: float | None = None) -> dict[str, Any]:
     ok = [s for s in samples if "rss_mb" in s]
     warm = [s for s in ok if s["t"] >= min(600.0, duration * 0.25)]  # после прогрева
     xs = [s["t"] / 3600.0 for s in warm]
     rss_slope = linreg_slope(xs, [s["rss_mb"] for s in warm])
+    priv_slope = linreg_slope(xs, [s["private_mb"] for s in warm])
     thr_slope = linreg_slope(xs, [s["threads"] for s in warm])
     hnd_slope = linreg_slope(xs, [s["handles"] for s in warm])
     tcp_slope = linreg_slope(xs, [s["tcp_conns"] for s in warm])
@@ -358,6 +374,7 @@ def analyze(samples: list[dict[str, Any]], c: Counters, recon: dict[str, Any], d
     crit = {
         "server_alive_whole_run": all(s.get("server_alive") for s in samples),
         "rss_growth_mb_per_h_below_50": rss_slope < 50.0,
+        "private_bytes_growth_mb_per_h_below_50": priv_slope < 50.0,
         "threads_stable": bool(warm) and abs(warm[-1]["threads"] - warm[0]["threads"]) <= 10,
         "handles_stable": hnd_slope < 200.0,
         "tcp_connections_stable": bool(warm) and abs(warm[-1]["tcp_conns"] - warm[0]["tcp_conns"]) <= 10,
@@ -369,7 +386,7 @@ def analyze(samples: list[dict[str, Any]], c: Counters, recon: dict[str, Any], d
         "events_persisted": bool(ev) and ev[-1] > ev[0],
         "no_server_log_errors": (last.get("log_errors") or 0) == 0,
         "no_api_errors": len(c.api_errors) == 0,
-        "docx_generated_valid": c.docx_ok >= int(duration // 600) and c.docx_bad == 0,
+        "docx_generated_valid": c.docx_ok >= expected_docx(target_s or duration) and c.docx_bad == 0,
         "mqtt_no_loss": recon.get("sent_but_not_received") == 0,
         "no_external_connections": not remote,
     }
@@ -378,6 +395,10 @@ def analyze(samples: list[dict[str, Any]], c: Counters, recon: dict[str, Any], d
         "samples": len(samples),
         "rss_mb": {"start": ok[0]["rss_mb"] if ok else None, "end": last.get("rss_mb"),
                    "max": max((s["rss_mb"] for s in ok), default=None), "slope_mb_per_h_after_warmup": round(rss_slope, 2)},
+        "private_mb": {"start": ok[0]["private_mb"] if ok else None, "end": last.get("private_mb"),
+                       "max": max((s["private_mb"] for s in ok), default=None),
+                       "slope_mb_per_h_after_warmup": round(priv_slope, 2)},
+        "docx": {"expected": expected_docx(target_s or duration), "ok": c.docx_ok, "bad": c.docx_bad},
         "threads": {"start": ok[0]["threads"] if ok else None, "end": last.get("threads"), "slope_per_h": round(thr_slope, 2)},
         "handles": {"start": ok[0]["handles"] if ok else None, "end": last.get("handles"), "slope_per_h": round(hnd_slope, 1)},
         "tcp_conns": {"start": ok[0]["tcp_conns"] if ok else None, "end": last.get("tcp_conns"), "slope_per_h": round(tcp_slope, 2)},
@@ -479,7 +500,7 @@ async def run(out: Path) -> int:
         recon = {"sf_rows": len(rows), "sent": len(sent), "pending": sum(1 for _, s in rows if s == "pending"),
                  "received_unique": len(got), "sent_but_not_received": sum(1 for u in sent if u not in got),
                  "duplicates": sum(v - 1 for v in got.values() if v > 1)}
-        summary = analyze(samples, c, recon, elapsed)
+        summary = analyze(samples, c, recon, elapsed, DURATION)
         eng.close()
         adm.close()
         opr.close()
@@ -509,10 +530,34 @@ async def run(out: Path) -> int:
     return 0 if summary.get("passed") else 1
 
 
+def reanalyze(out: Path) -> int:
+    """Пересчёт критериев по сохранённым замерам без повторного прогона; исходный summary.json не меняется."""
+    prev = json.loads((out / "summary.json").read_text(encoding="utf-8"))
+    samples = [json.loads(line) for line in (out / "samples.jsonl").read_text(encoding="utf-8").splitlines() if line.strip()]
+    cl = prev.get("clients") or {}
+    c = Counters()
+    c.docx_ok, c.docx_bad = int(cl.get("docx_ok", 0)), int(cl.get("docx_bad", 0))
+    c.api_errors = [f"api_error_{i}" for i in range(int(cl.get("api_errors", 0)))]
+    c.faults = prev.get("faults", [])
+    target = float(prev.get("meta", {}).get("duration_target_s") or DURATION)
+    summary = analyze(samples, c, prev.get("mqtt_reconciliation") or {}, float(prev["duration_s"]), target)
+    for k in ("server_exit_code", "graceful_shutdown_logged", "meta"):
+        summary[k] = prev.get(k)
+    summary["reanalysis"] = {"source": "summary.json + samples.jsonl", "original_passed": prev.get("passed"),
+                             "original_criteria": prev.get("criteria")}
+    (out / "summary_reanalyzed.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(json.dumps(summary["criteria"], ensure_ascii=False, indent=2))
+    print("SOAK PASSED (reanalysis)" if summary["passed"] else "SOAK FAILED (reanalysis)")
+    return 0 if summary["passed"] else 1
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(H.ROOT / "reports" / "remediation" / "evidence" / "soak"))
+    ap.add_argument("--reanalyze", metavar="DIR", help="пересчитать критерии по сохранённым замерам")
     args = ap.parse_args()
+    if args.reanalyze:
+        return reanalyze(Path(args.reanalyze))
     return asyncio.run(run(Path(args.out)))
 
 

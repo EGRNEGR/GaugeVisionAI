@@ -1,0 +1,78 @@
+{
+  "device": "cpu",
+  "timestamp_utc": "2026-11-26T22:04:15Z",
+  "cv_regression": {
+    "clean_27_valid_count": 27,
+    "clean_27_mae_pct": 0.212,
+    "clean_27_max_err_pct": 0.344,
+    "perspective_tilt_072": {
+      "valid": true,
+      "pred": 11.479716064919193,
+      "err_pct": 0.127
+    },
+    "glare_spot": {
+      "valid": true,
+      "pred": 11.449543582869298
+    },
+    "blank_frame_rejected": true,
+    "partial_occlusion_44pct_rejected": true,
+    "partial_occlusion_reason": "partial_occlusion"
+  },
+  "cpu_scaling": [
+    {
+      "channels": 1,
+      "duration_s": 6.01,
+      "total_frames": 117,
+      "aggregate_fps": 19.47,
+      "per_channel_fps": 19.47,
+      "p50_ms": 49.34,
+      "p95_ms": 86.14,
+      "p99_ms": 99.34,
+      "rss_mb": 803.4
+    },
+    {
+      "channels": 2,
+      "duration_s": 6.05,
+      "total_frames": 206,
+      "aggregate_fps": 34.04,
+      "per_channel_fps": 17.02,
+      "p50_ms": 54.5,
+      "p95_ms": 105.57,
+      "p99_ms": 147.54,
+      "rss_mb": 852.38
+    },
+    {
+      "channels": 4,
+      "duration_s": 6.03,
+      "total_frames": 372,
+      "aggregate_fps": 61.69,
+      "per_channel_fps": 15.42,
+      "p50_ms": 58.45,
+      "p95_ms": 108.14,
+      "p99_ms": 191.17,
+      "rss_mb": 951.65
+    },
+    {
+      "channels": 8,
+      "duration_s": 6.22,
+      "total_frames": 513,
+      "aggregate_fps": 82.44,
+      "per_channel_fps": 10.3,
+      "p50_ms": 71.08,
+      "p95_ms": 223.5,
+      "p99_ms": 578.22,
+      "rss_mb": 1099.8
+    }
+  ],
+  "subsystem_benchmarks": {
+    "sf_500_enqueue_s": 0.275,
+    "sf_500_drain_s": 0.012,
+    "sf_500_drain_msg_per_s": 43031.9,
+    "spec_md_ms": 0.2,
+    "spec_docx_ms": 16.7,
+    "spec_docx_bytes": 129112,
+    "adaptive_motion_wakeup_triggered": true,
+    "adaptive_motion_check_ms": 0.409
+  },
+  "rss_mb_end": 821.62
+}

@@ -343,6 +343,10 @@ LLM_BASE_URL: str = os.environ.get("GAUGEVISION_LLM_BASE_URL", "").strip()
 LLM_API_KEY: str = os.environ.get("GAUGEVISION_LLM_API_KEY", "").strip()
 LLM_MODEL: str = os.environ.get("GAUGEVISION_LLM_MODEL", "qwen2.5:7b-instruct").strip()
 LLM_TIMEOUT_SECONDS: float = _env_float("GAUGEVISION_LLM_TIMEOUT", 18.0)
+LLM_MAX_TOKENS: int = _env_int("GAUGEVISION_LLM_MAX_TOKENS", 700)
+# Рассуждающие модели (Qwen3, DeepSeek-R1 и др.) тратят весь лимит токенов на скрытые рассуждения
+# и возвращают пустой content; по умолчанию рассуждения отключаются (reasoning_effort = none)
+LLM_DISABLE_REASONING: bool = os.environ.get("GAUGEVISION_LLM_DISABLE_REASONING", "1").strip().lower() not in ("0", "false", "no")
 
 # Конфигурируемые параметры ТЭО (ориентировочные справочные допущения)
 ECO_COMMISSIONING_RATE: float = _env_float("GAUGEVISION_ECO_COMMISSIONING_RATE", 0.14)

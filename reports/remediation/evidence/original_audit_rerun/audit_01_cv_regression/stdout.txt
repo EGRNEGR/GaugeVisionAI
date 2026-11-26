@@ -1,0 +1,16 @@
+CV AUDIT COMPLETE -> C:\Hakatons\GaugeVisionAIDesign DashBoard\.claude\worktrees\remediation-acceptance\reports\remediation\evidence\original_audit_rerun\audit_01_cv_regression\cv_regression_results.json
+{
+  "yolo_available": true,
+  "yolo_load_ms": 4082.9,
+  "cw_mae_mpa": 0.0125,
+  "cw_rmse_mpa": 0.0146,
+  "cw_missed": 0,
+  "ccw_mae_pct": 0.083,
+  "neg_mae_kpa": 0.093,
+  "tilt_err": 0.261,
+  "glare_err": null,
+  "occ_err": null,
+  "blank_valid": false
+}
+
+--- stderr ---
