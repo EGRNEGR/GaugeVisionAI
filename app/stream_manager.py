@@ -529,6 +529,7 @@ class IncidentRingBuffer:
     def trigger(self, reason: str, level: str, value: float | None = None) -> dict[str, Any]:
         ts = utcnow_iso()
         clip_id = f"clip_{int(time.time() * 1000)}_{uuid.uuid4().hex[:6]}"
+        evicted: dict[str, Any] | None = None
         with self._lock:
             clip = {
                 "clip_id": clip_id,
@@ -545,15 +546,20 @@ class IncidentRingBuffer:
                 # Сохраняем завершённую на текущий момент часть самого старого захвата, не теряя его
                 evicted = self._active_captures.pop(0)
                 evicted["completed_at"] = ts
+                evicted["pre_count"] = len(evicted["pre"])
+                evicted["post_count"] = len(evicted["post"])
                 self._archives.append(evicted)
             self._active_captures.append(clip)
-            return {
+            result = {
                 "clip_id": clip_id,
                 "triggered_at": ts,
                 "pre_frames": len(clip["pre"]),
                 "post_target": self._post_len,
                 "active_captures": len(self._active_captures),
             }
+        if evicted is not None:
+            self._persist_clip(evicted)  # досрочно завершённый захват сохраняется, а не теряется
+        return result
 
     def stats(self) -> dict[str, Any]:
         with self._lock:

@@ -41,6 +41,9 @@ logger = logging.getLogger("gaugevision.store_forward")
 
 DeliverCallback = Callable[[list[dict[str, Any]]], Awaitable[bool]]
 
+# Сколько записей журнала пачек sf_batches хранить (журнал диагностики, не данные)
+SF_BATCH_LOG_KEEP = 500
+
 SF_SCHEMA = """
 CREATE TABLE IF NOT EXISTS sf_queue (
     seq_id        INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -104,6 +107,9 @@ class StoreAndForwardBuffer:
     def __init__(self, db_path: Path | None = None) -> None:
         self._explicit_path = db_path
         self._lock = asyncio.Lock()
+        # Сериализует живую доставку и досылку пачек: одна запись не уходит дважды
+        # из-за гонки enqueue() и flush_pending(). Порядок захвата: _deliver_lock, затем _lock.
+        self._deliver_lock = asyncio.Lock()
         self._conn: aiosqlite.Connection | None = None
         self._journal_mode: str = "unknown"
         self._outage_active: bool = False
@@ -386,8 +392,12 @@ class StoreAndForwardBuffer:
             }
 
         # Штатный режим: проверяем, нет ли накопленного хвоста и не идёт ли sync, чтобы не нарушать хронологию
-        pending_now = await self.pending_count()
-        if pending_now <= 1 and not self._syncing:
+        if self._syncing or self._deliver_lock.locked():
+            return {"seq_id": seq_id, "event_uuid": ev_uuid, "status": "pending", "size_bytes": size_bytes}
+        async with self._deliver_lock:
+            pending_now = await self.pending_count()
+            if pending_now > 1 or self._outage_active:
+                return {"seq_id": seq_id, "event_uuid": ev_uuid, "status": "pending", "size_bytes": size_bytes}
             delivered = await self._deliver_items([{
                 "seq_id": seq_id,
                 "event_uuid": ev_uuid,
@@ -446,9 +456,12 @@ class StoreAndForwardBuffer:
         placeholders = ",".join("?" for _ in seq_ids)
         async with self._lock:
             assert self._conn is not None
-            # Атомарная транзакция: обновление sf_queue и запись sf_batches коммитятся вместе
+            # Атомарная транзакция: обновление sf_queue и запись sf_batches коммитятся вместе.
+            # Байты кадра после подтверждённой доставки не храним (SHA-256 и размер остаются для аудита):
+            # исходный доказательный кадр персистентно хранится в журнале событий (events.snapshot_blob).
             await self._conn.execute(
-                f"UPDATE sf_queue SET status = 'sent', batch_id = ?, sent_at = ?, last_error = NULL WHERE seq_id IN ({placeholders})",
+                f"UPDATE sf_queue SET status = 'sent', batch_id = ?, sent_at = ?, last_error = NULL, "
+                f"frame_blob = NULL WHERE seq_id IN ({placeholders})",
                 [batch_id, sent_at, *seq_ids],
             )
             if batch_record is not None:
@@ -461,6 +474,12 @@ class StoreAndForwardBuffer:
                         batch_record["items_count"], batch_record["bytes_sent"], batch_record["frames_sent"],
                         batch_record["target"], batch_record["status"],
                     ),
+                )
+                await self._conn.execute(
+                    """DELETE FROM sf_batches WHERE batch_id NOT IN (
+                           SELECT batch_id FROM sf_batches ORDER BY completed_at DESC LIMIT ?
+                       )""",
+                    (SF_BATCH_LOG_KEEP,),
                 )
             await self._conn.commit()
         self._delivered_total += len(seq_ids)
@@ -486,98 +505,99 @@ class StoreAndForwardBuffer:
         total_flushed = 0
         batches_done = 0
         try:
-            for _ in range(max_batches):
-                if self._outage_active:
-                    break
-                async with self._lock:
-                    assert self._conn is not None
-                    cur = await self._conn.execute(
-                        """SELECT seq_id, event_uuid, edge_node, channel_id, payload_type,
-                                  severity, created_at, payload_json, frame_blob, frame_sha256,
-                                  size_bytes, retry_count
-                           FROM sf_queue
-                           WHERE status = 'pending'
-                           ORDER BY seq_id ASC
-                           LIMIT ?""",
-                        (config.SF_BATCH_SIZE,),
-                    )
-                    rows = await cur.fetchall()
-                if not rows:
-                    if self._queue_overflow:
-                        self._queue_overflow = False
-                        self._overflow_reason = None
-                    break
+            async with self._deliver_lock:
+                for _ in range(max_batches):
+                    if self._outage_active:
+                        break
+                    async with self._lock:
+                        assert self._conn is not None
+                        cur = await self._conn.execute(
+                            """SELECT seq_id, event_uuid, edge_node, channel_id, payload_type,
+                                      severity, created_at, payload_json, frame_blob, frame_sha256,
+                                      size_bytes, retry_count
+                               FROM sf_queue
+                               WHERE status = 'pending'
+                               ORDER BY seq_id ASC
+                               LIMIT ?""",
+                            (config.SF_BATCH_SIZE,),
+                        )
+                        rows = await cur.fetchall()
+                    if not rows:
+                        if self._queue_overflow:
+                            self._queue_overflow = False
+                            self._overflow_reason = None
+                        break
 
-                started_at = utcnow_iso()
-                batch_id = f"batch-{int(time.time())}-{uuid.uuid4().hex[:6]}"
-                items: list[dict[str, Any]] = []
-                seq_ids: list[int] = []
-                bytes_sent = 0
-                frames_sent = 0
-                for r in rows:
-                    seq_ids.append(int(r["seq_id"]))
-                    bytes_sent += int(r["size_bytes"] or 0)
-                    try:
-                        parsed = json.loads(r["payload_json"])
-                    except json.JSONDecodeError:
-                        parsed = {}
-                    raw_blob = r["frame_blob"]
-                    blob: bytes | None = bytes(raw_blob) if raw_blob is not None else None
-                    stored_sha = r["frame_sha256"]
-                    integrity_ok = True
-                    if blob is not None:
-                        actual_sha = hashlib.sha256(blob).hexdigest()
-                        if stored_sha and actual_sha != stored_sha:
-                            integrity_ok = False
-                            logger.error("Store-and-Forward: нарушение целостности frame_blob для seq_id=%s", r["seq_id"])
-                        else:
-                            stored_sha = stored_sha or actual_sha
-                        frames_sent += 1
-                    items.append({
-                        "seq_id": int(r["seq_id"]),
-                        "event_uuid": r["event_uuid"],
-                        "edge_node": r["edge_node"],
-                        "channel_id": r["channel_id"],
-                        "payload_type": r["payload_type"],
-                        "severity": r["severity"],
-                        "created_at": r["created_at"],
-                        "payload": parsed,
-                        "size_bytes": int(r["size_bytes"] or 0),
-                        "has_frame": blob is not None,
-                        "frame_blob": blob,
-                        "frame_sha256": stored_sha,
-                        "frame_integrity_ok": integrity_ok,
-                        "retry_count": int(r["retry_count"] or 0),
-                    })
+                    started_at = utcnow_iso()
+                    batch_id = f"batch-{int(time.time())}-{uuid.uuid4().hex[:6]}"
+                    items: list[dict[str, Any]] = []
+                    seq_ids: list[int] = []
+                    bytes_sent = 0
+                    frames_sent = 0
+                    for r in rows:
+                        seq_ids.append(int(r["seq_id"]))
+                        bytes_sent += int(r["size_bytes"] or 0)
+                        try:
+                            parsed = json.loads(r["payload_json"])
+                        except json.JSONDecodeError:
+                            parsed = {}
+                        raw_blob = r["frame_blob"]
+                        blob: bytes | None = bytes(raw_blob) if raw_blob is not None else None
+                        stored_sha = r["frame_sha256"]
+                        integrity_ok = True
+                        if blob is not None:
+                            actual_sha = hashlib.sha256(blob).hexdigest()
+                            if stored_sha and actual_sha != stored_sha:
+                                integrity_ok = False
+                                logger.error("Store-and-Forward: нарушение целостности frame_blob для seq_id=%s", r["seq_id"])
+                            else:
+                                stored_sha = stored_sha or actual_sha
+                            frames_sent += 1
+                        items.append({
+                            "seq_id": int(r["seq_id"]),
+                            "event_uuid": r["event_uuid"],
+                            "edge_node": r["edge_node"],
+                            "channel_id": r["channel_id"],
+                            "payload_type": r["payload_type"],
+                            "severity": r["severity"],
+                            "created_at": r["created_at"],
+                            "payload": parsed,
+                            "size_bytes": int(r["size_bytes"] or 0),
+                            "has_frame": blob is not None,
+                            "frame_blob": blob,
+                            "frame_sha256": stored_sha,
+                            "frame_integrity_ok": integrity_ok,
+                            "retry_count": int(r["retry_count"] or 0),
+                        })
 
-                ok = await self._deliver_items(items)
-                if not ok:
-                    await self._record_retry(seq_ids, error="batch_delivery_failed")
-                    delay = min(30.0, 0.5 * (2 ** min(self._consecutive_delivery_fails, 6)))
-                    self._retry_backoff_until = time.monotonic() + delay
-                    break
+                    ok = await self._deliver_items(items)
+                    if not ok:
+                        await self._record_retry(seq_ids, error="batch_delivery_failed")
+                        delay = min(30.0, 0.5 * (2 ** min(self._consecutive_delivery_fails, 6)))
+                        self._retry_backoff_until = time.monotonic() + delay
+                        break
 
-                completed_at = utcnow_iso()
-                rec = {
-                    "batch_id": batch_id,
-                    "started_at": started_at,
-                    "completed_at": completed_at,
-                    "items_count": len(seq_ids),
-                    "bytes_sent": bytes_sent,
-                    "frames_sent": frames_sent,
-                    "target": "SCADA / MQTT / Central",
-                    "status": "delivered",
-                }
-                await self._mark_sent(seq_ids, batch_id=batch_id, sent_at=completed_at, batch_record=rec)
-                self._recent_batches.append(rec)
-                self._last_batch_size = len(seq_ids)
-                total_flushed += len(seq_ids)
-                batches_done += 1
-                if self._on_change:
-                    self._on_change(await self.stats())
-                # Межпачечная пауза настраивается (по умолчанию 0.0 — максимальная скорость досылки, DEF-19)
-                if config.SF_BATCH_DELAY_S > 0 and len(seq_ids) >= config.SF_BATCH_SIZE:
-                    await asyncio.sleep(config.SF_BATCH_DELAY_S)
+                    completed_at = utcnow_iso()
+                    rec = {
+                        "batch_id": batch_id,
+                        "started_at": started_at,
+                        "completed_at": completed_at,
+                        "items_count": len(seq_ids),
+                        "bytes_sent": bytes_sent,
+                        "frames_sent": frames_sent,
+                        "target": "SCADA / MQTT / Central",
+                        "status": "delivered",
+                    }
+                    await self._mark_sent(seq_ids, batch_id=batch_id, sent_at=completed_at, batch_record=rec)
+                    self._recent_batches.append(rec)
+                    self._last_batch_size = len(seq_ids)
+                    total_flushed += len(seq_ids)
+                    batches_done += 1
+                    if self._on_change:
+                        self._on_change(await self.stats())
+                    # Межпачечная пауза настраивается (по умолчанию 0.0 — максимальная скорость досылки, DEF-19)
+                    if config.SF_BATCH_DELAY_S > 0 and len(seq_ids) >= config.SF_BATCH_SIZE:
+                        await asyncio.sleep(config.SF_BATCH_DELAY_S)
         finally:
             self._syncing = False
         return {"flushed": total_flushed, "batches": batches_done}

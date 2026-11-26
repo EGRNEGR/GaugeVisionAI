@@ -540,12 +540,31 @@ class GaugeService:
 
     async def _demo_sim_loop(self) -> None:
         """Плавное обновление 35 синтетических приборов (1 Гц, без CV-воркеров)."""
+        last_persist = 0.0
         while True:
             await asyncio.sleep(config.DEMO_SIM_INTERVAL)
             if config.is_demo_mode():
                 self._sync_simulated_events()
                 if self.hub.count > 0:
                     self.hub.broadcast(self.sim_adapter.tick_payload())
+                now_m = time.monotonic()
+                if now_m - last_persist >= config.DEMO_SIM_PERSIST_INTERVAL:
+                    last_persist = now_m
+                    await self._persist_simulated_readings()
+
+    async def _persist_simulated_readings(self) -> None:
+        """Пишет текущие отсчёты стендовых приборов в instrument_readings: протокол ТЗ за период
+        строится по сохранённой истории SQLite для всех 36 позиций, а не только для живой камеры."""
+        ts = db.utcnow_iso()
+        rows = []
+        for inst in self.sim_adapter.all_instruments():
+            rd = inst.get("reading") or {}
+            if rd.get("valid") and rd.get("value") is not None:
+                rows.append((inst["id"], "simulated", ts, rd.get("value"), rd.get("level") or "normal", inst.get("unit")))
+        try:
+            await db.insert_instrument_readings(rows)
+        except Exception as exc:
+            logger.warning("Запись стендовой телеметрии: %s", exc)
 
     def _start_demo_bench_streams(self) -> None:
         """
@@ -677,6 +696,12 @@ class GaugeService:
             iid = str(item["id"])
             rc = str(item.get("root_cause") or "process_anomaly")
             fp = f"{iid}:{rc}:{bucket}"
+            last = await db.get_last_auto_spec_trigger(iid, rc)
+            if last is not None and last.get("fingerprint") != fp and last.get("status") == "completed":
+                last_ts = _dt.datetime.fromisoformat(str(last["triggered_at"]))
+                age_s = (_dt.datetime.now(_dt.timezone.utc) - last_ts).total_seconds()
+                if age_s < config.AUTO_SPEC_COOLDOWN_SECONDS:
+                    continue  # то же состояние уже задокументировано в пределах cooldown
             inc_ids = [
                 int(e["id"]) for e in events
                 if e.get("cam_id") == iid and e.get("kind") == "alarm" and e.get("id") is not None
@@ -1123,6 +1148,7 @@ class GaugeService:
         while True:
             try:
                 self.lan_ip = config.get_lan_ip()
+                await db.prune_sessions()
                 if time.time() - last_prune > 86400:
                     removed = await db.prune_history(config.HISTORY_KEEP_DAYS)
                     last_prune = time.time()
@@ -1487,11 +1513,21 @@ async def favicon() -> Response:
 # -- аутентификация и RBAC (DEF-07) ------------------------------------------
 @app.post("/api/auth/login")
 async def api_auth_login(req: LoginRequest, request: Request) -> JSONResponse:
-    sess = await auth.authenticate_user(req.username, req.password)
     ip = request.client.host if request.client else None
+    retry_after = auth.login_retry_after(req.username, ip)
+    if retry_after is not None:
+        await db.log_audit(username=req.username, role=None, action="LOGIN_LOCKED", target="/api/auth/login", status_code=429, ip=ip)
+        raise HTTPException(
+            429,
+            f"Слишком много неудачных попыток входа. Повторите через {retry_after} с",
+            headers={"Retry-After": str(retry_after)},
+        )
+    sess = await auth.authenticate_user(req.username, req.password)
     if sess is None:
+        auth.register_login_failure(req.username, ip)
         await db.log_audit(username=req.username, role=None, action="LOGIN_FAILED", target="/api/auth/login", status_code=401, ip=ip)
         raise HTTPException(401, "Неверное имя пользователя или пароль")
+    auth.reset_login_failures(req.username, ip)
     await db.log_audit(username=sess["username"], role=sess["role"], action="LOGIN_OK", target="/api/auth/login", status_code=200, ip=ip)
     resp = JSONResponse({
         "ok": True,
@@ -1575,6 +1611,22 @@ async def api_meta(request: Request) -> dict[str, Any]:
     with contextlib.suppress(Exception):
         fingerprint = cert_fingerprint()
     sess = await auth.get_optional_user(request)
+    if auth.is_auth_required() and sess is None:
+        # До входа — только справочники для экрана входа: без путей, адресов и состояния объекта
+        return {
+            "app": __app_name__,
+            "version": __version__,
+            "gauge_types": config.GAUGE_TYPES,
+            "camera_types": list(config.CAMERA_TYPES),
+            "trend_windows": list(config.TREND_WINDOWS),
+            "trend_default": config.TREND_WINDOW_DEFAULT,
+            "demo_mode": config.is_demo_mode(),
+            "auth_required": True,
+            "authenticated": False,
+            "user": None,
+            "stale_seconds": config.READING_STALE_SECONDS,
+            "disclaimer": LEGAL_DISCLAIMER,
+        }
     return {
         "app": __app_name__,
         "version": __version__,
@@ -2232,6 +2284,20 @@ async def ws_dashboard(ws: WebSocket) -> None:
             await ws.send_text(data)
 
     send_task = asyncio.create_task(sender())
+
+    async def session_guard() -> None:
+        # Выход из системы, истечение или отключение учётной записи закрывают уже открытый поток
+        token_hash = sess.get("token_hash")
+        if not token_hash:
+            return
+        while True:
+            await asyncio.sleep(config.WS_SESSION_RECHECK_SECONDS)
+            if auth.is_auth_required() and await db.get_session(token_hash) is None:
+                with contextlib.suppress(Exception):
+                    await ws.close(code=4401, reason="session expired")
+                return
+
+    guard_task = asyncio.create_task(session_guard())
     try:
         snapshot_msg = {
             "type": "snapshot",
@@ -2253,6 +2319,7 @@ async def ws_dashboard(ws: WebSocket) -> None:
     finally:
         service.hub.remove(ws)
         send_task.cancel()
+        guard_task.cancel()
 
 
 @app.post("/api/alarms/ack")

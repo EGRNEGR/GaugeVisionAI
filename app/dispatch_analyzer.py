@@ -213,7 +213,10 @@ class DispatchAnalyzer:
 
             buf = self._series.setdefault(iid, deque(maxlen=120))
             if valid and val is not None:
-                buf.append((now, val, lv))
+                # Ряд для производных прореживается до фактического шага опроса: частые
+                # запросы HMI (десятки в секунду) иначе превращают шум CV в ложные «скачки» dP/dt.
+                if not buf or (now - buf[-1][0]) >= config.DISPATCH_MIN_SAMPLE_INTERVAL:
+                    buf.append((now, val, lv))
             elif not buf and isinstance(rd.get("sparkline"), list):
                 pts = [v for x in rd["sparkline"] if (v := _finite_float(x)) is not None]
                 n = len(pts)
@@ -270,8 +273,16 @@ class DispatchAnalyzer:
         rate_pct_min = min(100.0, abs(rate_val) / span * 100.0)
         peak_rate_pct = min(100.0, peak_rate / span * 100.0)
 
-        hydraulic_shock = (inst.get("gauge_type") == "pressure" and peak_rate_pct >= 9.0)
-        thermal_runaway = (inst.get("gauge_type") == "temperature" and rate_val > 0 and peak_rate_pct >= 4.0)
+        # Скачок признаётся только при изменении между соседними точками выше шумового порога
+        # считывания (доля шкалы), а не по одной лишь производной на коротком dt.
+        max_step_pct = 0.0
+        if len(timed_pts) >= 2:
+            max_step_pct = max(abs(b[1] - a[1]) for a, b in zip(timed_pts, timed_pts[1:])) / span * 100.0
+        elif len(vals) >= 2:
+            max_step_pct = max(abs(b - a) for a, b in zip(vals, vals[1:])) / span * 100.0
+        real_jump = max_step_pct >= config.DISPATCH_JUMP_NOISE_PCT
+        hydraulic_shock = (inst.get("gauge_type") == "pressure" and peak_rate_pct >= 9.0 and real_jump)
+        thermal_runaway = (inst.get("gauge_type") == "temperature" and rate_val > 0 and peak_rate_pct >= 4.0 and real_jump)
 
         # 2. Высокочастотный «дребезг» стрелки строго по фактическому ряду (без _BENCH_DIAGNOSTIC_PROFILES)
         chatter_amp, chatter_pct = _compute_chatter(vals, span)

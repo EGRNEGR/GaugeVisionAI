@@ -12,17 +12,24 @@ GaugeVision AI — локальная аутентификация и ролев
 """
 from __future__ import annotations
 
+import contextlib
 import datetime as _dt
 import hashlib
 import hmac
+import logging
 import os
 import secrets
+import time
+from collections import deque
+from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
-from fastapi import Depends, HTTPException, Request, WebSocket
+from fastapi import HTTPException, Request, WebSocket
 
 from . import config, db
+
+logger = logging.getLogger("gaugevision.auth")
 
 SESSION_COOKIE_NAME = "gv_session"
 ROLE_LEVEL: dict[str, int] = {"operator": 1, "engineer": 2, "admin": 3}
@@ -75,18 +82,93 @@ def is_fault_injection_allowed() -> bool:
     return config.ALLOW_FAULT_INJECTION or config.is_demo_mode()
 
 
-async def bootstrap_default_users() -> None:
-    """Идемпотентно создаёт локальные учётные записи (operator / engineer / admin) при старте."""
+def initial_credentials_path() -> Path:
+    """Файл одноразовых паролей, сгенерированных при первом запуске вне деморежима."""
+    return config.get_db_path().resolve().parent / "initial_credentials.txt"
+
+
+def _is_known_default(password: str) -> bool:
+    return password in config.KNOWN_DEFAULT_PASSWORDS
+
+
+async def bootstrap_default_users() -> list[str]:
+    """
+    Идемпотентно создаёт локальные учётные записи (operator / engineer / admin) при старте.
+
+    В деморежиме используются пароли из окружения (по умолчанию — стендовые из `.env.example`).
+    Вне деморежима известные стендовые пароли и пустые значения не принимаются: для каждой
+    новой учётной записи генерируется случайный пароль, который однократно записывается в
+    `initial_credentials.txt` рядом с БД (права 0600). Возвращает имена созданных записей.
+    """
     accounts = (
         (config.ADMIN_USERNAME, config.ADMIN_PASSWORD, "admin"),
         (config.ENGINEER_USERNAME, config.ENGINEER_PASSWORD, "engineer"),
         (config.OPERATOR_USERNAME, config.OPERATOR_PASSWORD, "operator"),
     )
+    production = not config.is_demo_mode()
+    created: list[str] = []
+    generated: list[tuple[str, str, str]] = []
     for uname, pwd, role in accounts:
-        if uname and pwd:
-            existing = await db.get_user(uname)
-            if existing is None:
-                await db.upsert_user(uname, hash_password(pwd), role)
+        if not uname:
+            continue
+        if await db.get_user(uname) is not None:
+            continue
+        if production and (not pwd or _is_known_default(pwd)):
+            pwd = secrets.token_urlsafe(14)
+            generated.append((uname, role, pwd))
+        if not pwd:
+            continue
+        await db.upsert_user(uname, hash_password(pwd), role)
+        created.append(uname)
+    if generated:
+        path = initial_credentials_path()
+        lines = [
+            "# GaugeVision AI — одноразовые пароли первичного запуска (вне деморежима).",
+            "# Стендовые пароли по умолчанию в промышленном режиме не принимаются.",
+            "# Перенесите пароли в защищённое хранилище и удалите этот файл.",
+        ] + [f"{u}\t{r}\t{p}" for u, r, p in generated]
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        with contextlib.suppress(OSError):
+            os.chmod(path, 0o600)
+        logger.warning("Созданы учётные записи со случайными паролями: %s (см. %s)",
+                       ", ".join(u for u, _, _ in generated), path)
+    return created
+
+
+# -- защита от подбора пароля ----------------------------------------------------
+_login_failures: dict[str, deque[float]] = {}
+
+
+def _failure_key(username: str, ip: str | None) -> str:
+    return f"{username.strip().lower()}|{ip or '-'}"
+
+
+def login_retry_after(username: str, ip: str | None) -> int | None:
+    """Секунды до разблокировки, если для пары «пользователь + адрес» превышен лимит неудачных входов."""
+    q = _login_failures.get(_failure_key(username, ip))
+    if not q:
+        return None
+    now = time.monotonic()
+    window = float(config.LOGIN_LOCKOUT_WINDOW_SECONDS)
+    while q and now - q[0] > window:
+        q.popleft()
+    if len(q) >= config.LOGIN_MAX_FAILURES:
+        return max(1, int(window - (now - q[0])) + 1)
+    return None
+
+
+def register_login_failure(username: str, ip: str | None) -> None:
+    key = _failure_key(username, ip)
+    q = _login_failures.setdefault(key, deque(maxlen=max(1, config.LOGIN_MAX_FAILURES) * 2))
+    q.append(time.monotonic())
+    if len(_login_failures) > 10_000:  # ограничение памяти при переборе имён
+        for k in list(_login_failures)[:5_000]:
+            _login_failures.pop(k, None)
+
+
+def reset_login_failures(username: str, ip: str | None) -> None:
+    _login_failures.pop(_failure_key(username, ip), None)
 
 
 async def authenticate_user(username: str, password: str) -> dict[str, Any] | None:
@@ -94,6 +176,10 @@ async def authenticate_user(username: str, password: str) -> dict[str, Any] | No
     if not user:
         return None
     if not verify_password(password, user["password_hash"]):
+        return None
+    if not config.is_demo_mode() and _is_known_default(password):
+        # БД перенесена со стенда: стендовый пароль в промышленном режиме не действует
+        logger.warning("Вход %s отклонён: стендовый пароль по умолчанию вне деморежима", user["username"])
         return None
     token = secrets.token_urlsafe(32)
     exp = (_dt.datetime.now(_dt.timezone.utc) + _dt.timedelta(seconds=max(300, config.SESSION_TTL_SECONDS))).isoformat(

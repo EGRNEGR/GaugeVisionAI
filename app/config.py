@@ -165,6 +165,8 @@ DEMO_LIVE_CAM_ID: str = "demo-mtp160-steam"
 DEMO_TOTAL_POSITIONS: int = 36
 DEMO_SEED: int = int(os.environ.get("GAUGEVISION_DEMO_SEED", "42"))
 DEMO_SIM_INTERVAL: float = 1.0
+# Шаг записи телеметрии стендовых приборов в SQLite (instrument_readings), с
+DEMO_SIM_PERSIST_INTERVAL: float = float(os.environ.get("GAUGEVISION_SIM_PERSIST_INTERVAL", "5.0"))
 SIMULATOR_URL: str = os.environ.get(
     "GAUGEVISION_SIMULATOR_URL",
     "https://gaugevision-simulator.goodlyoatmeal32.chatgpt.site/",
@@ -296,6 +298,12 @@ ENGINEER_USERNAME: str = os.environ.get("GAUGEVISION_ENGINEER_USER", "engineer")
 ENGINEER_PASSWORD: str = os.environ.get("GAUGEVISION_ENGINEER_PASS", "GaugeEng!2026")
 OPERATOR_USERNAME: str = os.environ.get("GAUGEVISION_OPERATOR_USER", "operator")
 OPERATOR_PASSWORD: str = os.environ.get("GAUGEVISION_OPERATOR_PASS", "GaugeOp!2026")
+# Публично известные стендовые пароли (.env.example, документация): вне деморежима не принимаются
+KNOWN_DEFAULT_PASSWORDS: frozenset[str] = frozenset({"GaugeAdmin!2026", "GaugeEng!2026", "GaugeOp!2026"})
+LOGIN_MAX_FAILURES: int = _env_int("GAUGEVISION_LOGIN_MAX_FAILURES", 5)
+LOGIN_LOCKOUT_WINDOW_SECONDS: int = _env_int("GAUGEVISION_LOGIN_LOCKOUT_WINDOW", 300)
+# Период повторной проверки сессии открытых WebSocket-подключений пульта, с
+WS_SESSION_RECHECK_SECONDS: float = _env_float("GAUGEVISION_WS_SESSION_RECHECK", 15.0)
 
 
 def get_videos_dir() -> Path:
@@ -323,6 +331,13 @@ def get_auto_specs_dir() -> Path:
 # Трек №1: Умная диспетчеризация и генерация проектной документации / ТЗ
 # ---------------------------------------------------------------------------
 CRITICAL_WEAR_HEALTH_THRESHOLD: float = _env_float("GAUGEVISION_WEAR_THRESHOLD", 50.0)
+# Минимальный шаг точек ряда диспетчерского анализа, с (цикл синхронизации архитектуры — 2 с, допуск на джиттер)
+DISPATCH_MIN_SAMPLE_INTERVAL: float = _env_float("GAUGEVISION_DISPATCH_SAMPLE_INTERVAL", 1.5)
+# Шумовой порог считывания: скачок между соседними точками ниже этой доли шкалы (%) не считается гидроударом
+DISPATCH_JUMP_NOISE_PCT: float = _env_float("GAUGEVISION_DISPATCH_JUMP_NOISE_PCT", 1.5)
+# «Регулярные перегрузки» (ТЗ, раздел 3 дефектной ведомости): минимум срабатываний уставок за период
+# для включения исправного по остальным признакам прибора в ТЗ на модернизацию
+SPEC_REGULAR_TRIPS_MIN: int = _env_int("GAUGEVISION_SPEC_REGULAR_TRIPS_MIN", 3)
 AUTO_SPEC_COOLDOWN_SECONDS: float = _env_float("GAUGEVISION_AUTO_SPEC_COOLDOWN", 3600.0)
 LLM_BASE_URL: str = os.environ.get("GAUGEVISION_LLM_BASE_URL", "").strip()
 LLM_API_KEY: str = os.environ.get("GAUGEVISION_LLM_API_KEY", "").strip()

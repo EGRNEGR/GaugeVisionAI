@@ -163,13 +163,16 @@ class BaseWorker(ABC):
         logger.info("[%s] статус: %s", self.cam_id[:8], status)
         if self._on_status is None:
             return
+        if self.loop.is_closed():
+            return  # остановка сервера: уведомлять некого
+        coro = self._safe_notify(status)
         try:
             if self._in_loop_thread():
-                self.loop.create_task(self._safe_notify(status))
+                self.loop.create_task(coro)
             else:
-                asyncio.run_coroutine_threadsafe(self._safe_notify(status), self.loop)
+                asyncio.run_coroutine_threadsafe(coro, self.loop)
         except RuntimeError:
-            pass  # event-loop уже закрыт (остановка сервера)
+            coro.close()  # event-loop закрылся между проверкой и отправкой
 
     def _in_loop_thread(self) -> bool:
         try:

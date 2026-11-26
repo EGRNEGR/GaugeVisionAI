@@ -70,6 +70,21 @@ CREATE TABLE IF NOT EXISTS readings (
 CREATE INDEX IF NOT EXISTS idx_readings_ts ON readings (timestamp);
 CREATE INDEX IF NOT EXISTS idx_readings_cam_ts ON readings (camera_id, timestamp);
 
+-- Телеметрия приборов без собственной камеры в реестре cameras (стендовая симуляция,
+-- внешние источники). Отдельная таблица: readings ссылается на cameras(id) по FK.
+CREATE TABLE IF NOT EXISTS instrument_readings (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    instrument_id TEXT NOT NULL,
+    source_kind   TEXT NOT NULL DEFAULT 'simulated',
+    timestamp     TEXT NOT NULL,
+    value         REAL,
+    status_level  TEXT NOT NULL DEFAULT 'normal' CHECK (status_level IN ('normal','warning','alert')),
+    unit          TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_inst_readings_ts ON instrument_readings (timestamp);
+CREATE INDEX IF NOT EXISTS idx_inst_readings_id_ts ON instrument_readings (instrument_id, timestamp);
+
 CREATE TABLE IF NOT EXISTS demo_runs (
     id           TEXT PRIMARY KEY,
     camera_id    TEXT NOT NULL,
@@ -678,8 +693,34 @@ async def prune_history(keep_days: int = 90) -> int:
     async with _lock:
         conn = await _get_conn()
         cur = await conn.execute("DELETE FROM readings WHERE timestamp < ?", (cutoff,))
+        cur2 = await conn.execute("DELETE FROM instrument_readings WHERE timestamp < ?", (cutoff,))
         await conn.commit()
-        return cur.rowcount or 0
+        return (cur.rowcount or 0) + (cur2.rowcount or 0)
+
+
+async def insert_instrument_readings(rows: Iterable[tuple[Any, ...]]) -> int:
+    """Пакетная запись телеметрии приборов вне реестра камер.
+
+    Кортеж: (instrument_id, source_kind, timestamp, value, status_level, unit).
+    Невалидные значения (None/NaN/Inf) не записываются.
+    """
+    clean: list[tuple[Any, ...]] = []
+    for iid, kind, ts, val, lv, unit in rows:
+        v = _clean_float(val)
+        if v is None:
+            continue
+        clean.append((iid, kind, ts, v, lv if lv in ("normal", "warning", "alert") else "normal", unit))
+    if not clean:
+        return 0
+    async with _lock:
+        conn = await _get_conn()
+        await conn.executemany(
+            """INSERT INTO instrument_readings (instrument_id, source_kind, timestamp, value, status_level, unit)
+               VALUES (?,?,?,?,?,?)""",
+            clean,
+        )
+        await conn.commit()
+    return len(clean)
 
 
 # ---------------------------------------------------------------------------
@@ -691,108 +732,89 @@ async def get_period_reading_stats(
     camera_ids: list[str] | None = None,
 ) -> dict[str, dict[str, Any]]:
     """
-    Возвращает фактическую статистику по таблице `readings` за [since_iso, until_iso]:
-    число точек, min/max/avg, время пика, охваченный интервал и реальную длительность
-    нахождения в зонах warning/alert (в минутах) по последовательным временным меткам.
+    Возвращает фактическую статистику по таблицам `readings` (камеры) и
+    `instrument_readings` (приборы вне реестра камер) за [since_iso, until_iso]:
+    число точек, min/max/avg, время пика, охваченный интервал, реальную длительность
+    нахождения в зонах warning/alert (мин) и пиковую скорость изменения (ед/мин)
+    по последовательным временным меткам.
+
+    Агрегация выполняется в SQLite (оконные функции LAG/FIRST_VALUE), без выгрузки
+    строк периода в Python: за 30 суток живая камера даёт ~2,6 млн отсчётов.
+    Интервалы между соседними точками длиннее 600 с (разрыв связи/простой) не
+    засчитываются ни во время перегрузки, ни в скорость изменения.
     """
     clauses = ["timestamp >= ?", "value IS NOT NULL"]
     params: list[Any] = [since_iso]
     if until_iso:
         clauses.append("timestamp <= ?")
         params.append(until_iso)
+    id_clause = ""
+    id_params: list[Any] = []
     if camera_ids:
         ph = ",".join("?" for _ in camera_ids)
-        clauses.append(f"camera_id IN ({ph})")
-        params.extend(camera_ids)
+        id_clause = f" AND {{col}} IN ({ph})"
+        id_params = list(camera_ids)
     where_sql = " AND ".join(clauses)
-
+    sql = f"""
+        WITH src AS (
+            SELECT camera_id AS cid, timestamp AS ts, value AS v, status_level AS lv, id AS rid, 0 AS tbl
+            FROM readings WHERE {where_sql}{id_clause.format(col="camera_id")}
+            UNION ALL
+            SELECT instrument_id, timestamp, value, status_level, id, 1
+            FROM instrument_readings WHERE {where_sql}{id_clause.format(col="instrument_id")}
+        ),
+        seq AS (
+            SELECT cid, ts, v, lv,
+                   (julianday(ts) - julianday(LAG(ts) OVER w)) * 86400.0 AS dt_s,
+                   LAG(v) OVER w AS pv,
+                   LAG(lv) OVER w AS plv,
+                   FIRST_VALUE(ts) OVER (PARTITION BY cid ORDER BY v DESC, ts ASC, tbl ASC, rid ASC) AS peak_ts
+            FROM src
+            WINDOW w AS (PARTITION BY cid ORDER BY ts ASC, tbl ASC, rid ASC)
+        )
+        SELECT cid,
+               COUNT(*) AS n,
+               MIN(v) AS min_val,
+               MAX(v) AS max_val,
+               AVG(v) AS avg_val,
+               MIN(ts) AS first_ts,
+               MAX(ts) AS last_ts,
+               MAX(peak_ts) AS peak_ts,
+               (julianday(MAX(ts)) - julianday(MIN(ts))) * 1440.0 AS cov_min,
+               COALESCE(SUM(CASE WHEN plv IN ('warning','alert') AND dt_s > 0.001 AND dt_s <= 600.0
+                                 THEN dt_s ELSE 0 END), 0) AS overload_s,
+               COALESCE(MAX(CASE WHEN dt_s > 0.001 AND dt_s <= 600.0
+                                 THEN ABS(v - pv) / (dt_s / 60.0) END), 0) AS peak_rate,
+               SUM(CASE WHEN lv = 'alert' THEN 1 ELSE 0 END) AS alert_samples,
+               SUM(CASE WHEN lv = 'warning' THEN 1 ELSE 0 END) AS warning_samples
+        FROM seq
+        GROUP BY cid
+    """
+    all_params = params + id_params + params + id_params
     async with _lock:
         conn = await _get_conn()
-        cur = await conn.execute(
-            f"""SELECT camera_id, timestamp, value, status_level
-                FROM readings
-                WHERE {where_sql}
-                ORDER BY camera_id ASC, timestamp ASC, id ASC""",
-            params,
-        )
+        cur = await conn.execute(sql, all_params)
         rows = await cur.fetchall()
 
     out: dict[str, dict[str, Any]] = {}
-    by_cam: dict[str, list[aiosqlite.Row]] = {}
     for r in rows:
-        by_cam.setdefault(r["camera_id"], []).append(r)
-
-    for cid, crows in by_cam.items():
-        vals: list[float] = []
-        peak_val: float | None = None
-        peak_ts: str | None = None
-        min_val: float | None = None
-        alert_samples = 0
-        warn_samples = 0
-        overload_sec = 0.0
-        peak_rate = 0.0
-        prev_t: float | None = None
-        prev_v: float | None = None
-        prev_lv: str | None = None
-        first_ts: str | None = None
-        last_ts: str | None = None
-
-        for r in crows:
-            v = _clean_float(r["value"])
-            if v is None:
-                continue
-            ts_str = str(r["timestamp"])
-            lv = str(r["status_level"] or "normal")
-            try:
-                t_unix = _dt.datetime.fromisoformat(ts_str.replace("Z", "+00:00")).timestamp()
-            except ValueError:
-                continue
-            if first_ts is None:
-                first_ts = ts_str
-            last_ts = ts_str
-            vals.append(v)
-            if min_val is None or v < min_val:
-                min_val = v
-            if peak_val is None or v > peak_val:
-                peak_val = v
-                peak_ts = ts_str
-            if lv == "alert":
-                alert_samples += 1
-            elif lv == "warning":
-                warn_samples += 1
-            if prev_t is not None and prev_v is not None:
-                dt_s = t_unix - prev_t
-                if 1e-3 < dt_s <= 600.0:
-                    if prev_lv in ("warning", "alert"):
-                        overload_sec += dt_s
-                    rate_m = abs(v - prev_v) / (dt_s / 60.0)
-                    if math.isfinite(rate_m):
-                        peak_rate = max(peak_rate, rate_m)
-            prev_t, prev_v, prev_lv = t_unix, v, lv
-
-        if vals:
-            cov_min = 0.0
-            try:
-                if first_ts and last_ts:
-                    t0 = _dt.datetime.fromisoformat(first_ts.replace("Z", "+00:00")).timestamp()
-                    t1 = _dt.datetime.fromisoformat(last_ts.replace("Z", "+00:00")).timestamp()
-                    cov_min = round(max(0.0, (t1 - t0) / 60.0), 2)
-            except ValueError:
-                pass
-            out[cid] = {
-                "samples_count": len(vals),
-                "min_val": round(min_val, 4) if min_val is not None else None,
-                "max_val": round(peak_val, 4) if peak_val is not None else None,
-                "avg_val": round(sum(vals) / len(vals), 4),
-                "peak_ts": peak_ts,
-                "first_ts": first_ts,
-                "last_ts": last_ts,
-                "coverage_min": cov_min,
-                "overload_min": round(overload_sec / 60.0, 2),
-                "peak_rate_per_min": round(peak_rate, 3),
-                "alert_samples": alert_samples,
-                "warning_samples": warn_samples,
-            }
+        if not r["n"]:
+            continue
+        peak_rate = _clean_float(r["peak_rate"]) or 0.0
+        out[r["cid"]] = {
+            "samples_count": int(r["n"]),
+            "min_val": round(float(r["min_val"]), 4) if r["min_val"] is not None else None,
+            "max_val": round(float(r["max_val"]), 4) if r["max_val"] is not None else None,
+            "avg_val": round(float(r["avg_val"]), 4) if r["avg_val"] is not None else None,
+            "peak_ts": r["peak_ts"],
+            "first_ts": r["first_ts"],
+            "last_ts": r["last_ts"],
+            "coverage_min": round(max(0.0, _clean_float(r["cov_min"]) or 0.0), 2),
+            "overload_min": round((_clean_float(r["overload_s"]) or 0.0) / 60.0, 2),
+            "peak_rate_per_min": round(peak_rate, 3),
+            "alert_samples": int(r["alert_samples"] or 0),
+            "warning_samples": int(r["warning_samples"] or 0),
+        }
     return out
 
 
@@ -988,6 +1010,23 @@ async def list_auto_spec_triggers(limit: int = 50) -> list[dict[str, Any]]:
     return out
 
 
+async def get_last_auto_spec_trigger(instrument_id: str, root_cause: str) -> dict[str, Any] | None:
+    """Последняя задача автогенерации ТЗ по прибору и первопричине (для подавления дублей между бакетами)."""
+    async with _lock:
+        conn = await _get_conn()
+        cur = await conn.execute(
+            """SELECT * FROM auto_spec_triggers WHERE instrument_id = ? AND root_cause = ?
+               ORDER BY triggered_at DESC, id DESC LIMIT 1""",
+            (instrument_id, root_cause),
+        )
+        row = await cur.fetchone()
+    if row is None:
+        return None
+    d = dict(row)
+    d["incident_ids"] = json.loads(d.pop("incident_ids_json", "[]") or "[]")
+    return d
+
+
 async def get_auto_spec_trigger(trigger_id: int) -> dict[str, Any] | None:
     async with _lock:
         conn = await _get_conn()
@@ -1045,12 +1084,25 @@ async def get_session(token_hash: str) -> dict[str, Any] | None:
     now = utcnow_iso()
     async with _lock:
         conn = await _get_conn()
+        # Роль берётся из актуальной учётной записи: отключение пользователя или понижение
+        # роли действует сразу, без ожидания истечения ранее выданной сессии.
         cur = await conn.execute(
-            "SELECT token_hash, username, role, created_at, expires_at FROM sessions WHERE token_hash = ? AND expires_at > ?",
+            """SELECT s.token_hash, s.username, u.role AS role, s.created_at, s.expires_at
+               FROM sessions s JOIN users u ON u.username = s.username AND u.active = 1
+               WHERE s.token_hash = ? AND s.expires_at > ?""",
             (token_hash, now),
         )
         row = await cur.fetchone()
     return dict(row) if row else None
+
+
+async def prune_sessions() -> int:
+    """Удаляет истёкшие сессии; возвращает число удалённых."""
+    async with _lock:
+        conn = await _get_conn()
+        cur = await conn.execute("DELETE FROM sessions WHERE expires_at <= ?", (utcnow_iso(),))
+        await conn.commit()
+        return cur.rowcount or 0
 
 
 async def delete_session(token_hash: str) -> None:

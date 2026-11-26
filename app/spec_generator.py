@@ -402,12 +402,15 @@ async def generate_spec_bundle(
     ]
     defective.sort(key=lambda x: (float(x.get("health_score", 100.0)), -int(x.get("period_trips", 0))))
 
-    # Позиции, требующие модернизации датчика (исключаем чисто оптические проблемы камеры!)
+    # Позиции, требующие модернизации датчика (исключаем чисто оптические проблемы камеры!).
+    # Единичное срабатывание уставки — событие техпроцесса, а не основание для замены прибора:
+    # в ТЗ попадают только диагностические основания или регулярные перегрузки за период.
+    regular_trips_min = max(1, int(config.SPEC_REGULAR_TRIPS_MIN))
     modernize_candidates = [
         x for x in defective
         if x.get("root_cause") in ("process_anomaly", "instrument_degradation")
         or x.get("modernization_needed")
-        or int(x.get("period_trips", 0)) > 0
+        or int(x.get("period_trips", 0)) >= regular_trips_min
     ]
 
     # Конфигурируемые экономические параметры (DEF-04)
