@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#0f1215">
-  <title>GaugeVision AI — пульт оператора</title>
+  <title>GaugeVision AI — пульт оператора КТЦ</title>
   <link rel="icon" href="/favicon.ico" type="image/svg+xml">
   <link rel="preload" href="/static/fonts/jetbrains-mono-latin-500.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/ibm-plex-sans-cyrillic-400.woff2" as="font" type="font/woff2" crossorigin>
@@ -14,294 +14,1231 @@
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-mark" viewBox="0 0 20 20"><path d="M3.5 15A7.5 7.5 0 1 1 16.5 15" /><path d="M10 11l4-5" /><path d="M9 11h2" /></symbol>
-  <symbol id="i-plus" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10" /></symbol>
-  <symbol id="i-search" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5L14 14" /></symbol>
+  <symbol id="i-cam" viewBox="0 0 16 16"><rect x="1.5" y="4" width="9.5" height="8" /><path d="M11 6.5l3.5-2v7L11 9.5" /></symbol>
   <symbol id="i-phone" viewBox="0 0 16 16"><rect x="4.5" y="1.5" width="7" height="13" /><path d="M7 12.5h2" /></symbol>
+  <symbol id="i-qr" viewBox="0 0 16 16"><path d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h2v2H9zM12 12h2v2h-2zM12 9h2M9 12v2" /></symbol>
   <symbol id="i-sound" viewBox="0 0 16 16"><path d="M2.5 6h3l4-3v10l-4-3h-3z" /><path d="M11.5 5.5c1 1.4 1 3.6 0 5M13.5 3.5c2 2.5 2 6.5 0 9" /></symbol>
   <symbol id="i-mute" viewBox="0 0 16 16"><path d="M2.5 6h3l4-3v10l-4-3h-3z" /><path d="M11.5 6l3 4M14.5 6l-3 4" /></symbol>
   <symbol id="i-check" viewBox="0 0 16 16"><path d="M3 8.5l3 3 7-7" /></symbol>
   <symbol id="i-restart" viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.5-3.6" /><path d="M12 1.5v3h-3" /></symbol>
   <symbol id="i-download" viewBox="0 0 16 16"><path d="M8 2v8M4.5 6.5L8 10l3.5-3.5M2.5 13.5h11" /></symbol>
   <symbol id="i-trash" viewBox="0 0 16 16"><path d="M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4" /></symbol>
-  <symbol id="i-external" viewBox="0 0 16 16"><path d="M9 2.5h4.5V7M13.5 2.5L7.5 8.5M11.5 9.5v4h-9v-9h4" /></symbol>
   <symbol id="i-close" viewBox="0 0 16 16"><path d="M3.5 3.5l9 9M12.5 3.5l-9 9" /></symbol>
+  <symbol id="i-back" viewBox="0 0 16 16"><path d="M13.5 8H3M7 4L3 8l4 4" /></symbol>
   <symbol id="i-target" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5" /><path d="M8 1v3M8 12v3M1 8h3M12 8h3" /></symbol>
   <symbol id="i-frame" viewBox="0 0 16 16"><rect x="1.5" y="3" width="13" height="10" /><path d="M1.5 10.5l3.5-3 3 2.5 2-1.5 4.5 3" /></symbol>
   <symbol id="i-live" viewBox="0 0 16 16"><path d="M5 3.5v9l7-4.5z" /></symbol>
+  <symbol id="i-stop" viewBox="0 0 16 16"><rect x="4" y="4" width="8" height="8" /></symbol>
   <symbol id="i-prev" viewBox="0 0 16 16"><path d="M10 3.5L5.5 8l4.5 4.5" /></symbol>
   <symbol id="i-next" viewBox="0 0 16 16"><path d="M6 3.5L10.5 8 6 12.5" /></symbol>
-  <symbol id="i-qr" viewBox="0 0 16 16"><path d="M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h2v2H9zM12 12h2v2h-2zM12 9h2M9 12v2" /></symbol>
+  <symbol id="i-plus" viewBox="0 0 16 16"><path d="M8 3v10M3 8h10" /></symbol>
+  <symbol id="i-search" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.5" /><path d="M10.5 10.5L14 14" /></symbol>
+  <symbol id="i-full" viewBox="0 0 16 16"><path d="M2.5 6V2.5H6M10 2.5h3.5V6M13.5 10v3.5H10M6 13.5H2.5V10" /></symbol>
+  <symbol id="i-sliders" viewBox="0 0 16 16"><path d="M2 4h12M2 8h12M2 12h12" /><rect x="5" y="2.5" width="2" height="3" fill="currentColor" /><rect x="9" y="6.5" width="2" height="3" fill="currentColor" /><rect x="4" y="10.5" width="2" height="3" fill="currentColor" /></symbol>
+  <symbol id="i-rail" viewBox="0 0 16 16"><rect x="1.5" y="2.5" width="13" height="11" /><path d="M11 2.5v11M7.5 6l2 2-2 2" /></symbol>
+  <symbol id="i-wide" viewBox="0 0 16 16"><rect x="1.5" y="2.5" width="13" height="11" /><path d="M8 2.5v11M5.5 6.5L4 8l1.5 1.5M10.5 6.5L12 8l-1.5 1.5" /></symbol>
+  <symbol id="i-stats" viewBox="0 0 16 16"><path d="M2 13.5h12M4 11V7M8 11V4M12 11V6" /></symbol>
 </svg>
 
-<div class="shell">
-  <!-- Шапка: состояние объекта за долю секунды -->
-  <header class="head">
+<div class="shell" id="appShell">
+  <!-- УРОВЕНЬ 1: Глобальный статус станции, навигация по разделам и единые счётчики тревог -->
+  <header class="head" role="banner">
     <div class="brand">
-      <svg class="i" aria-hidden="true"><use href="#i-mark" /></svg>
-      <span>GaugeVision AI</span>
-      <small>Пульт оператора</small>
+      <svg class="i brand-mark" aria-hidden="true"><use href="#i-mark" /></svg>
+      <div class="brand-txt">
+        <span class="brand-name">GaugeVision AI</span>
+        <span class="mode-badge" id="modeBadge">КТЦ</span>
+      </div>
     </div>
-    <div class="counters" role="group" aria-label="Сводка тревог">
-      <button class="counter" data-kind="alarm" data-filter="alert" title="Приборы в аварийной зоне — показать в журнале">
-        <span class="lbl"><span class="lng">Авария</span><span class="sht">Авар.</span></span><span class="n" id="cAlarm">0</span>
+
+    <nav class="nav-tabs" role="tablist" aria-label="Рабочие разделы пульта">
+      <button role="tab" type="button" class="nav-tab" data-view="monitor" aria-selected="true">
+        <span>Мониторинг</span><span class="tab-cnt mono" id="tabCntMonitor">36</span>
       </button>
-      <button class="counter" data-kind="warn" data-filter="warning" title="Приборы в зоне предупреждения — показать в журнале">
-        <span class="lbl"><span class="lng">Предупр.</span><span class="sht">Пред.</span></span><span class="n" id="cWarn">0</span>
+      <button role="tab" type="button" class="nav-tab" data-view="architecture" aria-selected="false" title="Архитектурная видеоаналитика: Edge-воркеры, Adaptive FPS, Store-and-Forward и SCADA">
+        <span>Видеоаналитика</span><span class="tab-cnt mono" id="tabCntArch">OK</span>
       </button>
-      <button class="counter" data-kind="unack" data-filter="unack" title="Неквитированные срабатывания — показать в журнале">
+      <button role="tab" type="button" class="nav-tab" data-view="dispatch" aria-selected="false" title="Умная диспетчеризация, Health Score и автогенерация ТЗ (.docx)">
+        <span>Диспетчеризация и ТЗ</span><span class="tab-cnt mono" id="tabCntDispatch">—</span>
+      </button>
+      <button role="tab" type="button" class="nav-tab" data-view="events" aria-selected="false">
+        <span>События</span><span class="tab-cnt mono" id="tabCntEvents">0</span>
+      </button>
+      <button role="tab" type="button" class="nav-tab" data-view="history" aria-selected="false">
+        <span>История</span><span class="tab-cnt mono" id="tabCntHistory">0</span>
+      </button>
+      <button role="tab" type="button" class="nav-tab nav-tab-eng" data-view="cameras" aria-selected="false">
+        <span>Камеры</span>
+      </button>
+      <button role="tab" type="button" class="nav-tab nav-tab-eng" data-view="calibration" aria-selected="false">
+        <span>Калибровка</span>
+      </button>
+    </nav>
+
+    <div class="plant-banner" id="plantBanner" data-tone="normal" role="status" aria-live="polite">
+      <div class="plant-main">
+        <span class="plant-sq" aria-hidden="true"></span>
+        <span class="plant-headline" id="plantHeadline">Загрузка телеметрии станции…</span>
+      </div>
+      <div class="plant-actions" id="plantActions"></div>
+    </div>
+
+    <div class="counters" role="group" aria-label="Единые счётчики состояния по 36 приборам">
+      <button class="counter" type="button" data-summary="alert" title="Приборы в аварийной зоне (CRITICAL: HH / LL)">
+        <span class="lbl">Аварии</span><span class="n" id="cAlarm">0</span>
+      </button>
+      <button class="counter" type="button" data-summary="warning" title="Приборы в предупредительной зоне (WARNING: H / L)">
+        <span class="lbl">Предупр.</span><span class="n" id="cWarn">0</span>
+      </button>
+      <button class="counter" type="button" data-summary="deviation" title="Все приборы с выходом за уставки (Аварии + Предупр.)">
+        <span class="lbl">Отклон.</span><span class="n" id="cDev">0</span>
+      </button>
+      <button class="counter" type="button" data-summary="nodata" title="Приборы без свежих достоверных данных (STALE)">
+        <span class="lbl">Без данных</span><span class="n" id="cNoData">0</span>
+      </button>
+      <button class="counter" type="button" data-summary="unack" title="Неквитированные срабатывания в журнале">
         <span class="lbl">Неквит.</span><span class="n" id="cUnack">0</span>
       </button>
-      <button class="counter" data-kind="link" data-filter="link" title="Камеры без связи">
-        <span class="lbl"><span class="lng">Нет связи</span><span class="sht">Обрыв</span></span><span class="n" id="cLink">0</span>
+    </div>
+
+    <div class="head-ops">
+      <button class="btn sm ack" type="button" id="btnAckAll" disabled title="Квитировать все неквитированные события">
+        <svg class="i" aria-hidden="true"><use href="#i-check" /></svg><span id="lblAckAll">Квитировано</span>
       </button>
-    </div>
-    <div class="spacer"></div>
-    <div class="clock" title="Время пульта и текущая смена">
-      <span class="t mono" id="clockT">--:--:--</span>
-      <span class="d"><span id="clockD">—</span><br><span id="shiftLbl">Смена —</span></span>
-    </div>
-    <div class="link" id="linkCell" data-state="down" role="status">
-      <span class="sq" aria-hidden="true"></span><span id="linkText">Нет связи с сервером</span>
-    </div>
-    <div class="actions">
-      <button class="btn icon" id="btnSound" aria-pressed="false" title="Звуковая сигнализация">
+
+      <div class="phone-pill" id="phonePill" data-stage="waiting_phone">
+        <span class="phone-stage-txt" id="phoneStageTxt">Ожидаем телефон</span>
+        <button class="btn sm" type="button" id="btnHeaderQr" title="Открыть QR для подключения камеры смартфона">
+          <svg class="i" aria-hidden="true"><use href="#i-qr" /></svg><span>QR</span>
+        </button>
+      </div>
+
+      <div class="link" id="linkCell" data-state="down" role="status" title="Состояние WebSocket пульта">
+        <span class="sq" aria-hidden="true"></span><span id="linkText">WSS…</span>
+      </div>
+      <button class="btn sm auth-pill" type="button" id="btnAuthAction" title="Учётная запись и роль RBAC">
+        <span id="authUserLbl">Вход</span>
+      </button>
+      <span class="clock-txt mono" id="clockT">--:--:--</span>
+      <button class="btn icon sm" type="button" id="btnSound" aria-pressed="false" title="Звуковая сигнализация">
         <svg class="i" aria-hidden="true"><use href="#i-mute" /></svg>
       </button>
-      <button class="btn ack" id="btnAck" disabled title="Квитировать все срабатывания на всех пультах">
-        <svg class="i" aria-hidden="true"><use href="#i-check" /></svg><span>Квитировать</span>
+      <button class="btn icon sm" type="button" id="btnFullscreen" title="Полноэкранный режим (F11)">
+        <svg class="i" aria-hidden="true"><use href="#i-full" /></svg>
       </button>
     </div>
   </header>
 
-  <div class="notice" id="certNotice" hidden>
-    <span><b>Самоподписанный сертификат.</b> На каждом новом устройстве предупреждение браузера принимается один раз, без HTTPS смартфон не даст доступ к камере. Отпечаток SHA-256: <span class="mono" id="certFp">—</span></span>
-    <span class="sp"></span>
-    <a href="/api/cert.pem" download>Скачать сертификат</a>
-    <button class="btn sm icon" id="btnHideNotice" title="Скрыть"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button>
-  </div>
+  <!-- Раскрывающийся список всех текущих проблем -->
+  <section class="issues-drawer" id="issuesDrawer" hidden aria-label="Список активных отклонений и проблем со связью">
+    <header class="pane-head">
+      <h2>Сводка активных отклонений и каналов без данных</h2>
+      <span class="sp"></span>
+      <button class="btn sm icon" type="button" id="btnCloseIssues" title="Закрыть сводку"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button>
+    </header>
+    <ul class="issues-list" id="issuesList"></ul>
+  </section>
 
-  <main class="main">
-    <!-- Приборы: телеметрия всех точек -->
-    <section class="col col-left" aria-labelledby="hInst">
-      <div>
-        <div class="pane-head">
-          <h2 id="hInst">Приборы</h2><span class="count" id="instCount">0</span>
-          <span class="sp"></span>
-          <div class="seg" role="group" aria-label="Порядок списка">
-            <button data-sort="order" aria-pressed="true">По порядку</button>
-            <button data-sort="severity" aria-pressed="false">Тревоги сверху</button>
+  <!-- ==================== ВКЛАДКА 1: МОНИТОРИНГ ==================== -->
+  <main class="workspace" id="view-monitor">
+    <div class="monitor-page">
+      <!-- УРОВЕНЬ 2: Управление режимами симуляции, сеткой 3×3 / 4×4 / 6×6 и фильтрами -->
+      <div class="grid-toolbar" role="region" aria-label="Управление режимами, сеткой и фильтрами">
+        <div class="ctl-group" id="scenarioWrap">
+          <span class="ctl-lbl">Режим:</span>
+          <div class="seg" role="group" aria-label="Пресеты симуляции станции" id="segScenario">
+            <button type="button" data-scenario="mixed" aria-pressed="true" title="Стартовый смешанный режим: норма + предупреждения + аварии + обрыв связи">Смешанный</button>
+            <button type="button" data-scenario="nominal" aria-pressed="false" title="Все 35 синтетических каналов в рабочей зоне">Штатный</button>
+            <button type="button" data-scenario="peak" aria-pressed="false" title="Пиковая нагрузка и перегрев парового тракта">Перегрев</button>
+            <button type="button" data-scenario="cascade" aria-pressed="false" title="Аварийный каскад нарушений верхних и нижних уставок">Каскад</button>
           </div>
         </div>
-        <div class="list-tools">
-          <button class="btn sm" data-act="add"><svg class="i" aria-hidden="true"><use href="#i-plus" /></svg>Камера</button>
-          <button class="btn sm" data-act="discover"><svg class="i" aria-hidden="true"><use href="#i-search" /></svg>Поиск в сети</button>
-          <button class="btn sm" data-act="phone"><svg class="i" aria-hidden="true"><use href="#i-phone" /></svg>Смартфон по QR</button>
-        </div>
-      </div>
-      <ul class="inst-list" id="instList" aria-label="Список приборов"></ul>
-    </section>
 
-    <!-- Видео, отсчёт и тренд выбранного прибора -->
-    <section class="col col-center" aria-label="Выбранный прибор">
-      <div class="view-bar">
-        <div class="cam-tabs" id="camTabs" role="tablist" aria-label="Камеры"></div>
+        <div class="ctl-group">
+          <span class="ctl-lbl">Сетка:</span>
+          <div class="seg" role="group" aria-label="Формат сетки колонок" id="segDensity">
+            <button type="button" data-density="9" aria-pressed="false">3×3</button>
+            <button type="button" data-density="16" aria-pressed="false">4×4</button>
+            <button type="button" data-density="36" aria-pressed="true">6×6</button>
+          </div>
+        </div>
+
+        <div class="seg" role="group" aria-label="Фильтр состояния приборов" id="segFilter">
+          <button type="button" data-gfilter="all" aria-pressed="true">Все <span class="c" id="gfAll">36</span></button>
+          <button type="button" data-gfilter="alert" aria-pressed="false">Аварии <span class="c" id="gfAlert">0</span></button>
+          <button type="button" data-gfilter="warning" aria-pressed="false">Предупр. <span class="c" id="gfWarn">0</span></button>
+          <button type="button" data-gfilter="deviation" aria-pressed="false">Отклонения <span class="c" id="gfDev">0</span></button>
+          <button type="button" data-gfilter="nodata" aria-pressed="false">Без данных <span class="c" id="gfNoData">0</span></button>
+        </div>
+
+        <label class="toolbar-select">
+          <span class="sr-only">Технологический узел</span>
+          <select class="input sm" id="selGroup" aria-label="Технологическая группа">
+            <option value="all">Все узлы (6)</option>
+          </select>
+        </label>
+
+        <div class="toolbar-search">
+          <input class="input sm" type="search" id="inpSearch" placeholder="Поиск по коду или контуру…" aria-label="Поиск прибора">
+        </div>
+
+        <button class="btn sm" type="button" id="btnResetFilters" hidden>Сбросить</button>
+
+        <span class="toolbar-count mono" id="gridCountLbl">36 из 36</span>
+
+        <div class="pager" id="gridPager" hidden role="navigation" aria-label="Страницы сетки">
+          <button class="btn sm icon" type="button" id="btnPagePrev" title="Предыдущая страница"><svg class="i" aria-hidden="true"><use href="#i-prev" /></svg></button>
+          <span class="mono" id="lblPage">1 / 3</span>
+          <button class="btn sm icon" type="button" id="btnPageNext" title="Следующая страница"><svg class="i" aria-hidden="true"><use href="#i-next" /></svg></button>
+        </div>
+
+        <span class="sp"></span>
+
+        <button class="btn sm live-jump" type="button" id="btnJumpLive" title="Открыть живой манометр с камеры смартфона">
+          <svg class="i" aria-hidden="true"><use href="#i-cam" /></svg><span id="lblJumpLive">Камера К1-Р01</span>
+        </button>
+
+        <div class="run-strip" id="runStrip" hidden>
+          <span class="run-lbl" id="runStripLbl">Показ №1</span>
+          <span class="run-cnt mono" id="runStripCnt">0 отсч.</span>
+          <button class="btn sm" type="button" id="btnRunNew" title="Начать новый интервал записи показа">Новый</button>
+          <button class="btn sm" type="button" id="btnRunStop" title="Завершить текущий интервал показа">Стоп</button>
+        </div>
+
+        <button class="btn sm" type="button" id="btnToggleStats" aria-pressed="true" title="Свернуть или развернуть панель общестанционной статистики">
+          <svg class="i" aria-hidden="true"><use href="#i-stats" /></svg><span>Сводка ТЭЦ</span>
+        </button>
       </div>
-      <div class="stage" id="stage">
-        <div class="strip" id="strip">
-          <span class="live" id="liveInfo"></span>
-          <span class="sp"></span>
-          <span class="perf" id="perfInfo"></span>
-          <span class="layers" role="group" aria-label="Слои разметки">
-            <label class="chk"><input type="checkbox" data-layer="box" checked>Рамка</label>
-            <label class="chk"><input type="checkbox" data-layer="scale" checked>Шкала</label>
-            <label class="chk"><input type="checkbox" data-layer="needle" checked>Стрелка</label>
-            <label class="chk"><input type="checkbox" data-layer="labels" checked>Подписи</label>
-          </span>
-          <button class="btn sm" id="btnFilm" aria-pressed="false" title="Стоп-кадры срабатываний этого прибора">
-            <svg class="i" aria-hidden="true"><use href="#i-frame" /></svg>Стоп-кадры <span class="mono" id="filmCount">0</span>
+
+      <!-- СВОРАЧИВАЕМЫЙ БЛОК АГРЕГИРОВАННОЙ СТАТИСТИКИ СТАНЦИИ -->
+      <section class="station-stats" id="stationStatsBar" aria-label="Агрегированная статистика электростанции">
+        <div class="stat-cell">
+          <div class="stat-top">
+            <span class="stat-lbl">Активная мощность ТЭЦ</span>
+            <span class="stat-cap mono" id="stPowerPct">—</span>
+          </div>
+          <div class="stat-main">
+            <strong class="stat-val mono" id="stPowerVal">—</strong>
+            <span class="stat-unit">МВт</span>
+          </div>
+          <div class="stat-bar"><div class="stat-bar-fill" id="stPowerFill"></div></div>
+          <div class="stat-sub mono" id="stPowerSub">ТГ-1 + ТГ-2 (ном. 240 МВт)</div>
+        </div>
+
+        <div class="stat-cell">
+          <div class="stat-top">
+            <span class="stat-lbl">Суммарный расход пара</span>
+            <span class="stat-cap mono">К-1 + К-2</span>
+          </div>
+          <div class="stat-main">
+            <strong class="stat-val mono" id="stSteamVal">—</strong>
+            <span class="stat-unit">т/ч</span>
+          </div>
+          <div class="stat-sub" id="stSteamSub">Острый пар паровых котлов</div>
+        </div>
+
+        <div class="stat-cell">
+          <div class="stat-top">
+            <span class="stat-lbl">Достоверность CV-зрения</span>
+            <span class="stat-cap mono" id="stCvModel">YOLOv8n</span>
+          </div>
+          <div class="stat-main">
+            <strong class="stat-val mono" id="stCvVal">—</strong>
+            <span class="stat-unit" id="stCvUnit"></span>
+          </div>
+          <div class="stat-sub" id="stCvSub">Канал К1-Р01 (МТП-160)</div>
+        </div>
+
+        <div class="stat-cell">
+          <div class="stat-top">
+            <span class="stat-lbl">Срабатываний за смену</span>
+            <span class="stat-cap mono">12 ч</span>
+          </div>
+          <div class="stat-main">
+            <strong class="stat-val mono" id="stTripsVal">0</strong>
+            <span class="stat-unit">соб.</span>
+          </div>
+          <div class="stat-sub" id="stTripsSub">Неквитировано: 0</div>
+        </div>
+
+        <div class="stat-cell stat-zones-cell">
+          <div class="stat-top">
+            <span class="stat-lbl">Распределение 36 приборов по зонам</span>
+          </div>
+          <div class="zones-dist-bar" id="stZonesBar"></div>
+          <div class="zones-dist-legend mono" id="stZonesLegend"></div>
+        </div>
+      </section>
+
+      <!-- УПРАВЛЯЕМЫЙ SPLIT-PANE: ЛЕВАЯ СЕТКА ПРИБОРОВ + DRAG-РЕСАЙЗЕР + ПРАВЫЙ ИНСПЕКТОР -->
+      <div class="monitor-layout" id="monitorLayout" data-detail="closed" data-imode="normal">
+        <section class="matrix-pane" id="matrixPane" aria-label="Матрица приборов станции">
+          <div class="matrix-wrap" id="matrixWrap">
+            <div class="tile-grid" id="tileGrid" data-density="36" role="list" aria-label="Карточки приборов"></div>
+            <div class="grid-empty" id="gridEmpty" hidden>
+              <p id="gridEmptyText">Под выбранный фильтр приборы не найдены.</p>
+              <div class="row">
+                <button class="btn primary" type="button" id="btnEmptyReset">Показать все 36 приборов</button>
+                <button class="btn" type="button" id="btnEmptyLive">Перейти к камере К1-Р01</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Интерактивный разделитель панелей (min 340px .. max 65vw, двойной клик — 50% экрана) -->
+        <div class="split-resizer" id="splitResizer" role="separator" aria-orientation="vertical" tabindex="0" aria-label="Изменить ширину инспектора прибора (перетащите или нажмите стрелки влево/вправо)" title="Потяните для изменения ширины (340px–65vw, двойной клик — 50%)" hidden>
+          <span class="split-grip" aria-hidden="true"></span>
+        </div>
+
+        <!-- Узкая боковая полоса свёрнутого инспектора -->
+        <aside class="inspector-rail" id="inspectorRail" hidden aria-label="Свёрнутый инспектор прибора">
+          <button class="btn sm icon" type="button" id="btnRailExpand" title="Развернуть панель инспектора">
+            <svg class="i" aria-hidden="true"><use href="#i-prev" /></svg>
           </button>
-          <a class="btn sm icon" id="lnkMjpeg" target="_blank" rel="noopener" title="Поток MJPEG с разметкой сервера в новой вкладке">
-            <svg class="i" aria-hidden="true"><use href="#i-external" /></svg>
-          </a>
-        </div>
-        <div class="stopbar" id="stopbar" hidden>
-          <span class="tag" id="stopTag"></span>
-          <span class="what" id="stopWhat"></span>
-          <span class="sp"></span>
-          <button class="btn sm icon" id="stopPrev" title="Предыдущий стоп-кадр"><svg class="i" aria-hidden="true"><use href="#i-prev" /></svg></button>
-          <button class="btn sm icon" id="stopNext" title="Следующий стоп-кадр"><svg class="i" aria-hidden="true"><use href="#i-next" /></svg></button>
-          <button class="btn sm primary" id="stopLive"><svg class="i" aria-hidden="true"><use href="#i-live" /></svg>Живой поток</button>
-        </div>
-        <div class="media" id="media">
-          <img id="frame" alt="Кадр выбранной камеры" decoding="async">
-          <svg class="ov" id="overlay" aria-hidden="true"></svg>
-          <div class="stale-note" id="staleNote" hidden></div>
-          <div class="veil" id="veil" hidden></div>
-        </div>
-        <div class="film" id="film" hidden></div>
-      </div>
-      <div class="readout" id="readout">
-        <div class="ro-main" id="roMain">
-          <div class="lbl"><span>Показание</span><span class="tag" id="roTag">—</span></div>
-          <div class="big"><span id="roValue">—</span><small id="roUnit"></small></div>
-        </div>
-        <div class="ro-ruler" id="roRuler"></div>
-        <dl class="ro-grid" id="roGrid"></dl>
-      </div>
-      <section class="trend" aria-labelledby="hTrend">
-        <div class="pane-head">
-          <h2 id="hTrend">Тренд</h2>
-          <div class="seg" role="group" aria-label="Окно тренда">
-            <button data-range="900" aria-pressed="false">15 мин</button>
-            <button data-range="3600" aria-pressed="false">1 ч</button>
-            <button data-range="shift" aria-pressed="true">Смена</button>
+          <span class="tag" id="railBadge" data-level="normal">НОРМ</span>
+          <span class="rail-code mono" id="railCode">К1-Р01</span>
+          <span class="rail-val mono" id="railVal">—</span>
+        </aside>
+
+        <!-- Правая панель инспектора прибора -->
+        <aside class="detail-pane" id="detailPane" hidden aria-label="Инспектор выбранного прибора">
+          <header class="detail-head">
+            <button class="btn sm back-btn" type="button" id="btnDetailBack">
+              <svg class="i" aria-hidden="true"><use href="#i-back" /></svg><span>К сетке</span>
+            </button>
+            <div class="detail-title-wrap">
+              <div class="detail-code-row">
+                <span class="mono detail-code" id="detCode">—</span>
+                <span class="source-tag" id="detSourceTag">—</span>
+                <span class="detail-group" id="detGroup">—</span>
+              </div>
+              <h2 class="detail-name" id="detName">Прибор не выбран</h2>
+            </div>
+            <div class="inspector-tools" role="group" aria-label="Размер панели инспектора">
+              <button class="btn sm icon" type="button" data-imode="collapsed" title="Свернуть инспектор в узкую боковую полосу">
+                <svg class="i" aria-hidden="true"><use href="#i-rail" /></svg>
+              </button>
+              <button class="btn sm" type="button" data-imode="wide" title="Развернуть инспектор на пол-экрана (50%)">
+                <svg class="i" aria-hidden="true"><use href="#i-wide" /></svg><span>50%</span>
+              </button>
+              <button class="btn sm icon" type="button" data-imode="fullscreen" title="Развернуть инспектор на весь экран">
+                <svg class="i" aria-hidden="true"><use href="#i-full" /></svg>
+              </button>
+              <button class="btn sm icon" type="button" id="btnDetailClose" title="Закрыть инспектор (Esc)">
+                <svg class="i" aria-hidden="true"><use href="#i-close" /></svg>
+              </button>
+            </div>
+          </header>
+
+          <div class="detail-body" id="detailBody">
+            <div class="detail-col-primary">
+              <!-- Главный отсчёт со скоростью изменения Δ/мин -->
+              <section class="det-readout" id="detReadout">
+                <div class="det-val-col">
+                  <div class="det-tag-row">
+                    <span class="tag" id="detZoneTag">—</span>
+                    <span class="det-qual" id="detQualityTxt">—</span>
+                    <span class="det-rate mono" id="detRate">Δ —</span>
+                  </div>
+                  <div class="det-big">
+                    <span class="mono" id="detValue">—</span>
+                    <small id="detUnit"></small>
+                  </div>
+                  <div class="det-subnote" id="detSubnote" hidden></div>
+                </div>
+                <dl class="det-times" id="detTimes"></dl>
+              </section>
+
+              <!-- Баннер адресного квитирования -->
+              <div class="det-unack-bar" id="detUnackBar" hidden>
+                <span id="detUnackTxt">Неквитированное срабатывание</span>
+                <button class="btn sm ack" type="button" id="btnDetAck">Квитировать</button>
+              </div>
+
+              <!-- Видеоблок живой камеры: статус потери потока строго в верхнем баннере #staleNote без перекрытия кадра! -->
+              <section class="det-video-sec" id="detVideoSec">
+                <div class="strip">
+                  <div class="seg" role="group" aria-label="Режим просмотра кадра" id="segFrameMode">
+                    <button type="button" data-fmode="overlay" aria-pressed="true" title="Векторная разметка CV поверх кадра">Разметка</button>
+                    <button type="button" data-fmode="raw" aria-pressed="false" title="Исходный кадр без разметки">Сырой</button>
+                    <button type="button" data-fmode="server" aria-pressed="false" title="Оверлей сервера OpenCV">Сервер</button>
+                  </div>
+                  <span class="sp"></span>
+                  <span class="layers" id="detLayers" role="group" aria-label="Слои векторной разметки">
+                    <label class="chk"><input type="checkbox" data-layer="box" checked>ROI</label>
+                    <label class="chk"><input type="checkbox" data-layer="scale" checked>Шкала</label>
+                    <label class="chk"><input type="checkbox" data-layer="needle" checked>Стрелка</label>
+                    <label class="chk"><input type="checkbox" data-layer="labels" checked>Подп.</label>
+                  </span>
+                  <button class="btn sm" type="button" id="btnFilm" aria-pressed="false" title="Стоп-кадры срабатываний">
+                    <svg class="i" aria-hidden="true"><use href="#i-frame" /></svg><span class="mono" id="filmCount">0</span>
+                  </button>
+                </div>
+
+                <!-- Компактный верхний баннер статуса потока (НИКОГДА не перекрывает область ROI/стрелки!) -->
+                <div class="det-stream-banner" id="staleNote" hidden role="status"></div>
+
+                <div class="stopbar" id="stopbar" hidden>
+                  <span class="tag" id="stopTag"></span>
+                  <span class="what" id="stopWhat"></span>
+                  <span class="sp"></span>
+                  <button class="btn sm icon" type="button" id="stopPrev" title="Предыдущий стоп-кадр"><svg class="i" aria-hidden="true"><use href="#i-prev" /></svg></button>
+                  <button class="btn sm icon" type="button" id="stopNext" title="Следующий стоп-кадр"><svg class="i" aria-hidden="true"><use href="#i-next" /></svg></button>
+                  <button class="btn sm primary" type="button" id="stopLive"><svg class="i" aria-hidden="true"><use href="#i-live" /></svg><span>Живой поток</span></button>
+                </div>
+
+                <div class="media det-media" id="media">
+                  <img id="frame" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-empty="true" alt="Кадр выбранной камеры" decoding="async">
+                  <svg class="ov" id="overlay" aria-hidden="true"></svg>
+                  <div class="veil" id="veil" hidden></div>
+                </div>
+
+                <div class="film" id="film" hidden></div>
+              </section>
+
+              <!-- Информационный блок синтетического канала -->
+              <section class="det-sim-note" id="detSimNote" hidden>
+                <strong>Синтетический канал технологического контура ТЭЦ</strong>
+                <p>Телеметрия позиции рассчитывается генератором режимов станции (с поддержкой уставок LL/L/H/HH, расчёта Δ/мин и 15-минутного профиля). Живой видеопоток и CV-распознавание закреплены за позицией К1-Р01.</p>
+                <button class="btn sm" type="button" id="btnSimToLive">Перейти к живому манометру с камеры (К1-Р01)</button>
+              </section>
+
+              <!-- Паспорт уставок / диагностика CV -->
+              <dl class="ro-grid det-cv-grid" id="detCvGrid"></dl>
+            </div>
+
+            <div class="detail-col-secondary">
+              <!-- Полноразмерный график тренда (высота >= 220px) с горизонтальными линиями уставок L / H / HH -->
+              <section class="det-block">
+                <header class="det-block-head">
+                  <span id="detTrendTitle">Тренд за 15 мин (уставки L / H / HH)</span>
+                  <div class="seg" id="segDetRange">
+                    <button type="button" data-drange="900" aria-pressed="true">15 мин</button>
+                    <button type="button" data-drange="3600" aria-pressed="false">1 ч</button>
+                    <button type="button" data-drange="run" aria-pressed="false">Прогон</button>
+                  </div>
+                </header>
+                <div class="det-trend-box" id="detTrendBox">
+                  <canvas id="detTrendCanvas"></canvas>
+                  <div class="trend-tip" id="detTrendTip" hidden></div>
+                </div>
+              </section>
+
+              <!-- Детальная шкала уставок -->
+              <section class="det-block">
+                <header class="det-block-head">
+                  <span>Шкала прибора и границы зон</span>
+                  <span class="mono" id="detScaleRange">—</span>
+                </header>
+                <div class="det-ruler-wrap" id="detRuler"></div>
+              </section>
+
+              <!-- Быстрые действия -->
+              <div class="det-actions" id="detActions">
+                <button class="btn sm primary" type="button" id="btnDetConnectPhone">
+                  <svg class="i" aria-hidden="true"><use href="#i-qr" /></svg><span>Подключить телефон</span>
+                </button>
+                <button class="btn sm" type="button" id="btnDetCalibrate">
+                  <svg class="i" aria-hidden="true"><use href="#i-sliders" /></svg><span>Калибровка и уставки</span>
+                </button>
+                <button class="btn sm" type="button" id="btnDetHistory">
+                  <svg class="i" aria-hidden="true"><use href="#i-download" /></svg><span>История и CSV</span>
+                </button>
+              </div>
+            </div>
           </div>
-          <span class="sp"></span>
-          <div class="legend" aria-hidden="true">
-            <span><i></i>среднее</span><span><i class="env"></i>мин – макс</span><span><i class="sp"></i>уставки</span><span><i class="ev"></i>срабатывания</span>
-          </div>
-          <a class="btn sm" id="lnkCsv" download title="Весь архив показаний прибора, CSV"><svg class="i" aria-hidden="true"><use href="#i-download" /></svg>CSV</a>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- ==================== ВКЛАДКА: АРХИТЕКТУРНАЯ ВИДЕОАНАЛИТИКА (ТРЕК №2) ==================== -->
+  <section class="workspace page-pane" id="view-architecture" hidden aria-label="Архитектурная видеоаналитика и отказоустойчивость">
+    <div class="page-wrap arch-wrap">
+      <div class="page-head-row">
+        <div>
+          <h1>Архитектурная видеоаналитика и контур отказоустойчивости</h1>
+          <p class="page-sub">Распределённая архитектура «Edge-узел цеха — локальный буфер Store-and-Forward (SQLite WAL) — шлюз АСУ ТП (MQTT 3.1.1 / Modbus TCP)».</p>
         </div>
-        <div class="trend-body" id="trendBody">
-          <canvas id="trendCanvas"></canvas>
-          <div class="trend-tip" id="trendTip" hidden></div>
+        <div class="arch-head-actions">
+          <button class="btn danger" type="button" id="btnArchToggleOutage">
+            <span id="lblArchOutage">Симулировать обрыв связи с АСУ ТП</span>
+          </button>
+          <button class="btn" type="button" id="btnArchFlushQueue" disabled>Дослать очередь</button>
+        </div>
+      </div>
+
+      <!-- Интерактивная схема топологии -->
+      <section class="block">
+        <header>
+          <span>Топология конвейера данных в реальном времени</span>
+          <span class="mono hint">Air-gapped Edge Architecture</span>
+        </header>
+        <div class="body">
+          <div class="topo-grid" role="region" aria-label="Интерактивная схема топологии">
+            <div class="topo-node" id="topoSources" data-tone="normal">
+              <div class="topo-head"><span class="topo-step mono">01</span><strong>Источники видео</strong></div>
+              <div class="topo-state mono">—</div>
+              <div class="topo-metrics mono"></div>
+            </div>
+            <div class="topo-arrow mono">RTSP / WSS →</div>
+            <div class="topo-node" id="topoEdge" data-tone="normal">
+              <div class="topo-head"><span class="topo-step mono">02</span><strong>Edge-воркеры CV</strong></div>
+              <div class="topo-state mono">—</div>
+              <div class="topo-metrics mono"></div>
+            </div>
+            <div class="topo-arrow mono">Adaptive FPS →</div>
+            <div class="topo-node" id="topoBuffer" data-tone="normal">
+              <div class="topo-head"><span class="topo-step mono">03</span><strong>Store-and-Forward</strong></div>
+              <div class="topo-state mono">—</div>
+              <div class="topo-metrics mono"></div>
+            </div>
+            <div class="topo-arrow mono" id="topoLinkScada" data-broken="false">TLS / TCP →</div>
+            <div class="topo-node" id="topoScada" data-tone="normal">
+              <div class="topo-head"><span class="topo-step mono">04</span><strong>SCADA / MQTT / Modbus</strong></div>
+              <div class="topo-state mono">—</div>
+              <div class="topo-metrics mono"></div>
+            </div>
+          </div>
+          <div class="arch-outage-banner" id="archOutageBanner" data-tone="normal">Загрузка статуса Store-and-Forward…</div>
         </div>
       </section>
-    </section>
 
-    <!-- Журнал событий и управление -->
-    <section class="col col-right" aria-label="Журнал и управление">
-      <section class="journal" aria-labelledby="hJournal">
-        <div class="pane-head">
-          <h2 id="hJournal">Журнал событий</h2><span class="count" id="jCount">0</span>
+      <!-- Мультиэкранная сетка камер + Панель фокуса и тестирования отказоустойчивости -->
+      <div class="arch-split-grid">
+        <section class="block">
+          <header>
+            <span>Мультиэкранная сетка видеоканалов Edge</span>
+            <span class="mono hint">Нажмите на канал для переключения фокуса</span>
+          </header>
+          <div class="body">
+            <div class="arch-streams-grid" id="archStreamsGrid"></div>
+          </div>
+        </section>
+
+        <section class="block" id="archFocusBox">
+          <header>
+            <span id="archFocusTitle">Фокус видеоканала</span>
+            <span id="archFocusHealth"></span>
+          </header>
+          <div class="body arch-focus-body">
+            <div class="arch-focus-stage">
+              <img id="archFocusImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Выбранный видеоканал Edge">
+            </div>
+            <div class="mono hint" id="archFocusUrl">—</div>
+            <div class="arch-focus-metrics" id="archFocusMetrics"></div>
+            <div class="arch-fault-panel">
+              <span class="ctl-lbl">Симуляция деградации выбранного узла:</span>
+              <div class="seg" id="archFaultBtns" role="group" aria-label="Симуляция деградации видеосигнала">
+                <button type="button" data-fault="recover" aria-pressed="true">Норма</button>
+                <button type="button" data-fault="steam" aria-pressed="false">Пар / дым</button>
+                <button type="button" data-fault="partial_occlusion" aria-pressed="false">Перекрытие 50%</button>
+                <button type="button" data-fault="freeze" aria-pressed="false">Заморозка</button>
+                <button type="button" data-fault="low_light" aria-pressed="false">Темнота</button>
+                <button type="button" data-fault="packet_loss" aria-pressed="false">Пропуск кадров</button>
+                <button type="button" data-fault="offline" aria-pressed="false">Обрыв</button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Буфер Store-and-Forward + Шлюз SCADA (Modbus TCP / MQTT 3.1.1) -->
+      <div class="arch-bottom-grid">
+        <section class="block">
+          <header>
+            <span>Журнал буфера Store-and-Forward (SQLite WAL)</span>
+            <span class="mono hint">Сквозные seq_id и хронологическая досылка</span>
+          </header>
+          <div class="body">
+            <div class="arch-sf-kpis">
+              <div class="arch-kpi"><span>В локальной очереди</span><strong class="mono" id="sfPendingVal">0</strong><small class="mono" id="sfPendingSize">0 КБ</small></div>
+              <div class="arch-kpi"><span>Всего доставлено в АСУ ТП</span><strong class="mono" id="sfDeliveredVal">0</strong><small>Хронологический порядок</small></div>
+              <div class="arch-kpi"><span>Последняя синхронизация</span><strong class="mono" id="sfLastSyncVal">—</strong><small>Batch FIFO</small></div>
+            </div>
+            <table class="ev-tbl">
+              <thead><tr><th>Пакет (Batch ID)</th><th>Завершён</th><th>Записей</th><th>Объём</th><th>Статус</th></tr></thead>
+              <tbody id="archBatchBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="block">
+          <header>
+            <span>Шлюз интеграции АСУ ТП (SCADA)</span>
+            <div class="seg" id="segScadaTab">
+              <button type="button" data-scada="modbus" aria-pressed="true">Modbus TCP регистры</button>
+              <button type="button" data-scada="mqtt" aria-pressed="false">MQTT 3.1.1 сообщения</button>
+            </div>
+          </header>
+          <div class="body" id="archScadaBody">
+            <div class="arch-empty">Загрузка регистров SCADA…</div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== ВКЛАДКА: ДИСПЕТЧЕРИЗАЦИЯ И ТЗ (ТРЕК №1) ==================== -->
+  <section class="workspace page-pane" id="view-dispatch" hidden aria-label="Умная диспетчеризация и генерация ТЗ">
+    <div class="page-wrap disp-wrap">
+      <div class="page-head-row">
+        <div>
+          <h1>Умная система диспетчеризации и автогенерация ТЗ на модернизацию</h1>
+          <p class="page-sub">Предиктивная оценка Health Score (0–100%), анализ скорости нарастания dV/dt и дребезга стрелки, сборка дефектной ведомости и ТЗ в .docx.</p>
         </div>
+        <div class="disp-kpi-strip">
+          <div class="disp-kpi"><span>Средний Health Score</span><strong class="mono" id="dispAvgHealth">—</strong></div>
+          <div class="disp-kpi"><span>Критический износ (&lt;50%)</span><strong class="mono" id="dispCritWear">0</strong></div>
+          <div class="disp-kpi"><span>К модернизации КИП</span><strong class="mono" id="dispModCount">0</strong></div>
+          <div class="disp-kpi"><span>Окупаемость этапа</span><strong class="mono" id="dispPaybackKpi">—</strong></div>
+        </div>
+      </div>
+
+      <!-- Верхний ряд: Матрица Health Score + Детальный график dV/dt и очередь рекомендаций -->
+      <div class="disp-top-grid">
+        <section class="block">
+          <header>
+            <span>Матрица технического состояния оборудования (Health Score)</span>
+            <div class="disp-filters">
+              <select class="input sm" id="dispFilterGroup" aria-label="Фильтр по узлу"><option value="all">Все узлы ТЭЦ</option></select>
+              <select class="input sm" id="dispFilterCause" aria-label="Фильтр по первопричине">
+                <option value="all">Все первопричины</option>
+                <option value="process_anomaly">Техпроцесс</option>
+                <option value="instrument_degradation">Деградация КИП</option>
+                <option value="optical_degradation">Оптика / связь</option>
+                <option value="nominal">Норма</option>
+              </select>
+            </div>
+          </header>
+          <div class="disp-cause-bar mono" id="dispCauseSplit">Загрузка классификации причин…</div>
+          <div class="disp-matrix-scroll">
+            <table class="ev-tbl disp-tbl">
+              <thead>
+                <tr>
+                  <th>Код</th><th>Прибор и узел</th><th>Health Score</th><th>Значение</th>
+                  <th>Скорость</th><th>Дребезг</th><th>Перегр.</th><th>CV</th><th>Причина</th>
+                </tr>
+              </thead>
+              <tbody id="dispMatrixBody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="disp-side-col">
+          <section class="block">
+            <header>
+              <span id="dispDetailTitle">Динамика параметра и производная dV/dt</span>
+              <span id="dispDetailHealth"></span>
+            </header>
+            <div class="body disp-detail-body">
+              <div class="disp-chart-row">
+                <canvas id="dispRateCanvas" class="disp-canvas" aria-label="График тренда и скорости изменения параметра"></canvas>
+                <div class="disp-ev-thumb">
+                  <img id="dispDetailImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Доказательный кадр прибора">
+                </div>
+              </div>
+              <div class="disp-penalties mono" id="dispDetailPenalties"></div>
+            </div>
+          </section>
+
+          <section class="block">
+            <header>
+              <span>Приоритизированная очередь диспетчерских рекомендаций</span>
+              <span class="mono hint">Ранжирование по риску</span>
+            </header>
+            <ul class="disp-recs-list" id="dispRecsList"></ul>
+          </section>
+        </div>
+      </div>
+
+      <!-- Лента инцидентов с доказательными стоп-кадрами -->
+      <section class="block">
+        <header>
+          <span>Журнал инцидентов с доказательными кадрами (CV-разметка угла и шкалы)</span>
+          <span class="mono hint">Нажмите на кадр для увеличения</span>
+        </header>
+        <div class="body">
+          <div class="disp-incidents-strip" id="dispIncidentsStrip"></div>
+        </div>
+      </section>
+
+      <!-- Автоматически сформированные проекты ТЗ при критическом износе (персистентные в SQLite) -->
+      <section class="block" id="autoSpecsSection">
+        <header>
+          <span>Автоматически сформированные проекты ТЗ (триггеры критического состояния)</span>
+          <span class="mono hint" id="autoSpecsCnt">0 документов</span>
+        </header>
+        <div class="body">
+          <table class="ev-tbl">
+            <thead>
+              <tr><th>Документ</th><th>Прибор</th><th>Тех. Health</th><th>Основание</th><th>Статус</th><th>Выгрузка</th></tr>
+            </thead>
+            <tbody id="autoSpecsBody">
+              <tr><td colspan="6" class="arch-empty">Автоматических проектов ТЗ пока не сформировано.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Интерактивный конструктор проектной документации и ТЗ -->
+      <section class="block">
+        <header>
+          <span>Интерактивный конструктор Дефектной ведомости и ТЗ на модернизацию</span>
+          <span class="mono hint" id="specLlmStatus">Автономный режим (air-gapped)</span>
+        </header>
+        <div class="body spec-builder-grid">
+          <form class="spec-form" id="specForm" autocomplete="off">
+            <div class="grid2">
+              <label class="field">
+                <span>Период анализа</span>
+                <select class="input sm" id="specPeriod">
+                  <option value="12h">Текущая смена (12 ч)</option>
+                  <option value="24h">Сутки (24 ч)</option>
+                  <option value="7d">Неделя (7 суток)</option>
+                  <option value="30d">Месяц (30 суток)</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Режим генерации</span>
+                <select class="input sm" id="specMode">
+                  <option value="deterministic">Локальный детерминированный</option>
+                  <option value="llm_enhanced">LLM-обогащение (Ollama / API)</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>Цех / технологический узел</span>
+                <select class="input sm" id="specGroup"><option value="all">Вся станция (КТЦ)</option></select>
+              </label>
+              <label class="field">
+                <span>Конкретный прибор</span>
+                <select class="input sm" id="specInstrument"><option value="all">Все проблемные приборы</option></select>
+              </label>
+              <label class="field span2">
+                <span>Наименование энергообъекта</span>
+                <input class="input sm" id="specPlant" maxlength="200" placeholder="ТЭЦ-22 ПАО «Интер РАО»">
+              </label>
+              <label class="field">
+                <span>Филиал</span>
+                <input class="input sm" id="specBranch" maxlength="200" placeholder="Филиал «Московская генерация»">
+              </label>
+              <label class="field">
+                <span>Подразделение / цех</span>
+                <input class="input sm" id="specWorkshop" maxlength="200" placeholder="Котлотурбинный цех (КТЦ)">
+              </label>
+              <label class="field">
+                <span>Заказчик</span>
+                <input class="input sm" id="specCustomer" maxlength="200" placeholder="ПАО «Интер РАО»">
+              </label>
+              <label class="field">
+                <span>Номер документа</span>
+                <input class="input sm mono" id="specDocNum" maxlength="80" placeholder="Авто (ТЗ-КИП-YYYYMMDD-01)">
+              </label>
+              <label class="field span2">
+                <span>Исполнитель обследования</span>
+                <input class="input sm" id="specContractor" maxlength="200" placeholder="Служба КИПиА, АСУ ТП и видеоаналитики GaugeVision AI">
+              </label>
+            </div>
+            <div class="spec-actions">
+              <button class="btn primary" type="button" id="btnSpecDownloadDocx">
+                <svg class="i" aria-hidden="true"><use href="#i-download" /></svg><span>Скачать .docx (ТЗ и ведомость)</span>
+              </button>
+              <button class="btn" type="button" id="btnSpecDownloadMd">Скачать .md</button>
+              <button class="btn" type="button" id="btnSpecRefresh">Обновить предпросмотр</button>
+            </div>
+          </form>
+
+          <div class="spec-preview-col">
+            <div class="spec-eco-bar mono" id="specEcoSummary">Формирование ТЭО…</div>
+            <div class="spec-preview-box" id="specPreviewBox" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ==================== ВКЛАДКА 2: СОБЫТИЯ ==================== -->
+  <section class="workspace page-pane" id="view-events" hidden aria-label="Активные тревоги и журнал событий">
+    <div class="events-layout">
+      <section class="block active-alarms-sec" aria-labelledby="hActiveAlarms">
+        <header>
+          <span id="hActiveAlarms">Активные аварии, предупреждения и неквитированные срабатывания</span>
+          <span class="mono" id="activeAlarmsCnt">0</span>
+        </header>
+        <div class="active-alarms-body" id="activeAlarmsBody"></div>
+      </section>
+
+      <section class="block events-log-sec" aria-labelledby="hChrono">
+        <header>
+          <span id="hChrono">Хронология событий смены</span>
+          <span class="sp"></span>
+          <span class="mono" id="jCount">0 записей</span>
+        </header>
         <div class="j-filters">
-          <div class="seg" role="group" aria-label="Уровень события" id="jLevels">
-            <button data-f="all" aria-pressed="true">Все</button>
-            <button data-f="alert" aria-pressed="false">Авария<span class="c" id="jcAlert">0</span></button>
-            <button data-f="warning" aria-pressed="false">Предупр.<span class="c" id="jcWarn">0</span></button>
-            <button data-f="link" aria-pressed="false">Связь</button>
-            <button data-f="action" aria-pressed="false">Действия</button>
+          <div class="seg" role="group" aria-label="Фильтр типа состояния" id="jLevels">
+            <button type="button" data-f="all" aria-pressed="true">Все</button>
+            <button type="button" data-f="alert" aria-pressed="false">Аварии <span class="c" id="jcAlert">0</span></button>
+            <button type="button" data-f="warning" aria-pressed="false">Предупр. <span class="c" id="jcWarn">0</span></button>
+            <button type="button" data-f="return" aria-pressed="false">Возврат в норму</button>
+            <button type="button" data-f="link" aria-pressed="false">Связь</button>
+            <button type="button" data-f="action" aria-pressed="false">Квитирование и настройки</button>
           </div>
-          <label class="chk"><input type="checkbox" id="jUnack">Неквитированные</label>
-          <label class="chk"><input type="checkbox" id="jMine">Только выбранный</label>
+          <label class="toolbar-select">
+            <select class="input sm" id="jCamFilter" aria-label="Фильтр по прибору">
+              <option value="all">Все приборы (36)</option>
+            </select>
+          </label>
+          <label class="chk"><input type="checkbox" id="jUnack">Только неквитированные</label>
+          <span class="sp"></span>
+          <span class="hint">Журнал ведётся в памяти процесса сервера; архив достоверных отсчётов камеры пишется в SQLite.</span>
         </div>
-        <ul class="j-list" id="jList" aria-label="События"></ul>
+        <div class="j-table-wrap">
+          <ul class="j-list" id="jList" aria-label="Список событий"></ul>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ==================== ВКЛАДКА 3: ИСТОРИЯ И CSV ==================== -->
+  <section class="workspace page-pane" id="view-history" hidden aria-label="История измерений и выгрузка CSV">
+    <div class="history-layout">
+      <div class="history-bar">
+        <label class="field-inline">
+          <span>Прибор:</span>
+          <select class="input sm" id="histCamSelect"></select>
+        </label>
+        <label class="field-inline">
+          <span>Выборка / прогон:</span>
+          <select class="input sm" id="histRunSelect"></select>
+        </label>
+        <button class="btn sm" type="button" id="btnHistStartRun">
+          <svg class="i" aria-hidden="true"><use href="#i-live" /></svg><span>Начать новый показ</span>
+        </button>
+        <button class="btn sm" type="button" id="btnHistStopRun">
+          <svg class="i" aria-hidden="true"><use href="#i-stop" /></svg><span>Завершить показ</span>
+        </button>
+        <button class="btn sm" type="button" id="btnHistRefresh">Обновить</button>
+        <span class="sp"></span>
+        <button class="btn sm" type="button" id="btnToggleCsvRaw" aria-pressed="false">Предпросмотр текста CSV</button>
+        <a class="btn primary" id="btnDownloadCsv" href="#" download>
+          <svg class="i" aria-hidden="true"><use href="#i-download" /></svg><span id="lblDownloadCsv">Скачать CSV прогона</span>
+        </a>
+      </div>
+
+      <div class="history-meta" id="histMeta"></div>
+
+      <section class="block hist-trend-sec">
+        <header>
+          <span id="histTrendTitle">Тренд достоверных отсчётов прогона</span>
+          <span class="hint">Паузы связи и недостоверные кадры отображаются разрывом линии</span>
+        </header>
+        <div class="hist-trend-body" id="histTrendBody">
+          <canvas id="histTrendCanvas"></canvas>
+          <div class="trend-tip" id="histTrendTip" hidden></div>
+        </div>
       </section>
 
-      <section class="control" aria-label="Управление и диагностика">
-        <div class="tabs" role="tablist" aria-label="Разделы управления">
-          <button role="tab" id="tab-sp" aria-controls="pane-sp" aria-selected="true">Уставки</button>
-          <button role="tab" id="tab-roi" aria-controls="pane-roi" aria-selected="false" tabindex="-1">ROI и шкала</button>
-          <button role="tab" id="tab-diag" aria-controls="pane-diag" aria-selected="false" tabindex="-1">Диагностика</button>
-          <button role="tab" id="tab-src" aria-controls="pane-src" aria-selected="false" tabindex="-1">Источник</button>
+      <pre class="csv-raw-box mono" id="csvRawBox" hidden></pre>
+
+      <section class="block hist-incidents-sec" aria-labelledby="hHistIncidents">
+        <header>
+          <span id="hHistIncidents">Зафиксированные инциденты по всем узлам ТЭЦ (WARNING / CRITICAL / NO_DATA)</span>
+          <span class="mono" id="histIncidentsCnt">0 инцидентов</span>
+        </header>
+        <div class="hist-incidents-wrap">
+          <ul class="j-list" id="histIncidentsList" aria-label="Журнал инцидентов станции в истории"></ul>
         </div>
+      </section>
 
-        <!-- Уставки -->
-        <form class="tabpanel" role="tabpanel" id="pane-sp" aria-labelledby="tab-sp" autocomplete="off" novalidate>
-          <div class="sub" id="spFor">Прибор не выбран</div>
-          <div class="grid4">
-            <label class="field sp-field" data-kind="alert"><span><b>LL</b> нижн. авар.</span><input class="input num mono" name="ll_alert" inputmode="decimal" placeholder="нет"></label>
-            <label class="field sp-field" data-kind="warning"><span><b>L</b> нижн. предупр.</span><input class="input num mono" name="l_warn" inputmode="decimal" placeholder="нет"></label>
-            <label class="field sp-field" data-kind="warning"><span><b>H</b> верхн. предупр.</span><input class="input num mono" name="h_warn" inputmode="decimal" placeholder="нет"></label>
-            <label class="field sp-field" data-kind="alert"><span><b>HH</b> верхн. авар.</span><input class="input num mono" name="hh_alert" inputmode="decimal" placeholder="нет"></label>
-          </div>
-          <div id="spRuler"></div>
-          <div class="hint">Пятизонная модель ISA-18.2 / ГОСТ Р МЭК 62682. Пустое поле — уставка не контролируется. Уставки возрастают: LL ≤ L ≤ H ≤ HH, в пределах шкалы <span class="mono" id="spScale">—</span>.</div>
-          <div class="err-text" id="spErr" role="alert"></div>
-          <div class="foot">
-            <button class="btn primary" type="submit" id="spSave" disabled>Применить уставки</button>
-            <button class="btn" type="button" id="spReset" disabled>Отменить правку</button>
-          </div>
-        </form>
+      <section class="block hist-table-sec">
+        <header>
+          <span>Таблица сохранённых отсчётов (совпадает с серверной выгрузкой CSV)</span>
+          <span class="mono" id="histRowsCount">0 строк</span>
+        </header>
+        <div class="hist-table-wrap">
+          <table class="data-table" id="histTable">
+            <thead>
+              <tr>
+                <th>Локальное время</th>
+                <th>Метка ISO 8601 (UTC)</th>
+                <th>Код прибора</th>
+                <th>Источник</th>
+                <th class="num-col">Значение</th>
+                <th>Ед.</th>
+                <th class="num-col">Угол θ, °</th>
+                <th>Зона уставок</th>
+              </tr>
+            </thead>
+            <tbody id="histTbody"></tbody>
+          </table>
+          <div class="hist-empty" id="histEmpty" hidden></div>
+        </div>
+      </section>
+    </div>
+  </section>
 
-        <!-- ROI и шкала -->
-        <form class="tabpanel" role="tabpanel" id="pane-roi" aria-labelledby="tab-roi" autocomplete="off" novalidate hidden>
-          <div class="sub" id="roiFor">Прибор не выбран</div>
-          <div class="block">
-            <header><span>Область циферблата (ROI)</span><span class="mono" id="roiSrc">—</span></header>
-            <div class="body">
-              <div class="seg" role="radiogroup" aria-label="Режим ROI" id="roiMode">
-                <button type="button" data-mode="auto" aria-pressed="true">Автоматически</button>
-                <button type="button" data-mode="manual" aria-pressed="false">Вручную</button>
-              </div>
-              <div class="grid3" id="roiManual">
-                <label class="field"><span>Центр X, доля кадра</span><input class="input num mono" name="roi_cx" inputmode="decimal"></label>
-                <label class="field"><span>Центр Y, доля кадра</span><input class="input num mono" name="roi_cy" inputmode="decimal"></label>
-                <label class="field"><span>Радиус, доля меньшей стороны</span><input class="input num mono" name="roi_r" inputmode="decimal"></label>
-              </div>
-              <div class="foot">
-                <button type="button" class="btn sm" id="roiEdit" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-target" /></svg>Править на кадре</button>
-                <button type="button" class="btn sm" id="roiRedetect">Найти циферблат заново</button>
-              </div>
-              <div class="hint" id="roiHint"></div>
+  <!-- ==================== ВКЛАДКА 4: КАМЕРЫ И ПОДКЛЮЧЕНИЕ ANDROID ==================== -->
+  <section class="workspace page-pane" id="view-cameras" hidden aria-label="Подключение смартфона Android и камеры">
+    <div class="cameras-layout">
+      <section class="block phone-connect-card">
+        <header>
+          <span>Основной живой источник демонстрации — Смартфон Android (WSS)</span>
+          <span class="mono" id="camCardId">demo-mtp160-steam</span>
+        </header>
+        <div class="phone-card-grid">
+          <div class="phone-qr-col">
+            <div class="qr-stage" id="camQrBox">
+              <div class="qr" id="camQrSvg"><span class="hint">Нажмите «Подключить телефон (QR)», чтобы получить код сессии</span></div>
+            </div>
+            <div class="url-box mono" id="camQrUrl">—</div>
+            <div class="foot">
+              <button class="btn primary" type="button" id="btnCamShowQr">
+                <svg class="i" aria-hidden="true"><use href="#i-qr" /></svg><span>Подключить телефон (QR)</span>
+              </button>
+              <button class="btn" type="button" id="btnCamCopyUrl">Скопировать ссылку</button>
+              <button class="btn sm" type="button" id="btnCamRegenQr" title="Выпустить новый токен и закрыть прежнюю сессию">Перевыпустить QR</button>
             </div>
           </div>
-          <div class="block">
-            <header><span>Двухточечная калибровка шкалы</span><span class="angle-now"><span>θ сейчас</span><span class="a mono" id="calAngle">—</span></span></header>
-            <div class="body">
-              <div class="grid4">
-                <label class="field"><span>V<sub>min</sub></span><input class="input num mono" name="v_min" inputmode="decimal"></label>
-                <label class="field"><span>θ<sub>min</sub>, °</span><span class="input-row"><input class="input num mono" name="theta_min" inputmode="decimal"><button type="button" class="btn icon" data-take="theta_min" title="Взять текущий угол стрелки"><svg class="i" aria-hidden="true"><use href="#i-target" /></svg></button></span></label>
-                <label class="field"><span>V<sub>max</sub></span><input class="input num mono" name="v_max" inputmode="decimal"></label>
-                <label class="field"><span>θ<sub>max</sub>, °</span><span class="input-row"><input class="input num mono" name="theta_max" inputmode="decimal"><button type="button" class="btn icon" data-take="theta_max" title="Взять текущий угол стрелки"><svg class="i" aria-hidden="true"><use href="#i-target" /></svg></button></span></label>
-              </div>
-              <div class="seg" role="radiogroup" aria-label="Направление шкалы" id="calDir">
-                <button type="button" data-dir="cw" aria-pressed="true">По часовой (CW)</button>
-                <button type="button" data-dir="ccw" aria-pressed="false">Против часовой (CCW)</button>
-              </div>
-              <div class="hint">Углы в системе кадра: 0° — на 3 часа, 90° — на 6, 180° — на 9, 270° — на 12. Поставьте стрелку на известную отметку и возьмите текущий угол.</div>
+
+          <div class="phone-status-col">
+            <div class="stage-stepper" id="phoneStepper" aria-label="Состояние цепочки Android"></div>
+            <div class="phone-advice" id="phoneAdvice"></div>
+            <dl class="sys cam-kv-grid" id="camStateGrid"></dl>
+            <div class="foot">
+              <button class="btn" type="button" id="btnCamRestart">
+                <svg class="i" aria-hidden="true"><use href="#i-restart" /></svg><span>Переподключить поток</span>
+              </button>
+              <button class="btn" type="button" id="btnCamOpenCal">Перейти к калибровке прибора</button>
+              <button class="btn" type="button" id="btnCamOpenMonitor">Открыть в мониторинге</button>
+            </div>
+            <div class="steps-box">
+              <strong>Порядок подключения перед судьями:</strong>
+              <ol class="steps">
+                <li>Убедитесь, что ноутбук и Android находятся в одной Wi-Fi сети или точке доступа (адрес сервера: <span class="mono" id="camLanHost">—</span>).</li>
+                <li>Откройте на экране для съёмки симулятор прибора (<a id="lnkSimulator" href="https://gaugevision-simulator.goodlyoatmeal32.chatgpt.site/" target="_blank" rel="noopener">открыть симулятор МТП-160</a>, режим камеры, 0–16 МПа).</li>
+                <li>Отсканируйте QR-код на Android, при первом входе подтвердите доверие к HTTPS-сертификату сервера (<a href="/api/cert.pem" download>скачать cert.pem</a>).</li>
+                <li>Разрешите доступ к задней камере и нажмите «Начать трансляцию» в открытой вкладке смартфона.</li>
+              </ol>
             </div>
           </div>
-          <div class="err-text" id="roiErr" role="alert"></div>
-          <div class="foot">
-            <button class="btn primary" type="submit" id="roiSave" disabled>Применить калибровку</button>
-            <button class="btn" type="button" id="roiReset" disabled>Отменить правку</button>
-          </div>
-        </form>
 
-        <!-- Диагностика -->
-        <div class="tabpanel" role="tabpanel" id="pane-diag" aria-labelledby="tab-diag" hidden>
+          <div class="phone-preview-col">
+            <div class="preview-head">
+              <span>Проверка живого кадра</span>
+              <div class="seg" id="segCamPreview">
+                <button type="button" data-cprev="overlay" aria-pressed="true">Разметка</button>
+                <button type="button" data-cprev="raw" aria-pressed="false">Сырой кадр</button>
+              </div>
+            </div>
+            <div class="cam-preview-stage" id="camPreviewStage">
+              <img id="camPreviewImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-empty="true" alt="Предпросмотр кадра смартфона" decoding="async">
+              <div class="cam-preview-empty" id="camPreviewEmpty">Кадры со смартфона ещё не поступали</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <details class="tech-collapse" id="techDiagCollapse">
+        <summary>Техническая диагностика конвейера и дополнительные источники видео (RTSP / ONVIF / USB)</summary>
+        <div class="tech-collapse-body">
+          <div class="foot">
+            <button class="btn sm" type="button" data-act="add"><svg class="i" aria-hidden="true"><use href="#i-plus" /></svg><span>Добавить IP/USB камеру</span></button>
+            <button class="btn sm" type="button" data-act="discover"><svg class="i" aria-hidden="true"><use href="#i-search" /></svg><span>Поиск камер в подсети</span></button>
+          </div>
           <div class="sys" id="diagSys"></div>
           <div style="overflow:auto">
             <table class="diag" id="diagTable">
-              <thead><tr><th>Прибор</th><th title="Кадров в секунду с камеры">Захват</th><th title="Обработано кадров конвейером в секунду, измерено пультом">Обраб.</th><th title="Время конвейера на кадр: медиана / 95-й процентиль, мс">p50 / p95</th><th title="В сети непрерывно">Аптайм</th><th title="Неудачных подключений подряд">Сбои</th></tr></thead>
+              <thead><tr><th>Прибор</th><th>Источник</th><th>Статус</th><th>Захват, к/с</th><th>Обработка, к/с</th><th>p50 / p95, мс</th><th>Аптайм</th><th>Сбои</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
           <div id="diagErr"></div>
-          <div class="hint">Захват и обработка — кадров в секунду, конвейер — миллисекунд на кадр. Обработку и конвейер пульт измеряет по последним 30 с телеметрии, захват и сбои сообщает сервер.</div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ==================== ВКЛАДКА 5: ПРИБОРЫ И КАЛИБРОВКА ==================== -->
+  <section class="workspace page-pane" id="view-calibration" hidden aria-label="Настройка прибора, шкалы и уставок">
+    <div class="cal-layout">
+      <div class="cal-selector-bar">
+        <input class="input sm" type="search" id="calSearch" placeholder="Найти прибор по коду или названию…" aria-label="Поиск прибора для настройки">
+        <label class="field-inline">
+          <span>Выбранный прибор:</span>
+          <select class="input sm" id="calSelect" aria-label="Прибор для настройки"></select>
+        </label>
+        <button class="btn sm" type="button" id="btnCalPresetMtp" title="Заполнить штатные параметры МТП-160 (0–16 МПа, 270° CW, H=14,2, HH=15,2)">Профиль МТП-160 (0–16 МПа)</button>
+        <span class="sp"></span>
+        <button class="btn sm" type="button" id="btnCalBackMonitor">
+          <svg class="i" aria-hidden="true"><use href="#i-back" /></svg><span>К мониторингу</span>
+        </button>
+      </div>
+
+      <div class="cal-sim-guard" id="calSimGuard" hidden>
+        <strong>Выбран синтетический прибор демонстрационного стенда</strong>
+        <p>Позиции 02–36 генерируются адаптером режимов станции и не привязаны к видеокамере. Для настройки шкалы и ROI переключитесь на живой манометр с камеры смартфона.</p>
+        <button class="btn primary" type="button" id="btnCalSwitchLive">Перейти к К1-Р01 (Камера телефона)</button>
+      </div>
+
+      <form class="cal-grid" id="calMasterForm" autocomplete="off" novalidate>
+        <div class="cal-visual-col">
+          <section class="block">
+            <header>
+              <span>Кадр прибора, область ROI и отметки шкалы</span>
+              <div class="seg" id="segCalFreeze">
+                <button type="button" data-freeze="live" aria-pressed="true">Живой кадр</button>
+                <button type="button" data-freeze="freeze" aria-pressed="false">Стоп-кадр</button>
+              </div>
+            </header>
+            <div class="cal-stage-bar">
+              <div class="seg" id="segCalPick">
+                <button type="button" data-pick="none" aria-pressed="true">Просмотр</button>
+                <button type="button" data-pick="roi" aria-pressed="false">Двигать ROI</button>
+                <button type="button" data-pick="theta_min" aria-pressed="false">Клик θmin (0)</button>
+                <button type="button" data-pick="theta_max" aria-pressed="false">Клик θmax (16)</button>
+              </div>
+              <span class="sp"></span>
+              <button class="btn sm" type="button" id="btnCalRedetect">Найти циферблат заново</button>
+            </div>
+            <div class="cal-media" id="calMedia">
+              <img id="calFrameImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-empty="true" alt="Кадр калибровки прибора" decoding="async">
+              <svg class="ov" id="calOverlaySvg" aria-hidden="true"></svg>
+              <div class="cal-media-empty" id="calMediaEmpty">Подключите смартфон, чтобы увидеть кадр прибора и оверлей стрелки</div>
+            </div>
+            <div class="cal-live-strip mono" id="calLiveStrip">
+              <span>Распознанный угол θ: <b id="calLiveAngle">—</b></span>
+              <span>Сырое знач.: <b id="calLiveRaw">—</b></span>
+              <span>Проверка по черновику: <b id="calDraftPreviewVal">—</b></span>
+            </div>
+          </section>
         </div>
 
-        <!-- Источник -->
-        <form class="tabpanel" role="tabpanel" id="pane-src" aria-labelledby="tab-src" autocomplete="off" novalidate hidden>
-          <div class="sub" id="srcFor">Прибор не выбран</div>
-          <div class="grid2">
-            <label class="field span2"><span>Наименование прибора</span><input class="input" name="name" maxlength="200" required></label>
-            <label class="field"><span>Тип прибора</span><select class="input" name="gauge_type"></select></label>
-            <label class="field"><span>Единица измерения</span><select class="input" name="unit"></select></label>
-            <label class="field"><span>Тип источника</span><select class="input" name="type"></select></label>
-            <label class="field" data-url><span>Адрес потока</span><input class="input mono" name="source_url"></label>
-          </div>
-          <div class="hint" data-url-hint></div>
-          <div class="err-text" id="srcErr" role="alert"></div>
-          <div class="foot">
-            <button class="btn primary" type="submit" id="srcSave" disabled>Сохранить</button>
-            <span class="sp"></span>
-            <button class="btn sm" type="button" id="srcRestart"><svg class="i" aria-hidden="true"><use href="#i-restart" /></svg>Переподключить</button>
-            <button class="btn sm" type="button" id="srcQr" hidden><svg class="i" aria-hidden="true"><use href="#i-qr" /></svg>QR</button>
-          </div>
-          <div class="foot">
-            <button class="btn sm danger" type="button" id="srcClear">Очистить архив</button>
-            <button class="btn sm danger" type="button" id="srcDelete"><svg class="i" aria-hidden="true"><use href="#i-trash" /></svg>Удалить прибор</button>
-          </div>
-        </form>
-      </section>
-    </section>
-  </main>
+        <div class="cal-form-col">
+          <section class="block">
+            <header><span>1. Источник, наименование и единица измерения</span><span class="mono" id="calSourceBadge">Камера телефона</span></header>
+            <div class="body grid3">
+              <label class="field span2">
+                <span>Наименование прибора</span>
+                <input class="input" name="name" maxlength="200" required>
+                <small class="field-err" data-ferr="name"></small>
+              </label>
+              <label class="field">
+                <span>Источник данных</span>
+                <input class="input" id="calSourceReadonly" value="Камера телефона (WSS)" readonly>
+              </label>
+              <label class="field span2">
+                <span>Тип прибора КИПиА</span>
+                <select class="input" name="gauge_type" id="calGaugeType"></select>
+              </label>
+              <label class="field">
+                <span>Единица шкалы</span>
+                <select class="input" name="unit" id="calUnit"></select>
+              </label>
+            </div>
+          </section>
+
+          <section class="block">
+            <header><span>2. Область циферблата (ROI)</span><span class="mono" id="calRoiStatus">—</span></header>
+            <div class="body">
+              <div class="foot">
+                <div class="seg" id="calRoiMode">
+                  <button type="button" data-rmode="auto" aria-pressed="true">Автоматически (YOLO / эллипс)</button>
+                  <button type="button" data-rmode="manual" aria-pressed="false">Ручная окружность</button>
+                </div>
+              </div>
+              <div class="grid3" id="calRoiInputs">
+                <label class="field"><span>Центр X (0,05…0,95)</span><input class="input num mono" name="roi_cx" inputmode="decimal"><small class="field-err" data-ferr="roi_cx"></small></label>
+                <label class="field"><span>Центр Y (0,05…0,95)</span><input class="input num mono" name="roi_cy" inputmode="decimal"><small class="field-err" data-ferr="roi_cy"></small></label>
+                <label class="field"><span>Радиус R (0,05…1,00)</span><input class="input num mono" name="roi_r" inputmode="decimal"><small class="field-err" data-ferr="roi_r"></small></label>
+              </div>
+            </div>
+          </section>
+
+          <section class="block">
+            <header><span>3. Шкала прибора (две опорные отметки и направление)</span><span class="mono" id="calArcSpanLbl">Дуга 270,0° CW</span></header>
+            <div class="body">
+              <div class="grid4">
+                <label class="field">
+                  <span>Начало шкалы V<sub>min</sub>, <em data-unit-lbl>МПа</em></span>
+                  <input class="input num mono" name="v_min" inputmode="decimal">
+                  <small class="field-err" data-ferr="v_min"></small>
+                </label>
+                <label class="field">
+                  <span>Угол θ<sub>min</sub>, °</span>
+                  <span class="input-row">
+                    <input class="input num mono" name="theta_min" inputmode="decimal">
+                    <button class="btn icon" type="button" data-take-live="theta_min" title="Взять текущий угол распознанной стрелки"><svg class="i" aria-hidden="true"><use href="#i-target" /></svg></button>
+                  </span>
+                  <small class="field-err" data-ferr="theta_min"></small>
+                </label>
+                <label class="field">
+                  <span>Конец шкалы V<sub>max</sub>, <em data-unit-lbl>МПа</em></span>
+                  <input class="input num mono" name="v_max" inputmode="decimal">
+                  <small class="field-err" data-ferr="v_max"></small>
+                </label>
+                <label class="field">
+                  <span>Угол θ<sub>max</sub>, °</span>
+                  <span class="input-row">
+                    <input class="input num mono" name="theta_max" inputmode="decimal">
+                    <button class="btn icon" type="button" data-take-live="theta_max" title="Взять текущий угол распознанной стрелки"><svg class="i" aria-hidden="true"><use href="#i-target" /></svg></button>
+                  </span>
+                  <small class="field-err" data-ferr="theta_max"></small>
+                </label>
+              </div>
+              <div class="foot">
+                <div class="seg" id="calDirSeg">
+                  <button type="button" data-cdir="cw" aria-pressed="true">По часовой стрелке (CW)</button>
+                  <button type="button" data-cdir="ccw" aria-pressed="false">Против часовой (CCW)</button>
+                </div>
+                <span class="hint">Углы кадра: 0° — 3 ч, 90° — 6 ч, 180° — 9 ч, 270° — 12 ч.</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="block">
+            <header>
+              <span>4. Границы зон сигнализации (LL, L, H, HH)</span>
+              <label class="chk"><input type="checkbox" id="calLowerEnabled">Двусторонние зоны (нижние LL и L)</label>
+            </header>
+            <div class="body">
+              <div class="grid4">
+                <label class="field sp-field" data-kind="alert">
+                  <span><b>LL</b> нижн. авар., <em data-unit-lbl>МПа</em></span>
+                  <input class="input num mono" name="ll_alert" inputmode="decimal" placeholder="выкл.">
+                  <small class="field-err" data-ferr="ll_alert"></small>
+                </label>
+                <label class="field sp-field" data-kind="warning">
+                  <span><b>L</b> нижн. предупр., <em data-unit-lbl>МПа</em></span>
+                  <input class="input num mono" name="l_warn" inputmode="decimal" placeholder="выкл.">
+                  <small class="field-err" data-ferr="l_warn"></small>
+                </label>
+                <label class="field sp-field" data-kind="warning">
+                  <span><b>H</b> верхн. предупр., <em data-unit-lbl>МПа</em></span>
+                  <input class="input num mono" name="h_warn" inputmode="decimal" required>
+                  <small class="field-err" data-ferr="h_warn"></small>
+                </label>
+                <label class="field sp-field" data-kind="alert">
+                  <span><b>HH</b> верхн. авар., <em data-unit-lbl>МПа</em></span>
+                  <input class="input num mono" name="hh_alert" inputmode="decimal" required>
+                  <small class="field-err" data-ferr="hh_alert"></small>
+                </label>
+              </div>
+
+              <div class="dual-rulers">
+                <div class="ruler-compare-row">
+                  <span class="ruler-cmp-lbl">Сохранено на сервере:</span>
+                  <div id="calSavedRuler"></div>
+                </div>
+                <div class="ruler-compare-row">
+                  <span class="ruler-cmp-lbl">Предлагаемый черновик:</span>
+                  <div id="calDraftRuler"></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="block cal-save-block">
+            <div class="body">
+              <div class="err-text" id="calFormErr" role="alert"></div>
+              <div class="cal-save-status" id="calSaveStatus" hidden></div>
+              <div class="foot">
+                <button class="btn primary" type="submit" id="btnCalSave" disabled>Сохранить конфигурацию прибора</button>
+                <button class="btn" type="button" id="btnCalReset" disabled>Отменить черновик</button>
+                <span class="sp"></span>
+                <button class="btn" type="button" id="btnCalSaveAndMonitor" disabled>Сохранить и открыть мониторинг</button>
+              </div>
+            </div>
+          </section>
+
+          <details class="danger-collapse">
+            <summary>Служебные и необратимые операции с архивом</summary>
+            <div class="foot danger-foot">
+              <button class="btn sm danger" type="button" id="btnCalClearHistory">Очистить весь архив прибора</button>
+              <button class="btn sm danger" type="button" id="btnCalDeleteCam"><svg class="i" aria-hidden="true"><use href="#i-trash" /></svg><span>Удалить камеру</span></button>
+            </div>
+          </details>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <footer class="hmi-disclaimer" id="hmiDisclaimer">
+    <span>Вспомогательная система оптического мониторинга GaugeVision AI. Не является средством измерений по ФЗ-102 и не заменяет системы ПАЗ / АСУ ТП.</span>
+    <span class="mono">Air-Gapped Local Loop</span>
+  </footer>
 </div>
 
-<!-- Добавление камеры -->
+<!-- Диалог локальной аутентификации (RBAC) -->
+<dialog class="dlg narrow" id="dlgLogin">
+  <div class="wrap">
+    <header>
+      <h2>Вход в систему GaugeVision AI</h2>
+      <button class="btn icon" type="button" id="btnLoginClose" title="Закрыть"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button>
+    </header>
+    <form class="body" id="loginForm" autocomplete="off">
+      <p class="hint" id="loginCurrentInfo">Локальная аутентификация (роли: operator, engineer, admin).</p>
+      <div class="field">
+        <label for="inpLoginUser">Логин</label>
+        <input id="inpLoginUser" name="username" type="text" required autocomplete="username" placeholder="operator / engineer / admin">
+      </div>
+      <div class="field">
+        <label for="inpLoginPass">Пароль</label>
+        <input id="inpLoginPass" name="password" type="password" required autocomplete="current-password" placeholder="Пароль учётной записи">
+      </div>
+      <div class="err-text" id="loginErr" role="alert"></div>
+      <div class="foot">
+        <button class="btn primary" type="submit" id="btnLoginSubmit">Войти</button>
+        <button class="btn danger" type="button" id="btnLogout" hidden>Выйти из сеанса</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+
+<!-- Диалог быстрого показа QR поверх любого экрана -->
+<dialog class="dlg" id="dlgPhone">
+  <div class="wrap">
+    <header><h2>Подключение смартфона Android по QR-коду</h2><button class="btn icon" type="button" data-close title="Закрыть"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button></header>
+    <div class="body">
+      <div class="qr-box" id="phoneResult">
+        <div class="qr" id="pQr"></div>
+        <div class="qr-side">
+          <div><strong id="pCamTitle">Манометр острого пара котла К-1 (МТП-160)</strong></div>
+          <div class="mono hint" id="pStageBadge">Статус: Ожидаем телефон</div>
+          <ol class="steps">
+            <li>Ноутбук и Android подключены к одной локальной сети или точке доступа.</li>
+            <li>Отсканируйте QR-код и откройте ссылку в Chrome на Android.</li>
+            <li>При первом входе подтвердите переход по самоподписанному HTTPS-сертификату.</li>
+            <li>Разрешите доступ к задней камере и нажмите «Начать трансляцию».</li>
+          </ol>
+          <div class="url-box mono" id="pUrl"></div>
+          <div class="foot">
+            <button class="btn sm" type="button" id="btnCopyUrl">Скопировать ссылку</button>
+            <button class="btn sm" type="button" id="btnDlgRegenQr">Перевыпустить QR</button>
+            <button class="btn sm" type="button" id="btnDlgGoCameras">Открыть раздел «Камеры»</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer><button class="btn primary" type="button" data-close>Готово</button></footer>
+  </div>
+</dialog>
+
+<!-- Диалог просмотра стоп-кадра из вкладки «События» -->
+<dialog class="dlg wide" id="dlgSnapshot">
+  <div class="wrap">
+    <header><h2 id="snapDlgTitle">Стоп-кадр срабатывания</h2><button class="btn icon" type="button" data-close title="Закрыть"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button></header>
+    <div class="body">
+      <div class="snap-dlg-meta" id="snapDlgMeta"></div>
+      <div class="snap-dlg-stage"><img id="snapDlgImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Стоп-кадр распознавания в момент срабатывания"></div>
+    </div>
+    <footer>
+      <button class="btn ack" type="button" id="btnSnapDlgAck">Квитировать событие</button>
+      <button class="btn" type="button" data-close>Закрыть</button>
+    </footer>
+  </div>
+</dialog>
+
+<!-- Добавление дополнительной камеры -->
 <dialog class="dlg" id="dlgAdd">
   <form method="dialog" id="addForm" autocomplete="off" novalidate>
     <header><h2>Добавить камеру</h2><button class="btn icon" value="cancel" formnovalidate title="Закрыть"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button></header>
@@ -314,71 +1251,40 @@
         <label class="field" data-url><span>Адрес потока</span><input class="input mono" name="source_url"></label>
       </div>
       <div class="hint" data-url-hint></div>
-      <div class="hint">Калибровка шкалы и уставки задаются после добавления, на вкладках «ROI и шкала» и «Уставки».</div>
       <div class="err-text" role="alert" data-err></div>
     </div>
     <footer><button class="btn" value="cancel" formnovalidate>Отмена</button><button class="btn primary" value="ok">Добавить</button></footer>
   </form>
 </dialog>
 
-<!-- Поиск устройств -->
+<!-- Поиск устройств ONVIF -->
 <dialog class="dlg wide" id="dlgDiscover">
   <div class="wrap">
-    <header><h2>Поиск устройств в сети</h2><button class="btn icon" data-close title="Закрыть"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button></header>
+    <header><h2>Поиск устройств в сети</h2><button class="btn icon" type="button" data-close title="Закрыть"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button></header>
     <div class="body">
-      <div class="hint">ONVIF WS-Discovery (мультикаст 239.255.255.250:3702) и сканирование подсети /24 по портам 554, 80, 8080, 4747 (DroidCam), 8554.</div>
+      <div class="hint">ONVIF WS-Discovery и сканирование подсети /24 по портам 554, 80, 8080, 4747, 8554.</div>
       <div class="input-row">
         <input class="input mono" id="discSubnet" placeholder="IP из подсети, например 192.168.1.1; пусто — подсеть сервера">
-        <button class="btn primary" id="btnScan"><svg class="i" aria-hidden="true"><use href="#i-search" /></svg>Сканировать</button>
+        <button class="btn primary" type="button" id="btnScan"><svg class="i" aria-hidden="true"><use href="#i-search" /></svg><span>Сканировать</span></button>
       </div>
       <div class="hint" id="discStatus" role="status"></div>
       <div style="overflow-x:auto">
         <table class="disc" id="discTable" hidden>
-          <thead><tr><th>IP-адрес</th><th>Устройство</th><th>Порты</th><th>Адрес потока (можно дописать логин и пароль)</th><th></th></tr></thead>
+          <thead><tr><th>IP-адрес</th><th>Устройство</th><th>Порты</th><th>Адрес потока</th><th></th></tr></thead>
           <tbody id="discBody"></tbody>
         </table>
       </div>
     </div>
-    <footer><button class="btn" data-close>Закрыть</button></footer>
+    <footer><button class="btn" type="button" data-close>Закрыть</button></footer>
   </div>
 </dialog>
 
-<!-- Смартфон как камера -->
-<dialog class="dlg" id="dlgPhone">
-  <div class="wrap">
-    <header><h2>Смартфон как Wi-Fi камера</h2><button class="btn icon" data-close title="Закрыть"><svg class="i" aria-hidden="true"><use href="#i-close" /></svg></button></header>
-    <div class="body">
-      <div id="phoneSetup" class="grid2">
-        <label class="field span2"><span>Наименование прибора</span><input class="input" id="pName" maxlength="200" placeholder="Тягомер топки котла №1"></label>
-        <label class="field"><span>Тип прибора</span><select class="input" id="pGaugeType"></select></label>
-        <label class="field"><span>Единица измерения</span><select class="input" id="pUnit"></select></label>
-        <div class="hint span2">Приложение не нужно: трансляцию ведёт браузер смартфона (Safari или Chrome).</div>
-      </div>
-      <div id="phoneResult" class="qr-box" hidden>
-        <div class="qr" id="pQr"></div>
-        <div style="display:grid;gap:.625rem">
-          <ol class="steps">
-            <li>Смартфон и сервер в одной сети Wi-Fi или LAN.</li>
-            <li>Отсканируйте QR-код камерой телефона и откройте ссылку.</li>
-            <li>При первом входе примите самоподписанный сертификат.</li>
-            <li>Разрешите доступ к камере и нажмите «Начать трансляцию».</li>
-          </ol>
-          <div class="url-box" id="pUrl"></div>
-          <div><button class="btn sm" id="btnCopyUrl">Копировать ссылку</button></div>
-          <div class="hint">Ссылка содержит одноразовый токен. После перезапуска сервера создайте QR заново: вкладка «Источник», кнопка «QR».</div>
-        </div>
-      </div>
-    </div>
-    <footer><button class="btn" data-close>Закрыть</button><button class="btn primary" id="btnMakeQr">Создать QR-код</button></footer>
-  </div>
-</dialog>
-
-<!-- Подтверждение -->
+<!-- Диалог подтверждения -->
 <dialog class="dlg narrow" id="dlgConfirm">
   <form method="dialog">
     <header><h2 id="confTitle">Подтвердите действие</h2></header>
     <div class="body"><p id="confText" style="margin:0;line-height:1.5"></p></div>
-    <footer><button class="btn" value="cancel">Отмена</button><button class="btn danger" value="ok" id="confOk">Удалить</button></footer>
+    <footer><button class="btn" value="cancel">Отмена</button><button class="btn danger" value="ok" id="confOk">Подтвердить</button></footer>
   </form>
 </dialog>
 

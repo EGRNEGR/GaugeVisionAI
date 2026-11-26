@@ -1,0 +1,26 @@
+{
+  "warm_1ch": {
+    "elapsed_s": 3.02,
+    "inferences": 31,
+    "fps": 10.27,
+    "p50_ms": 32.3,
+    "p95_ms": 52.6,
+    "p99_ms": 95.2
+  },
+  "isolation_4ch": {
+    "mid_counts": {
+      "c0": 12,
+      "c1": 11,
+      "c2": 11,
+      "c3": 11
+    },
+    "end_counts": {
+      "c0": 12,
+      "c1": 24,
+      "c2": 23,
+      "c3": 24
+    },
+    "c0_stopped": true,
+    "c1_to_c3_continued": true
+  }
+}

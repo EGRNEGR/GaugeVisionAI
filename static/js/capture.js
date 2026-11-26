@@ -253,6 +253,7 @@
       st.wsAttempt = 0;
       st.inflight = false;
       setConn(st.streaming ? 'online' : 'reconnecting', st.streaming ? 'В эфире' : 'Подключено');
+      sendClientState(st.streaming ? 'streaming' : (st.track ? 'camera_ready' : 'awaiting_permission'));
       ping = setInterval(() => { if (ws.readyState === 1 && !st.streaming) ws.send(JSON.stringify({ type: 'ping', t: Date.now() })); }, 15000);
     };
     ws.onmessage = (ev) => {
@@ -290,6 +291,14 @@
       setTimeout(connectWs, d * 1000);
     };
     ws.onerror = () => {};
+  }
+
+  function sendClientState(stateName, errorText = null) {
+    if (st.ws && st.ws.readyState === 1) {
+      try {
+        st.ws.send(JSON.stringify({ type: 'client_state', state: stateName, error: errorText }));
+      } catch (_) { /* сокет закрывается */ }
+    }
   }
 
   function showReading(r) {
@@ -364,7 +373,7 @@
     }
     const fmtName = st.mime === 'image/webp' ? 'WebP' : 'JPEG';
     $('#stats').innerHTML = st.streaming
-      ? `<span class="live-dot"></span>${s.fps.toFixed(1)} к/с · ${s.kb.toFixed(0)} КБ<br>${fmtName} · RTT ${s.rtt} мс`
+      ? `<span class="live-dot"></span>${s.fps.toFixed(1)} к/с, ${s.kb.toFixed(0)} КБ<br>${fmtName}, RTT ${s.rtt} мс`
       : `${video.videoWidth || 0}×${video.videoHeight || 0}`;
   }
 
@@ -384,6 +393,7 @@
     btn.textContent = '■ Остановить';
     btn.classList.add('live');
     if (st.ws && st.ws.readyState === 1) setConn('online', 'В эфире');
+    sendClientState('streaming');
     requestWakeLock();
     loop();
   }
@@ -396,18 +406,23 @@
     btn.classList.remove('live');
     if (st.wakeLock) { st.wakeLock.release().catch(() => {}); st.wakeLock = null; }
     if (st.ws && st.ws.readyState === 1) setConn('reconnecting', 'Подключено (пауза)');
+    sendClientState('paused');
     updateStats();
   }
 
   $('#btnStream').addEventListener('click', () => (st.streaming ? stopStreaming() : startStreaming()));
 
   document.addEventListener('visibilitychange', async () => {
-    if (document.hidden) return;
+    if (document.hidden) {
+      if (st.streaming) sendClientState('paused', 'экран смартфона свёрнут или выключен');
+      return;
+    }
     if (st.streaming && !st.wakeLock) requestWakeLock();
     // iOS/Android останавливают камеру в фоне — восстанавливаем
     if (!st.track || st.track.readyState === 'ended') {
       try { await selectLens(st.lensKey); } catch (_) { /* покажется ниже */ }
     }
+    sendClientState(st.streaming ? 'streaming' : 'camera_ready');
   });
 
   if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
@@ -417,7 +432,7 @@
   function updateInfo() {
     const settings = st.track && st.track.getSettings ? st.track.getSettings() : {};
     const lens = st.lenses.find((l) => l.key === st.lensKey);
-    $('#camInfo').textContent = `${lens ? lens.label : '—'} · ${settings.width || '?'}×${settings.height || '?'}`;
+    $('#camInfo').textContent = `${lens ? lens.label : '—'}, ${settings.width || '?'}×${settings.height || '?'}`;
   }
 
   // ---------------------------------------------------------------------
@@ -439,8 +454,10 @@
     try {
       await openCamera(st.lenses.length ? st.lenses[0].constraints : { facingMode: { ideal: 'environment' } });
       hideMsg();
+      sendClientState(st.streaming ? 'streaming' : 'camera_ready');
     } catch (e) {
       const denied = e && (e.name === 'NotAllowedError' || e.name === 'SecurityError');
+      sendClientState(denied ? 'permission_denied' : 'camera_error', e && (e.name || e.message));
       showMsg(denied ? 'Доступ к камере запрещён' : 'Камера недоступна',
         denied
           ? 'Разрешите доступ к камере для этого сайта в настройках браузера (iOS: Настройки → Safari → Камера; Chrome: значок замка → Разрешения) и нажмите «Повторить».'

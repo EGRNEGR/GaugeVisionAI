@@ -1,194 +1,375 @@
-// Список приборов: состояние всех точек на одной колонке.
-import { $, $$, esc, fmt, num, decimalsFor, LEVEL_TAG, shiftStart } from './util.js';
-import { state, on, camList, select, displayLevel, unackedByCam } from './store.js';
+// Вкладка «Мониторинг»: сетка приборов (строго 3×3 / 4×4 / 6×6 колонок),
+// двухстрочные наименования без потери идентификатора контура, полнофоновая заливка
+// WARNING / CRITICAL, скорость изменения Δ/мин, 15-минутный спарклайн и шкала уставок.
+import { $, $$, esc, fmt, fmtRate, durStr, LEVEL_TAG } from './util.js';
+import {
+  state, on, camList, select, setDetailOpen, setView,
+  buildSensorTelemetry, selectDashboardSummary, unackedByCam,
+} from './store.js';
 import { renderRuler } from './ruler.js';
-import { fetchSeries, pushLive } from './series.js';
-import { drawSpark } from './plot.js';
+import { renderSparklineSvg } from './plot.js';
+import { applyInspectorLayout } from './readout.js';
 
-const list = $('#instList');
-const rows = new Map();          // camId -> { li, btn, f }
-const sparks = new Map();        // camId -> ряд смены
-let sortMode = localStorage.getItem('gv.sort') || 'order';
-let sparkDirty = new Set();
+const gridEl = $('#tileGrid');
+const tiles = new Map(); // id -> { btn, code, name, badges, num, unit, spark, rate, ruler }
 
-/** Какая уставка нарушена — как crossed_setpoint на сервере. */
-export function crossed(value, t) {
-  const v = num(value);
-  if (v === null || !t) return null;
-  const LL = num(t.ll_alert), L = num(t.l_warn), H = num(t.h_warn), HH = num(t.hh_alert);
-  if (LL !== null && v <= LL) return 'LL';
-  if (HH !== null && v >= HH) return 'HH';
-  if (L !== null && v <= L) return 'L';
-  if (H !== null && v >= H) return 'H';
-  return null;
-}
-
-/** Текст и уровень тега состояния прибора. */
-export function tagOf(cam) {
-  const lv = displayLevel(cam);
-  if (!state.connected) return { level: 'stale', text: 'НЕТ ДАННЫХ' };
-  if (lv === 'stale') return { level: 'stale', text: cam.status === 'reconnecting' ? 'ПЕРЕПОДКЛ.' : 'НЕТ СВЯЗИ' };
-  if (lv === 'hold') return { level: 'hold', text: 'УДЕРЖАНИЕ' };
-  const sp = lv === 'normal' ? null : crossed(cam.reading.value, cam.data.thresholds);
-  return { level: lv, text: sp ? `${LEVEL_TAG[lv]} ${sp}` : LEVEL_TAG[lv] };
-}
-
-export function applyTag(el, cam, unack) {
-  const t = tagOf(cam);
-  el.dataset.level = t.level;
-  el.textContent = t.text;
-  el.dataset.unack = String(!!unack);
-  el.title = unack ? 'Срабатывание не квитировано' : '';
-}
-
-function severity(cam, unack) {
-  const lv = displayLevel(cam);
-  const base = lv === 'alert' ? 4 : lv === 'warning' ? 3 : (lv === 'stale' || lv === 'hold') ? 2 : 0;
-  return base + (unack.has(cam.id) ? 0.5 : 0);
-}
-
-function rowFor(cam) {
-  let r = rows.get(cam.id);
-  if (r) return r;
-  const li = document.createElement('li');
-  li.innerHTML = `<button class="inst" type="button">
-      <span class="idx"></span><span class="name"></span><span class="tag"></span>
-      <span class="val"><span class="v"></span><span class="ruler"></span></span>
-      <canvas class="spark" aria-hidden="true"></canvas>
-    </button>`;
-  const btn = li.firstElementChild;
-  const f = (s) => btn.querySelector(s);
-  r = { li, btn, idx: f('.idx'), name: f('.name'), tag: f('.tag'), v: f('.v'), ruler: f('.ruler'), canvas: f('canvas') };
-  btn.addEventListener('click', () => select(cam.id));
-  btn.addEventListener('keydown', (e) => {
-    if (e.key !== 'ArrowDown' && e.key !== 'ArrowUp') return;
-    e.preventDefault();
-    const btns = $$('.inst', list);
-    const i = btns.indexOf(btn) + (e.key === 'ArrowDown' ? 1 : -1);
-    if (btns[i]) { btns[i].focus(); btns[i].click(); }
-  });
-  rows.set(cam.id, r);
-  return r;
-}
-
-function renderRow(cam, unack) {
-  const r = rowFor(cam);
-  const d = decimalsFor(cam.data);
-  const rd = cam.reading;
-  r.name.textContent = cam.data.name;
-  r.btn.title = cam.data.name;
-  applyTag(r.tag, cam, unack.has(cam.id));
-  r.v.innerHTML = `${fmt(rd && rd.value, d)}<small>${esc(cam.data.unit)}</small>`;
-  const lv = displayLevel(cam);
-  r.btn.dataset.stale = String(lv === 'stale' || lv === 'hold');
-  r.btn.setAttribute('aria-current', String(state.selectedId === cam.id));
-  renderRuler(r.ruler, {
-    calibration: cam.data.calibration, thresholds: cam.data.thresholds,
-    value: rd && rd.value, level: lv === 'stale' ? 'stale' : (rd && rd.level) || 'normal', decimals: d,
-  });
-}
-
-/** Полная перерисовка: состав, порядок, номера. */
-export function renderList() {
-  const cams = camList();
-  const unack = unackedByCam();
-  $('#instCount').textContent = String(cams.length);
-  let ordered = cams.map((c, i) => ({ c, i }));
-  if (sortMode === 'severity') {
-    ordered.sort((a, b) => severity(b.c, unack) - severity(a.c, unack) || a.i - b.i);
+function populateGroups() {
+  const sel = $('#selGroup');
+  const groups = [];
+  const seen = new Set();
+  for (const c of camList()) {
+    const g = c.data.group || 'Прочие';
+    if (!seen.has(g)) { seen.add(g); groups.push(g); }
   }
-  for (const id of Array.from(rows.keys())) if (!state.cams.has(id)) { rows.get(id).li.remove(); rows.delete(id); sparks.delete(id); }
-  if (!cams.length) {
-    list.innerHTML = `<li class="empty-list"><p>Приборы ещё не подключены. Добавьте IP-камеру (RTSP или HTTP-MJPEG), найдите устройства в сети или подключите смартфон по QR-коду.</p></li>`;
+  const prev = state.grid.group;
+  sel.innerHTML = `<option value="all">Все узлы (${groups.length})</option>`
+    + groups.map((g) => `<option value="${esc(g)}">${esc(g)}</option>`).join('');
+  sel.value = seen.has(prev) ? prev : 'all';
+  state.grid.group = sel.value;
+}
+
+function matchesFilter(telemetry) {
+  const f = state.grid.filter;
+  if (f === 'alert' && telemetry.status !== 'CRITICAL') return false;
+  if (f === 'warning' && telemetry.status !== 'WARNING') return false;
+  if (f === 'deviation' && telemetry.status !== 'WARNING' && telemetry.status !== 'CRITICAL') return false;
+  if (f === 'nodata' && telemetry.status !== 'STALE') return false;
+  if (state.grid.group !== 'all' && telemetry.group !== state.grid.group) return false;
+  if (state.grid.search) {
+    const q = state.grid.search.toLowerCase();
+    const hay = `${telemetry.code} ${telemetry.displayName} ${telemetry.name} ${telemetry.group}`.toLowerCase();
+    if (!hay.includes(q)) return false;
+  }
+  return true;
+}
+
+function buildTile(id) {
+  let t = tiles.get(id);
+  if (t) return t;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'tile';
+  btn.setAttribute('role', 'listitem');
+  btn.dataset.id = id;
+  btn.innerHTML = `
+    <div class="tile-head">
+      <span class="tile-code"></span>
+      <span class="tile-badges"></span>
+    </div>
+    <div class="tile-name"></div>
+    <div class="tile-mid">
+      <div class="tile-val-wrap">
+        <span class="tile-num mono"></span>
+        <span class="tile-unit"></span>
+      </div>
+      <div class="tile-dyn">
+        <svg class="tile-spark" aria-hidden="true"></svg>
+        <span class="tile-rate mono"></span>
+      </div>
+    </div>
+    <div class="tile-bot">
+      <div class="ruler"></div>
+    </div>`;
+  const q = (s) => btn.querySelector(s);
+  t = {
+    btn,
+    code: q('.tile-code'),
+    badges: q('.tile-badges'),
+    name: q('.tile-name'),
+    num: q('.tile-num'),
+    unit: q('.tile-unit'),
+    spark: q('.tile-spark'),
+    rate: q('.tile-rate'),
+    ruler: q('.ruler'),
+  };
+  btn.addEventListener('click', () => {
+    if (state.selectedId === id && state.detailOpen && state.inspector.mode !== 'collapsed') {
+      setDetailOpen(false);
+    } else {
+      select(id, { openDetail: true });
+    }
+  });
+  btn.addEventListener('keydown', onTileKeydown);
+  tiles.set(id, t);
+  return t;
+}
+
+function renderTileTelemetry(tel) {
+  const t = buildTile(tel.id);
+  const d = tel.decimals;
+  const live = tel.isLive;
+  const unack = tel.unacked;
+
+  t.btn.dataset.live = String(live);
+  t.btn.dataset.tone = tel.tone;
+  t.btn.setAttribute('aria-current', String(state.detailOpen && state.selectedId === tel.id));
+
+  t.code.textContent = tel.code;
+  t.name.textContent = tel.displayName;
+  t.btn.title = `${tel.code} — ${tel.name} (${live ? 'Камера телефона CV' : 'Телеметрия контура'})`;
+
+  // Верхние статусные плашки
+  let badgeHtml = '';
+  if (live) {
+    badgeHtml += '<span class="cam-chip" title="Живой источник компьютерного зрения"><svg class="i" aria-hidden="true"><use href="#i-cam"/></svg>КАМЕРА</span>';
+  }
+  if (tel.status === 'CRITICAL' || tel.status === 'WARNING') {
+    const sp = tel.crossedSetpoint;
+    badgeHtml += `<span class="tile-zone" data-kind="${tel.tone}" data-unack="${unack}">${LEVEL_TAG[tel.tone]}${sp ? ` ${sp}` : ''}</span>`;
+  } else if (tel.status === 'STALE') {
+    const lbl = tel.measState === 'disconnected' ? 'ОЖИД. КАМЕРЫ'
+      : tel.measState === 'awaiting_reading' ? 'ПОИСК СТРЕЛКИ'
+      : tel.measState === 'needs_calibration' ? 'КАЛИБРОВКА'
+      : tel.measState === 'hold' ? 'УДЕРЖАНИЕ' : 'НЕТ ДАННЫХ';
+    badgeHtml += `<span class="tile-zone" data-kind="nodata" data-unack="${unack}">${lbl}</span>`;
+  } else if (unack) {
+    badgeHtml += '<span class="tile-zone" data-kind="warning" data-unack="true">НЕКВИТ.</span>';
+  } else {
+    badgeHtml += '<span class="tile-zone" data-kind="normal">НОРМА</span>';
+  }
+  if (t.badges.dataset.html !== badgeHtml) {
+    t.badges.dataset.html = badgeHtml;
+    t.badges.innerHTML = badgeHtml;
+  }
+
+  // Главное числовое показание и скорость изменения Δ/мин
+  t.num.textContent = fmt(tel.value, d);
+  t.unit.textContent = tel.unit;
+
+  if (tel.hasFreshValid) {
+    const rateTxt = fmtRate(tel.rateOfChange, d);
+    t.rate.textContent = `Δ ${rateTxt}`;
+    t.rate.dataset.dir = tel.rateOfChange > 0.01 ? 'up' : tel.rateOfChange < -0.01 ? 'down' : 'flat';
+  } else {
+    t.rate.textContent = Number.isFinite(tel.ageS) ? `устар. ${durStr(tel.ageS)}` : 'ожид. связи';
+    t.rate.dataset.dir = 'flat';
+  }
+
+  renderSparklineSvg(t.spark, tel);
+
+  renderRuler(t.ruler, {
+    calibration: tel.cam.data.calibration,
+    thresholds: tel.cam.data.thresholds,
+    value: tel.hasFreshValid ? tel.freshValue : null,
+    level: tel.tone === 'nodata' ? 'stale' : tel.tone,
+    showScaleLabels: true,
+    decimals: d,
+  });
+}
+
+function syncFilterBadges(counts) {
+  $('#gfAll').textContent = String(counts.total);
+  $('#gfAlert').textContent = String(counts.critical);
+  $('#gfWarn').textContent = String(counts.warning);
+  $('#gfDev').textContent = String(counts.deviations);
+  $('#gfNoData').textContent = String(counts.stale);
+}
+
+export function renderGrid() {
+  const summary = selectDashboardSummary();
+  syncFilterBadges(summary.counts);
+
+  for (const id of Array.from(tiles.keys())) {
+    if (!state.cams.has(id)) {
+      tiles.get(id).btn.remove();
+      tiles.delete(id);
+    }
+  }
+
+  const filtered = summary.telemetries.filter(matchesFilter);
+  const density = ['9', '16', '36'].includes(String(state.grid.density)) ? Number(state.grid.density) : 36;
+  const pageSize = density === 36 ? Math.max(36, filtered.length || 36) : density;
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  if (state.grid.page > totalPages) state.grid.page = totalPages;
+  if (state.grid.page < 1) state.grid.page = 1;
+
+  const start = (state.grid.page - 1) * pageSize;
+  const visible = density === 36 ? filtered : filtered.slice(start, start + pageSize);
+
+  gridEl.dataset.density = String(density);
+  $$('#segDensity [data-density]').forEach((b) => {
+    b.setAttribute('aria-pressed', String(Number(b.dataset.density) === density));
+  });
+
+  const hasActiveFilter = state.grid.filter !== 'all' || state.grid.group !== 'all' || state.grid.search !== '';
+  $('#btnResetFilters').hidden = !hasActiveFilter;
+
+  $('#gridCountLbl').textContent = density !== 36 && filtered.length > 0
+    ? `${start + 1}–${start + visible.length} из ${filtered.length}`
+    : `${filtered.length} из ${summary.counts.total}`;
+
+  const pager = $('#gridPager');
+  pager.hidden = density === 36 || totalPages <= 1;
+  if (!pager.hidden) {
+    $('#lblPage').textContent = `${state.grid.page} / ${totalPages}`;
+    $('#btnPagePrev').disabled = state.grid.page <= 1;
+    $('#btnPageNext').disabled = state.grid.page >= totalPages;
+  }
+
+  const emptyBox = $('#gridEmpty');
+  if (visible.length === 0) {
+    gridEl.hidden = true;
+    emptyBox.hidden = false;
+    $('#gridEmptyText').textContent = state.grid.filter !== 'all'
+      ? 'Приборов в выбранной категории состояния сейчас нет.'
+      : 'Под выбранные условия поиска приборы не найдены.';
     return;
   }
-  const empty = $('.empty-list', list);
-  if (empty) empty.remove();
-  ordered.forEach(({ c, i }) => {
-    const r = rowFor(c);
-    r.idx.textContent = String(i + 1).padStart(2, '0');
-    renderRow(c, unack);
-    list.appendChild(r.li);
-    if (!sparks.has(c.id)) loadSpark(c);
+  gridEl.hidden = false;
+  emptyBox.hidden = true;
+
+  const frag = document.createDocumentFragment();
+  for (const tel of visible) {
+    renderTileTelemetry(tel);
+    frag.appendChild(tiles.get(tel.id).btn);
+  }
+  const curChildren = Array.from(gridEl.children);
+  const sameOrder = curChildren.length === visible.length && curChildren.every((el, idx) => el.dataset.id === visible[idx].id);
+  if (!sameOrder) {
+    gridEl.replaceChildren(frag);
+  }
+}
+
+export function updateTile(camId) {
+  const summary = selectDashboardSummary();
+  syncFilterBadges(summary.counts);
+  if (state.grid.filter !== 'all') {
+    renderGrid();
+    return;
+  }
+  const tel = summary.byId.get(camId);
+  if (tel && tiles.has(camId)) {
+    renderTileTelemetry(tel);
+  }
+}
+
+function onTileKeydown(e) {
+  if (!['ArrowRight', 'ArrowLeft', 'ArrowDown', 'ArrowUp'].includes(e.key)) return;
+  e.preventDefault();
+  const btns = $$('.tile', gridEl);
+  const idx = btns.indexOf(e.currentTarget);
+  if (idx < 0) return;
+  const cols = state.grid.density === '9' ? 3 : state.grid.density === '16' ? 4 : 6;
+  const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : e.key === 'ArrowDown' ? cols : -cols;
+  const target = btns[idx + step];
+  if (target) target.focus();
+}
+
+export function setMonitorFilter(filterName) {
+  state.grid.filter = filterName;
+  state.grid.page = 1;
+  $$('#segFilter [data-gfilter]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.gfilter === filterName)));
+  renderGrid();
+}
+
+export function resetMonitorFilters() {
+  state.grid.filter = 'all';
+  state.grid.group = 'all';
+  state.grid.search = '';
+  state.grid.page = 1;
+  $('#selGroup').value = 'all';
+  $('#inpSearch').value = '';
+  $$('#segFilter [data-gfilter]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.gfilter === 'all')));
+  renderGrid();
+}
+
+export function jumpToInstrument(instId) {
+  if (!state.cams.has(instId)) return;
+  setView('monitor');
+  const summary = selectDashboardSummary();
+  const tel = summary.byId.get(instId);
+  if (tel && !matchesFilter(tel)) {
+    resetMonitorFilters();
+  }
+  const density = Number(state.grid.density) || 36;
+  if (density !== 36) {
+    const filtered = selectDashboardSummary().telemetries.filter(matchesFilter);
+    const pos = filtered.findIndex((t) => t.id === instId);
+    if (pos >= 0) state.grid.page = Math.floor(pos / density) + 1;
+  }
+  select(instId, { openDetail: true });
+  renderGrid();
+  requestAnimationFrame(() => {
+    tiles.get(instId)?.btn.scrollIntoView({ block: 'nearest' });
   });
 }
 
-export function updateRow(camId) {
-  const cam = state.cams.get(camId);
-  if (cam) renderRow(cam, unackedByCam());
-}
-
-async function loadSpark(cam) {
-  sparks.set(cam.id, null);
-  try {
-    const s = await fetchSeries(cam.id, shiftStart(), 140);
-    sparks.set(cam.id, s);
-    sparkDirty.add(cam.id);
-  } catch (e) {
-    sparks.delete(cam.id);
+function syncDetailSelection() {
+  applyInspectorLayout();
+  const unack = unackedByCam();
+  for (const [id] of tiles) {
+    const cam = state.cams.get(id);
+    if (cam) renderTileTelemetry(buildSensorTelemetry(cam, unack));
   }
-}
-
-function drawSparks() {
-  // спарклайн — смена с начала до текущего момента
-  const x0 = shiftStart().getTime();
-  const x1 = Math.max(Date.now(), x0 + 15 * 60000);
-  for (const id of sparkDirty) {
-    const cam = state.cams.get(id), r = rows.get(id);
-    if (cam && r) drawSpark(r.canvas, sparks.get(id), cam, x0, x1);
-  }
-  sparkDirty = new Set();
 }
 
 export function initInstruments() {
-  $$('[data-sort]').forEach((b) => {
-    b.setAttribute('aria-pressed', String(b.dataset.sort === sortMode));
+  $$('#segDensity [data-density]').forEach((b) => {
+    b.setAttribute('aria-pressed', String(b.dataset.density === state.grid.density));
     b.addEventListener('click', () => {
-      sortMode = b.dataset.sort;
-      localStorage.setItem('gv.sort', sortMode);
-      $$('[data-sort]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      renderList();
+      state.grid.density = b.dataset.density;
+      state.grid.page = 1;
+      localStorage.setItem('gv.density', state.grid.density);
+      renderGrid();
     });
   });
-  on('reading', (camId) => {
-    updateRow(camId);
-    const cam = state.cams.get(camId);
-    const s = sparks.get(camId);
-    const r = cam && cam.reading;
-    if (s && r && r.valid) {
-      pushLive(s, Date.parse(r.ts), r.value, r.level);
-      sparkDirty.add(camId);
+
+  $$('#segFilter [data-gfilter]').forEach((b) => {
+    b.addEventListener('click', () => setMonitorFilter(b.dataset.gfilter));
+  });
+
+  $('#selGroup').addEventListener('change', (e) => {
+    state.grid.group = e.target.value;
+    state.grid.page = 1;
+    renderGrid();
+  });
+
+  $('#inpSearch').addEventListener('input', (e) => {
+    state.grid.search = e.target.value.trim();
+    state.grid.page = 1;
+    renderGrid();
+  });
+
+  $('#btnResetFilters').addEventListener('click', resetMonitorFilters);
+  $('#btnEmptyReset').addEventListener('click', resetMonitorFilters);
+  $('#btnEmptyLive').addEventListener('click', () => {
+    const liveId = state.demo?.live_cam_id || 'demo-mtp160-steam';
+    jumpToInstrument(liveId);
+  });
+
+  $('#btnPagePrev').addEventListener('click', () => { state.grid.page--; renderGrid(); });
+  $('#btnPageNext').addEventListener('click', () => { state.grid.page++; renderGrid(); });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && state.view === 'monitor' && state.detailOpen && !state.stop && !document.querySelector('dialog[open]')) {
+      setDetailOpen(false);
     }
   });
-  on('status', updateRow);
-  on('cams', renderList);
-  on('select', () => { for (const c of camList()) updateRow(c.id); });
-  on('conn', renderList);
-  on('events', () => {
-    if (sortMode === 'severity') renderList();
-    else for (const c of camList()) updateRow(c.id);
-  });
-  on('cam-config', (camId) => { sparks.delete(camId); renderList(); });
 
-  // спарклайны: перерисовка не чаще раза в секунду, свежие агрегаты — раз в минуту и на новой смене
-  let shiftAt = shiftStart().getTime();
-  setInterval(drawSparks, 1000);
-  setInterval(() => { for (const id of sparks.keys()) sparkDirty.add(id); }, 30000);
-  setInterval(() => {
-    const s = shiftStart().getTime();
-    if (s !== shiftAt) { shiftAt = s; sparks.clear(); renderList(); return; }
-    for (const c of camList()) loadSpark(c);
-  }, 60000);
-  window.addEventListener('resize', () => { for (const id of sparks.keys()) sparkDirty.add(id); });
+  syncDetailSelection();
 
-  // 1…9 — выбор прибора по номеру в списке
-  document.addEventListener('keydown', (e) => {
-    if (e.altKey || e.ctrlKey || e.metaKey) return;
-    const tgt = e.target;
-    if (tgt && (tgt.tagName === 'INPUT' || tgt.tagName === 'SELECT' || tgt.tagName === 'TEXTAREA')) return;
-    if (document.querySelector('dialog[open]')) return;
-    if (!/^[1-9]$/.test(e.key)) return;
-    const cam = camList()[Number(e.key) - 1];
-    if (cam) { select(cam.id); rows.get(cam.id)?.btn.scrollIntoView({ block: 'nearest' }); }
+  on('cams', () => { populateGroups(); renderGrid(); syncDetailSelection(); });
+  on('reading', updateTile);
+  on('sim-tick', (ids) => {
+    const summary = selectDashboardSummary();
+    syncFilterBadges(summary.counts);
+    if (state.grid.filter !== 'all') {
+      renderGrid();
+      return;
+    }
+    for (const id of ids) {
+      const tel = summary.byId.get(id);
+      if (tel && tiles.has(id)) renderTileTelemetry(tel);
+    }
   });
+  on('status', updateTile);
+  on('freshness', () => {
+    const liveId = state.demo?.live_cam_id || 'demo-mtp160-steam';
+    if (state.cams.has(liveId)) updateTile(liveId);
+  });
+  on('events', renderGrid);
+  on('conn', renderGrid);
+  on('select', syncDetailSelection);
+  on('detail-toggle', syncDetailSelection);
+  on('inspector-layout', syncDetailSelection);
 }

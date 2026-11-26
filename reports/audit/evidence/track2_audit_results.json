@@ -1,0 +1,440 @@
+{
+  "timestamp": "2026-11-26T20:00:43",
+  "signal_quality_11_scenarios": {
+    "1_clean_moving": {
+      "health_status": "ONLINE",
+      "quality_score": 100.0,
+      "mean_luma": 105.8,
+      "sharpness": 2260.1,
+      "glare_pct": 0.0,
+      "frame_diff": 1.44,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T17:00:43.782+00:00"
+    },
+    "2a_static_needle_zero_noise_fp_check": {
+      "health_status": "DEGRADED",
+      "quality_score": 58.0,
+      "mean_luma": 106.0,
+      "sharpness": 2335.9,
+      "glare_pct": 0.0,
+      "frame_diff": 0.0,
+      "frozen": true,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [
+        "Заморозка кадра (нет межкадровой разницы)"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T17:00:43.793+00:00"
+    },
+    "2b_static_needle_sensor_noise": {
+      "health_status": "ONLINE",
+      "quality_score": 100.0,
+      "mean_luma": 105.9,
+      "sharpness": 2331.4,
+      "glare_pct": 0.0,
+      "frame_diff": 0.26,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T17:00:43.968+00:00"
+    },
+    "3_true_freeze_12_frames": {
+      "health_status": "DEGRADED",
+      "quality_score": 58.0,
+      "mean_luma": 105.8,
+      "sharpness": 2331.8,
+      "glare_pct": 0.0,
+      "frame_diff": 0.0,
+      "frozen": true,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [
+        "Заморозка кадра (нет межкадровой разницы)"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T17:00:43.980+00:00"
+    },
+    "4_low_light_real_pixels": {
+      "health_status": "DEGRADED",
+      "quality_score": 68.0,
+      "mean_luma": 14.1,
+      "sharpness": 48.3,
+      "glare_pct": 0.0,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": true,
+      "glare": false,
+      "steam_occlusion": false,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [
+        "Критически низкая освещённость (14/255)"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T17:00:43.991+00:00"
+    },
+    "5_partial_occlusion_50pct": {
+      "health_status": "ONLINE",
+      "quality_score": 100.0,
+      "mean_luma": 55.2,
+      "sharpness": 1783.5,
+      "glare_pct": 0.0,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T17:00:43.998+00:00"
+    },
+    "6_full_occlusion_black": {
+      "health_status": "DEGRADED",
+      "quality_score": 68.0,
+      "mean_luma": 4.0,
+      "sharpness": 0.0,
+      "glare_pct": 0.0,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": true,
+      "glare": false,
+      "steam_occlusion": false,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [
+        "Критически низкая освещённость (4/255)"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T17:00:43.999+00:00"
+    },
+    "7_fog_condensation_real_pixels": {
+      "health_status": "DEGRADED",
+      "quality_score": 62.0,
+      "mean_luma": 163.8,
+      "sharpness": 3.5,
+      "glare_pct": 0.0,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": true,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [
+        "Перекрытие объектива паром / задымлением"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T17:00:44.018+00:00"
+    },
+    "8_steam_smoke_real_pixels": {
+      "health_status": "DEGRADED",
+      "quality_score": 62.0,
+      "mean_luma": 182.7,
+      "sharpness": 1.1,
+      "glare_pct": 0.0,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": true,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [
+        "Перекрытие объектива паром / задымлением"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T17:00:44.028+00:00"
+    },
+    "9_glare_real_pixels": {
+      "health_status": "DEGRADED",
+      "quality_score": 44.0,
+      "mean_luma": 114.1,
+      "sharpness": 20.7,
+      "glare_pct": 25.7,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": false,
+      "glare": true,
+      "steam_occlusion": true,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [
+        "Перекрытие объектива паром / задымлением",
+        "Засветка / блик на стекле (26%)"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T17:00:44.039+00:00"
+    },
+    "10_recovery_after_steam": {
+      "health_status": "ONLINE",
+      "quality_score": 100.0,
+      "mean_luma": 105.8,
+      "sharpness": 2356.0,
+      "glare_pct": 0.0,
+      "frame_diff": 83.04,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T17:00:44.048+00:00"
+    },
+    "11_natural_dimming_45pct": {
+      "health_status": "ONLINE",
+      "quality_score": 100.0,
+      "mean_luma": 46.8,
+      "sharpness": 471.9,
+      "glare_pct": 0.0,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T17:00:44.058+00:00"
+    }
+  },
+  "adaptive_fps": {
+    "idle_calls": 3,
+    "idle_actual_fps": 1.0,
+    "burst_triggered": true,
+    "switch_latency_ms": 0.032,
+    "burst_calls": 9,
+    "burst_actual_fps": 5.82,
+    "returned_to_idle_after_hold": true,
+    "actual_compute_reduction_pct": 82.8,
+    "transient_035s_spike_missed_at_1fps": true,
+    "note_aliasing": "At 1.0 FPS eco_idle, _process_loop sleeps 1.0s without lightweight frame-diff/motion wake-up; any transient < 1.0s between samples is missed."
+  },
+  "ring_buffer": {
+    "single_incident_pre_tags": [
+      "PRE_03",
+      "PRE_04",
+      "PRE_05",
+      "PRE_06",
+      "PRE_07"
+    ],
+    "single_incident_post_tags": [
+      "POST_08",
+      "POST_09",
+      "POST_10"
+    ],
+    "pre_strictly_before_trigger": true,
+    "post_strictly_after_trigger": true,
+    "concurrent_incidents_archived": 1,
+    "concurrent_incident_1_lost": true,
+    "persisted_to_disk": false,
+    "stats_after": {
+      "pre_buffered": 5,
+      "pre_capacity": 5,
+      "post_target": 3,
+      "capturing_post": false,
+      "archived_clips": 1,
+      "buffer_kb": 0.1
+    }
+  },
+  "multistream_load_and_isolation": {
+    "scaling": {
+      "1_channels": {
+        "elapsed_s": 5.93,
+        "total_inferences": 1,
+        "aggregate_fps": 0.17,
+        "per_channel_fps": {
+          "ch-0": 0.17
+        },
+        "latency_p50_ms": 5742.9,
+        "latency_p95_ms": 5742.9,
+        "latency_p99_ms": 5742.9,
+        "event_loop_lag_p95_ms": 26.68,
+        "event_loop_lag_max_ms": 39.63,
+        "errors": 0,
+        "isolation_other_channels_continue_after_stop": null
+      },
+      "2_channels": {
+        "elapsed_s": 3.57,
+        "total_inferences": 56,
+        "aggregate_fps": 15.68,
+        "per_channel_fps": {
+          "ch-0": 7.84,
+          "ch-1": 7.84
+        },
+        "latency_p50_ms": 26.5,
+        "latency_p95_ms": 87.7,
+        "latency_p99_ms": 110.8,
+        "event_loop_lag_p95_ms": 13.02,
+        "event_loop_lag_max_ms": 26.91,
+        "errors": 0,
+        "isolation_other_channels_continue_after_stop": null
+      },
+      "4_channels": {
+        "elapsed_s": 3.6,
+        "total_inferences": 113,
+        "aggregate_fps": 31.38,
+        "per_channel_fps": {
+          "ch-0": 8.05,
+          "ch-1": 8.05,
+          "ch-2": 7.78,
+          "ch-3": 7.5
+        },
+        "latency_p50_ms": 26.3,
+        "latency_p95_ms": 88.4,
+        "latency_p99_ms": 126.8,
+        "event_loop_lag_p95_ms": 14.64,
+        "event_loop_lag_max_ms": 26.99,
+        "errors": 0,
+        "isolation_other_channels_continue_after_stop": false
+      },
+      "8_channels": {
+        "elapsed_s": 3.61,
+        "total_inferences": 207,
+        "aggregate_fps": 57.38,
+        "per_channel_fps": {
+          "ch-0": 7.21,
+          "ch-1": 7.48,
+          "ch-2": 6.93,
+          "ch-3": 7.21,
+          "ch-4": 7.21,
+          "ch-5": 7.21,
+          "ch-6": 6.93,
+          "ch-7": 7.21
+        },
+        "latency_p50_ms": 25.5,
+        "latency_p95_ms": 64.9,
+        "latency_p99_ms": 103.4,
+        "event_loop_lag_p95_ms": 9.85,
+        "event_loop_lag_max_ms": 13.72,
+        "errors": 0,
+        "isolation_other_channels_continue_after_stop": null
+      }
+    },
+    "dead_rtsp_test": {
+      "duration_s": 5.28,
+      "fail_count": 0,
+      "status_before_stop": "reconnecting",
+      "last_error": null,
+      "event_loop_max_lag_ms": 10.8,
+      "status_transitions": [
+        [
+          207066.98,
+          "reconnecting"
+        ],
+        [
+          207073.09,
+          "offline"
+        ]
+      ]
+    }
+  },
+  "store_and_forward_A_to_G": {
+    "actual_sqlite_journal_mode": "wal",
+    "scenario_A_normal": {
+      "produced": 10,
+      "delivered_calls": 10,
+      "unique_uuids": 10,
+      "pending": 0,
+      "in_order": true
+    },
+    "scenario_B_outage": {
+      "produced": 15,
+      "delivered_during_outage": 0,
+      "pending": 15,
+      "sync_state": "BUFFERING"
+    },
+    "scenario_C_recovery": {
+      "flushed": 15,
+      "batches": 1,
+      "recovery_ms": 7.2,
+      "pending_after": 0,
+      "strict_chronological_seq": true,
+      "alarm_has_frame_flag": true,
+      "alarm_frame_blob_actually_delivered": false
+    },
+    "scenario_D_restart_during_outage": {
+      "pending_before_restart": 15,
+      "pending_after_restart": 15,
+      "zero_loss_across_restart": true
+    },
+    "scenario_E_reoutage_midsync": {
+      "produced": 50,
+      "flushed_before_second_outage": 40,
+      "pending_after_interruption": 10,
+      "flushed_after_recovery": 10,
+      "pending_final": 0,
+      "total_accounted_for": true
+    },
+    "scenario_F_lost_ack": {
+      "deliver_attempts_received": 2,
+      "unique_event_uuids": 1,
+      "duplicate_deliveries": 1,
+      "delivery_guarantee": "at-least-once (no receiver-side idempotency / dedup)"
+    },
+    "scenario_G_prolonged_outage_cap": {
+      "configured_sf_max_queue_rows": 30,
+      "enqueued_during_outage": 60,
+      "pending_rows_in_sqlite": 60,
+      "pending_queue_unbounded_on_outage": true
+    },
+    "concurrency_enqueue_vs_flush_race": {
+      "delivered_count": 68,
+      "duplicate_seq_ids": 0,
+      "out_of_order": false
+    }
+  },
+  "scada_mqtt_and_modbus": {
+    "mqtt_live_broker": {
+      "connected": true,
+      "messages_sent_wire": 2,
+      "sample_topics": [
+        "interrao/tec22/ktc/gaugevision/k1-p01/telemetry",
+        "interrao/tec22/ktc/gaugevision/k1-p01/alarm"
+      ],
+      "qos_supported": 0,
+      "auth_supported": false,
+      "pingreq_implemented": false
+    },
+    "mqtt_broker_down_fault_injection": {
+      "enqueue_status_while_broker_down": "sent",
+      "pending_in_sf_queue": 0,
+      "DEFECT_silent_drop_when_broker_down": true
+    },
+    "modbus_tcp_wire": {
+      "i1_decoded_float32": 13.75,
+      "i1_status_code": 0,
+      "i1_health_x10": 945,
+      "i2_stale_float32": 0.0,
+      "i2_stale_status_code": 3,
+      "fc04_system_regs": [
+        2,
+        0,
+        0,
+        1,
+        7,
+        1
+      ],
+      "illegal_fc_exception": [
+        134,
+        1
+      ],
+      "illegal_addr_exception": [
+        131,
+        2
+      ],
+      "wrong_unit_id_99_accepted_without_check": true
+    }
+  }
+}

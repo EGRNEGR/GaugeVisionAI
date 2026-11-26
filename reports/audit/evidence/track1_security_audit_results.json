@@ -1,0 +1,215 @@
+{
+  "timestamp": "2026-11-26T19:59:01",
+  "dispatch_math_12_signals": {
+    "1_constant_10mpa": {
+      "expected_rate": 0.0,
+      "actual_rate": 0.0,
+      "expected_peak_rate": 0.0,
+      "actual_peak_rate": 0.0,
+      "expected_chatter": 0.0,
+      "actual_chatter_pct": 0.0,
+      "health_score": 100.0,
+      "root_cause": "nominal"
+    },
+    "2_linear_ramp_6mpa_per_min_1hz": {
+      "expected_rate_per_min": 6.0,
+      "actual_rate_per_min": 6.0,
+      "expected_peak_rate_per_min": 6.0,
+      "actual_peak_rate_per_min": 6.0,
+      "rate_match": true,
+      "peak_rate_match_within_10pct": true,
+      "peak_rate_error_note": "dispatch_analyzer assumes 15-min window (step_min = 15/(N-1)) even for 1Hz mem_pts!"
+    },
+    "3_linear_drop_minus6mpa_per_min": {
+      "expected_rate_per_min": -6.0,
+      "actual_rate_per_min": -6.0,
+      "rate_match": true
+    },
+    "4_step_jump_4mpa": {
+      "actual_rate_per_min": 48.0,
+      "actual_peak_rate_per_min": 48.0,
+      "hydraulic_shock_risk": true
+    },
+    "5_chatter_pm_05mpa": {
+      "chatter_amp": 1.3333,
+      "chatter_pct": 8.33,
+      "root_cause": "instrument_degradation",
+      "health_score": 62.0
+    },
+    "6_duplicate_timestamps_div0": {
+      "no_crash_and_finite": true,
+      "actual_rate_per_min": 180.0,
+      "note": "dt clamped via max(1.0, dt) prevents ZeroDivisionError, but silently treats 0s dt as 1.0s."
+    },
+    "7_instant_1s_alert_overload_min": {
+      "real_elapsed_overload_min": 0.0,
+      "reported_overload_min": 6.5,
+      "DEFECT_phantom_6_5_min_added": true
+    },
+    "8_trips_shift_vs_24h": {
+      "events_injected": 3,
+      "trips_shift": 3,
+      "trips_24h": 6,
+      "DEFECT_trips_24h_is_hardcoded_2x_shift": true
+    },
+    "9_missing_data": {
+      "health_score": 60.1,
+      "root_cause": "optical_degradation",
+      "finite": true,
+      "in_range_0_100": true
+    },
+    "10_health_score_confounding_healthy_process_bad_camera": {
+      "process_level": "normal",
+      "optical_score": 20.0,
+      "health_score": 72.0,
+      "penalties": {
+        "overload": 0.0,
+        "rate": 0.0,
+        "chatter": 0.0,
+        "trips": 0.0,
+        "optical": 28.0,
+        "link": 0.0
+      },
+      "root_cause": "optical_degradation",
+      "modernization_needed": false,
+      "DEFECT_camera_degradation_penalizes_equipment_health_score": true
+    },
+    "11_multi_factor": {
+      "health_score": 5.0,
+      "root_cause": "process_anomaly",
+      "urgency": "КРИТИЧНО",
+      "critical_wear": true,
+      "penalties": {
+        "overload": 35.6,
+        "rate": 16.0,
+        "chatter": 22.0,
+        "trips": 2.4,
+        "optical": 20.4,
+        "link": 0.0
+      }
+    },
+    "12_simulated_hardcoded_profile_injection": {
+      "input_values_flat": true,
+      "reported_chatter_pct": 3.8,
+      "root_cause": "instrument_degradation",
+      "DEFECT_bench_profile_overrides_zero_chatter": true
+    }
+  },
+  "spec_generator_audit": {
+    "case1_all_healthy": {
+      "scoped": 3,
+      "defective_forced_despite_healthy": 3,
+      "capex_rub": 316920,
+      "docx_bytes": 97467,
+      "DEFECT_forces_healthy_equipment_into_defects_and_tz": true
+    },
+    "case2_single_incident": {
+      "defective_codes": [
+        "К1-Р01"
+      ],
+      "capex_rub": 104880
+    },
+    "case3_regular_overloads_and_period_sensitivity": {
+      "gas_sensor_ex": "1Ex ia IIC T6 Ga (ТР ТС 012/2011)",
+      "capex_rub": 230280,
+      "annual_effect_rub": 556000,
+      "payback_months": 5,
+      "DEFECT_period_12h_vs_30d_only_changes_header_label": true,
+      "docx_bytes": 68162
+    },
+    "economics_arithmetic_check": {
+      "capex_match": true,
+      "annual_effect_match": true,
+      "payback_years_match": true,
+      "has_opex_modeling": false,
+      "uses_hardcoded_vendor_prices": true,
+      "custom_economic_inputs_supported": false
+    },
+    "case4_optical_degradation": {
+      "root_cause": "optical_degradation",
+      "recommends_digital_sensor_for_camera_issue": true
+    },
+    "case5_single_workshop": {
+      "scoped_count": 1,
+      "groups": [
+        "Топливо и тяга"
+      ]
+    },
+    "case6_multi_workshop": {
+      "scoped_count": 5,
+      "groups": [
+        "Котлоагрегаты",
+        "Питательный узел",
+        "Топливо и тяга",
+        "Турбоагрегаты"
+      ]
+    },
+    "case7_empty_telemetry": {
+      "scoped": 0,
+      "defective": 0,
+      "capex_rub": 0,
+      "payback_months_on_zero_capex": 1,
+      "DEFECT_zero_capex_reports_1_month_payback": true,
+      "docx_valid_zip": true
+    },
+    "case8_unknown_group_silent_fallback": {
+      "requested_group": "Несуществующий цех",
+      "returned_scoped_count": 5,
+      "DEFECT_silent_fallback_to_all_items": true
+    },
+    "case9_reproducibility_and_mutation": {
+      "deterministic_identical_md": true,
+      "changes_when_data_mutates": true
+    },
+    "llm_integration_protocol": {
+      "ok_engine": "llm_enhanced (qwen2.5:7b-instruct)",
+      "ok_tables_numbers_preserved": false,
+      "http500_fallback_engine": "deterministic (fallback: LLM недоступна)",
+      "bad_json_fallback_engine": "deterministic (fallback: LLM недоступна)",
+      "timeout_fallback_engine": "deterministic (fallback: LLM недоступна)",
+      "all_failures_gracefully_fell_back": true
+    },
+    "docx_xml_escaping_test": {
+      "valid_xml_with_special_chars": true,
+      "payload_preserved_as_escaped_text": true
+    }
+  },
+  "security_api_audit": {
+    "video_file_path_validation": {
+      "dotdot_status": 422,
+      "absolute_path_status": 201,
+      "DEFECT_arbitrary_absolute_path_accepted": true
+    },
+    "rtsp_credentials_exposure": {
+      "leaked_in_api_cameras": true,
+      "leaked_in_api_architecture_streams": true,
+      "stored_plaintext_in_sqlite": true
+    },
+    "ssrf_source_url_restriction": {
+      "metadata_ip_status": 201,
+      "DEFECT_ssrf_unrestricted_url_accepted": true
+    },
+    "unauthenticated_control_endpoints": {
+      "outage_toggle_no_auth_status": 200,
+      "degrade_inject_no_auth_status": 200,
+      "auth_middleware_present": false
+    },
+    "http_headers_and_cors": {
+      "x_content_type_options": "nosniff",
+      "referrer_policy": "no-referrer",
+      "csp_present": false,
+      "x_frame_options_present": false,
+      "cors_allow_origin": null
+    },
+    "input_validation_and_sqli": {
+      "sqli_inst_id_status": 404,
+      "bad_spec_enum_status": 422,
+      "nan_json_status": 500
+    },
+    "sse_endpoint": {
+      "status_code": 200,
+      "content_type": "text/event-stream; charset=utf-8",
+      "first_line": "event: connected"
+    }
+  }
+}

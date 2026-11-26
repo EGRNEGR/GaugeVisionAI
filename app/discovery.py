@@ -166,7 +166,7 @@ def _guess_device(ip: str, open_ports: set[int], servers: dict[int, str] | None 
     if servers and not dev.vendor:
         dev.vendor = next(iter(servers.values()))
     elif servers and dev.vendor and dev.vendor.startswith(("IP camera", "HTTP-")):
-        dev.vendor = f"{dev.vendor} · {next(iter(servers.values()))}"
+        dev.vendor = f"{dev.vendor} — {next(iter(servers.values()))}"
     return dev
 
 

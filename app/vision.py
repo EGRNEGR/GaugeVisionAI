@@ -93,6 +93,14 @@ def _load_yolo():
                 _YOLO = False
             else:
                 try:
+                    import os as _os
+                    if "YOLO_CONFIG_DIR" not in _os.environ:
+                        cfg_dir = config.DATA_DIR / ".ultralytics"
+                        try:
+                            cfg_dir.mkdir(parents=True, exist_ok=True)
+                            _os.environ["YOLO_CONFIG_DIR"] = str(cfg_dir)
+                        except OSError:
+                            pass
                     from ultralytics import YOLO  # type: ignore
                     model = YOLO(str(weights))
                     _YOLO_DEVICE, _YOLO_HALF, _YOLO_DEVICE_NAME = _resolve_device()
@@ -276,9 +284,24 @@ def _ellipse_candidates(gray: np.ndarray) -> list[tuple[float, float, float, flo
             continue
         ellipse_area = math.pi * a * b
         fill = area / ellipse_area if ellipse_area else 0.0
-        if fill < 0.75 or fill > 1.25:  # контур плохо совпадает с эллипсом
+        if fill < 0.85 or fill > 1.15:  # контур плохо совпадает с эллипсом (в т. ч. полумесяц при перекрытии)
             continue
-        score = (area / (h * w)) * (1.0 - abs(1.0 - fill))
+        # Проверка радиальной невязки точек контура к аппроксимирующему эллипсу (DEF-15):
+        # истинный эллипс (даже при сильной перспективе) имеет p90(|r - 1|) < 0.06,
+        # а частично перекрытый циферблат (D-форма с прямой хордой и углами) — > 0.12.
+        pts = cnt.reshape(-1, 2).astype(np.float64)
+        rad = math.radians(ang)
+        ca, sa = math.cos(rad), math.sin(rad)
+        dx = pts[:, 0] - ex
+        dy = pts[:, 1] - ey
+        # OpenCV fitEllipse: ew — ось вдоль угла ang, eh — перпендикулярная ось
+        u = (dx * ca + dy * sa) / max(a, 1e-6)
+        v = (-dx * sa + dy * ca) / max(b, 1e-6)
+        radial_err = np.abs(np.hypot(u, v) - 1.0)
+        p90_err = float(np.percentile(radial_err, 90))
+        if p90_err > 0.10:
+            continue
+        score = (area / (h * w)) * (1.0 - abs(1.0 - fill)) * max(0.2, 1.0 - 2.0 * p90_err)
         out.append((float(ex), float(ey), float(a), float(b), float(ang), float(score)))
     out.sort(key=lambda e: e[5], reverse=True)
     return out
@@ -375,6 +398,88 @@ def manual_roi(frame_bgr: np.ndarray, roi_cfg: dict[str, Any]) -> DialROI | None
         return roi_from_ellipse(cx, cy, r, r, 0.0, score=1.0, source="manual")
     except (KeyError, TypeError, ValueError):
         return None
+
+
+def detect_all_dials(frame_bgr: np.ndarray) -> list[DialROI]:
+    """
+    Возвращает все найденные приборы на кадре (YOLO + контурные эллипсы OpenCV).
+    Примечание: GaugePipeline.process() обрабатывает один целевой прибор (ручной ROI
+    или наиболее достоверный корпус); для многоприборных сцен каждый прибор привязывается
+    к отдельному каналу через ручной ROI или выбирается из detect_all_dials().
+    """
+    found: list[DialROI] = []
+    primary = detect_dial(frame_bgr)
+    if primary is not None:
+        found.append(primary)
+    for ex, ey, a, b, ang, score in _ellipse_candidates(_prep_gray(frame_bgr)):
+        if all(math.hypot(ex - r.center[0], ey - r.center[1]) > 0.5 * max(r.axes) for r in found):
+            found.append(roi_from_ellipse(ex, ey, a, b, ang, score=score, source="ellipse"))
+    return found
+
+
+def assess_dial_suitability(dial_bgr: np.ndarray) -> tuple[bool, str | None, float]:
+    """
+    Оценивает пригодность нормализованного циферблата (640×640) для измерения (DEF-15):
+      • выявляет частичное перекрытие сектора/половины циферблата тёмным объектом;
+      • выявляет критическое затемнение, засветку или отсутствие контраста (пар/пустой кадр).
+    Возвращает (suitable, reason_code, suitability_score_0_100).
+    """
+    if dial_bgr is None or dial_bgr.size == 0:
+        return False, "empty_dial", 0.0
+    gray = cv2.cvtColor(dial_bgr, cv2.COLOR_BGR2GRAY)
+    h, w = gray.shape[:2]
+    cy, cx = h // 2, w // 2
+    inside = _RR < (_SIZE * 0.43)
+    if not np.any(inside):
+        return False, "empty_dial", 0.0
+
+    # Проверка общей яркости и контраста внутри циферблата
+    vals_all = gray[inside]
+    mean_all = float(np.mean(vals_all))
+    std_all = float(np.std(vals_all))
+    glare_all = float(np.mean(vals_all >= 248))
+    if mean_all < 22.0 or std_all < 8.0:
+        return False, "unreadable_dial", 10.0
+    if glare_all > 0.65:
+        return False, "severe_glare", 15.0
+
+    # Квадрантный и полусферный анализ на частичное перекрытие (тёмный непрозрачный объект)
+    halves = (
+        gray[:, :cx][inside[:, :cx]],
+        gray[:, cx:][inside[:, cx:]],
+        gray[:cy, :][inside[:cy, :]],
+        gray[cy:, :][inside[cy:, :]],
+    )
+    half_means = [float(np.mean(hv)) for hv in halves if hv.size > 0]
+    half_dark = [float(np.mean(hv < 30)) for hv in halves if hv.size > 0]
+    half_stds = [float(np.std(hv)) for hv in halves if hv.size > 0]
+    max_hm = max(half_means) if half_means else 0.0
+    if max_hm >= 105.0:
+        for hm, hd, hs in zip(half_means, half_dark, half_stds):
+            if hd >= 0.42 and (max_hm - hm) >= 55.0:
+                return False, "partial_occlusion", round(max(0.0, 100.0 - hd * 100.0), 1)
+            if hd >= 0.32 and hs < 32.0 and (max_hm - hm) >= 65.0:
+                return False, "partial_occlusion", round(max(0.0, 100.0 - hd * 100.0), 1)
+
+    # Проверка по 8 угловым секторам циферблата (выявляет узкое боковое/верхнее перекрытие)
+    yy, xx = np.mgrid[0:h, 0:w]
+    ang = (np.degrees(np.arctan2(yy - cy, xx - cx)) + 360.0) % 360.0
+    occluded_sectors = 0
+    sector_means: list[float] = []
+    for k in range(8):
+        sec_mask = inside & (ang >= k * 45.0) & (ang < (k + 1) * 45.0)
+        if not np.any(sec_mask):
+            continue
+        sv = gray[sec_mask]
+        sm = float(np.mean(sv))
+        sector_means.append(sm)
+        if float(np.mean(sv < 28)) >= 0.65 and float(np.std(sv)) < 25.0:
+            occluded_sectors += 1
+    if occluded_sectors >= 2 and (max(sector_means) if sector_means else 0.0) >= 105.0:
+        return False, "partial_occlusion", round(max(0.0, (1.0 - occluded_sectors / 8.0) * 100.0), 1)
+
+    score = min(100.0, max(20.0, 100.0 - glare_all * 80.0))
+    return True, None, round(score, 1)
 
 
 def detect_dial(frame_bgr: np.ndarray) -> DialROI | None:
@@ -604,33 +709,40 @@ def _calib_parts(calib: dict[str, Any]) -> tuple[float, float, float, float, str
     return v_min, th_min, v_max, th_max, ("ccw" if direction == "ccw" else "cw")
 
 
-def angle_to_value(angle_deg: float, calib: dict[str, Any], clamp: float = 0.05) -> float | None:
+def angle_to_value(angle_deg: float, calib: dict[str, Any], clamp: float = 0.05,
+                   max_overshoot: float = 0.08) -> float | None:
     """
     CW:  Δθ = (θ − θmin) mod 360;  Δθspan = (θmax − θmin) mod 360;
     CCW: Δθ = (θmin − θ) mod 360;  Δθspan = (θmin − θmax) mod 360;
     V = Vmin + Δθ/Δθspan · (Vmax − Vmin).
 
-    Положения стрелки в «мёртвой зоне» шкалы относятся к ближайшему краю
-    (небольшой заход ниже нуля не превращается в максимум шкалы).
+    Положения стрелки в глубокой «мёртвой зоне» (за пределами ±max_overshoot
+    от рабочей дуги шкалы — например, при перепутанном направлении CW/CCW или
+    перевёрнутой камере) возвращают None (недостоверный отсчёт), не маскируясь
+    под корректный край шкалы.
     """
     parts = _calib_parts(calib)
     if parts is None:
         return None
     v_min, th_min, v_max, th_max, direction = parts
+    if v_max == v_min:
+        return None
     if direction == "cw":
         delta = (angle_deg - th_min) % 360.0
         span = (th_max - th_min) % 360.0
     else:
         delta = (th_min - angle_deg) % 360.0
         span = (th_min - th_max) % 360.0
-    if span < 1e-6:
-        span = 360.0
+    if span < 1.0:
+        return None
     if delta > span:
         over = delta - span           # перелёт за максимум
         under = 360.0 - delta         # недолёт до минимума
         delta = span + over if over <= under else -under
-    frac = delta / span
-    frac = max(-clamp, min(1.0 + clamp, frac))
+    raw_frac = delta / span
+    if raw_frac < -max_overshoot or raw_frac > 1.0 + max_overshoot:
+        return None
+    frac = max(-clamp, min(1.0 + clamp, raw_frac))
     return v_min + frac * (v_max - v_min)
 
 
@@ -666,14 +778,16 @@ def _num(v: Any) -> float | None:
 def classify_level(value: float | None, thresholds: dict[str, Any]) -> str:
     """
     normal | warning | alert:
-      V ≤ LL или V ≥ HH  -> alert   (красная зона)
-      V ≤ L  или V ≥ H   -> warning (жёлтая зона)
-      L < V < H          -> normal  (зелёный доверительный интервал)
+      V ≤ LL или V ≥ HH  -> alert   (красная зона, проверяется первой)
+      V ≤ L  или V ≥ H   -> warning (янтарная зона)
+      L < V < H          -> normal  (нормальная зона)
+    При lower_enabled=False нижние уставки (LL и L) отключены.
     """
     if value is None:
         return "normal"
-    ll = _num(thresholds.get("ll_alert"))
-    lw = _num(thresholds.get("l_warn"))
+    lower_on = thresholds.get("lower_enabled")
+    ll = None if lower_on is False else _num(thresholds.get("ll_alert"))
+    lw = None if lower_on is False else _num(thresholds.get("l_warn"))
     hw = _num(thresholds.get("h_warn"))
     hh = _num(thresholds.get("hh_alert"))
     if (ll is not None and value <= ll) or (hh is not None and value >= hh):
@@ -720,7 +834,13 @@ UNIT_ASCII = {
     "А": "A", "кА": "kA", "В": "V", "кВ": "kV", "МВт": "MW",
     "т/ч": "t/h", "м³/ч": "m3/h",
 }
-_LEVEL_COLORS = {"normal": (90, 200, 80), "warning": (0, 200, 255), "alert": (50, 50, 240)}
+_LEVEL_COLORS = {
+    "normal": (90, 200, 80),
+    "warning": (0, 200, 255),
+    "alert": (50, 50, 240),
+    "invalid": (140, 148, 156),
+    "degraded": (0, 165, 255),
+}
 
 
 def _dial_to_frame(roi: DialROI, pts: np.ndarray) -> np.ndarray:
@@ -767,7 +887,9 @@ def _zone_segments(calib: dict[str, Any],
     v_min, _, v_max, _, _ = parts
     lo, hi = min(v_min, v_max), max(v_min, v_max)
     thr = thresholds or {}
-    ll, lw = _num(thr.get("ll_alert")), _num(thr.get("l_warn"))
+    lower_on = thr.get("lower_enabled")
+    ll = None if lower_on is False else _num(thr.get("ll_alert"))
+    lw = None if lower_on is False else _num(thr.get("l_warn"))
     hw, hh = _num(thr.get("h_warn")), _num(thr.get("hh_alert"))
     n_lo = lw if lw is not None else ll
     n_hi = hw if hw is not None else hh
@@ -851,11 +973,15 @@ def draw_overlay(frame_bgr: np.ndarray, roi: DialROI | None, needle: NeedleResul
                  labels: bool = True) -> np.ndarray:
     """
     Рисует контур циферблата, зоны уставок, стрелку и значение на кадре.
-    labels=False — без текстовых плашек (стоп-кадр пульта: уровень и значение
-    пульт подписывает сам, по-русски, а камера сохраняет свою отметку времени).
+    Цвет, текст и плашка статуса формируются из единого достоверного источника
+    состояния (без затенения переменной `level`, DEF-02).
     """
     out = frame_bgr.copy()
-    color = _LEVEL_COLORS.get(level, _LEVEL_COLORS["normal"])
+    # Единый источник состояния: при отсутствии достоверного значения — статус invalid/degraded
+    state_level = level if (value is not None and level in ("normal", "warning", "alert")) else (
+        level if level in ("invalid", "degraded") else "invalid"
+    )
+    color = _LEVEL_COLORS.get(state_level, _LEVEL_COLORS["invalid"])
     scale = max(0.5, min(out.shape[0], out.shape[1]) / 720.0)
 
     if roi is not None:
@@ -866,17 +992,17 @@ def draw_overlay(frame_bgr: np.ndarray, roi: DialROI | None, needle: NeedleResul
         if calib:
             parts = _calib_parts(calib)
             if parts:
-                for z0, z1, level in _zone_segments(calib, thresholds):
+                for z0, z1, z_level in _zone_segments(calib, thresholds):
                     pts = _zone_arc_points(roi, calib, z0, z1)
                     if pts is not None:
                         cv2.polylines(out, [pts.astype(np.int32)], False,
-                                      _LEVEL_COLORS[level], 4, cv2.LINE_AA)
+                                      _LEVEL_COLORS.get(z_level, _LEVEL_COLORS["normal"]), 4, cv2.LINE_AA)
                 # калибровочные лучи θmin / θmax
                 for th in (parts[1], parts[3]):
                     p0, p1 = _ray_points(roi, th, config.DIAL_SIZE * 0.40, config.DIAL_SIZE * 0.49)
                     cv2.line(out, p0, p1, (255, 160, 60), 2, cv2.LINE_AA)
 
-        if needle is not None and needle.angle_deg is not None:
+        if needle is not None and needle.angle_deg is not None and value is not None:
             p = _needle_points(roi, needle)
             cv2.arrowedLine(out, (int(p[0][0]), int(p[0][1])), (int(p[1][0]), int(p[1][1])),
                             color, max(2, int(3 * scale)), cv2.LINE_AA, tipLength=0.12)
@@ -885,14 +1011,15 @@ def draw_overlay(frame_bgr: np.ndarray, roi: DialROI | None, needle: NeedleResul
     if not labels:
         return out
     unit_txt = UNIT_ASCII.get(unit, unit.encode("ascii", "ignore").decode() or "")
-    label = f"{value:.2f} {unit_txt}" if value is not None else "NO READING"
+    label = f"{value:.2f} {unit_txt}" if value is not None else "INVALID / NO READING"
     fs = 0.9 * scale
     th = max(1, int(2 * scale))
     (tw, tht), _ = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, fs, th)
     cv2.rectangle(out, (8, 8), (8 + tw + 20, 8 + tht + 22), (20, 20, 20), -1)
     cv2.putText(out, label, (18, 8 + tht + 10), cv2.FONT_HERSHEY_SIMPLEX, fs, color, th, cv2.LINE_AA)
-    if level != "normal":
-        badge = "CRITICAL" if level == "alert" else "WARNING"
+    if state_level != "normal":
+        badge_map = {"alert": "CRITICAL", "warning": "WARNING", "degraded": "DEGRADED", "invalid": "INVALID"}
+        badge = badge_map.get(state_level, "INVALID")
         (bw, bh), _ = cv2.getTextSize(badge, cv2.FONT_HERSHEY_SIMPLEX, fs, th)
         x0 = out.shape[1] - bw - 28
         cv2.rectangle(out, (x0, 8), (out.shape[1] - 8, 8 + bh + 22), color, -1)
@@ -978,35 +1105,59 @@ class GaugePipeline:
 
             roi = self._locate(frame, calibration)
             dial = normalize_dial(frame, roi)
-            needle = estimate_needle(dial)
+            suitable, invalid_reason, dial_quality = assess_dial_suitability(dial)
+            needle = estimate_needle(dial) if suitable else NeedleResult(None, None, 0.0, "rejected")
 
             reading = GaugeReading(dial_found=roi.source != "frame", dial_source=roi.source)
             reading.needle_confidence = round(float(needle.confidence), 3)
-            reading.debug = {"needle_method": needle.method, "roi": roi.to_json()}
+            reading.debug = {
+                "needle_method": needle.method,
+                "roi": roi.to_json(),
+                "dial_suitable": suitable,
+                "dial_quality": dial_quality,
+                "invalid_reason": invalid_reason,
+            }
 
-            if needle.angle_deg is not None and needle.confidence >= config.MIN_NEEDLE_CONFIDENCE:
+            # Дополнительная защита от ложных показаний при низкой уверенности без согласования Hough (DEF-15)
+            min_conf = config.MIN_NEEDLE_CONFIDENCE
+            if needle.method.startswith("moment/") and needle.confidence < max(min_conf, 0.45):
+                suitable = False
+                reading.debug["invalid_reason"] = reading.debug["invalid_reason"] or "low_confidence_unconfirmed"
+
+            if suitable and needle.angle_deg is not None and needle.confidence >= min_conf:
                 self._miss_streak = 0
                 reading.angle = round(float(needle.angle_deg), 2)
                 reading.value = angle_to_value(needle.angle_deg, calibration)
                 reading.valid = reading.value is not None
+                if not reading.valid:
+                    reading.debug["out_of_scale"] = True
+                    reading.debug["invalid_reason"] = "out_of_scale"
             else:
                 self._miss_streak += 1
+                if not reading.debug.get("invalid_reason"):
+                    reading.debug["invalid_reason"] = "low_confidence"
 
             reading.ema_value = self.ema.update(reading.value if reading.valid else None)
-            reading.status_level = classify_level(reading.ema_value, thresholds)
+            reading.status_level = classify_level(reading.ema_value, thresholds) if reading.ema_value is not None else "normal"
             reading.debug["geom"] = overlay_geometry(
-                frame.shape, roi, needle if reading.valid else None, calibration, thresholds)
+                frame.shape, roi,
+                needle if (reading.valid and needle.angle_deg is not None) else None,
+                calibration, thresholds)
 
             if with_overlay:
+                ov_level = reading.status_level if reading.valid else ("degraded" if invalid_reason == "partial_occlusion" else "invalid")
                 reading.overlay = draw_overlay(
-                    frame, roi, needle if reading.valid else None, reading.ema_value,
-                    unit, reading.status_level, calibration, thresholds,
+                    frame, roi,
+                    needle if (reading.valid and needle.angle_deg is not None) else None,
+                    reading.ema_value if reading.valid else None,
+                    unit, ov_level, calibration, thresholds,
                 )
-            if reading.status_level != self._last_level and reading.status_level != "normal":
-                reading.snapshot = draw_overlay(
-                    frame, roi, needle if reading.valid else None, reading.ema_value,
-                    unit, reading.status_level, calibration, thresholds, labels=False,
-                )
-            self._last_level = reading.status_level
+            if reading.valid and reading.ema_value is not None and reading.status_level != self._last_level:
+                if reading.status_level != "normal":
+                    reading.snapshot = draw_overlay(
+                        frame, roi, needle, reading.ema_value,
+                        unit, reading.status_level, calibration, thresholds, labels=False,
+                    )
+                self._last_level = reading.status_level
             reading.process_ms = round((time.perf_counter() - t0) * 1000.0, 1)
             return reading
