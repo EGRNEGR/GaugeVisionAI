@@ -23,8 +23,8 @@ function updateNavBadge(sf) {
   const badge = $('#tabCntArch');
   if (!badge || !sf) return;
   const pending = Number(sf.pending_count || 0);
-  badge.textContent = sf.outage_active ? `Q:${pending}` : (pending > 0 ? `Q:${pending}` : 'OK');
-  badge.dataset.alert = String(Boolean(sf.outage_active || pending > 0));
+  badge.textContent = pending > 0 ? `Q:${pending}` : 'OK';
+  badge.dataset.alert = String(Boolean(sf.outage_active || sf.link_down || pending > 0));
 }
 
 function renderTopology(data) {
@@ -36,8 +36,10 @@ function renderTopology(data) {
   const camTone = edge.channels_online > 0
     ? (edge.channels_degraded > 0 ? 'warning' : 'normal')
     : 'stale';
-  const sfTone = sf.outage_active ? 'alert' : (sf.pending_count > 0 ? 'warning' : 'normal');
-  const scadaTone = sf.outage_active ? 'stale' : 'normal';
+  // Обрыв: симуляция из пульта или реальный отказ доставки (брокер не подтверждает)
+  const linkBroken = Boolean(sf.outage_active || sf.link_down);
+  const sfTone = linkBroken ? 'alert' : (sf.pending_count > 0 ? 'warning' : 'normal');
+  const scadaTone = linkBroken ? 'stale' : 'normal';
 
   const setNode = (id, tone, badgeText, metricsHtml) => {
     const el = $(`#${id}`);
@@ -83,7 +85,7 @@ function renderTopology(data) {
   setNode(
     'topoScada',
     scadaTone,
-    sf.outage_active ? 'КАНАЛ ПРЕРВАН' : 'ДОСТАВКА АКТИВНА',
+    sf.outage_active ? 'КАНАЛ ПРЕРВАН' : (sf.link_down ? 'НЕТ ПОДТВЕРЖДЕНИЯ' : 'ДОСТАВКА АКТИВНА'),
     `<div>MQTT: <b>${mqttSt.published_total || 0}</b> сообщ. (${mqttSt.enabled ? 'Брокер' : 'Авт. шина'})</div>
      <div>Modbus TCP: <b>${mbSt.registers_mapped || 0}</b> рег. (HR 40001+)</div>`,
   );
@@ -91,8 +93,8 @@ function renderTopology(data) {
   // Состояние стрелки связи перед АСУ ТП
   const linkArrow = $('#topoLinkScada');
   if (linkArrow) {
-    linkArrow.dataset.broken = String(Boolean(sf.outage_active));
-    linkArrow.textContent = sf.outage_active ? 'ОБРЫВ КАНАЛА' : (sf.pending_count > 0 ? 'ДОСЫЛКА' : 'TLS / TCP');
+    linkArrow.dataset.broken = String(linkBroken);
+    linkArrow.textContent = linkBroken ? 'ОБРЫВ КАНАЛА' : (sf.pending_count > 0 ? 'ДОСЫЛКА' : 'TLS / TCP');
   }
 }
 
@@ -113,10 +115,12 @@ function renderFaultPanel(sf) {
   if (btnFlush) btnFlush.disabled = isOut || Number(sf.pending_count || 0) === 0;
 
   if (stateBanner) {
-    stateBanner.dataset.tone = (isOut || sf.queue_overflow) ? 'alert' : (sf.pending_count > 0 ? 'warning' : 'normal');
+    stateBanner.dataset.tone = (isOut || sf.link_down || sf.queue_overflow) ? 'alert' : (sf.pending_count > 0 ? 'warning' : 'normal');
     const ovTxt = sf.queue_overflow ? ` | ВНИМАНИЕ: ${esc(sf.overflow_reason || 'переполнение очереди')} (вытеснено ${sf.evicted_total || 0})` : '';
     stateBanner.innerHTML = isOut
       ? `<strong>Обрыв связи с верхним уровнем АСУ ТП</strong> — события и телеметрия накапливаются в SQLite WAL на Edge-узле (${sf.pending_count} записей, ${fmt(sf.pending_kb || 0, 1)} КБ)${ovTxt}`
+      : sf.link_down
+        ? `<strong>Канал АСУ ТП не подтверждает доставку</strong> — брокер или SCADA недоступны, ${sf.delivery_fail_streak || 0} неудачных попыток подряд; записи сохраняются в SQLite WAL на Edge-узле (${sf.pending_count} записей, ${fmt(sf.pending_kb || 0, 1)} КБ) и будут досланы после восстановления${ovTxt}`
       : (sf.pending_count > 0
         ? `<strong>Восстановление и синхронизация</strong> — автоматическая досылка очереди пачками по ${sf.batch_size} записей (осталось ${sf.pending_count})${ovTxt}`
         : `<strong>Связь с контуром АСУ ТП штатная</strong> — доставлено ${sf.delivered_total || 0} записей, буфер Store-and-Forward пуст (WAL ${fmt(sf.db_size_mb || 0, 3)} МБ, своб. ${fmt(sf.disk_free_mb || 0, 0)} МБ)`);

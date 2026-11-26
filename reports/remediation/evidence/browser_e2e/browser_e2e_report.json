@@ -1,7 +1,7 @@
 {
-  "baseUrl": "https://127.0.0.1:49813",
+  "baseUrl": "https://127.0.0.1:51024",
   "steps": {
-    "loadMs": 726,
+    "loadMs": 728,
     "login": {
       "wrongErr": "Неверное имя пользователя или пароль",
       "tiles": 36,
@@ -9,9 +9,9 @@
     },
     "outage": {
       "pendingDuringOutage": 2,
-      "growMs": 1228,
+      "growMs": 409,
       "banner": "Обрыв связи с верхним уровнем АСУ ТП — события и телеметрия накапливаются в SQLite WAL на Edge-узле (2 записей, 0,5 КБ)",
-      "drainMs": 2037
+      "drainMs": 818
     },
     "faults": {
       "steam": "DEGRADED",
@@ -57,7 +57,7 @@
       "autoSpecs": true
     },
     "specPreview": {
-      "len": 18876,
+      "len": 19003,
       "plant": true,
       "num": true,
       "law": true,

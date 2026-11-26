@@ -1,0 +1,16 @@
+{
+  "torch_version": "2.14.1+cu130",
+  "cuda_available": true,
+  "device_name": "NVIDIA GeForce RTX 5060 Laptop GPU",
+  "last_dial_source": "ellipse",
+  "last_valid": true,
+  "last_value": 12.142510350793161,
+  "frames": 5,
+  "latencies_ms": [
+    4604.42,
+    57.65,
+    54.83,
+    50.29,
+    50.86
+  ]
+}

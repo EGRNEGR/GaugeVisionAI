@@ -1,0 +1,315 @@
+{
+  "total": 21,
+  "passed": 21,
+  "failed": 0,
+  "cases": [
+    {
+      "name": "dispatch_noise_under_hmi_polling",
+      "refs": "NEW-01, DEF-14, REQ-DA-02",
+      "passed": true,
+      "ms": 59.1,
+      "details": {
+        "stable_20hz": {
+          "peak_rate_per_min": 1.349,
+          "health": 90.3
+        },
+        "real_jump_peak_rate": 117.0
+      }
+    },
+    {
+      "name": "dispatch_overload_trips_and_health_split",
+      "refs": "DEF-08, REQ-DA-04/05/07/08, REQ-ARCH-03",
+      "passed": true,
+      "ms": 4.6,
+      "details": {
+        "overload_min_90x2s": 0.0,
+        "fog_optical": 20.0,
+        "fog_health": 100.0
+      }
+    },
+    {
+      "name": "period_stats_sql_vs_reference",
+      "refs": "NEW-05, NEW-06, DEF-03, REQ-DOC-04",
+      "passed": true,
+      "ms": 48.2,
+      "details": {
+        "rows": 1300,
+        "sql_ms": 6.9,
+        "ref_cam_overload_min": 3.79,
+        "sim_peak_rate": 3.195
+      }
+    },
+    {
+      "name": "store_forward_frames_duplicates_growth",
+      "refs": "DEF-01, DEF-06, DEF-21, NEW-02, NEW-03, REQ-SF-05/06/11/12",
+      "passed": true,
+      "ms": 7574.0,
+      "details": {
+        "duplicates": 0,
+        "delivered_unique": 180,
+        "sent_blob_bytes": 0,
+        "broker_down_status": "pending"
+      }
+    },
+    {
+      "name": "store_forward_overflow_keeps_alarms",
+      "refs": "DEF-06, REQ-SF-12",
+      "passed": true,
+      "ms": 76.9,
+      "details": {
+        "pending": 40,
+        "evicted": 30,
+        "alarms_kept": 10
+      }
+    },
+    {
+      "name": "store_forward_real_link_failure_reported",
+      "refs": "NEW-12, REQ-SF-06",
+      "passed": true,
+      "ms": 30.6,
+      "details": {
+        "failing": {
+          "sync_state": "BUFFERING",
+          "pending": 5,
+          "fail_streak": 1
+        },
+        "recovered": "CONNECTED",
+        "simulated_outage": "BUFFERING"
+      }
+    },
+    {
+      "name": "llm_reasoning_model_empty_content_handled",
+      "refs": "NEW-13, REQ-DOC-10",
+      "passed": true,
+      "ms": 1303.7,
+      "details": {
+        "empty_reason": "deterministic (fallback: пустой ответ LLM, finish_reason=length)",
+        "think_stripped": "Итоговое резюме.",
+        "strict_retry_requests": 2
+      }
+    },
+    {
+      "name": "ring_buffer_concurrent_clip_identity",
+      "refs": "DEF-10, NEW-08, REQ-VA-10",
+      "passed": true,
+      "ms": 54.1,
+      "details": {
+        "clips": [
+          "clip_1795729894401_be5377",
+          "clip_1795729894402_086317",
+          "clip_1795729894402_6a97e0"
+        ],
+        "c1_post_count": 2
+      }
+    },
+    {
+      "name": "spec_single_trip_vs_regular_overloads",
+      "refs": "DEF-04, REQ-DOC-06/08",
+      "passed": true,
+      "ms": 1.6,
+      "details": {
+        "single_trip_capex": 0,
+        "regular_capex": 104880,
+        "payback_months": 7
+      }
+    },
+    {
+      "name": "api_unauthenticated_and_meta",
+      "refs": "DEF-07, NEW-04, REQ-SEC-05",
+      "passed": true,
+      "ms": 51.0,
+      "details": {
+        "unauth_codes": {
+          "/api/cameras": 401,
+          "/api/instruments": 401,
+          "/api/events": 401,
+          "/api/dispatch/overview": 401,
+          "/api/architecture/status": 401,
+          "/api/specs/auto": 401,
+          "/api/scada/modbus/registers": 401
+        }
+      }
+    },
+    {
+      "name": "api_rbac_matrix",
+      "refs": "DEF-07, REQ-SEC-05",
+      "passed": true,
+      "ms": 96.5,
+      "details": {
+        "operator POST /api/cameras": 403,
+        "engineer POST /api/cameras": 201,
+        "operator POST /api/architecture/outage": 403,
+        "engineer POST /api/architecture/outage": 403,
+        "admin POST /api/architecture/outage": 200,
+        "operator POST /api/architecture/degrade": 403,
+        "engineer POST /api/architecture/degrade": 403,
+        "admin POST /api/architecture/degrade": 200,
+        "operator GET /api/discover": 403,
+        "engineer GET /api/discover": 403,
+        "operator GET /api/auth/audit": 403,
+        "engineer GET /api/auth/audit": 403,
+        "admin GET /api/auth/audit": 200,
+        "operator POST /api/specs/preview": 403,
+        "engineer POST /api/specs/preview": 200,
+        "operator POST /api/architecture/store-forward/flush": 403,
+        "engineer POST /api/architecture/store-forward/flush": 200,
+        "operator GET /api/specs/auto": 200,
+        "operator GET /api/dispatch/overview": 200
+      }
+    },
+    {
+      "name": "api_ssrf_and_path_traversal",
+      "refs": "DEF-07, REQ-SEC-04",
+      "passed": true,
+      "ms": 5596.5,
+      "details": {
+        "http://169.254.169.254/latest/meta-data/": 422,
+        "http://[::ffff:169.254.169.254]/": 422,
+        "http://2852039166/": 422,
+        "http://127.0.0.1:8443/api/meta": 422,
+        "http://127.1/": 422,
+        "http://localhost/": 422,
+        "http://[::1]/": 422,
+        "http://0.0.0.0/": 422,
+        "http://metadata.google.internal/": 422,
+        "http://8.8.8.8/stream": 422,
+        "http://100.64.0.1/": 422,
+        "http://192.168.1.2/not-rtsp": 422,
+        "rtsp://[fe80::1]/live": 422,
+        "..\\..\\Windows\\win.ini": 422,
+        "../../etc/passwd": 422,
+        "C:\\Windows\\win.ini": 422,
+        "\\\\srv\\share\\a.mp4": 422,
+        "Z:a.mp4": 422,
+        "sub/../../x.mp4": 422,
+        "bench.mp4\u0000.txt": 422,
+        "notes.txt": 422,
+        "C:\\Users\\Egoru\\AppData\\Local\\Temp\\gv_accept_main_hpw5llhz\\outside.mp4": 422,
+        "C:bench.mp4": 201
+      }
+    },
+    {
+      "name": "api_rtsp_credentials_never_leak",
+      "refs": "DEF-07, REQ-SEC-03",
+      "passed": true,
+      "ms": 363.8,
+      "details": {
+        "checked_responses": 9
+      }
+    },
+    {
+      "name": "api_nan_payload_422",
+      "refs": "DEF-09, REQ-API-02",
+      "passed": true,
+      "ms": 7.0,
+      "details": {
+        "nan": 422,
+        "inf": 422
+      }
+    },
+    {
+      "name": "api_sessions_logout_role_change_ws",
+      "refs": "NEW-04, REQ-SEC-05",
+      "passed": true,
+      "ms": 612.5,
+      "details": {
+        "ws_close_code": 4401,
+        "demoted": 403,
+        "disabled": 401
+      }
+    },
+    {
+      "name": "api_period_sensitivity_from_db",
+      "refs": "DEF-03, NEW-06, REQ-DOC-04",
+      "passed": true,
+      "ms": 89.3,
+      "details": {
+        "samples": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "events": [
+          1,
+          2,
+          3,
+          4
+        ],
+        "sim_group_samples": 12
+      }
+    },
+    {
+      "name": "auto_spec_generation_lifecycle",
+      "refs": "REQ-DA-09, DEF-20",
+      "passed": true,
+      "ms": 55.4,
+      "details": {
+        "trigger_id": 1,
+        "docx_bytes": 37248,
+        "retry_attempts": 2
+      }
+    },
+    {
+      "name": "api_login_bruteforce_lockout",
+      "refs": "NEW-04, REQ-SEC-05",
+      "passed": true,
+      "ms": 227.7,
+      "details": {
+        "failures": [
+          401,
+          401,
+          401,
+          401,
+          401
+        ],
+        "locked": 429
+      }
+    },
+    {
+      "name": "restart_persistence",
+      "refs": "DEF-20, REQ-ARCH-04",
+      "passed": true,
+      "ms": 4150.5,
+      "details": {
+        "auto_specs": 2,
+        "events": 37
+      }
+    },
+    {
+      "name": "production_mode_rejects_default_passwords",
+      "refs": "NEW-04, REQ-SEC-05/06",
+      "passed": true,
+      "ms": 5328.8,
+      "details": {
+        "default_login": 401,
+        "generated_login": 200,
+        "fault_injection": 403
+      }
+    },
+    {
+      "name": "legacy_db_migration",
+      "refs": "REQ-ARCH-04, обратная совместимость",
+      "passed": true,
+      "ms": 325.0,
+      "details": {
+        "cams": [
+          "old-1"
+        ],
+        "history": 5,
+        "tables": [
+          "audit_log",
+          "auto_spec_triggers",
+          "cameras",
+          "demo_runs",
+          "events",
+          "instrument_readings",
+          "readings",
+          "sessions",
+          "sqlite_sequence",
+          "users"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+2026/11/26 23:53:31 INF MediaMTX v1.21.4, windows, amd64
+2026/11/26 23:53:31 INF configuration loaded from C:\Users\Egoru\AppData\Local\Temp\gv_interop_u5mxjte9\rtsp\mediamtx.yml
+2026/11/26 23:53:31 INF [RTSP] started with listeners on 127.0.0.1:53276 (TCP/RTSP), 127.0.0.1:53276 (UDP/RTP), 127.0.0.1:53277 (UDP/RTCP)
+2026/11/26 23:53:31 WAR [MoQ] certificate auto.key not found, generating it from scratch
+2026/11/26 23:53:31 INF [MoQ] started with listeners on :8892 (TCP/HTTP2), :8892 (UDP/HTTP3), :8893 (UDP/QUIC)
+2026/11/26 23:53:31 INF [RTSP] [conn 127.0.0.1:53288] opened
+2026/11/26 23:53:31 INF [RTSP] [conn 127.0.0.1:53288] closed: EOF
+2026/11/26 23:53:31 INF [RTSP] [conn 127.0.0.1:53290] opened
+2026/11/26 23:53:31 INF [RTSP] [session cc291505] created by 127.0.0.1:53290
+2026/11/26 23:53:31 INF [path gauge] stream is available and online, 1 track (H264)
+2026/11/26 23:53:31 INF [RTSP] [session cc291505] is publishing to path 'gauge'
+2026/11/26 23:53:32 INF [path gauge] RTP packets are too big (1460 > 1440), remuxing them into smaller ones
+2026/11/26 23:53:38 INF [RTSP] [conn 127.0.0.1:53310] opened
+2026/11/26 23:53:38 INF [RTSP] [session dac74cde] created by 127.0.0.1:53310
+2026/11/26 23:53:38 INF [RTSP] [session dac74cde] is reading from path 'gauge', with TCP, 1 track (H264)
+2026/11/26 23:54:27 INF [RTSP] [conn 127.0.0.1:53290] closed: read tcp 127.0.0.1:53276->127.0.0.1:53290: wsarecv: An existing connection was forcibly closed by the remote host.
+2026/11/26 23:54:27 INF [RTSP] [session cc291505] destroyed: not in use
+2026/11/26 23:54:27 INF [RTSP] [conn 127.0.0.1:53310] closed: terminated
+2026/11/26 23:54:27 INF [RTSP] [session dac74cde] destroyed: terminated
+2026/11/26 23:54:29 INF [RTSP] [conn 127.0.0.1:49189] opened
+2026/11/26 23:54:29 INF [RTSP] [conn 127.0.0.1:49189] closed: no stream is available on path 'gauge'
+2026/11/26 23:54:31 INF [RTSP] [conn 127.0.0.1:49190] opened
+2026/11/26 23:54:31 INF [RTSP] [conn 127.0.0.1:49190] closed: no stream is available on path 'gauge'
+2026/11/26 23:54:35 INF [RTSP] [conn 127.0.0.1:49194] opened
+2026/11/26 23:54:35 INF [RTSP] [conn 127.0.0.1:49194] closed: no stream is available on path 'gauge'
+2026/11/26 23:54:36 INF [RTSP] [conn 127.0.0.1:49199] opened
+2026/11/26 23:54:36 INF [RTSP] [session e8ef6cf8] created by 127.0.0.1:49199
+2026/11/26 23:54:36 INF [path gauge] stream is available and online, 1 track (H264)
+2026/11/26 23:54:36 INF [RTSP] [session e8ef6cf8] is publishing to path 'gauge'
+2026/11/26 23:54:36 INF [path gauge] RTP packets are too big (1460 > 1440), remuxing them into smaller ones
+2026/11/26 23:54:43 INF [RTSP] [conn 127.0.0.1:54481] opened
+2026/11/26 23:54:43 INF [RTSP] [session d9784703] created by 127.0.0.1:54481
+2026/11/26 23:54:43 INF [RTSP] [session d9784703] is reading from path 'gauge', with TCP, 1 track (H264)
+2026/11/26 23:54:51 INF [RTSP] [conn 127.0.0.1:49199] closed: read tcp 127.0.0.1:53276->127.0.0.1:49199: wsarecv: An existing connection was forcibly closed by the remote host.
+2026/11/26 23:54:51 INF [RTSP] [session e8ef6cf8] destroyed: not in use
+2026/11/26 23:54:51 INF [RTSP] [conn 127.0.0.1:54481] closed: terminated
+2026/11/26 23:54:51 INF [RTSP] [session d9784703] destroyed: terminated
+2026/11/26 23:54:52 INF [RTSP] [conn 127.0.0.1:54490] opened
+2026/11/26 23:54:52 INF [RTSP] [conn 127.0.0.1:54490] closed: no stream is available on path 'gauge'
+2026/11/26 23:54:54 INF [RTSP] [conn 127.0.0.1:54501] opened
+2026/11/26 23:54:54 INF [RTSP] [conn 127.0.0.1:54501] closed: no stream is available on path 'gauge'
+2026/11/26 23:55:01 INF MediaMTX v1.21.4, windows, amd64
+2026/11/26 23:55:01 INF configuration loaded from C:\Users\Egoru\AppData\Local\Temp\gv_interop_u5mxjte9\rtsp\mediamtx.yml
+2026/11/26 23:55:01 INF [RTSP] started with listeners on 127.0.0.1:53276 (TCP/RTSP), 127.0.0.1:53276 (UDP/RTP), 127.0.0.1:53277 (UDP/RTCP)
+2026/11/26 23:55:01 INF [MoQ] started with listeners on :8892 (TCP/HTTP2), :8892 (UDP/HTTP3), :8893 (UDP/QUIC)
+2026/11/26 23:55:02 INF [RTSP] [conn 127.0.0.1:54525] opened
+2026/11/26 23:55:02 INF [RTSP] [conn 127.0.0.1:54525] closed: EOF
+2026/11/26 23:55:02 INF [RTSP] [conn 127.0.0.1:54527] opened
+2026/11/26 23:55:02 INF [RTSP] [session 4b04783f] created by 127.0.0.1:54527
+2026/11/26 23:55:02 INF [path gauge] stream is available and online, 1 track (H264)
+2026/11/26 23:55:02 INF [RTSP] [session 4b04783f] is publishing to path 'gauge'
+2026/11/26 23:55:02 INF [path gauge] RTP packets are too big (1460 > 1440), remuxing them into smaller ones
+2026/11/26 23:55:12 INF [RTSP] [conn 127.0.0.1:54556] opened
+2026/11/26 23:55:12 INF [RTSP] [session 3bba3135] created by 127.0.0.1:54556
+2026/11/26 23:55:12 INF [RTSP] [session 3bba3135] is reading from path 'gauge', with TCP, 1 track (H264)
+2026/11/26 23:56:29 INF [RTSP] [session 3bba3135] destroyed: torn down by 127.0.0.1:54556
+2026/11/26 23:56:29 INF [RTSP] [conn 127.0.0.1:54556] closed: read tcp 127.0.0.1:53276->127.0.0.1:54556: wsarecv: An established connection was aborted by the software in your host machine.
+2026/11/26 23:56:44 INF [RTSP] [conn 127.0.0.1:54527] closed: read tcp 127.0.0.1:53276->127.0.0.1:54527: wsarecv: An existing connection was forcibly closed by the remote host.
+2026/11/26 23:56:44 INF [RTSP] [session 4b04783f] destroyed: not in use

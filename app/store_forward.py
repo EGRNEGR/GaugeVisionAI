@@ -661,7 +661,11 @@ class StoreAndForwardBuffer:
             except OSError:
                 pass
 
-        if self._outage_active:
+        # Реальный отказ канала: доставка не подтверждается, а записи ждут в очереди (NEW-12).
+        # Без этого при падении брокера статус оставался SYNCING и пульт показывал «доставку».
+        link_down = (not self._outage_active and self._deliver_cb is not None
+                     and self._consecutive_delivery_fails > 0 and pending_cnt > 0)
+        if self._outage_active or link_down:
             sync_state = "BUFFERING"
         elif self._syncing or pending_cnt > 0:
             sync_state = "SYNCING"
@@ -674,6 +678,8 @@ class StoreAndForwardBuffer:
             "outage_active": self._outage_active,
             "outage_since": self._outage_since,
             "outage_reason": self._outage_reason,
+            "link_down": link_down,
+            "delivery_fail_streak": self._consecutive_delivery_fails,
             "pending_count": pending_cnt,
             "pending_alarms": pending_alarms,
             "pending_bytes": pending_bytes,

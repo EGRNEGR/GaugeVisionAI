@@ -1,0 +1,149 @@
+{
+  "total": 8,
+  "passed": 8,
+  "failed": 0,
+  "cases": [
+    {
+      "name": "mqtt_qos1_sf_and_idempotency",
+      "defects": [
+        "DEF-01",
+        "DEF-06",
+        "DEF-19",
+        "DEF-21"
+      ],
+      "passed": true,
+      "ms": 2229.7,
+      "details": {
+        "puback_dup_retried": true,
+        "pings_received": 1,
+        "frame_sha256_verified": true,
+        "duplicates_ignored": 1,
+        "alarms_preserved_on_overflow": 5,
+        "evicted_telemetry": 25,
+        "drain_250_seconds": 0.005
+      }
+    },
+    {
+      "name": "modbus_tcp_strict_and_nan",
+      "defects": [
+        "DEF-13"
+      ],
+      "passed": true,
+      "ms": 2.4,
+      "details": {
+        "unit_id_99_exc": "0x0B",
+        "valid_float32": 13.75,
+        "stale_words": "0x7FC00000"
+      }
+    },
+    {
+      "name": "cv_overlay_and_partial_occlusion",
+      "defects": [
+        "DEF-02",
+        "DEF-15"
+      ],
+      "passed": true,
+      "ms": 6879.3,
+      "details": {
+        "clean_val": 12.962,
+        "occ_44pct_valid": false,
+        "occ_reason": "partial_occlusion",
+        "norm_red_px": 0,
+        "alert_red_px": 5122
+      }
+    },
+    {
+      "name": "streams_ring_quality_adaptive",
+      "defects": [
+        "DEF-10",
+        "DEF-11",
+        "DEF-12"
+      ],
+      "passed": true,
+      "ms": 46.2,
+      "details": {
+        "concurrent_clips_persisted": 2,
+        "partial_occlusion_detected": true,
+        "frame_drop_pct": 62.5,
+        "motion_wakeup_triggered": true
+      }
+    },
+    {
+      "name": "dispatch_analyzer_real_math",
+      "defects": [
+        "DEF-08",
+        "DEF-14"
+      ],
+      "passed": true,
+      "ms": 0.2,
+      "details": {
+        "ramp_peak_rate_per_min": 6.0,
+        "trips_12h_vs_24h": [
+          1,
+          2
+        ],
+        "fog_equipment_health": 100.0,
+        "fog_optical_health": 45.0,
+        "fog_modernization_needed": false
+      }
+    },
+    {
+      "name": "spec_generator_honesty_and_periods",
+      "defects": [
+        "DEF-03",
+        "DEF-04",
+        "DEF-17",
+        "DEF-22"
+      ],
+      "passed": true,
+      "ms": 33.7,
+      "details": {
+        "healthy_capex": 0,
+        "optical_capex": 0,
+        "unknown_group_rejected": true,
+        "period_counts": {
+          "12h": 1,
+          "24h": 2,
+          "7d": 3,
+          "30d": 4
+        }
+      }
+    },
+    {
+      "name": "security_rbac_and_persistence",
+      "defects": [
+        "DEF-07",
+        "DEF-09",
+        "DEF-20"
+      ],
+      "passed": true,
+      "ms": 694.8,
+      "details": {
+        "rbac_matrix_ok": true,
+        "path_traversal_422": true,
+        "ssrf_422": true,
+        "nan_422": true,
+        "rtsp_encrypted_at_rest": true,
+        "rtsp_masked_in_api": true,
+        "events_persisted_sqlite": 9
+      }
+    },
+    {
+      "name": "local_http_mjpeg_capture",
+      "defects": [
+        "REQ-T2-02"
+      ],
+      "passed": true,
+      "ms": 6517.3,
+      "details": {
+        "mjpeg_port": 55527,
+        "frame_shape": [
+          480,
+          480,
+          3
+        ],
+        "read_value": 11.146
+      }
+    }
+  ]
+}

@@ -1,89 +1,105 @@
-# Автономное развёртывание GaugeVision AI в закрытом промышленном контуре (Air-Gapped)
+# Автономное развёртывание GaugeVision AI в закрытом промышленном контуре
 
-Документ описывает воспроизводимую установку и запуск **GaugeVision AI** без доступа к интернету и внешним облачным сервисам.
+Инструкция описывает установку и запуск GaugeVision AI без доступа к интернету. Процедура для Windows x64 проверена 26.11.2026 на чистом окружении: установка из локального wheelhouse, запуск, CV-инференс YOLOv8 на CPU, HMI, SQLite, аналитика, генерация `.docx`, Modbus TCP. Аудит сетевых вызовов процесса сервера за время проверки не зафиксировал ни одного обращения к нелокальному адресу. Отчёт и доказательства: `reports/remediation/OFFLINE_INSTALLATION_REPORT.md`.
 
-## 1. Требования к окружению
+## 1. Состав комплекта
 
-- ОС: Windows Server / Windows 10–11 или Linux (Debian/Ubuntu/Astra/RED OS).
-- Python 3.12 (рекомендуется 3.12.9).
-- Режим инференса по умолчанию: CPU (`GAUGEVISION_DEVICE=cpu`), для NVIDIA GPU в промышленном сервере — `GAUGEVISION_DEVICE=cuda:0` при отдельной установке PyTorch CUDA.
-- Все статические ресурсы HMI (шрифты, SVG-иконки, JS/CSS) поставляются локально внутри каталога `static/` — внешние CDN не используются.
-- Все функции Трека №1 (диспетчеризация, расчёт дефектов, генерация ТЗ `.md` / `.docx`) и Трека №2 (CV-инференс, Ring Buffer, SQLite WAL Store-and-Forward, MQTT 3.1.1 QoS 1, Modbus TCP) работают полностью локально.
+| Компонент | Где | Назначение |
+|---|---|---|
+| `requirements.lock` | корень репозитория | Полный закреплённый набор из 61 пакета: FastAPI, OpenCV, aiosqlite, cryptography, ultralytics 8.4.183, torch 2.14.1+cpu, torchvision 0.29.1+cpu и их зависимости |
+| `wheels/` | создаётся скриптом подготовки | Колёса всех пакетов комплекта (Windows x64, Python 3.12 — около 307 МБ) и `SHA256SUMS.txt` |
+| `models/gauge_yolov8.pt` | в репозитории | Локальные веса детектора корпуса прибора (6,5 МБ, SHA-256 `0bcc644b40023ec281464c9a1d5d0431718708d9caa4fc2ed677d1b470ea9e68`) |
+| `static/` | в репозитории | Весь интерфейс пульта: шрифты, иконки, JS и CSS; внешних CDN нет |
+| `scripts/prepare_offline_bundle.ps1`, `scripts/install_offline.ps1` | в репозитории | Подготовка и установка комплекта |
 
-## 2. Подготовка офлайн-пакета (на машине с доступом к PyPI)
+Без `ultralytics` и `torch` конвейер не падает, а молча переходит на OpenCV-fallback, поэтому оба пакета входят в lock-файл обязательно.
 
-1. Зафиксируйте и соберите локальные wheel-пакеты в каталог `wheels/`:
+## 2. Подготовка комплекта на машине с доступом к PyPI
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/prepare_offline_bundle.ps1 -PythonExe C:\C1\GaugeVS\.venv\Scripts\python.exe
-```
-
-2. Убедитесь, что в комплекте присутствуют:
-   - `requirements.txt` и `requirements.lock`;
-   - каталог `wheels/` со всеми `.whl`-пакетами;
-   - локальные веса `models/gauge_yolov8.pt` (при отсутствии детектор автоматически работает через OpenCV-fallback без попыток скачивания из сети);
-   - каталог `scripts/`.
-
-## 3. Установка в изолированном контуре (без сети)
-
-### Вариант А — чистое виртуальное окружение (Windows / Linux)
+Требуется Python 3.12 (версии в `requirements.lock` проверены на 3.12.9).
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/install_offline.ps1 -VenvDir .venv_offline
+powershell -ExecutionPolicy Bypass -File scripts/prepare_offline_bundle.ps1 -PythonExe "C:\Program Files\Python312\python.exe"
 ```
 
-Или вручную:
+Скрипт скачивает колёса по `requirements.lock` (PyTorch — из CPU-индекса `download.pytorch.org/whl/cpu`, остальное — из PyPI), пишет `wheels/SHA256SUMS.txt` и проверяет наличие весов YOLOv8. Внутреннее зеркало задаётся параметрами `-PypiIndex` и `-TorchIndex`.
 
-```bash
+В закрытый контур переносится репозиторий вместе с каталогами `wheels/` и `models/`.
+
+## 3. Установка в закрытом контуре
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/install_offline.ps1 -BasePython "C:\Program Files\Python312\python.exe"
+```
+
+Скрипт сверяет SHA-256 колёс, создаёт `.venv_offline`, ставит пакеты с ключом `--no-index` (обращение к индексу пакетов невозможно), выполняет `pip check` и проверяет загрузку YOLOv8 на CPU. Ожидаемый вывод последнего шага: `YOLO True CPU`. Установка 61 пакета занимает около двух минут.
+
+Ручной вариант:
+
+```powershell
 python -m venv .venv_offline
-.venv_offline/bin/pip install --no-index --find-links=./wheels -r requirements.lock
+.venv_offline\Scripts\python.exe -m pip install --no-index --find-links=wheels -r requirements.lock
+.venv_offline\Scripts\python.exe -m pip check
 ```
 
-### Вариант Б — Docker-контейнер
+## 4. Настройка перед вводом в эксплуатацию
 
-```bash
-docker build --build-arg OFFLINE_WHEELS=1 -t gaugevision-ai:offline .
-docker run -d --name gaugevision \
-  -p 8000:8000 -p 5020:5020 \
-  -e GAUGEVISION_DEVICE=cpu \
-  -e GAUGEVISION_AUTH_REQUIRED=1 \
-  -e GAUGEVISION_ADMIN_PASSWORD="<СЛОЖНЫЙ_ПАРОЛЬ>" \
-  -v $(pwd)/data:/app/data \
-  gaugevision-ai:offline
-```
+Скопируйте `.env.example` в `.env` и задайте параметры объекта. Переменные читаются при запуске; уже заданные в окружении значения имеют приоритет над `.env`.
 
-## 4. Обязательная настройка безопасности перед вводом в эксплуатацию
+| Переменная | Значение для промышленного режима |
+|---|---|
+| `GAUGEVISION_DEMO` | `0` — промышленный профиль (отдельная БД `data/gaugevision.db`) |
+| `GAUGEVISION_ADMIN_PASS`, `GAUGEVISION_ENGINEER_PASS`, `GAUGEVISION_OPERATOR_PASS` | Уникальные пароли учётных записей `admin`, `engineer`, `operator` |
+| `GAUGEVISION_SECRET_KEY` | Длинный случайный ключ шифрования паролей RTSP в БД (Fernet). Без него ключ создаётся в файле `data/.gv_secret.key` |
+| `GAUGEVISION_LAN_IP` | Адрес узла в сети цеха: ссылки и QR-коды строятся по нему, интерфейсы не перебираются |
+| `GAUGEVISION_ALLOWED_STREAM_CIDRS` | Подсети камер, если они вне RFC 1918 (например `10.20.0.0/16`) |
+| `GAUGEVISION_ALLOW_LOOPBACK_STREAMS`, `GAUGEVISION_ALLOW_EXTERNAL_STREAMS` | `0` — защита от SSRF |
+| `GAUGEVISION_ALLOW_FAULT_INJECTION` | `0` — симуляция отказов из интерфейса запрещена |
+| `GAUGEVISION_MQTT_ENABLED`, `GAUGEVISION_MQTT_HOST`, `GAUGEVISION_MQTT_PORT`, `GAUGEVISION_MQTT_QOS=1`, `GAUGEVISION_MQTT_USERNAME`, `GAUGEVISION_MQTT_PASSWORD`, `GAUGEVISION_MQTT_TLS` | Доставка в SCADA с подтверждением PUBACK |
+| `GAUGEVISION_MODBUS_ENABLED`, `GAUGEVISION_MODBUS_HOST`, `GAUGEVISION_MODBUS_PORT` (по умолчанию 15020), `GAUGEVISION_MODBUS_UNIT_ID` | Регистровая карта для SCADA |
+| `GAUGEVISION_LLM_BASE_URL`, `GAUGEVISION_LLM_MODEL`, `GAUGEVISION_LLM_TIMEOUT`, `GAUGEVISION_LLM_MAX_TOKENS`, `GAUGEVISION_LLM_DISABLE_REASONING` | Необязательное обогащение формулировок ТЗ локальной LLM (Ollama, vLLM, llama.cpp). Пусто — детерминированный режим. На CPU ответ модели 7–9 млрд параметров занимает минуты, тайм-аут задаётся соответственно. Для рассуждающих моделей (Qwen3, DeepSeek-R1) рассуждения по умолчанию отключаются (`reasoning_effort=none`), иначе ответ приходит пустым |
 
-Скопируйте `.env.example` в `.env` и обязательно измените параметры по умолчанию:
+Если в промышленном режиме пароль не задан или совпадает со стендовым из `.env.example`, при первом запуске для учётной записи создаётся случайный пароль. Он однократно записывается в `data/initial_credentials.txt` (права 0600); файл нужно перенести в защищённое хранилище и удалить. Стендовые пароли вне деморежима отклоняются при входе даже для ранее созданных учётных записей.
 
-- `GAUGEVISION_AUTH_REQUIRED=1` — обязательная локальная RBAC-аутентификация (`operator`, `engineer`, `admin`).
-- `GAUGEVISION_ADMIN_PASSWORD`, `GAUGEVISION_ENGINEER_PASSWORD`, `GAUGEVISION_OPERATOR_PASSWORD` — задайте уникальные пароли (пароли по умолчанию предназначены только для локального стенда).
-- `GAUGEVISION_SECRET_KEY` — стойкий секрет для шифрования учётных данных RTSP (Fernet) и подписи сессий.
-- `GAUGEVISION_ALLOW_LOOPBACK_STREAMS=0` и `GAUGEVISION_ALLOW_EXTERNAL_STREAMS=0` — защита от SSRF (разрешены только частные промышленные подсети RFC1918 и явно указанные `GAUGEVISION_ALLOWED_STREAM_CIDRS`).
-- `GAUGEVISION_ALLOW_FAULT_INJECTION=0` — запрет API инъекции сбоев в боевом режиме.
-- `GAUGEVISION_MQTT_ENABLED=1`, `GAUGEVISION_MQTT_QOS=1`, `GAUGEVISION_MQTT_TLS=1`, `GAUGEVISION_MQTT_USERNAME`, `GAUGEVISION_MQTT_PASSWORD` — гарантированная доставка в SCADA с подтверждением `PUBACK`.
-- `GAUGEVISION_CORS_ORIGINS` — белый список доверенных origin HMI.
-
-## 5. Запуск и проверка работоспособности
-
-Демонстрационный стенд (36 приборов, CPU-only, HTTPS):
+## 5. Запуск
 
 ```powershell
 $env:CUDA_VISIBLE_DEVICES = ""
-$env:GAUGEVISION_DEVICE = "cpu"
-.\.venv_offline\Scripts\python.exe -B run.py --demo --host 127.0.0.1 --port 8443 --device cpu
-```
-
-Промышленный режим (HTTPS с локальным X.509 сертификатом):
-
-```powershell
-$env:CUDA_VISIBLE_DEVICES = ""
-$env:GAUGEVISION_DEVICE = "cpu"
 .\.venv_offline\Scripts\python.exe -B run.py --host 0.0.0.0 --port 8443 --device cpu
 ```
 
-Вход в веб-консоль: откройте `https://<ip>:8443` (или `https://localhost:8443`) и авторизуйтесь в модальном окне `Вход в систему GaugeVision AI`.
+Демонстрационный профиль (36 приборов: живая камера смартфона и 35 стендовых): добавить `--demo`.
 
-## 6. Ограничения применения
+Пульт: `https://<адрес-узла>:8443`. Сертификат самоподписный, создаётся при первом запуске в `certs/`.
 
-GaugeVision AI является вспомогательной системой оптического мониторинга. Система не является сертифицированным средством измерений в соответствии с ФЗ-102 «Об обеспечении единства измерений» и не предназначена для замены штатных систем ПАЗ, защит и АСУ ТП.
+Сервер выставляет `YOLO_OFFLINE=1` до загрузки ultralytics: без этого библиотека при импорте проверяет «онлайн» DNS-запросами к внешним серверам.
+
+## 6. Проверка установки
+
+Полная автоматическая проверка (чистое окружение, установка, запуск, аудит сетевых вызовов):
+
+```powershell
+python reports/remediation/tests/offline_install_check.py --wheels wheels --base-python "C:\Program Files\Python312\python.exe"
+```
+
+Ручная проверка после запуска: `https://<адрес>:8443/api/health` отвечает `{"ok": true, ...}`; после входа на вкладке «Видеоаналитика» стендовые каналы показывают задержку инференса около 60–75 мс на кадр (CPU).
+
+## 7. GPU-узел
+
+Для NVIDIA GPU замените в `requirements.lock` строки `torch==2.14.1+cpu` и `torchvision==0.29.1+cpu` на сборки `+cu130` и подготовьте комплект с `-TorchIndex https://download.pytorch.org/whl/cu130`. Запуск — с `--device cuda:0`. Сценарий проверки производительности на GPU-станции: `reports/remediation/tests/gpu_validation_3090.py`.
+
+## 8. Docker
+
+`Dockerfile` собирает CPU-образ из `requirements.lock`. Для автономной сборки нужен wheelhouse под Linux:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/prepare_offline_bundle.ps1 -Platform manylinux_2_28_x86_64
+docker build --build-arg OFFLINE_WHEELS=1 -t gaugevision-ai:offline .
+docker run -d -p 8443:8443 -p 15020:15020 -v ./data:/app/data --env-file .env gaugevision-ai:offline
+```
+
+Сборка образа на стенде приёмки не выполнялась: Docker Engine на нём отсутствует.
+
+## 9. Ограничения применения
+
+GaugeVision AI — вспомогательная система оптического мониторинга. Она не является средством измерений утверждённого типа (ФЗ-102 «Об обеспечении единства измерений») и не заменяет штатные системы ПАЗ, защит и АСУ ТП.

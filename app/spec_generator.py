@@ -25,6 +25,7 @@ from __future__ import annotations
 import datetime as _dt
 import logging
 import math
+import re
 from typing import Any
 
 import httpx
@@ -210,6 +211,9 @@ def _parse_iso(ts: Any) -> float | None:
         return None
 
 
+_THINK_BLOCK_RE = re.compile(r"<think>.*?(</think>|$)", re.IGNORECASE | re.DOTALL)
+
+
 async def _try_llm_enrichment(summary_prompt: str) -> tuple[str | None, str]:
     """Опциональное стилистическое обогащение выводов через Ollama/vLLM/OpenAI-compatible API."""
     if not config.LLM_BASE_URL:
@@ -223,7 +227,7 @@ async def _try_llm_enrichment(summary_prompt: str) -> tuple[str | None, str]:
     body = {
         "model": config.LLM_MODEL,
         "temperature": 0.2,
-        "max_tokens": 500,
+        "max_tokens": config.LLM_MAX_TOKENS,
         "messages": [
             {
                 "role": "system",
@@ -236,14 +240,30 @@ async def _try_llm_enrichment(summary_prompt: str) -> tuple[str | None, str]:
             {"role": "user", "content": summary_prompt},
         ],
     }
+    if config.LLM_DISABLE_REASONING:
+        body["reasoning_effort"] = "none"
     try:
         async with httpx.AsyncClient(timeout=config.LLM_TIMEOUT_SECONDS) as client:
             resp = await client.post(endpoint, headers=headers, json=body)
+            if resp.status_code in (400, 422) and "reasoning_effort" in body:
+                # сервер не знает параметра — повтор без него
+                body.pop("reasoning_effort")
+                resp = await client.post(endpoint, headers=headers, json=body)
             resp.raise_for_status()
             data = resp.json()
-            text = (data.get("choices") or [{}])[0].get("message", {}).get("content", "").strip()
+            choice = (data.get("choices") or [{}])[0]
+            raw = str((choice.get("message") or {}).get("content") or "")
+            text = _THINK_BLOCK_RE.sub("", raw).strip()
             if text:
                 return text, f"llm_enhanced ({config.LLM_MODEL})"
+            # NEW-13: сервер ответил, но без текста (лимит исчерпан рассуждениями и т. п.)
+            finish = choice.get("finish_reason") or "—"
+            logger.warning("LLM %s вернула пустой ответ (finish_reason=%s) — детерминированный режим",
+                           config.LLM_MODEL, finish)
+            return None, f"deterministic (fallback: пустой ответ LLM, finish_reason={finish})"
+    except httpx.TimeoutException:
+        logger.info("LLM enrichment timeout (%.0f с), using deterministic mode", config.LLM_TIMEOUT_SECONDS)
+        return None, "deterministic (fallback: тайм-аут LLM)"
     except Exception as exc:
         logger.info("LLM enrichment unavailable, using deterministic mode: %s", exc)
     return None, "deterministic (fallback: LLM недоступна)"
