@@ -1,0 +1,118 @@
+{
+  "started_utc": "2026-11-26T19:27:57Z",
+  "checks": {
+    "wheelhouse": {
+      "files": 61,
+      "size_mb": 307.2
+    },
+    "pip_install": {
+      "rc": 0,
+      "seconds": 137.5
+    },
+    "pip_check_rc": 0,
+    "lock_vs_installed": {
+      "lock_entries": 61,
+      "missing": [],
+      "extra": []
+    },
+    "imports": {
+      "rc": 0,
+      "versions": "2.14.1+cpu 8.4.183 5.0.0 False",
+      "stderr_tail": ""
+    },
+    "yolo_weights": {
+      "exists": true,
+      "bytes": 6503658,
+      "sha256": "0bcc644b40023ec281464c9a1d5d0431718708d9caa4fc2ed677d1b470ea9e68"
+    },
+    "static": {
+      "index_refs": 4,
+      "js_module_imports": 17,
+      "missing": [],
+      "external_resource_urls": [],
+      "external_navigation_links": [
+        "index.html: https://gaugevision-simulator.goodlyoatmeal32.chatgpt.site/"
+      ]
+    },
+    "server_start_s": 6.7,
+    "meta": {
+      "yolo": true,
+      "yolo_device": "CPU",
+      "demo": true
+    },
+    "cv_bench_streams": [
+      {
+        "id": "edge-bench-k1t01",
+        "status": "online",
+        "value": 568.6415,
+        "inference_ms": 62.2,
+        "frames": 153
+      },
+      {
+        "id": "edge-bench-ta2t02",
+        "status": "online",
+        "value": 94.8956,
+        "inference_ms": 54.8,
+        "frames": 153
+      }
+    ],
+    "hmi": {
+      "index": 200,
+      "assets_ok": 4,
+      "assets_total": 4,
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src"
+    },
+    "analytics": {
+      "instruments": 36,
+      "avg_health": 88.0
+    },
+    "docx": {
+      "status": 200,
+      "valid": true,
+      "bytes": 132780,
+      "media": 4
+    },
+    "modbus_system_block": [
+      36,
+      2,
+      3,
+      2,
+      0,
+      0
+    ],
+    "server_exit_code": 3,
+    "yolo_loaded_logged": true,
+    "graceful_shutdown_logged": true,
+    "log_errors": 0,
+    "sqlite": {
+      "journal_mode": "wal",
+      "instrument_readings": 170,
+      "events": 9,
+      "users": 3
+    },
+    "runtime_network_audit": {
+      "events_total": 0,
+      "local_hostname_lookup": 0,
+      "udp_route_probe_no_packets": [],
+      "external_attempts": []
+    }
+  },
+  "verdict": {
+    "offline_install_ok": true,
+    "installed_matches_lock": true,
+    "imports_ok": true,
+    "weights_present": true,
+    "static_complete_no_external": true,
+    "yolo_cpu_loaded": true,
+    "cv_inference_running": true,
+    "hmi_served": true,
+    "sqlite_written": true,
+    "analytics_36": true,
+    "docx_generated": true,
+    "modbus_serves": true,
+    "no_external_network_attempts": true,
+    "no_server_errors": true
+  },
+  "passed": true,
+  "finished_utc": "2026-11-26T19:31:07Z"
+}

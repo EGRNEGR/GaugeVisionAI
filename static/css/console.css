@@ -1351,7 +1351,7 @@ table.disc .port { display: inline-block; padding: 0 .25rem; margin-right: .25re
 @media (max-width: 1380px) {
   .phone-stage-txt { display: none; }
   .phone-pill { padding: .15rem; }
-  .auth-pill { max-width: 6.2rem; padding: 0 .35rem; }
+  .auth-pill { max-width: 6.6rem; padding: 0 .35rem; }
   .head-ops { gap: .22rem; padding: 0 .3rem; }
   .nav button { padding: 0 .45rem; }
 }

@@ -101,6 +101,9 @@ def _load_yolo():
                             _os.environ["YOLO_CONFIG_DIR"] = str(cfg_dir)
                         except OSError:
                             pass
+                    # Закрытый контур: без YOLO_OFFLINE ultralytics при импорте проверяет «онлайн»
+                    # DNS-запросами к one.one.one.one / dns.google и включает внешнюю телеметрию
+                    _os.environ.setdefault("YOLO_OFFLINE", "1")
                     from ultralytics import YOLO  # type: ignore
                     model = YOLO(str(weights))
                     _YOLO_DEVICE, _YOLO_HALF, _YOLO_DEVICE_NAME = _resolve_device()

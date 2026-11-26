@@ -7,8 +7,10 @@ from __future__ import annotations
 import base64
 import hashlib
 import ipaddress
+import logging
 import math
 import os
+import re
 import secrets
 import socket
 from pathlib import Path
@@ -242,6 +244,48 @@ def validate_video_file_path(raw_path: str, allowed_root: Path | None = None) ->
 
     rel = resolved.relative_to(root)
     return str(rel).replace("\\", "/")
+
+
+_TOKEN_QUERY_RE = re.compile(r"((?:^|[?&])(?:token|access_token|api_key)=)[^&\s\"']+", re.IGNORECASE)
+
+
+def redact_secrets_in_text(text: str) -> str:
+    """Маскирует токены в строке запроса и учётные данные в URL (для журналов)."""
+    text = _TOKEN_QUERY_RE.sub(r"\1***", text)
+    return _URL_USERINFO_RE.sub(r"\1***:***@", text)
+
+
+_URL_USERINFO_RE = re.compile(r"((?:rtsps?|https?)://)[^/\s:@]+:[^/\s@]+@", re.IGNORECASE)
+
+
+class SecretRedactingFilter(logging.Filter):
+    """Фильтр журналов: токены сессии/смартфона из `?token=` и пароли из URL не попадают в логи
+    (в том числе в access-лог uvicorn, который пишет полный путь запроса WebSocket)."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        try:
+            if record.args:
+                record.args = tuple(
+                    redact_secrets_in_text(a) if isinstance(a, str) else a
+                    for a in (record.args if isinstance(record.args, tuple) else (record.args,))
+                )
+            if isinstance(record.msg, str):
+                record.msg = redact_secrets_in_text(record.msg)
+        except Exception:
+            pass
+        return True
+
+
+def install_log_redaction() -> None:
+    """Подключает маскирование секретов к журналам приложения и uvicorn (идемпотентно)."""
+    flt = SecretRedactingFilter()
+    for name in ("", "uvicorn", "uvicorn.access", "uvicorn.error", "gaugevision"):
+        lg = logging.getLogger(name)
+        if not any(isinstance(f, SecretRedactingFilter) for f in lg.filters):
+            lg.addFilter(flt)
+        for h in lg.handlers:
+            if not any(isinstance(f, SecretRedactingFilter) for f in h.filters):
+                h.addFilter(flt)
 
 
 def sanitize_non_finite(obj: Any) -> Any:

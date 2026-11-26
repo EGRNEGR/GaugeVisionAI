@@ -49,7 +49,8 @@ def print_banner(lan_ip: str, port: int, fingerprint: str | None) -> None:
     print(f"  {b}Дашборд оператора:{r}")
     print(f"    {g}➜  Этот ПК:          https://localhost:{port}{r}")
     print(f"    {g}➜  Сеть Wi-Fi / LAN: https://{lan_ip}:{port}{r}")
-    others = [ip for ip in config.candidate_lan_ips() if ip != lan_ip]
+    # при явно заданном адресе (закрытый контур) интерфейсы не перебираются: ни одной сетевой операции
+    others = [] if os.environ.get("GAUGEVISION_LAN_IP") else [ip for ip in config.candidate_lan_ips() if ip != lan_ip]
     if others:
         print(f"    Другие адреса хоста: {', '.join(others)}  (выбор: python run.py --lan-ip <IP>)")
     print(f"  {line}")

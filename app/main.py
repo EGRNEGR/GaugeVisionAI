@@ -53,6 +53,7 @@ from .dispatch_analyzer import DispatchAnalyzer
 from .events import EventLog, crossed_setpoint
 from .scada_gateway import ScadaGateway
 from .security import (
+    install_log_redaction,
     mask_url_credentials,
     sanitize_non_finite,
     validate_network_stream_url,
@@ -1448,6 +1449,8 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
             lp.default_exception_handler(ctx)
 
     loop.set_exception_handler(_quiet_resets)
+    # uvicorn уже настроил журналы: маскируем ?token= в access-логе и пароли в URL
+    install_log_redaction()
     await service.start()
     try:
         yield
