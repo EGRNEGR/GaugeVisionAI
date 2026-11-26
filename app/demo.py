@@ -99,7 +99,8 @@ SCENARIO_OVERRIDES: dict[str, dict[str, dict[str, Any]]] = {
     "mixed": {
         # 2 CRITICAL (котёл К-1, турбоагрегат Т-2)
         "sim-02": {"base": 570.2, "amp": 1.8, "ramp_from": 546.0, "period_s": 28.0},
-        "sim-12": {"base": 93.8, "amp": 1.1, "ramp_from": 73.5, "period_s": 32.0, "chatter_amp": 3.2},
+        # дребезг ±3,2 поверх волны ±1,1: минимум 94,6 − 4,3 = 90,3 > HH 90 — позиция не выходит из CRITICAL
+        "sim-12": {"base": 94.6, "amp": 1.1, "ramp_from": 73.5, "period_s": 32.0, "chatter_amp": 3.2},
         # 3 WARNING (деаэратор №1, теплосеть СН-1, турбогенератор ТГ-1)
         "sim-17": {"base": 85.6, "amp": 1.1, "ramp_from": 69.0, "period_s": 34.0},
         "sim-21": {"base": 126.4, "amp": 1.2, "ramp_from": 105.0, "period_s": 31.0},
