@@ -12,14 +12,107 @@ import socket
 from pathlib import Path
 
 # ---------------------------------------------------------------------------
-# Пути
+# Пути и загрузка .env (автономный контур, без внешних зависимостей)
 # ---------------------------------------------------------------------------
 BASE_DIR: Path = Path(__file__).resolve().parent.parent
+
+
+def _load_dotenv(env_path: Path) -> None:
+    """Загружает переменные из .env в корне репозитория без перезаписи уже заданных."""
+    if not env_path.is_file():
+        return
+    try:
+        for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+            line = raw_line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, val = line.split("=", 1)
+            key = key.strip()
+            val = val.strip().strip('"').strip("'")
+            if key and key not in os.environ:
+                os.environ[key] = val
+    except OSError:
+        pass
+
+
+_load_dotenv(BASE_DIR / ".env")
+
 CERTS_DIR: Path = BASE_DIR / "certs"
 STATIC_DIR: Path = BASE_DIR / "static"
 DATA_DIR: Path = BASE_DIR / "data"
 MODELS_DIR: Path = BASE_DIR / "models"
-DB_PATH: Path = Path(os.environ.get("GAUGEVISION_DB", DATA_DIR / "gaugevision.db"))
+EXPORTS_DIR: Path = DATA_DIR / "exports"
+DEMO_MODE: bool = os.environ.get("GAUGEVISION_DEMO", "").strip().lower() in ("1", "true", "yes", "on", "demo")
+DEMO_DB_DEFAULT: Path = DATA_DIR / "gaugevision_demo.db"
+DB_PATH: Path = Path(os.environ.get("GAUGEVISION_DB", DEMO_DB_DEFAULT if DEMO_MODE else DATA_DIR / "gaugevision.db"))
+SF_DB_PATH: Path = Path(os.environ.get("GAUGEVISION_SF_DB", DATA_DIR / "store_forward.db"))
+
+
+def _env_bool(name: str, default: bool = False) -> bool:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    return raw.strip().lower() in ("1", "true", "yes", "on")
+
+
+def _env_float(name: str, default: float) -> float:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    try:
+        return float(raw)
+    except ValueError:
+        return default
+
+
+def _env_int(name: str, default: int) -> int:
+    raw = os.environ.get(name)
+    if raw is None:
+        return default
+    try:
+        return int(raw)
+    except ValueError:
+        return default
+
+
+def get_sf_db_path() -> Path:
+    explicit = os.environ.get("GAUGEVISION_SF_DB")
+    if explicit:
+        return Path(explicit)
+    db_override = os.environ.get("GAUGEVISION_DB")
+    if db_override:
+        return Path(db_override).resolve().parent / "store_forward.db"
+    return DATA_DIR / ("store_forward_demo.db" if is_demo_mode() else "store_forward.db")
+
+
+def is_demo_mode() -> bool:
+    env = os.environ.get("GAUGEVISION_DEMO")
+    if env is not None:
+        return env.strip().lower() in ("1", "true", "yes", "on", "demo")
+    return DEMO_MODE
+
+
+def get_db_path() -> Path:
+    explicit = os.environ.get("GAUGEVISION_DB")
+    if explicit:
+        return Path(explicit)
+    return DEMO_DB_DEFAULT if is_demo_mode() else (DATA_DIR / "gaugevision.db")
+
+
+def configure_runtime(*, demo: bool | None = None, db_path: str | None = None,
+                      device: str | None = None) -> None:
+    """Применяет параметры запуска из CLI до инициализации БД и конвейера."""
+    global DEMO_MODE, DB_PATH, YOLO_DEVICE
+    if demo is not None:
+        DEMO_MODE = bool(demo)
+        os.environ["GAUGEVISION_DEMO"] = "1" if demo else "0"
+    if db_path:
+        os.environ["GAUGEVISION_DB"] = db_path
+    DB_PATH = get_db_path()
+    if device:
+        os.environ["GAUGEVISION_DEVICE"] = device
+        YOLO_DEVICE = device
+
 
 # Веса YOLOv8 для детекции корпуса прибора (опционально, раздел 5.1 ТЗ).
 # Без файла весов конвейер автоматически работает на OpenCV-fallback
@@ -60,6 +153,24 @@ REDETECT_EVERY_N_FRAMES: int = 15  # повторная локализация �
 MJPEG_FPS: float = 8.0           # частота раздачи MJPEG-превью на дашборд
 MAX_PROCESS_WIDTH: int = 1280    # кадры шире масштабируются перед анализом
 MIN_NEEDLE_CONFIDENCE: float = 0.25  # ниже — отсчёт недостоверен, держим последнее значение
+EVENTS_MAX: int = 1000          # записей журнала событий пульта в памяти сервера
+EVENT_SNAPSHOTS_MAX: int = 150  # стоп-кадров срабатываний к последним событиям
+TREND_BUCKETS_MAX: int = 1000   # точек агрегированного тренда за смену
+READING_STALE_SECONDS: float = float(os.environ.get("GAUGEVISION_STALE_SECONDS", "6.0"))
+
+# ---------------------------------------------------------------------------
+# Демонстрационный профиль (36 приборов: 1 живая камера + 35 симуляция)
+# ---------------------------------------------------------------------------
+DEMO_LIVE_CAM_ID: str = "demo-mtp160-steam"
+DEMO_TOTAL_POSITIONS: int = 36
+DEMO_SEED: int = int(os.environ.get("GAUGEVISION_DEMO_SEED", "42"))
+DEMO_SIM_INTERVAL: float = 1.0
+# Шаг записи телеметрии стендовых приборов в SQLite (instrument_readings), с
+DEMO_SIM_PERSIST_INTERVAL: float = float(os.environ.get("GAUGEVISION_SIM_PERSIST_INTERVAL", "5.0"))
+SIMULATOR_URL: str = os.environ.get(
+    "GAUGEVISION_SIMULATOR_URL",
+    "https://gaugevision-simulator.goodlyoatmeal32.chatgpt.site/",
+)
 
 # ---------------------------------------------------------------------------
 # Захват потоков (раздел 2 ТЗ)
@@ -119,10 +230,128 @@ GAUGE_TYPES: dict[str, dict] = {
 ALL_UNITS: list[str] = sorted({u for g in GAUGE_TYPES.values() for u in g["units"]})
 
 # Типы источников видеопотока (таблица cameras.type)
-CAMERA_TYPES: tuple[str, ...] = ("device", "rtsp", "http_mjpeg", "phone_ws")
+CAMERA_TYPES: tuple[str, ...] = ("device", "rtsp", "http_mjpeg", "phone_ws", "video_file")
 
-# Статусы потока (раздел 2.4 ТЗ)
+# Статусы потока (раздел 2.4 ТЗ) + расширенные статусы Edge-аналитики
 CAMERA_STATUSES: tuple[str, ...] = ("online", "reconnecting", "offline")
+EDGE_HEALTH_STATUSES: tuple[str, ...] = ("ONLINE", "DEGRADED", "OFFLINE")
+
+# ---------------------------------------------------------------------------
+# Трек №2: Архитектурная видеоаналитика, Adaptive FPS, Store-and-Forward, SCADA
+# ---------------------------------------------------------------------------
+EDGE_NODE_ID: str = os.environ.get("GAUGEVISION_EDGE_NODE_ID", "edge-ktc-01")
+PLANT_NAME: str = os.environ.get("GAUGEVISION_PLANT_NAME", "ТЭЦ-22 ПАО «Интер РАО» (Котлотурбинный цех)")
+PLANT_BRANCH: str = os.environ.get("GAUGEVISION_PLANT_BRANCH", "Филиал «Московская генерация»")
+
+# Adaptive FPS (Event-Driven Inference)
+ADAPTIVE_FPS_IDLE: float = _env_float("GAUGEVISION_ADAPTIVE_FPS_IDLE", 1.0)
+ADAPTIVE_FPS_ACTIVE: float = _env_float("GAUGEVISION_ADAPTIVE_FPS_ACTIVE", 6.0)
+ADAPTIVE_HOLD_SECONDS: float = _env_float("GAUGEVISION_ADAPTIVE_HOLD_SECONDS", 15.0)
+ADAPTIVE_DELTA_PCT: float = _env_float("GAUGEVISION_ADAPTIVE_DELTA_PCT", 2.5)
+ADAPTIVE_MOTION_MAD: float = _env_float("GAUGEVISION_ADAPTIVE_MOTION_MAD", 2.4)
+ADAPTIVE_WAKE_CHECK_INTERVAL: float = _env_float("GAUGEVISION_ADAPTIVE_WAKE_INTERVAL", 0.12)
+RING_BUFFER_PRE_FRAMES: int = _env_int("GAUGEVISION_RING_PRE_FRAMES", 12)
+RING_BUFFER_POST_FRAMES: int = _env_int("GAUGEVISION_RING_POST_FRAMES", 8)
+RING_BUFFER_MAX_CLIPS: int = _env_int("GAUGEVISION_RING_MAX_CLIPS", 20)
+
+# Store-and-Forward буфер (SQLite WAL)
+SF_BATCH_SIZE: int = _env_int("GAUGEVISION_SF_BATCH_SIZE", 40)
+SF_MAX_QUEUE_ROWS: int = _env_int("GAUGEVISION_SF_MAX_QUEUE_ROWS", 25000)
+SF_MAX_PENDING_MB: float = _env_float("GAUGEVISION_SF_MAX_PENDING_MB", 128.0)
+SF_MIN_DISK_FREE_MB: float = _env_float("GAUGEVISION_SF_MIN_DISK_FREE_MB", 100.0)
+SF_SYNC_INTERVAL: float = _env_float("GAUGEVISION_SF_SYNC_INTERVAL", 1.2)
+SF_BATCH_DELAY_S: float = _env_float("GAUGEVISION_SF_BATCH_DELAY", 0.0)
+
+# Промышленные протоколы интеграции АСУ ТП (MQTT 3.1.1 / Modbus TCP)
+MQTT_ENABLED: bool = _env_bool("GAUGEVISION_MQTT_ENABLED", False)
+MQTT_HOST: str = os.environ.get("GAUGEVISION_MQTT_HOST", "127.0.0.1")
+MQTT_PORT: int = _env_int("GAUGEVISION_MQTT_PORT", 1883)
+MQTT_TOPIC_PREFIX: str = os.environ.get("GAUGEVISION_MQTT_TOPIC_PREFIX", "interrao/tec22/ktc/gaugevision")
+MQTT_CLIENT_ID: str = os.environ.get("GAUGEVISION_MQTT_CLIENT_ID", f"gv-{EDGE_NODE_ID}")
+MQTT_USERNAME: str = os.environ.get("GAUGEVISION_MQTT_USERNAME", "")
+MQTT_PASSWORD: str = os.environ.get("GAUGEVISION_MQTT_PASSWORD", "")
+MQTT_QOS: int = _env_int("GAUGEVISION_MQTT_QOS", 1)
+MQTT_KEEPALIVE: int = _env_int("GAUGEVISION_MQTT_KEEPALIVE", 30)
+MQTT_ACK_TIMEOUT: float = _env_float("GAUGEVISION_MQTT_ACK_TIMEOUT", 2.5)
+MQTT_TLS: bool = _env_bool("GAUGEVISION_MQTT_TLS", False)
+MQTT_MAX_RETRIES: int = _env_int("GAUGEVISION_MQTT_MAX_RETRIES", 2)
+
+MODBUS_ENABLED: bool = _env_bool("GAUGEVISION_MODBUS_ENABLED", False)
+MODBUS_HOST: str = os.environ.get("GAUGEVISION_MODBUS_HOST", "127.0.0.1")
+MODBUS_PORT: int = _env_int("GAUGEVISION_MODBUS_PORT", 15020)
+MODBUS_UNIT_ID: int = _env_int("GAUGEVISION_MODBUS_UNIT_ID", 1)
+
+# ---------------------------------------------------------------------------
+# Безопасность, аутентификация / RBAC и ограничения видеоисточников (DEF-07)
+# ---------------------------------------------------------------------------
+AUTH_REQUIRED: bool = _env_bool("GAUGEVISION_AUTH_REQUIRED", True)
+SESSION_TTL_SECONDS: int = _env_int("GAUGEVISION_SESSION_TTL", 12 * 3600)
+ALLOW_FAULT_INJECTION: bool = _env_bool("GAUGEVISION_ALLOW_FAULT_INJECTION", False)
+ALLOW_LOOPBACK_STREAMS: bool = _env_bool("GAUGEVISION_ALLOW_LOOPBACK_STREAMS", False)
+ALLOW_EXTERNAL_STREAMS: bool = _env_bool("GAUGEVISION_ALLOW_EXTERNAL_STREAMS", False)
+ALLOWED_STREAM_CIDRS: str = os.environ.get("GAUGEVISION_ALLOWED_STREAM_CIDRS", "")
+CORS_ORIGINS: str = os.environ.get("GAUGEVISION_CORS_ORIGINS", "")
+SECRET_KEY: str = os.environ.get("GAUGEVISION_SECRET_KEY", "")
+ADMIN_USERNAME: str = os.environ.get("GAUGEVISION_ADMIN_USER", "admin")
+ADMIN_PASSWORD: str = os.environ.get("GAUGEVISION_ADMIN_PASS", "GaugeAdmin!2026")
+ENGINEER_USERNAME: str = os.environ.get("GAUGEVISION_ENGINEER_USER", "engineer")
+ENGINEER_PASSWORD: str = os.environ.get("GAUGEVISION_ENGINEER_PASS", "GaugeEng!2026")
+OPERATOR_USERNAME: str = os.environ.get("GAUGEVISION_OPERATOR_USER", "operator")
+OPERATOR_PASSWORD: str = os.environ.get("GAUGEVISION_OPERATOR_PASS", "GaugeOp!2026")
+# Публично известные стендовые пароли (.env.example, документация): вне деморежима не принимаются
+KNOWN_DEFAULT_PASSWORDS: frozenset[str] = frozenset({"GaugeAdmin!2026", "GaugeEng!2026", "GaugeOp!2026"})
+LOGIN_MAX_FAILURES: int = _env_int("GAUGEVISION_LOGIN_MAX_FAILURES", 5)
+LOGIN_LOCKOUT_WINDOW_SECONDS: int = _env_int("GAUGEVISION_LOGIN_LOCKOUT_WINDOW", 300)
+# Период повторной проверки сессии открытых WebSocket-подключений пульта, с
+WS_SESSION_RECHECK_SECONDS: float = _env_float("GAUGEVISION_WS_SESSION_RECHECK", 15.0)
+
+
+def get_videos_dir() -> Path:
+    explicit = os.environ.get("GAUGEVISION_VIDEOS_DIR")
+    if explicit:
+        return Path(explicit).resolve()
+    return (DATA_DIR / "videos").resolve()
+
+
+def get_incidents_dir() -> Path:
+    explicit = os.environ.get("GAUGEVISION_INCIDENTS_DIR")
+    if explicit:
+        return Path(explicit).resolve()
+    return (get_db_path().resolve().parent / "incidents").resolve()
+
+
+def get_auto_specs_dir() -> Path:
+    explicit = os.environ.get("GAUGEVISION_AUTO_SPECS_DIR")
+    if explicit:
+        return Path(explicit).resolve()
+    return (get_db_path().resolve().parent / "auto_specs").resolve()
+
+
+# ---------------------------------------------------------------------------
+# Трек №1: Умная диспетчеризация и генерация проектной документации / ТЗ
+# ---------------------------------------------------------------------------
+CRITICAL_WEAR_HEALTH_THRESHOLD: float = _env_float("GAUGEVISION_WEAR_THRESHOLD", 50.0)
+# Минимальный шаг точек ряда диспетчерского анализа, с (цикл синхронизации архитектуры — 2 с, допуск на джиттер)
+DISPATCH_MIN_SAMPLE_INTERVAL: float = _env_float("GAUGEVISION_DISPATCH_SAMPLE_INTERVAL", 1.5)
+# Шумовой порог считывания: скачок между соседними точками ниже этой доли шкалы (%) не считается гидроударом
+DISPATCH_JUMP_NOISE_PCT: float = _env_float("GAUGEVISION_DISPATCH_JUMP_NOISE_PCT", 1.5)
+# «Регулярные перегрузки» (ТЗ, раздел 3 дефектной ведомости): минимум срабатываний уставок за период
+# для включения исправного по остальным признакам прибора в ТЗ на модернизацию
+SPEC_REGULAR_TRIPS_MIN: int = _env_int("GAUGEVISION_SPEC_REGULAR_TRIPS_MIN", 3)
+AUTO_SPEC_COOLDOWN_SECONDS: float = _env_float("GAUGEVISION_AUTO_SPEC_COOLDOWN", 3600.0)
+LLM_BASE_URL: str = os.environ.get("GAUGEVISION_LLM_BASE_URL", "").strip()
+LLM_API_KEY: str = os.environ.get("GAUGEVISION_LLM_API_KEY", "").strip()
+LLM_MODEL: str = os.environ.get("GAUGEVISION_LLM_MODEL", "qwen2.5:7b-instruct").strip()
+LLM_TIMEOUT_SECONDS: float = _env_float("GAUGEVISION_LLM_TIMEOUT", 18.0)
+LLM_MAX_TOKENS: int = _env_int("GAUGEVISION_LLM_MAX_TOKENS", 700)
+# Рассуждающие модели (Qwen3, DeepSeek-R1 и др.) тратят весь лимит токенов на скрытые рассуждения
+# и возвращают пустой content; по умолчанию рассуждения отключаются (reasoning_effort = none)
+LLM_DISABLE_REASONING: bool = os.environ.get("GAUGEVISION_LLM_DISABLE_REASONING", "1").strip().lower() not in ("0", "false", "no")
+
+# Конфигурируемые параметры ТЭО (ориентировочные справочные допущения)
+ECO_COMMISSIONING_RATE: float = _env_float("GAUGEVISION_ECO_COMMISSIONING_RATE", 0.14)
+ECO_ROUNDS_SAVINGS_RUB_YR: int = _env_int("GAUGEVISION_ECO_ROUNDS_SAVINGS_RUB", 38000)
+ECO_OPEX_PER_SENSOR_RUB_YR: int = _env_int("GAUGEVISION_ECO_OPEX_RUB", 8000)
 
 
 def get_lan_ip() -> str:

@@ -1,0 +1,69 @@
+{
+  "timestamp": "2026-11-26T20:02:09",
+  "sqlite_batch_write": {
+    "rows": 1000,
+    "elapsed_s": 0.011,
+    "rows_per_sec": 87933.0
+  },
+  "store_forward_throughput": {
+    "enqueue_200_s": 0.079,
+    "enqueue_rows_per_sec": 2525.5,
+    "drain_200_s": 0.778,
+    "drain_rows_per_sec": 257.2,
+    "delivered": 200
+  },
+  "spec_generation_timing": {
+    "md_ms": 0.6,
+    "docx_ms": 33.8,
+    "docx_bytes": 131992
+  },
+  "adaptive_fps_cpu_comparison": {
+    "idle_1fps": {
+      "frames": 5,
+      "wall_s": 5.01,
+      "cpu_time_s": 1.219,
+      "cpu_core_pct": 24.4,
+      "avg_ms": 29.1
+    },
+    "burst_6fps": {
+      "frames": 30,
+      "wall_s": 5.01,
+      "cpu_time_s": 4.188,
+      "cpu_core_pct": 83.6,
+      "avg_ms": 36.4
+    },
+    "measured_cpu_reduction_pct": 70.8
+  },
+  "mini_soak_12s": {
+    "note": "Controlled 12s continuous CPU soak (30-60 min soak NOT VERIFIED due to session runtime budget).",
+    "frames_processed": 413,
+    "rss_start_mb": 750.3,
+    "rss_end_mb": 753.47,
+    "rss_delta_mb": 3.17,
+    "rss_samples_mb": [
+      752.52,
+      753.42,
+      753.44,
+      753.44,
+      753.45,
+      753.46,
+      753.46,
+      753.46,
+      753.46,
+      753.47,
+      753.47,
+      753.47,
+      753.47,
+      753.47,
+      753.47,
+      753.47,
+      753.47,
+      753.47
+    ]
+  },
+  "fault_injection_extra": {
+    "tiny_4x4_frame_handled_safely": true,
+    "tiny_frame_exception": null,
+    "unwritable_sf_db_error": "FileNotFoundError: [WinError 3] Системе не удается найти указанный путь: 'Z:\\\\'"
+  }
+}

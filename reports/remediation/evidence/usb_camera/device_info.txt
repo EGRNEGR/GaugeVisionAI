@@ -1,0 +1,4 @@
+Устройство захвата, использованное в usb_camera_check.py (индекс 0, DirectShow):
+FriendlyName: Integrated Camera
+InstanceId: USB\VID_5986&PID_2174&MI_00 (UVC-интерфейс USB, встроенная камера ноутбука)
+Кадры не сохранялись.

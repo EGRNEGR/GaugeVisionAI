@@ -33,6 +33,8 @@ import cv2
 import numpy as np
 
 from . import config
+from .db import utcnow_iso
+from .security import mask_url_credentials, validate_network_stream_url
 
 logger = logging.getLogger("gaugevision.streamer")
 
@@ -138,6 +140,7 @@ class BaseWorker(ABC):
         self.last_error: str | None = None
         self.frames_total = 0
         self.fps = 0.0
+        self.online_since: float | None = None   # UNIX-время перехода в «В сети»
         self._fps_t0 = time.monotonic()
         self._fps_n = 0
         self._stop = threading.Event()
@@ -156,16 +159,20 @@ class BaseWorker(ABC):
         if self.status == status:
             return
         self.status = status
+        self.online_since = time.time() if status == "online" else None
         logger.info("[%s] статус: %s", self.cam_id[:8], status)
         if self._on_status is None:
             return
+        if self.loop.is_closed():
+            return  # остановка сервера: уведомлять некого
+        coro = self._safe_notify(status)
         try:
             if self._in_loop_thread():
-                self.loop.create_task(self._safe_notify(status))
+                self.loop.create_task(coro)
             else:
-                asyncio.run_coroutine_threadsafe(self._safe_notify(status), self.loop)
+                asyncio.run_coroutine_threadsafe(coro, self.loop)
         except RuntimeError:
-            pass  # event-loop уже закрыт (остановка сервера)
+            coro.close()  # event-loop закрылся между проверкой и отправкой
 
     def _in_loop_thread(self) -> bool:
         try:
@@ -186,6 +193,7 @@ class BaseWorker(ABC):
             "frames_total": self.frames_total,
             "fail_count": self.fail_count,
             "last_error": self.last_error,
+            "online_since": self.online_since,
             "frame_age": None if self.broker.age(self.cam_id) == float("inf")
             else round(self.broker.age(self.cam_id), 2),
         }
@@ -206,9 +214,10 @@ class CaptureWorker(BaseWorker):
 
     READ_FAILS_BEFORE_RECONNECT = 5
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
+    def __init__(self, *args: Any, on_drop: Callable[[], None] | None = None, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self._thread: threading.Thread | None = None
+        self._on_drop = on_drop
 
     def start(self) -> None:
         if self._thread and self._thread.is_alive():
@@ -248,6 +257,14 @@ class CaptureWorker(BaseWorker):
                     cap.release()
                     cap = cv2.VideoCapture(src, cv2.CAP_ANY)
             else:
+                # Политика SSRF перепроверяется при каждом подключении: записи старых БД,
+                # принятые до введения проверки, и смена DNS-ответа после создания камеры
+                try:
+                    validate_network_stream_url(self.cam_type, url)
+                except ValueError as exc:
+                    self.last_error = f"источник заблокирован политикой безопасности: {exc}"
+                    logger.warning("[%s] %s", self.cam_id[:8], self.last_error)
+                    return None
                 # rtsp:// и http(s):// MJPEG — бэкенд FFMPEG
                 try:
                     cap = cv2.VideoCapture(url, cv2.CAP_FFMPEG, timeouts) if timeouts \
@@ -266,7 +283,7 @@ class CaptureWorker(BaseWorker):
             self.last_error = "источник не открывается"
         except Exception as exc:
             self.last_error = str(exc)
-            logger.debug("open %s failed: %s", url, exc)
+            logger.debug("open %s failed: %s", mask_url_credentials(url), exc)
         return None
 
     def _wait_backoff(self, attempt: int) -> bool:
@@ -296,7 +313,7 @@ class CaptureWorker(BaseWorker):
                 attempt += 1
                 continue
 
-            logger.info("[%s] поток подключён: %s", self.cam_id[:8], self.source_url)
+            logger.info("[%s] поток подключён: %s", self.cam_id[:8], mask_url_credentials(self.source_url))
             got_frame = False
             read_fails = 0
             try:
@@ -304,6 +321,11 @@ class CaptureWorker(BaseWorker):
                     ok, frame = cap.read()
                     if not ok or frame is None or frame.size == 0:
                         read_fails += 1
+                        if self._on_drop is not None:
+                            try:
+                                self._on_drop()
+                            except Exception:
+                                pass
                         if read_fails >= self.READ_FAILS_BEFORE_RECONNECT:
                             self.last_error = "поток оборвался"
                             break
@@ -353,6 +375,10 @@ class PhoneWorker(BaseWorker):
         super().__init__(*args, **kwargs)
         self._task: asyncio.Task | None = None
         self.connected_clients = 0
+        self.active_ws: Any = None
+        self.client_state: str = "waiting_phone"
+        self.client_error: str | None = None
+        self.last_frame_utc: str | None = None
 
     def start(self) -> None:
         if self._task is None or self._task.done():
@@ -364,12 +390,50 @@ class PhoneWorker(BaseWorker):
         if self._task:
             self._task.cancel()
 
-    def push_frame(self, frame: np.ndarray) -> None:
+    def attach_ws(self, ws: Any) -> Any:
+        """Привязывает новый WSS-клиент и возвращает прежний (для закрытия без смешивания кадров)."""
+        prev = self.active_ws if self.active_ws is not ws else None
+        self.active_ws = ws
+        self.connected_clients += 1
+        self.client_state = "awaiting_permission"
+        self.client_error = None
+        if self.status == "offline":
+            self._set_status("reconnecting")
+        return prev
+
+    def detach_ws(self, ws: Any) -> bool:
+        """Отвязывает закрытый WSS-клиент; True — если это был активный источник."""
+        self.connected_clients = max(0, self.connected_clients - 1)
+        if self.active_ws is ws:
+            self.active_ws = None
+            if self.frames_total == 0:
+                self.client_state = "waiting_phone"
+            else:
+                self.client_state = "disconnected"
+            return True
+        return False
+
+    def set_client_state(self, ws: Any, state: str, error: str | None = None) -> bool:
+        if self.active_ws is not None and ws is not self.active_ws:
+            return False
+        self.client_state = state
+        self.client_error = error
+        if error:
+            self.last_error = error
+        return True
+
+    def push_frame(self, frame: np.ndarray, ws: Any = None) -> bool:
+        if ws is not None and self.active_ws is not None and ws is not self.active_ws:
+            return False
         self.broker.publish(self.cam_id, frame)
         self._count_frame()
+        self.last_frame_utc = utcnow_iso()
+        self.client_state = "streaming"
+        self.client_error = None
         self.fail_count = 0
         self.last_error = None
         self._set_status("online")
+        return True
 
     def client_connected(self) -> None:
         self.connected_clients += 1
@@ -378,6 +442,17 @@ class PhoneWorker(BaseWorker):
 
     def client_disconnected(self) -> None:
         self.connected_clients = max(0, self.connected_clients - 1)
+
+    def info(self) -> dict[str, Any]:
+        base = super().info()
+        base.update({
+            "ws_connected": self.active_ws is not None,
+            "connected_clients": self.connected_clients,
+            "client_state": self.client_state,
+            "client_error": self.client_error,
+            "last_frame_utc": self.last_frame_utc,
+        })
+        return base
 
     async def _watchdog(self) -> None:
         try:
@@ -453,13 +528,23 @@ class StreamManager:
     def info(self, cam_id: str) -> dict[str, Any]:
         w = self._workers.get(cam_id)
         return w.info() if w else {"status": "offline", "fps": 0.0, "frames_total": 0,
-                                   "fail_count": 0, "last_error": None, "frame_age": None}
+                                   "fail_count": 0, "last_error": None, "online_since": None,
+                                   "frame_age": None}
 
     # -- смартфон-нода: токены сессий ------------------------------------------
     def issue_phone_token(self, cam_id: str) -> str:
         token = secrets.token_urlsafe(24)
         self._phone_tokens[cam_id] = token
         return token
+
+    def get_or_issue_phone_token(self, cam_id: str, regenerate: bool = False) -> tuple[str, bool]:
+        existing = self._phone_tokens.get(cam_id)
+        if existing and not regenerate:
+            return existing, False
+        return self.issue_phone_token(cam_id), existing is not None
+
+    def has_phone_token(self, cam_id: str) -> bool:
+        return cam_id in self._phone_tokens
 
     def verify_phone_token(self, cam_id: str, token: str | None) -> bool:
         expected = self._phone_tokens.get(cam_id)

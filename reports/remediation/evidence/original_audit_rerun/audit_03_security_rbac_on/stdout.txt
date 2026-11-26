@@ -1,0 +1,38 @@
+TRACK 1 & SECURITY AUDIT COMPLETE -> C:\Hakatons\GaugeVisionAIDesign DashBoard\.claude\worktrees\remediation-acceptance\reports\remediation\evidence\original_audit_rerun\audit_03_security_rbac_on\track1_security_audit_results.json
+{
+  "peak_rate_1hz_actual": 6.0,
+  "phantom_overload_min": 0.0,
+  "trips_24h_hardcoded_2x": false,
+  "health_score_bad_cam_confounding": 100.0,
+  "spec_forces_healthy_into_defects": false,
+  "spec_period_only_changes_label": true,
+  "llm_graceful_fallback": true,
+  "sec_abs_path_accepted": false,
+  "sec_rtsp_creds_leaked": false,
+  "sec_ssrf_accepted": false
+}
+
+--- stderr ---
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 52877)
+Traceback (most recent call last):
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 318, in _handle_request_noblock
+    self.process_request(request, client_address)
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 349, in process_request
+    self.finish_request(request, client_address)
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 766, in __init__
+    self.handle()
+  File "C:\Program Files\Python312\Lib\http\server.py", line 436, in handle
+    self.handle_one_request()
+  File "C:\Program Files\Python312\Lib\http\server.py", line 424, in handle_one_request
+    method()
+  File "C:\Hakatons\GaugeVisionAIDesign DashBoard\.claude\worktrees\remediation-acceptance\reports\audit\tests\audit_03_track1_dispatch_specs_security.py", line 398, in do_POST
+    self.wfile.write(b"{}")
+  File "C:\Program Files\Python312\Lib\socketserver.py", line 845, in write
+    self._sock.sendall(b)
+ConnectionAbortedError: [WinError 10053] Программа на вашем хост-компьютере разорвала установленное подключение
+----------------------------------------
+C:\C1\GaugeVS\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa

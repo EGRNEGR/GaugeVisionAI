@@ -1,0 +1,670 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-25T19:00:00Z",
+  "title": "Design System: GaugeVision AI — пульт оператора",
+  "extensions": {
+    "scope": {
+      "covers": [
+        "static/index.html",
+        "static/css/console.css",
+        "static/js/console/*.js"
+      ],
+      "excludes": [
+        "site/ (система лендинга — site/design-system.md)",
+        "static/capture.html",
+        "static/css/style.css"
+      ],
+      "tokenSource": "static/css/console.css, :root"
+    },
+    "colorMeta": {
+      "bg": {
+        "role": "neutral",
+        "displayName": "Графит",
+        "canonical": "oklch(18.0% 0.008 248)",
+        "cssVar": "--bg",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#232930",
+          "#3a424b",
+          "#737c86",
+          "#a9b2ba",
+          "#e1e5e9"
+        ]
+      },
+      "stage": {
+        "role": "neutral",
+        "displayName": "Сажа кадра",
+        "canonical": "oklch(13.8% 0.006 245)",
+        "cssVar": "--stage",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#232930",
+          "#3a424b",
+          "#737c86",
+          "#a9b2ba",
+          "#e1e5e9"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Панель",
+        "canonical": "oklch(21.5% 0.010 248)",
+        "cssVar": "--panel",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#232930",
+          "#3a424b",
+          "#737c86",
+          "#a9b2ba",
+          "#e1e5e9"
+        ]
+      },
+      "panel-2": {
+        "role": "neutral",
+        "displayName": "Панель 2",
+        "canonical": "oklch(24.5% 0.012 248)",
+        "cssVar": "--panel-2",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#232930",
+          "#3a424b",
+          "#737c86",
+          "#a9b2ba",
+          "#e1e5e9"
+        ]
+      },
+      "panel-3": {
+        "role": "neutral",
+        "displayName": "Панель 3",
+        "canonical": "oklch(27.8% 0.016 252)",
+        "cssVar": "--panel-3",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#232930",
+          "#3a424b",
+          "#737c86",
+          "#a9b2ba",
+          "#e1e5e9"
+        ]
+      },
+      "tile-live": {
+        "role": "neutral",
+        "displayName": "Панель живой камеры",
+        "canonical": "oklch(23.8% 0.014 248)",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#1a2026",
+          "#232930",
+          "#3a424b",
+          "#a9b2ba",
+          "#e1e5e9"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Линия",
+        "canonical": "oklch(30.6% 0.015 252)",
+        "cssVar": "--line",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#232930",
+          "#3a424b",
+          "#737c86",
+          "#a9b2ba",
+          "#e1e5e9"
+        ]
+      },
+      "line-2": {
+        "role": "neutral",
+        "displayName": "Линия 2",
+        "canonical": "oklch(37.5% 0.019 251)",
+        "cssVar": "--line-2",
+        "tonalRamp": [
+          "#07090b",
+          "#161a1e",
+          "#2a3037",
+          "#3a424b",
+          "#525c68",
+          "#8d96a0",
+          "#d6dbe0",
+          "#e1e5e9"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Текст",
+        "canonical": "oklch(92.0% 0.007 248)",
+        "cssVar": "--text",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#232930",
+          "#3a424b",
+          "#737c86",
+          "#a9b2ba",
+          "#e1e5e9"
+        ]
+      },
+      "text-2": {
+        "role": "neutral",
+        "displayName": "Текст 2",
+        "canonical": "oklch(75.8% 0.015 248)",
+        "cssVar": "--text-2",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#232930",
+          "#3a424b",
+          "#737c86",
+          "#a9b2ba",
+          "#e1e5e9"
+        ]
+      },
+      "text-3": {
+        "role": "neutral",
+        "displayName": "Текст 3",
+        "canonical": "oklch(67.1% 0.017 248)",
+        "cssVar": "--text-3",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#232930",
+          "#3a424b",
+          "#8d96a0",
+          "#a9b2ba",
+          "#e1e5e9"
+        ]
+      },
+      "ink-on-light": {
+        "role": "neutral",
+        "displayName": "Чернила на светлом",
+        "canonical": "oklch(18.0% 0.008 248)",
+        "cssVar": "--ink-on-light",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#232930",
+          "#3a424b",
+          "#737c86",
+          "#a9b2ba",
+          "#e1e5e9"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "Белый",
+        "canonical": "oklch(100.0% 0.000 0)",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#232930",
+          "#3a424b",
+          "#737c86",
+          "#a9b2ba",
+          "#ffffff"
+        ]
+      },
+      "ok": {
+        "role": "primary",
+        "displayName": "Сигнальный зелёный «Норма»",
+        "canonical": "oklch(68.4% 0.128 153)",
+        "cssVar": "--ok",
+        "tonalRamp": [
+          "#001004",
+          "#16301f",
+          "#2c5a3b",
+          "#166538",
+          "#2b854f",
+          "#52b073",
+          "#84ca99",
+          "#e6f7ec"
+        ]
+      },
+      "warn": {
+        "role": "primary",
+        "displayName": "Янтарь «Предупреждение»",
+        "canonical": "oklch(77.3% 0.141 77)",
+        "cssVar": "--warn",
+        "tonalRamp": [
+          "#120900",
+          "#2f1e00",
+          "#3b2a0d",
+          "#714e09",
+          "#bc830d",
+          "#e7a83a",
+          "#f8dea2",
+          "#fff8ea"
+        ]
+      },
+      "alarm": {
+        "role": "primary",
+        "displayName": "Аварийный красный",
+        "canonical": "oklch(65.8% 0.195 22)",
+        "cssVar": "--alarm",
+        "tonalRamp": [
+          "#1e0002",
+          "#4c1417",
+          "#700817",
+          "#99202a",
+          "#c4282d",
+          "#f05a5f",
+          "#fc9793",
+          "#ffd9db"
+        ]
+      },
+      "alarm-solid": {
+        "role": "primary",
+        "displayName": "Плотный аварийный красный",
+        "canonical": "oklch(53.4% 0.192 24)",
+        "cssVar": "--alarm-solid",
+        "tonalRamp": [
+          "#1e0002",
+          "#4c1417",
+          "#700817",
+          "#c4282d",
+          "#d63036",
+          "#f05a5f",
+          "#ffb8bc",
+          "#ffd9db"
+        ]
+      },
+      "ok-bg": {
+        "role": "secondary",
+        "displayName": "Тёмная хвоя",
+        "canonical": "oklch(28.3% 0.045 154)",
+        "cssVar": "--ok-bg",
+        "tonalRamp": [
+          "#001004",
+          "#16301f",
+          "#064724",
+          "#166538",
+          "#2b854f",
+          "#52b073",
+          "#84ca99",
+          "#e6f7ec"
+        ]
+      },
+      "warn-bg": {
+        "role": "secondary",
+        "displayName": "Тёмная охра",
+        "canonical": "oklch(29.8% 0.048 80)",
+        "cssVar": "--warn-bg",
+        "tonalRamp": [
+          "#120900",
+          "#2b1e08",
+          "#3b2a0d",
+          "#473310",
+          "#966703",
+          "#e7a83a",
+          "#f8dea2",
+          "#fff8ea"
+        ]
+      },
+      "warn-ink": {
+        "role": "secondary",
+        "displayName": "Тёплые чернила предупреждения",
+        "canonical": "oklch(90.5% 0.076 85)",
+        "cssVar": "--warn-ink",
+        "tonalRamp": [
+          "#120900",
+          "#3b2a0d",
+          "#714e09",
+          "#966703",
+          "#bc830d",
+          "#e7a83a",
+          "#f8dea2",
+          "#fff8ea"
+        ]
+      },
+      "alarm-bg": {
+        "role": "secondary",
+        "displayName": "Тёмная кровь",
+        "canonical": "oklch(28.9% 0.084 21)",
+        "cssVar": "--alarm-bg",
+        "tonalRamp": [
+          "#1e0002",
+          "#360d10",
+          "#4c1417",
+          "#59181c",
+          "#c4282d",
+          "#f05a5f",
+          "#ffb8bc",
+          "#ffd9db"
+        ]
+      },
+      "alarm-ink": {
+        "role": "secondary",
+        "displayName": "Светло-розовые чернила аварии",
+        "canonical": "oklch(90.6% 0.042 18)",
+        "cssVar": "--alarm-ink",
+        "tonalRamp": [
+          "#1e0002",
+          "#4c1417",
+          "#700817",
+          "#99202a",
+          "#c4282d",
+          "#f05a5f",
+          "#ffb8bc",
+          "#ffd9db"
+        ]
+      },
+      "stale": {
+        "role": "secondary",
+        "displayName": "Сланец «Без данных»",
+        "canonical": "oklch(58.2% 0.019 251)",
+        "cssVar": "--stale",
+        "tonalRamp": [
+          "#07090b",
+          "#0f1215",
+          "#161a1e",
+          "#232930",
+          "#3a424b",
+          "#737c86",
+          "#a9b2ba",
+          "#e1e5e9"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display-lg": {
+        "displayName": "Display LG",
+        "purpose": "Главное числовое показание плитки в крупном проекторном режиме 4×4."
+      },
+      "detail-display": {
+        "displayName": "Detail Display",
+        "purpose": "Крупное показание выбранного прибора в блоке отсчёта правой карточки деталей."
+      },
+      "display": {
+        "displayName": "Display",
+        "purpose": "Главное числовое показание в матрице 6×6 и в карточке выбранного прибора."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Главный статус установки в верхней шапке (.plant-headline)."
+      },
+      "counter": {
+        "displayName": "Counter",
+        "purpose": "Сводные счётчики тревог, обрывов и неквитированных событий в шапке."
+      },
+      "section-title": {
+        "displayName": "Section Title",
+        "purpose": "Название выбранного прибора в карточке деталей, заголовки диалогов и имя системы в шапке."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Вкладки разделов, подписи кнопок, заголовки блоков и строки списка событий."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Основной текст пояснений, таблиц и форм."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Подписи над полями ввода, фильтры, чекбоксы, сегменты и подсказки."
+      },
+      "data": {
+        "displayName": "Data",
+        "purpose": "Коды приборов, метки времени, диагностика конвейера, URL сессии и числовые колонки истории."
+      },
+      "tag": {
+        "displayName": "Tag",
+        "purpose": "Статусные плашки, метки источника данных и бейдж режима."
+      }
+    },
+    "textures": [
+      {
+        "name": "hatch",
+        "cssVar": "--hatch",
+        "value": "repeating-linear-gradient(-45deg, transparent 0 4px, rgba(140, 150, 160, .14) 4px 5px)",
+        "purpose": "Отсутствие данных, ожидание телефона или обрыв потока: плитки nodata, тег stale, активный счётчик «Без данных», плашка поверх обесцвеченного кадра."
+      }
+    ],
+    "shadows": [
+      {
+        "name": "none",
+        "value": "none",
+        "purpose": "Падающих теней в системе нет; глубина передаётся тоновой лестницей графита и линиями 1 px."
+      },
+      {
+        "name": "tile-selected",
+        "value": "inset 0 0 0 2px #ffffff",
+        "purpose": "Чёткая внутренняя белая рамка выбранной плитки в матрице приборов."
+      },
+      {
+        "name": "tile-tone-frame",
+        "value": "inset 0 0 0 1px var(--warn) | inset 0 0 0 1px var(--alarm)",
+        "purpose": "Внутренний сигнальный контур предупредительной или аварийной плитки без сдвига сетки."
+      },
+      {
+        "name": "tab-underline",
+        "value": "inset 0 -2px 0 var(--text)",
+        "purpose": "Нижнее подчёркивание активной вкладки раздела в .subbar."
+      },
+      {
+        "name": "backdrop",
+        "value": "rgba(7, 9, 11, .76)",
+        "purpose": "Плотное затемнение под модальным диалогом (::backdrop)."
+      }
+    ],
+    "motion": [
+      {
+        "name": "t-fast",
+        "cssVar": "--t-fast",
+        "value": "140ms",
+        "purpose": "Переход фона и рамки кнопок при наведении, проявление галочки чекбокса."
+      },
+      {
+        "name": "ruler-pointer",
+        "value": "left 200ms cubic-bezier(.2, .8, .2, 1)",
+        "purpose": "Смещение указателя линейки уставок; отключается при prefers-reduced-motion."
+      },
+      {
+        "name": "unack-blink",
+        "value": "1s steps(1, end) infinite; 50% { opacity: .4 }",
+        "purpose": "Дискретное мигание 1 Гц неквитированного срабатывания; при prefers-reduced-motion отключается с сохранением квадратного маркера."
+      },
+      {
+        "name": "toast-in",
+        "value": "160ms cubic-bezier(.2, .8, .2, 1), translateY(.375rem) -> 0",
+        "purpose": "Всплытие уведомления .toast в правом нижнем углу; отключается при prefers-reduced-motion."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-125",
+        "value": "1620px",
+        "purpose": "max-width (включая 1536×864 при 125% zoom): --detail-w = 28rem, компактный кегль цифр плитки для сохранения сетки 6×6 в одном экране."
+      },
+      {
+        "name": "laptop",
+        "value": "1420px",
+        "purpose": "max-width (включая 1366×768): открытая карточка прибора разворачивается во всю рабочую область с кнопкой возврата «К сетке приборов»."
+      },
+      {
+        "name": "narrow",
+        "value": "1100px",
+        "purpose": "max-width: шапка и панель разделов переносятся по строкам, сетка перестраивается в 3 или 2 столбца."
+      }
+    ],
+    "numberFormat": {
+      "function": "fmt() в static/js/console/util.js",
+      "locale": "ru-RU",
+      "decimal": ",",
+      "grouping": "неразрывный пробел",
+      "minus": "U+2212 «−»",
+      "empty": "«—»",
+      "decimals": "decimalsFor(): 3 знака до диапазона 2,5; 2 — до 25; 1 — до 250; иначе 0"
+    }
+  },
+  "components": [
+    {
+      "name": "Кнопка",
+      "kind": "button",
+      "refersTo": "button",
+      "description": "Нейтральная кнопка пульта: фон panel-2, рамка 1 px, прямые углы.",
+      "html": "<button class=\"ds-btn\" type=\"button\">Отменить черновик</button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: .375rem; height: 1.875rem; padding: 0 .75rem; border: 1px solid var(--line-2); border-radius: 0; background: var(--panel-2); color: var(--text); font: 500 var(--fs-s)/1.4 var(--sans); white-space: nowrap; cursor: pointer; transition: background-color var(--t-fast), border-color var(--t-fast); } .ds-btn:hover { background: var(--panel-3); border-color: #525c68; } .ds-btn:active { background: var(--line); } .ds-btn:focus-visible { outline: 2px solid #ffffff; outline-offset: -2px; } .ds-btn:disabled { cursor: not-allowed; color: var(--text-3); background: transparent; border-color: var(--line); }"
+    },
+    {
+      "name": "Основная кнопка",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Главное действие формы или подключения: светлая заливка text с тёмным текстом ink-on-light.",
+      "html": "<button class=\"ds-btn ds-btn-primary\" type=\"button\"><svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M2 2h5v5H2zM9 2h5v5H9zM2 9h5v5H2zM9 9h2v2H9zM12 12h2v2h-2zM12 9h2M9 12v2\"/></svg><span>Подключить телефон (QR)</span></button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: .375rem; height: 1.875rem; padding: 0 .75rem; border: 1px solid var(--line-2); border-radius: 0; background: var(--panel-2); color: var(--text); font: 500 var(--fs-s)/1.4 var(--sans); white-space: nowrap; cursor: pointer; transition: background-color var(--t-fast), border-color var(--t-fast); } .ds-btn svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: square; stroke-linejoin: miter; } .ds-btn-primary { background: var(--text); color: var(--ink-on-light); border-color: var(--text); font-weight: 700; } .ds-btn-primary:hover { background: #ffffff; border-color: #ffffff; } .ds-btn-primary:focus-visible { outline: 2px solid #ffffff; outline-offset: -2px; }"
+    },
+    {
+      "name": "Кнопка «Квитировать»",
+      "kind": "button",
+      "refersTo": "button-ack",
+      "description": "Плотная красная заливка при неквитированной аварии, янтарная — при одних предупреждениях, выключена без активных неквитированных событий.",
+      "html": "<div style=\"display:flex;gap:.5rem;flex-wrap:wrap\"><button class=\"ds-btn ds-btn-ack\" type=\"button\"><svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M3 8.5l3 3 7-7\"/></svg><span>Квитировать</span></button><button class=\"ds-btn ds-btn-ack ds-warn-only\" type=\"button\"><svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M3 8.5l3 3 7-7\"/></svg><span>Квитировать все</span></button><button class=\"ds-btn ds-btn-ack\" type=\"button\" disabled><svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M3 8.5l3 3 7-7\"/></svg><span>Квитировать все</span></button></div>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: .375rem; height: 1.875rem; padding: 0 .75rem; border: 1px solid var(--line-2); border-radius: 0; background: var(--panel-2); color: var(--text); font: 500 var(--fs-s)/1.4 var(--sans); white-space: nowrap; cursor: pointer; transition: background-color var(--t-fast), border-color var(--t-fast); } .ds-btn svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: square; stroke-linejoin: miter; } .ds-btn:disabled { cursor: not-allowed; color: var(--text-3); background: transparent; border-color: var(--line); } .ds-btn-ack:not(:disabled) { background: var(--alarm-solid); border-color: var(--alarm); color: #ffffff; font-weight: 700; } .ds-btn-ack:not(:disabled):hover { background: #d63036; } .ds-btn-ack.ds-warn-only:not(:disabled) { background: var(--warn); border-color: var(--warn); color: var(--ink-on-light); } .ds-btn:focus-visible { outline: 2px solid #ffffff; outline-offset: -2px; }"
+    },
+    {
+      "name": "Опасная кнопка",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Необратимая операция: красный текст в покое, плотная красная заливка только при наведении.",
+      "html": "<button class=\"ds-btn ds-btn-sm ds-btn-danger\" type=\"button\"><svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><path d=\"M2.5 4h11M6 4V2.5h4V4M4 4l.7 9.5h6.6L12 4\"/></svg><span>Очистить весь архив прибора</span></button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: .375rem; height: 1.875rem; padding: 0 .75rem; border: 1px solid var(--line-2); border-radius: 0; background: var(--panel-2); color: var(--text); font: 500 var(--fs-s)/1.4 var(--sans); white-space: nowrap; cursor: pointer; transition: background-color var(--t-fast), border-color var(--t-fast); } .ds-btn svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: square; stroke-linejoin: miter; } .ds-btn-sm { height: 1.5625rem; padding: 0 .5rem; font-size: var(--fs-xs); } .ds-btn-danger { color: var(--alarm); } .ds-btn-danger:hover { background: var(--alarm-solid); color: #ffffff; border-color: var(--alarm); } .ds-btn:focus-visible { outline: 2px solid #ffffff; outline-offset: -2px; }"
+    },
+    {
+      "name": "Поле уставки",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Числовое поле калибровки и уставок: фон bg, моноширинные цифры вправо, фокус белой рамкой, ошибка с адресным текстом под полем.",
+      "html": "<div style=\"display:flex;gap:.75rem;flex-wrap:wrap\"><label class=\"ds-field\"><span class=\"ds-warn-lbl\"><b>H</b> верхн. предупр., <em>МПа</em></span><input class=\"ds-input\" inputmode=\"decimal\" value=\"14,20\"></label><label class=\"ds-field\"><span class=\"ds-alert-lbl\"><b>HH</b> верхн. авар., <em>МПа</em></span><input class=\"ds-input\" inputmode=\"decimal\" value=\"13,80\" aria-invalid=\"true\"><small class=\"ds-err\">HH должна быть строго больше H</small></label></div>",
+      "css": ".ds-field { display: grid; gap: .25rem; width: 11.5rem; } .ds-field > span { font: 400 var(--fs-xs)/1.45 var(--sans); color: var(--text-2); white-space: nowrap; } .ds-field b { font: 700 var(--fs-xs) var(--mono); } .ds-field em { font-style: normal; font-family: var(--mono); color: var(--text); } .ds-warn-lbl b { color: var(--warn); } .ds-alert-lbl b { color: var(--alarm); } .ds-input { width: 100%; height: 1.875rem; padding: 0 .5rem; border: 1px solid var(--line-2); border-radius: 0; background: var(--bg); color: var(--text); font: 400 var(--fs-s) var(--mono); font-variant-numeric: tabular-nums slashed-zero; text-align: right; } .ds-input:focus { outline: none; border-color: #ffffff; } .ds-input[aria-invalid=\"true\"] { border-color: var(--alarm); background: rgba(196, 40, 45, .12); } .ds-err { font: 400 .6875rem/1.25 var(--sans); color: var(--alarm); }"
+    },
+    {
+      "name": "Сегментный переключатель",
+      "kind": "chip",
+      "refersTo": "seg-option",
+      "description": "Смежные кнопки переключения плотности матрицы (6×6 / 4×4), фильтров состояния и окна тренда.",
+      "html": "<div style=\"display:flex;gap:.5rem;flex-wrap:wrap\"><div class=\"ds-seg\" role=\"group\" aria-label=\"Представление сетки\"><button type=\"button\" aria-pressed=\"true\">36 приборов</button><button type=\"button\" aria-pressed=\"false\">Крупно 4×4</button></div><div class=\"ds-seg\" role=\"group\" aria-label=\"Фильтр состояния\"><button type=\"button\" aria-pressed=\"true\">Все<span class=\"c\">36</span></button><button type=\"button\" aria-pressed=\"false\">Отклонения<span class=\"c\">2</span></button><button type=\"button\" aria-pressed=\"false\">Без данных<span class=\"c\">0</span></button></div></div>",
+      "css": ".ds-seg { display: inline-flex; } .ds-seg button { height: 1.625rem; padding: .25rem .55rem; border: 1px solid var(--line-2); border-radius: 0; background: var(--bg); color: var(--text-2); font: 400 var(--fs-xs) var(--sans); cursor: pointer; white-space: nowrap; } .ds-seg button + button { margin-left: -1px; } .ds-seg button:hover { background: var(--panel-3); color: var(--text); } .ds-seg button:focus-visible { outline: 2px solid #ffffff; outline-offset: -2px; } .ds-seg button[aria-pressed=\"true\"] { background: var(--text); color: var(--ink-on-light); font-weight: 700; } .ds-seg .c { font-family: var(--mono); margin-left: .25rem; opacity: .85; }"
+    },
+    {
+      "name": "Чекбокс",
+      "kind": "input",
+      "refersTo": "checkbox",
+      "description": "Квадратный флаг 0,875rem без скругления для слоёв CV-оверлея, фильтров журнала и двусторонних зон.",
+      "html": "<div style=\"display:flex;gap:.75rem;flex-wrap:wrap\"><label class=\"ds-chk\"><input type=\"checkbox\" checked>Стрелка</label><label class=\"ds-chk\"><input type=\"checkbox\" checked>Шкала</label><label class=\"ds-chk\"><input type=\"checkbox\">Только неквитированные</label></div>",
+      "css": ".ds-chk { display: inline-flex; align-items: center; gap: .375rem; font: 400 var(--fs-xs) var(--sans); color: var(--text-2); cursor: pointer; white-space: nowrap; } .ds-chk input { appearance: none; width: .875rem; height: .875rem; margin: 0; border: 1px solid var(--line-2); border-radius: 0; background: var(--bg); display: grid; place-content: center; cursor: pointer; } .ds-chk input::after { content: \"\"; width: .25rem; height: .5rem; margin-top: -.125rem; border: solid var(--ink-on-light); border-width: 0 2px 2px 0; transform: rotate(45deg) scale(0); transition: transform var(--t-fast); } .ds-chk input:checked { background: var(--text); border-color: var(--text); } .ds-chk input:checked::after { transform: rotate(45deg) scale(1); } .ds-chk input:focus-visible { outline: 2px solid #ffffff; outline-offset: 1px; } .ds-chk:hover { color: var(--text); }"
+    },
+    {
+      "name": "Вкладки рабочих разделов",
+      "kind": "nav",
+      "refersTo": "nav-tab",
+      "description": "Полоса навигации .subbar с разделением задач оператора и инженера КИПиА и счётчиками вкладок.",
+      "html": "<div class=\"ds-nav\" role=\"tablist\"><span class=\"ds-grp\">Оператор:</span><button class=\"ds-tab\" role=\"tab\" aria-selected=\"true\"><span>Мониторинг</span><span class=\"ds-cnt\">36</span></button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\"><span>События</span><span class=\"ds-cnt\" data-alert=\"true\">2</span></button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\"><span>История</span><span class=\"ds-cnt\">48</span></button><span class=\"ds-sep\" aria-hidden=\"true\"></span><span class=\"ds-grp\">Оборудование:</span><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\"><span>Камеры</span></button><button class=\"ds-tab\" role=\"tab\" aria-selected=\"false\"><span>Приборы и калибровка</span></button></div>",
+      "css": ".ds-nav { display: flex; align-items: stretch; min-height: 2.375rem; background: var(--panel); border-bottom: 1px solid var(--line); } .ds-grp { display: inline-flex; align-items: center; padding: 0 .625rem; font: 400 var(--fs-xs) var(--sans); color: var(--text-3); white-space: nowrap; } .ds-sep { width: 1px; background: var(--line-2); margin: .375rem .25rem; } .ds-tab { display: inline-flex; align-items: center; gap: .4rem; padding: 0 .875rem; border: 0; border-right: 1px solid var(--line); background: transparent; color: var(--text-2); font: 500 var(--fs-s) var(--sans); cursor: pointer; white-space: nowrap; } .ds-tab:hover { background: var(--panel-2); color: var(--text); } .ds-tab:focus-visible { outline: 2px solid #ffffff; outline-offset: -2px; } .ds-tab[aria-selected=\"true\"] { background: var(--bg); color: var(--text); box-shadow: inset 0 -2px 0 var(--text); } .ds-cnt { font: 500 var(--fs-xs) var(--mono); color: var(--text-3); padding: 0 .25rem; border: 1px solid var(--line); } .ds-cnt[data-alert=\"true\"] { background: var(--alarm-solid); border-color: var(--alarm-solid); color: #ffffff; }"
+    },
+    {
+      "name": "Статусные теги и метки источника",
+      "kind": "chip",
+      "refersTo": "tag-normal",
+      "description": "Теги технологических зон с миганием 1 Гц для неквитированных событий и ахроматические плашки источника данных.",
+      "html": "<div class=\"ds-tags\"><span class=\"ds-tag\" data-level=\"normal\">НОРМА</span><span class=\"ds-tag\" data-level=\"warning\" data-unack=\"true\">ПРЕДУПР. H</span><span class=\"ds-tag\" data-level=\"alert\" data-unack=\"true\">АВАРИЯ HH</span><span class=\"ds-tag\" data-level=\"stale\">НЕТ ДАННЫХ</span><span class=\"ds-tag\" data-level=\"hold\">УДЕРЖАНИЕ</span><span class=\"ds-src\" data-live=\"true\">КАМЕРА ТЕЛЕФОНА</span><span class=\"ds-src\">СИМУЛЯЦИЯ</span></div>",
+      "css": ".ds-tags { display: flex; flex-wrap: wrap; align-items: center; gap: .375rem; } .ds-tag { display: inline-flex; align-items: center; justify-content: center; gap: .3rem; height: 1.25rem; padding: 0 .4rem; min-width: 4.5rem; font: 700 .6875rem/1 var(--mono); letter-spacing: .02em; white-space: nowrap; border: 1px solid var(--line-2); border-radius: 0; color: var(--text-2); } .ds-tag[data-level=\"normal\"] { color: var(--ok); border-color: #2c5a3b; } .ds-tag[data-level=\"warning\"] { color: var(--ink-on-light); background: var(--warn); border-color: var(--warn); } .ds-tag[data-level=\"alert\"] { color: #ffffff; background: var(--alarm-solid); border-color: var(--alarm); } .ds-tag[data-level=\"stale\"] { color: var(--text); background-color: var(--panel-2); background-image: var(--hatch); border-color: var(--line-2); } .ds-tag[data-level=\"hold\"] { color: var(--text); border-style: dashed; } .ds-tag[data-unack=\"true\"]::before { content: \"\"; width: .375rem; height: .375rem; background: currentColor; flex: none; } .ds-tag[data-unack=\"true\"] { animation: ds-unack 1s steps(1, end) infinite; } @keyframes ds-unack { 50% { opacity: .4; } } @media (prefers-reduced-motion: reduce) { .ds-tag[data-unack=\"true\"] { animation: none; } } .ds-src { display: inline-flex; align-items: center; height: 1.125rem; padding: 0 .35rem; font: 700 .6875rem/1 var(--mono); letter-spacing: .03em; border: 1px solid var(--line-2); background: var(--panel-2); color: var(--text-2); } .ds-src[data-live=\"true\"] { background: var(--text); color: var(--ink-on-light); border-color: #ffffff; }"
+    },
+    {
+      "name": "Плитка прибора матрицы 6×6 и линейка уставок",
+      "kind": "card",
+      "refersTo": "tile",
+      "description": "Ячейка обзорной матрицы: спокойный живой манометр с камеры телефона (белая полоса 3 px + чип КАМЕРА) и аварийная позиция со шкалой уставок.",
+      "html": "<div class=\"ds-matrix\"><button class=\"ds-tile\" type=\"button\" data-live=\"true\" aria-current=\"true\"><div class=\"ds-top\"><span class=\"ds-code\">К1-Р01</span><span class=\"ds-name\">Острый пар котла К-1</span><span class=\"ds-cam\"><svg viewBox=\"0 0 16 16\" aria-hidden=\"true\"><rect x=\"1.5\" y=\"4\" width=\"9.5\" height=\"8\"/><path d=\"M11 6.5l3.5-2v7L11 9.5\"/></svg>КАМЕРА</span></div><div class=\"ds-mid\"><span class=\"ds-num\">12,40</span><span class=\"ds-unit\">МПа</span></div><div class=\"ds-bot\"><div class=\"ds-ruler\" data-level=\"normal\" role=\"img\" aria-label=\"Значение 12,40 на шкале 0,00…16,00\"><div class=\"track\"></div><div class=\"zone\" data-level=\"normal\" style=\"left:0%;width:88.75%\"></div><div class=\"zone\" data-level=\"warning\" style=\"left:88.75%;width:6.25%\"></div><div class=\"zone\" data-level=\"alert\" style=\"left:95%;width:5%\"></div><div class=\"sp\" style=\"left:88.75%\"></div><div class=\"sp\" style=\"left:95%\"></div><div class=\"ptr\" style=\"left:77.5%\"></div></div><div class=\"ds-foot\">Камера телефона, 1 с назад</div></div></button><button class=\"ds-tile\" type=\"button\" data-live=\"true\" data-tone=\"alert\"><div class=\"ds-top\"><span class=\"ds-code\">К1-Р01</span><span class=\"ds-name\">Острый пар котла К-1</span><span class=\"ds-zone\" data-unack=\"true\">HH</span></div><div class=\"ds-mid\"><span class=\"ds-num\">15,48</span><span class=\"ds-unit\">МПа</span></div><div class=\"ds-bot\"><div class=\"ds-ruler\" data-level=\"alert\" role=\"img\" aria-label=\"Значение 15,48 на шкале 0,00…16,00\"><div class=\"track\"></div><div class=\"zone\" data-level=\"normal\" style=\"left:0%;width:88.75%\"></div><div class=\"zone\" data-level=\"warning\" style=\"left:88.75%;width:6.25%\"></div><div class=\"zone\" data-level=\"alert\" style=\"left:95%;width:5%\"></div><div class=\"sp\" style=\"left:88.75%\"></div><div class=\"sp\" style=\"left:95%\"></div><div class=\"ptr\" style=\"left:96.75%\"></div></div><div class=\"ds-foot\">АВАРИЯ HH, не квитировано</div></div></button></div>",
+      "css": ".ds-matrix { display: grid; grid-template-columns: repeat(2, minmax(13.5rem, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); max-width: 31rem; } .ds-tile { position: relative; display: grid; grid-template-rows: auto minmax(0, 1fr) auto; gap: .25rem; padding: .5rem .6875rem; border: 0; background: var(--panel); color: var(--text); text-align: left; cursor: pointer; min-height: 6.5rem; font: 400 var(--fs-s)/1.3 var(--sans); } .ds-tile:hover { background: var(--panel-2); } .ds-tile:focus-visible { outline: 2px dashed #ffffff; outline-offset: -4px; } .ds-tile[aria-current=\"true\"] { box-shadow: inset 0 0 0 2px #ffffff; } .ds-tile[data-live=\"true\"] { background: #1a2026; } .ds-tile[data-live=\"true\"]::after { content: \"\"; position: absolute; inset: 0; pointer-events: none; border-left: 3px solid #ffffff; } .ds-tile[data-tone=\"alert\"] { background: var(--alarm-bg); color: #ffffff; box-shadow: inset 0 0 0 1px var(--alarm); } .ds-tile[data-tone=\"alert\"]:hover { background: #59181c; } .ds-tile[data-tone=\"alert\"] .ds-code, .ds-tile[data-tone=\"alert\"] .ds-name, .ds-tile[data-tone=\"alert\"] .ds-unit, .ds-tile[data-tone=\"alert\"] .ds-foot { color: var(--alarm-ink); } .ds-top { display: flex; align-items: center; gap: .375rem; min-width: 0; } .ds-code { font: 700 .875rem/1.2 var(--mono); color: var(--text); } .ds-name { font-size: .8125rem; color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; } .ds-cam { display: inline-flex; align-items: center; gap: .2rem; height: 1.125rem; padding: 0 .3125rem; background: #ffffff; color: #0f1215; font: 700 .6875rem/1 var(--mono); letter-spacing: .03em; } .ds-cam svg { width: .75rem; height: .75rem; fill: none; stroke: currentColor; stroke-width: 1.75; } .ds-zone { display: inline-flex; align-items: center; height: 1.125rem; padding: 0 .35rem; background: var(--alarm-solid); color: #ffffff; border: 1px solid #ffffff; font: 700 .6875rem/1 var(--mono); } .ds-zone[data-unack=\"true\"] { animation: ds-unack 1s steps(1, end) infinite; } @keyframes ds-unack { 50% { opacity: .4; } } @media (prefers-reduced-motion: reduce) { .ds-zone[data-unack=\"true\"] { animation: none; } } .ds-mid { display: flex; align-items: baseline; gap: .375rem; align-self: center; } .ds-num { font: 500 2.15rem/1 var(--mono); font-variant-numeric: tabular-nums slashed-zero; letter-spacing: -.02em; } .ds-unit { font-size: .875rem; color: var(--text-2); } .ds-bot { display: grid; gap: .2rem; } .ds-foot { font-size: .75rem; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .ds-ruler { position: relative; height: .875rem; } .ds-ruler .track { position: absolute; left: 0; right: 0; top: .375rem; height: 4px; background: var(--line-2); } .ds-ruler .zone { position: absolute; top: .375rem; height: 4px; } .ds-ruler .zone[data-level=\"normal\"] { background: var(--ok); opacity: .55; } .ds-ruler .zone[data-level=\"warning\"] { background: var(--warn); opacity: .75; } .ds-ruler .zone[data-level=\"alert\"] { background: var(--alarm); opacity: .85; } .ds-ruler .sp { position: absolute; top: .1875rem; width: 1px; height: .625rem; background: var(--text-2); } .ds-ruler .ptr { position: absolute; top: 0; width: 0; height: .875rem; transition: left 200ms cubic-bezier(.2, .8, .2, 1); } .ds-ruler .ptr::before { content: \"\"; position: absolute; left: -1px; top: .125rem; width: 2px; height: .75rem; background: #ffffff; } .ds-ruler .ptr::after { content: \"\"; position: absolute; left: -.25rem; top: -.0625rem; border: .25rem solid transparent; border-top-color: #ffffff; border-bottom: 0; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Приборный щит",
+    "overview": "Пульт построен по принципам High-Performance HMI: это рабочий щит ТЭЦ на 36 позиций, читаемый как с кресла дежурного оператора, так и с дистанции проектора в зале защиты. Состояние всей установки считывается за долю секунды в верхней шапке: крупная строка статуса объекта, четыре сводных счётчика («Аварии», «Предупр.», «Без данных», «Неквит.») и отдельный индикатор цепочки смартфона Android. Основной экран мониторинга держит перед глазами матрицу всех 36 приборов (или укрупнённый срез 4×4), где в спокойном режиме царит тихий графит, а цветом загораются только позиции с отклонениями.\n\nВыбор любого прибора открывает правую карточку деталей без потери обзора матрицы (а на узких ноутбуках — полноразмерный экран с явным возвратом к сетке). Для живого источника с камеры (`К1-Р01`, МТП-160) карточка показывает видеопоток со векторной CV-разметкой (область ROI, дуга зон шкалы, распознанный луч стрелки), ленту стоп-кадров срабатываний, шкалу уставок и тренд текущего прогона; для 35 синтетических каналов — честную плашку демонстрационного адаптера без имитации видео. Пять рабочих вкладок разделяют задачи оператора («Мониторинг», «События», «История») и инженера КИПиА («Камеры», «Приборы и калибровка»).\n\nМир собран из холодного графита и сланца: ступенчатая лестница нейтральных поверхностей, жёсткая сетка линий толщиной 1 px, нулевые скругления и полное отсутствие падающих теней. Сознательно отвергнуты декоративные скруглённые карточки с модальными окнами на каждый прибор, бегущие строки и окраска интерфейса ради бренда: если пиксель на пульте получил цвет, он сообщает технологическое состояние.",
+    "keyCharacteristics": [
+      "Графитовая лестница поверхностей `bg` → `panel` → `panel-2` → `panel-3` с линиями 1 px и прямыми углами 0 px.",
+      "Семантический цвет только у состояний (`ok`, `warn`, `alarm` / `alarm-solid`); отсутствие данных и обрыв потока кодируются диагональной штриховкой `--hatch` без ложной аварии.",
+      "Раздельные признаки активного отклонения и неквитированного события: мигание 1 Гц и квадратный маркер принадлежат только неквитированному статусу.",
+      "Живой прибор с камеры телефона (`data-live=\"true\"`) выделен формой — белой левой полосой 3 px и контрастной плашкой `КАМЕРА` — независимо от цвета зоны.",
+      "Каждое число набрано моноширинным шрифтом JetBrains Mono с табличными цифрами, русской десятичной запятой и настоящим минусом «−».",
+      "Единая линейка уставок LL / L / H / HH в плитке матрицы, в карточке прибора и в двойном сравнении «сервер / черновик» при калибровке."
+    ],
+    "rules": [
+      {
+        "name": "Правило «Цвет — это состояние»",
+        "body": "Зелёный, янтарный и красный принадлежат исключительно технологическим зонам нормы, предупреждения и аварии. Выбор прибора, активная вкладка, основная кнопка формы и фокус клавиатуры решаются ахроматически — белым контуром, светлой заливкой `text` и ступенью графита.",
+        "section": "colors"
+      },
+      {
+        "name": "Правило «Серая штриховка вместо ложной тревоги»",
+        "body": "Ожидание смартфона, обрыв WSS-потока, устаревший отсчёт и выход стрелки за пределы шкалы никогда не красятся в красный цвет процесса: они получают нейтральный тон и диагональную штриховку `--hatch`, чтобы судьи и оператор мгновенно отличали потерю данных от аварии давления.",
+        "section": "colors"
+      },
+      {
+        "name": "Правило «Спокойная матрица»",
+        "body": "В обзорной сетке на 36 приборов заливку фона получают только плитки с активным предупреждением (`warn-bg`) или аварией (`alarm-bg`). Исправные приборы остаются на графите `panel`, благодаря чему отклонение считывается периферийным зрением с первого взгляда.",
+        "section": "colors"
+      },
+      {
+        "name": "Правило «Каждое число — моноширинным»",
+        "body": "Показания, углы `θ`, уставки, счётчики, тайминги, коды позиций и числовые поля ввода (`.input.num.mono`, выравнивание вправо) всегда набираются JetBrains Mono с `tabular-nums slashed-zero`. Единица измерения рядом с числом (`МПа`, `°C`, `кПа`) набирается IBM Plex Sans меньшего кегля и тона `text-2`, чтобы не сливаться с цифрами.",
+        "section": "typography"
+      },
+      {
+        "name": "Правило «Русская инженерная нотация»",
+        "body": "Все числа форматирует `fmt()` из `static/js/console/util.js`: локаль `ru-RU`, десятичная запятая, неразрывный пробел в разрядах тысяч, математический минус «−» (U+2212) и постоянная точность по диапазону шкалы (`decimalsFor`: 3 знака до 2,5 ед., 2 — до 25, 1 — до 250, иначе 0). Отсутствующее или недостоверное значение выводится длинным тире «—», а не прочерком, нулём или `NaN`.",
+        "section": "typography"
+      },
+      {
+        "name": "Правило «Ничего лишнего поверх кадра»",
+        "body": "На изображении камеры в карточке прибора и в мастере калибровки лежит только векторная SVG-разметка распознавания (область ROI, дуга зон, опорные лучи `θmin`/`θmax`, вектор стрелки). Переключатели режима кадра, чекбоксы слоёв и лента стоп-кадров располагаются в отдельных полосах над и под кадром; поверх самого изображения допускаются только системная плашка устаревшего потока и заставка отсутствия кадров.",
+        "section": "layout"
+      },
+      {
+        "name": "Правило «Тон и линия вместо тени»",
+        "body": "Чтобы выделить активный узел или поднять панель над фоном, меняют ступень яркости поверхности или толщину внутренней линии, никогда не добавляя свечение или размытую тень.",
+        "section": "elevation"
+      },
+      {
+        "name": "Правило «Прямой угол»",
+        "body": "Скругления `border-radius` запрещены во всём интерфейсе пульта; кривые линии допустимы только в графиках трендов и в геометрии циферблата на кадре камеры.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "**Do** оставлять фоновую заливку плиток в матрице 6×6 только за активными предупреждениями и авариями, сохраняя спокойные приборы на нейтральном графите `panel`.",
+      "**Do** кодировать отсутствие данных, ожидание смартфона и обрыв потока диагональной штриховкой `--hatch` и нейтральным текстом, строго отделяя их от технологических тревог.",
+      "**Do** дублировать каждый цветовой сигнал формой и текстом: кодом зоны (`ПРЕДУПР. H`, `АВАРИЯ HH`), квадратным маркером и миганием 1 Гц для неквитированных событий, левой белой полосой 3 px и плашкой `КАМЕРА` для живого прибора.",
+      "**Do** выводить все числа моноширинным шрифтом JetBrains Mono через `fmt()` с русской десятичной запятой, неразрывным пробелом тысяч, настоящим минусом «−» и длинным тире «—» при отсутствии значения.",
+      "**Do** честно разделять живой прибор с видеокамерой и CV-разметкой (`phone_cv` / `camera_cv`) и синтетические каналы демонстрационного стенда (`simulated`), скрывая пустой видеоблок у симулируемых позиций.",
+      "**Do** писать все тексты интерфейса в русской инженерной традиции с длинным тире «—» в пробелах, дефисом только внутри слов и коротким тире без пробелов в числовых диапазонах (`0–16 МПа`, `08:00–20:00`)."
+    ],
+    "donts": [
+      "**Don't** добавлять скругления углов (`border-radius > 0`), падающие тени, свечение фокуса, стеклянное размытие (`backdrop-filter`) или декоративные градиенты.",
+      "**Don't** использовать зелёный, янтарный или красный цвет для выбранной вкладки, активной кнопки, фокуса поля, ссылок или брендинга.",
+      "**Don't** накладывать элементы управления, таблицы или длинные плашки поверх самого изображения манометра — всё управление живёт в полосах над и под кадром.",
+      "**Don't** запускать бесконечные анимации, бегущие строки или пульсации нигде, кроме дискретного мигания 1 Гц у неквитированного срабатывания.",
+      "**Don't** набирать числовые показания пропорциональным шрифтом, выводить десятичную точку или обычный дефис вместо минуса.",
+      "**Don't** использовать среднюю точку «·» (U+00B7) как разделитель в подписях, кнопках и заголовках — заменяйте её по смыслу запятой, двоеточием или предлогом."
+    ]
+  }
+}

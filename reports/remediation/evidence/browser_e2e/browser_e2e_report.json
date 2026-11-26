@@ -1,0 +1,162 @@
+{
+  "baseUrl": "https://127.0.0.1:51024",
+  "steps": {
+    "loadMs": 728,
+    "login": {
+      "wrongErr": "Неверное имя пользователя или пароль",
+      "tiles": 36,
+      "user": "admin (Админ)"
+    },
+    "outage": {
+      "pendingDuringOutage": 2,
+      "growMs": 409,
+      "banner": "Обрыв связи с верхним уровнем АСУ ТП — события и телеметрия накапливаются в SQLite WAL на Edge-узле (2 записей, 0,5 КБ)",
+      "drainMs": 818
+    },
+    "faults": {
+      "steam": "DEGRADED",
+      "partial_occlusion": "DEGRADED",
+      "recover": "ONLINE"
+    },
+    "dispatch": {
+      "matrixRows": 36,
+      "tags": [
+        {
+          "level": "alert",
+          "text": "АВАРИЯ"
+        },
+        {
+          "level": "warning",
+          "text": "ПРЕДУПР."
+        },
+        {
+          "level": "alert",
+          "text": "АВАРИЯ"
+        },
+        {
+          "level": "warning",
+          "text": "ПРЕДУПР."
+        },
+        {
+          "level": "warning",
+          "text": "ПРЕДУПР."
+        },
+        {
+          "level": "stale",
+          "text": "СВЯЗЬ"
+        },
+        {
+          "level": "warning",
+          "text": "ПРЕДУПР."
+        },
+        {
+          "level": "warning",
+          "text": "ПРЕДУПР."
+        }
+      ],
+      "autoSpecs": true
+    },
+    "specPreview": {
+      "len": 19003,
+      "plant": true,
+      "num": true,
+      "law": true,
+      "period": true
+    },
+    "downloads": {
+      "docx": "ТЗ-ПРИЁМКА-2026-11_Дефектная_ведомость_и_ТЗ.docx",
+      "md": "ТЗ-ПРИЁМКА-2026-11_TZ_GaugeVision.md"
+    },
+    "logout": {
+      "modal": true,
+      "api": 401
+    },
+    "operator": {
+      "overview": 200,
+      "generate": 403,
+      "outage": 403
+    }
+  },
+  "viewports": {
+    "monitor_1920x1080": {
+      "vw": 1920,
+      "docScrollW": 1920,
+      "horizontalOverflow": false,
+      "headerBeyondViewport": [],
+      "truncatedTexts": [],
+      "middleDots": 0
+    },
+    "architecture_1920x1080": {
+      "vw": 1920,
+      "docScrollW": 1920,
+      "horizontalOverflow": false,
+      "headerBeyondViewport": [],
+      "truncatedTexts": [],
+      "middleDots": 0
+    },
+    "dispatch_1920x1080": {
+      "vw": 1920,
+      "docScrollW": 1920,
+      "horizontalOverflow": false,
+      "headerBeyondViewport": [],
+      "truncatedTexts": [],
+      "middleDots": 0
+    },
+    "monitor_1440x900": {
+      "vw": 1440,
+      "docScrollW": 1440,
+      "horizontalOverflow": false,
+      "headerBeyondViewport": [],
+      "truncatedTexts": [],
+      "middleDots": 0
+    },
+    "architecture_1440x900": {
+      "vw": 1440,
+      "docScrollW": 1440,
+      "horizontalOverflow": false,
+      "headerBeyondViewport": [],
+      "truncatedTexts": [],
+      "middleDots": 0
+    },
+    "dispatch_1440x900": {
+      "vw": 1440,
+      "docScrollW": 1440,
+      "horizontalOverflow": false,
+      "headerBeyondViewport": [],
+      "truncatedTexts": [],
+      "middleDots": 0
+    },
+    "monitor_1280x720": {
+      "vw": 1280,
+      "docScrollW": 1280,
+      "horizontalOverflow": false,
+      "headerBeyondViewport": [],
+      "truncatedTexts": [],
+      "middleDots": 0
+    },
+    "architecture_1280x720": {
+      "vw": 1280,
+      "docScrollW": 1280,
+      "horizontalOverflow": false,
+      "headerBeyondViewport": [],
+      "truncatedTexts": [],
+      "middleDots": 0
+    },
+    "dispatch_1280x720": {
+      "vw": 1280,
+      "docScrollW": 1280,
+      "horizontalOverflow": false,
+      "headerBeyondViewport": [],
+      "truncatedTexts": [],
+      "middleDots": 0
+    }
+  },
+  "failures": [],
+  "diagnostics": {
+    "consoleErrors": [],
+    "pageErrors": [],
+    "failedRequests": [],
+    "externalRequestsBlocked": []
+  },
+  "passed": true
+}

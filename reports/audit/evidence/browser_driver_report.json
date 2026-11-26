@@ -1,0 +1,134 @@
+{
+  "baseUrl": "https://127.0.0.1:18443",
+  "airGappedBlockedExternalUrls": [],
+  "viewports": {
+    "1920x1080": {
+      "vw": 1920,
+      "vh": 1080,
+      "docScrollW": 1920,
+      "headScrollW": 1920,
+      "headClientW": 1920,
+      "maxRight": 1920,
+      "clipped": false,
+      "tilesCount": 36,
+      "middleDotCount": 0,
+      "linkText": "WSS",
+      "cAlarm": "2",
+      "cWarn": "3",
+      "cDev": "5",
+      "cNoData": "1"
+    },
+    "1440x900": {
+      "vw": 1440,
+      "vh": 900,
+      "docScrollW": 1440,
+      "headScrollW": 1440,
+      "headClientW": 1440,
+      "maxRight": 1440,
+      "clipped": false,
+      "tilesCount": 36,
+      "middleDotCount": 0,
+      "linkText": "WSS",
+      "cAlarm": "2",
+      "cWarn": "3",
+      "cDev": "5",
+      "cNoData": "2"
+    },
+    "1280x720": {
+      "vw": 1280,
+      "vh": 720,
+      "docScrollW": 1280,
+      "headScrollW": 1280,
+      "headClientW": 1280,
+      "maxRight": 1280,
+      "clipped": false,
+      "tilesCount": 36,
+      "middleDotCount": 0,
+      "linkText": "WSS",
+      "cAlarm": "2",
+      "cWarn": "3",
+      "cDev": "5",
+      "cNoData": "2"
+    },
+    "arch_1280x720_overflow": {
+      "scrollW": 1280,
+      "vw": 1280,
+      "overflow": false
+    },
+    "dispatch_1280x720_overflow": {
+      "scrollW": 1280,
+      "vw": 1280,
+      "overflow": false
+    }
+  },
+  "steps": {
+    "initialLoadMs": 3400,
+    "liveCardText": "К1-Р01 КАМЕРА НЕКВИТ. К-1 давление острого пара 13,80 МПа Δ −0,32/мин LL2 L4 H14,2 HH15,2",
+    "inspector1920": {
+      "visible": true,
+      "bodyScrollH": 878,
+      "bodyClientH": 878,
+      "trendInViewport": true,
+      "trendH": 200
+    },
+    "archNormal": {
+      "topoSources": "01 Источники видео 3 / 3 ONLINE Потоки: 3 (RTSP / WSS / Стенд) Деградация: 0, обрыв: 0",
+      "topoEdge": "02 Edge-воркеры CV YOLOv8 (CPU) Инференс: 39,1 мс Экономия Adaptive FPS: 0%",
+      "topoBuffer": "03 Store-and-Forward СИНХРОНИЗИРОВАН В очереди: 0 зап. (0,0 КБ) SQLite WAL: 0,801 МБ, seq #20",
+      "topoScada": "04 SCADA / MQTT / Modbus ДОСТАВКА АКТИВНА MQTT: 20 сообщ. (Авт. шина) Modbus TCP: 150 рег. (HR 40001+)",
+      "streamCards": 3,
+      "sfPending": 0,
+      "sfDelivered": 20,
+      "hasModbusRows": 18
+    },
+    "mqttInspectorRows": 18,
+    "archOutage": {
+      "outageBtnText": "Восстановить связь с АСУ ТП (дослать очередь)",
+      "banner": "Обрыв связи с верхним уровнем АСУ ТП — события и телеметрия накапливаются в SQLite WAL на Edge-узле (3 записей, 0,7 КБ)",
+      "sfPending": 3,
+      "linkBroken": "true"
+    },
+    "archRecovered": {
+      "sfPending": 0,
+      "sfDelivered": 28,
+      "batchRows": 2,
+      "batchText": "batch-1795712329-949fae 19:58:49 4 0,8 КБ ДОСТАВЛЕНО batch-1795712306-bf34a5 19:58:26 6 2,4 КБ ДОСТАВЛЕНО"
+    },
+    "archFaultSteam": {
+      "focusTitle": "К1-Т01 — Edge-камера №2 — Котёл К-1 (перегретый пар)",
+      "focusHealth": "DEGRADED"
+    },
+    "dispatchState": {
+      "avgHealth": "88,2%",
+      "critWear": "3",
+      "modCount": "10",
+      "matrixRows": 36,
+      "recsCount": 11,
+      "incidentCards": 8,
+      "llmStatus": "Автономный режим (air-gapped: без облачных API)"
+    },
+    "specPreview": {
+      "len": 16568,
+      "hasCustomPlant": true,
+      "hasCustomDocNum": true,
+      "hasEcoSummary": "Позиций в ТЗ: 11 из 36\n      CAPEX: 1 124,0 тыс. ₽\n      Годовой эффект: 2 676,7 тыс. ₽/год\n      Окупаемость: 5 мес.\n      Движок: deterministic"
+    },
+    "downloadedDocx": {
+      "suggestedFilename": "ТЗ-АУДИТ-E2E-01_Дефектная_ведомость_и_ТЗ.docx",
+      "savedPath": "C:\\Users\\Egoru\\.gemini\\antigravity-cli\\brain\\695f6dc6-c8f0-404f-bda5-7db189aa45a1\\scratch\\audit_evidence\\e2e_downloaded_spec.docx",
+      "sizeBytes": 129874
+    },
+    "downloadedMd": {
+      "suggestedFilename": "ТЗ-АУДИТ-E2E-01_TZ_GaugeVision.md",
+      "savedPath": "C:\\Users\\Egoru\\.gemini\\antigravity-cli\\brain\\695f6dc6-c8f0-404f-bda5-7db189aa45a1\\scratch\\audit_evidence\\e2e_downloaded_spec.md",
+      "sizeBytes": 27448
+    }
+  },
+  "diagnostics": {
+    "consoleErrors": [],
+    "consoleWarningsCount": 0,
+    "pageErrors": [],
+    "failedRequests": [],
+    "externalNetworkRequestsBlocked": 0
+  }
+}

@@ -1,0 +1,26 @@
+[2026-11-26 23:53:32,389] :: INFO - Loading plugins from config
+[2026-11-26 23:53:32,438] :: INFO - Listener 'default' bind to 127.0.0.1:53278 (max_connections=0)
+[2026-11-26 23:53:32,438] :: INFO - Starting session expiration monitor.
+[2026-11-26 23:53:32,658] :: INFO - Listener 'default': Connection acquired; 1/∞ connections in use
+[2026-11-26 23:53:32,658] :: INFO - Connection from 127.0.0.1:53294 on listener 'default'
+[2026-11-26 23:53:32,675] :: ERROR - No data from (client @=127.0.0.1:53294) : No data to decode MQTT packet fixed header
+[2026-11-26 23:53:32,675] :: WARNING - Failed to initialize client session > No data to decode MQTT packet fixed header
+[2026-11-26 23:53:32,682] :: INFO - Listener 'default': Connection released; 0/∞ connections in use
+[2026-11-26 23:53:32,974] :: INFO - Listener 'default': Connection acquired; 1/∞ connections in use
+[2026-11-26 23:53:32,974] :: INFO - Connection from 127.0.0.1:53297 on listener 'default'
+[2026-11-26 23:53:35,303] :: INFO - Listener 'default': Connection acquired; 2/∞ connections in use
+[2026-11-26 23:53:35,303] :: INFO - Connection from 127.0.0.1:53302 on listener 'default'
+[2026-11-26 23:56:15,408] :: INFO - Loading plugins from config
+[2026-11-26 23:56:15,533] :: INFO - Listener 'default' bind to 127.0.0.1:53278 (max_connections=0)
+[2026-11-26 23:56:15,533] :: INFO - Starting session expiration monitor.
+[2026-11-26 23:56:15,599] :: INFO - Listener 'default': Connection acquired; 1/∞ connections in use
+[2026-11-26 23:56:15,599] :: INFO - Connection from 127.0.0.1:54681 on listener 'default'
+[2026-11-26 23:56:15,599] :: ERROR - No data from (client @=127.0.0.1:54681) : No data to decode MQTT packet fixed header
+[2026-11-26 23:56:15,599] :: WARNING - Failed to initialize client session > No data to decode MQTT packet fixed header
+[2026-11-26 23:56:15,599] :: INFO - Listener 'default': Connection released; 0/∞ connections in use
+[2026-11-26 23:56:15,632] :: INFO - Listener 'default': Connection acquired; 1/∞ connections in use
+[2026-11-26 23:56:15,632] :: INFO - Connection from 127.0.0.1:54677 on listener 'default'
+[2026-11-26 23:56:20,201] :: INFO - Listener 'default': Connection acquired; 2/∞ connections in use
+[2026-11-26 23:56:20,201] :: INFO - Connection from 127.0.0.1:54701 on listener 'default'
+[2026-11-26 23:56:29,015] :: INFO - Listener 'default': Connection released; 1/∞ connections in use
+[2026-11-26 23:56:34,248] :: INFO - Listener 'default': Connection released; 0/∞ connections in use

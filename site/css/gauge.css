@@ -1,0 +1,67 @@
+/*
+ * Прибор 0–10 МПа (kit.gauge) в двух исполнениях.
+ *   enamel  — эмалевый циферблат в кадре камеры первого листа: тёплая белая эмаль, чёрная печать шкалы;
+ *   drawing — чертёж тушью на бумаге листа 03: контур, осевые штрихпунктиром, стрелка красная —
+ *             единственный красный центр листа.
+ * Единицы — viewBox −200…200: толщины линий здесь в единицах SVG, кегли — атрибутом font-size в kit.gauge.
+ */
+.gv-gauge {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-variant-numeric: tabular-nums;
+}
+.gv-gauge__arc,
+.gv-gauge__zone {
+  fill: none;
+}
+.gv-gauge__tick {
+  stroke-linecap: butt;
+}
+.gv-gauge__num {
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+.gv-gauge__unit {
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+}
+.gv-gauge__cap {
+  font-family: var(--font-mono);
+  letter-spacing: 0.08em;
+}
+.gv-gauge__zone {
+  stroke-width: 9;
+}
+
+/* ---------- эмаль ---------- */
+.gv-gauge--enamel .gv-gauge__case { fill: #2B2E30; }
+.gv-gauge--enamel .gv-gauge__face { fill: #F3F1E9; }
+.gv-gauge--enamel .gv-gauge__arc { stroke: #1A1B1C; stroke-width: 2; }
+.gv-gauge--enamel .gv-gauge__tick { stroke: #1A1B1C; stroke-width: 1.6; }
+.gv-gauge--enamel .gv-gauge__tick.is-major { stroke-width: 3.4; }
+.gv-gauge--enamel .gv-gauge__num { fill: #1A1B1C; }
+.gv-gauge--enamel .gv-gauge__unit { fill: #1A1B1C; }
+.gv-gauge--enamel .gv-gauge__cap { fill: #5C626A; }
+.gv-gauge--enamel .gv-gauge__zone--alert { stroke: #B8321C; }
+.gv-gauge--enamel .gv-gauge__zone--warning { stroke: #C7962E; }
+.gv-gauge--enamel .gv-gauge__needle path { fill: #141516; }
+.gv-gauge--enamel .gv-gauge__hub { fill: #141516; }
+.gv-gauge--enamel .gv-gauge__pin { fill: #8B8F93; }
+.gv-gauge--enamel .gv-gauge__glass { fill: #FFFFFF; opacity: 0.1; }
+
+/* ---------- чертёж ---------- */
+.gv-gauge--drawing .gv-gauge__case { fill: none; stroke: var(--ink); stroke-width: 1.4; }
+.gv-gauge--drawing .gv-gauge__face { fill: var(--paper); stroke: var(--ink); stroke-width: 0.8; }
+.gv-gauge--drawing .gv-gauge__axis { stroke: var(--ink-3); stroke-width: 0.8; stroke-dasharray: 14 4 2 4; }
+.gv-gauge--drawing .gv-gauge__arc { stroke: var(--ink); stroke-width: 1.4; }
+.gv-gauge--drawing .gv-gauge__tick { stroke: var(--ink); stroke-width: 1; }
+.gv-gauge--drawing .gv-gauge__tick.is-major { stroke-width: 2.2; }
+.gv-gauge--drawing .gv-gauge__num { fill: var(--ink); font-weight: 700; }
+.gv-gauge--drawing .gv-gauge__unit { fill: var(--ink-2); }
+.gv-gauge--drawing .gv-gauge__zone { stroke-width: 6; }
+.gv-gauge--drawing .gv-gauge__zone--alert { stroke: var(--red); }
+.gv-gauge--drawing .gv-gauge__zone--warning { stroke: var(--warn); opacity: 0.7; }
+.gv-gauge--drawing .gv-gauge__needle path { fill: var(--red); }
+.gv-gauge--drawing .gv-gauge__hub { fill: var(--paper); stroke: var(--ink); stroke-width: 1.4; }
+.gv-gauge--drawing .gv-gauge__pin { fill: var(--ink); }

@@ -4,6 +4,7 @@
    • Зум: track.applyConstraints({advanced:[{zoom}]}) c валидацией getCapabilities().zoom,
      при отсутствии аппаратного зума — программный (кадрирование)
    • Фонарик (Torch API), удержание экрана (Wake Lock API)
+   • Автофокус по точке касания на объективах с поддержкой настройки фокуса
    • Передача JPEG/WebP-кадров по WSS 3–5 к/с с подтверждением (backpressure)
    ========================================================================= */
 (() => {
@@ -15,6 +16,9 @@
   const token = params.get('token');
 
   const video = $('#video');
+  const focusTarget = $('#focusTarget');
+  const focusMarker = $('#focusMarker');
+  const focusHint = $('#focusHint');
   const canvas = document.createElement('canvas');
   const ctx2d = canvas.getContext('2d', { alpha: false });
 
@@ -61,12 +65,31 @@
   // Камера и объективы
   // ---------------------------------------------------------------------
   const BASE_VIDEO = { width: { ideal: 1920 }, height: { ideal: 1080 }, frameRate: { ideal: 30, max: 30 } };
+  let cameraControls = Promise.resolve();
+  let appliedControls = {};
+
+  function applyCameraControls(track, changes) {
+    // applyConstraints заменяет набор ограничений. Храним настройки объектива вместе.
+    const request = cameraControls.then(async () => {
+      if (track !== st.track || track.readyState !== 'live') return false;
+      const next = { ...appliedControls, ...changes };
+      await track.applyConstraints({ advanced: [next] });
+      if (track !== st.track) return false;
+      appliedControls = next;
+      return true;
+    });
+    cameraControls = request.catch(() => {});
+    return request;
+  }
 
   function stopStream() {
     if (st.stream) st.stream.getTracks().forEach((t) => t.stop());
     st.stream = null;
     st.track = null;
     st.torch = false;
+    cameraControls = Promise.resolve();
+    appliedControls = {};
+    resetFocus();
   }
 
   async function openCamera(constraints) {
@@ -81,6 +104,7 @@
     });
     setupZoom();
     setupTorch();
+    setupFocus(st.track);
     return st.track;
   }
 
@@ -182,30 +206,39 @@
     $('#zoomVal').textContent = `${Number(slider.value).toFixed(1)}×`;
   }
 
-  let zoomBusy = false, zoomPending = null;
+  let zoomUpdate = null;
   async function applyZoom(v) {
     const slider = $('#zoom');
+    const track = st.track;
+    if (!track) return;
     if (st.hwZoom) {
-      const caps = st.track.getCapabilities();
+      const caps = track.getCapabilities();
       // валидация по возможностям устройства
       const z = Math.min(caps.zoom.max, Math.max(caps.zoom.min, Number(v)));
-      if (zoomBusy) { zoomPending = z; return; }
-      zoomBusy = true;
+      if (zoomUpdate?.track === track) {
+        zoomUpdate.pending = z;
+        return;
+      }
+      const update = { track, pending: null };
+      zoomUpdate = update;
       try {
-        await st.track.applyConstraints({ advanced: [{ zoom: z }] });
+        if (await applyCameraControls(track, { zoom: z })) {
+          $('#zoomVal').textContent = `${z.toFixed(1)}×`;
+        }
       } catch (e) {
         console.warn('zoom', e);
       } finally {
-        zoomBusy = false;
-        if (zoomPending !== null) { const p = zoomPending; zoomPending = null; applyZoom(p); }
+        if (zoomUpdate === update) {
+          zoomUpdate = null;
+          if (update.pending !== null && track === st.track) applyZoom(update.pending);
+        }
       }
-      $('#zoomVal').textContent = `${z.toFixed(1)}×`;
     } else {
       st.swZoom = Math.min(4, Math.max(1, Number(v)));
       applySwZoomPreview();
       $('#zoomVal').textContent = `${st.swZoom.toFixed(1)}×`;
+      slider.value = v;
     }
-    slider.value = v;
   }
 
   function applySwZoomPreview() {
@@ -226,15 +259,86 @@
     btn.title = caps.torch ? 'Фонарик' : 'Фонарик недоступен для этого объектива';
   }
   $('#btnTorch').addEventListener('click', async () => {
-    if (!st.track) return;
+    const track = st.track;
+    if (!track) return;
     const want = !st.torch;
     try {
-      await st.track.applyConstraints({ advanced: [{ torch: want }] });
+      if (!await applyCameraControls(track, { torch: want })) return;
       st.torch = want;
       $('#btnTorch').classList.toggle('on', want);
     } catch (e) {
-      toastLike('Не удалось переключить фонарик');
+      if (track === st.track) toastLike('Не удалось переключить фонарик');
     }
+  });
+
+  // ---------------------------------------------------------------------
+  // Автофокус
+  // ---------------------------------------------------------------------
+  const FOCUS_HINT = 'Коснитесь циферблата, чтобы сфокусировать камеру';
+  let focusTimer = null;
+  let focusRequest = 0;
+
+  function resetFocus() {
+    focusRequest++;
+    clearTimeout(focusTimer);
+    focusTarget.classList.add('hidden');
+    focusMarker.classList.add('hidden');
+    focusHint.classList.add('hidden');
+  }
+
+  function setupFocus(track) {
+    const modes = track.getCapabilities?.().focusMode ?? [];
+    const continuous = modes.includes('continuous');
+    const point = navigator.mediaDevices.getSupportedConstraints?.().pointsOfInterest;
+    focusTarget.classList.toggle('hidden', !continuous || !point);
+    focusHint.classList.toggle('hidden', !continuous || !point);
+    focusHint.textContent = FOCUS_HINT;
+    if (continuous && track.getSettings?.().focusMode !== 'continuous') {
+      applyCameraControls(track, { focusMode: 'continuous' }).catch((e) => console.warn('focus', e));
+    }
+  }
+
+  focusTarget.addEventListener('click', async (ev) => {
+    const track = st.track;
+    const { videoWidth, videoHeight } = video;
+    if (!track || track.readyState !== 'live' || !videoWidth || !videoHeight) return;
+
+    // object-fit: contain. Границы видео уже включают CSS-зум, но не поля вокруг кадра.
+    const rect = video.getBoundingClientRect();
+    const scale = Math.min(rect.width / videoWidth, rect.height / videoHeight);
+    if (!scale) return;
+    const width = videoWidth * scale;
+    const height = videoHeight * scale;
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const clientX = ev.detail ? ev.clientX : centerX;
+    const clientY = ev.detail ? ev.clientY : centerY;
+    const x = 0.5 + (clientX - centerX) / width;
+    const y = 0.5 + (clientY - centerY) / height;
+    if (x < 0 || x > 1 || y < 0 || y > 1) return;
+
+    const targetRect = focusTarget.getBoundingClientRect();
+    focusMarker.style.left = `${clientX - targetRect.left}px`;
+    focusMarker.style.top = `${clientY - targetRect.top}px`;
+    focusMarker.classList.remove('hidden');
+    clearTimeout(focusTimer);
+    const request = ++focusRequest;
+    focusHint.textContent = 'Настраиваем фокус…';
+
+    const point = { x: st.lensKey === 'front' ? 1 - x : x, y };
+    let message = 'Запрос фокуса отправлен';
+    try {
+      if (!await applyCameraControls(track, { focusMode: 'continuous', pointsOfInterest: [point] })) return;
+    } catch (e) {
+      console.warn('focus', e);
+      message = 'Камера не приняла запрос фокуса';
+    }
+    if (track !== st.track || request !== focusRequest) return;
+    focusHint.textContent = message;
+    focusTimer = setTimeout(() => {
+      focusMarker.classList.add('hidden');
+      focusHint.textContent = FOCUS_HINT;
+    }, 1800);
   });
 
   // ---------------------------------------------------------------------
@@ -253,6 +357,7 @@
       st.wsAttempt = 0;
       st.inflight = false;
       setConn(st.streaming ? 'online' : 'reconnecting', st.streaming ? 'В эфире' : 'Подключено');
+      sendClientState(st.streaming ? 'streaming' : (st.track ? 'camera_ready' : 'awaiting_permission'));
       ping = setInterval(() => { if (ws.readyState === 1 && !st.streaming) ws.send(JSON.stringify({ type: 'ping', t: Date.now() })); }, 15000);
     };
     ws.onmessage = (ev) => {
@@ -290,6 +395,14 @@
       setTimeout(connectWs, d * 1000);
     };
     ws.onerror = () => {};
+  }
+
+  function sendClientState(stateName, errorText = null) {
+    if (st.ws && st.ws.readyState === 1) {
+      try {
+        st.ws.send(JSON.stringify({ type: 'client_state', state: stateName, error: errorText }));
+      } catch (_) { /* сокет закрывается */ }
+    }
   }
 
   function showReading(r) {
@@ -364,7 +477,7 @@
     }
     const fmtName = st.mime === 'image/webp' ? 'WebP' : 'JPEG';
     $('#stats').innerHTML = st.streaming
-      ? `<span class="live-dot"></span>${s.fps.toFixed(1)} к/с · ${s.kb.toFixed(0)} КБ<br>${fmtName} · RTT ${s.rtt} мс`
+      ? `<span class="live-dot"></span>${s.fps.toFixed(1)} к/с, ${s.kb.toFixed(0)} КБ<br>${fmtName}, RTT ${s.rtt} мс`
       : `${video.videoWidth || 0}×${video.videoHeight || 0}`;
   }
 
@@ -384,6 +497,7 @@
     btn.textContent = '■ Остановить';
     btn.classList.add('live');
     if (st.ws && st.ws.readyState === 1) setConn('online', 'В эфире');
+    sendClientState('streaming');
     requestWakeLock();
     loop();
   }
@@ -396,18 +510,23 @@
     btn.classList.remove('live');
     if (st.wakeLock) { st.wakeLock.release().catch(() => {}); st.wakeLock = null; }
     if (st.ws && st.ws.readyState === 1) setConn('reconnecting', 'Подключено (пауза)');
+    sendClientState('paused');
     updateStats();
   }
 
   $('#btnStream').addEventListener('click', () => (st.streaming ? stopStreaming() : startStreaming()));
 
   document.addEventListener('visibilitychange', async () => {
-    if (document.hidden) return;
+    if (document.hidden) {
+      if (st.streaming) sendClientState('paused', 'экран смартфона свёрнут или выключен');
+      return;
+    }
     if (st.streaming && !st.wakeLock) requestWakeLock();
     // iOS/Android останавливают камеру в фоне — восстанавливаем
     if (!st.track || st.track.readyState === 'ended') {
       try { await selectLens(st.lensKey); } catch (_) { /* покажется ниже */ }
     }
+    sendClientState(st.streaming ? 'streaming' : 'camera_ready');
   });
 
   if (navigator.mediaDevices && navigator.mediaDevices.addEventListener) {
@@ -417,7 +536,7 @@
   function updateInfo() {
     const settings = st.track && st.track.getSettings ? st.track.getSettings() : {};
     const lens = st.lenses.find((l) => l.key === st.lensKey);
-    $('#camInfo').textContent = `${lens ? lens.label : '—'} · ${settings.width || '?'}×${settings.height || '?'}`;
+    $('#camInfo').textContent = `${lens ? lens.label : '—'}, ${settings.width || '?'}×${settings.height || '?'}`;
   }
 
   // ---------------------------------------------------------------------
@@ -439,8 +558,10 @@
     try {
       await openCamera(st.lenses.length ? st.lenses[0].constraints : { facingMode: { ideal: 'environment' } });
       hideMsg();
+      sendClientState(st.streaming ? 'streaming' : 'camera_ready');
     } catch (e) {
       const denied = e && (e.name === 'NotAllowedError' || e.name === 'SecurityError');
+      sendClientState(denied ? 'permission_denied' : 'camera_error', e && (e.name || e.message));
       showMsg(denied ? 'Доступ к камере запрещён' : 'Камера недоступна',
         denied
           ? 'Разрешите доступ к камере для этого сайта в настройках браузера (iOS: Настройки → Safari → Камера; Chrome: значок замка → Разрешения) и нажмите «Повторить».'

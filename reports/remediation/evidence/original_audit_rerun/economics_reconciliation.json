@@ -1,0 +1,15 @@
+{
+  "n_items": 2,
+  "capex_gen": 230280,
+  "capex_audit_formula": 230280,
+  "gross_gen": 556000,
+  "gross_audit_formula": 556000,
+  "opex_gen": 16000,
+  "opex_expected": 16000,
+  "net_gen": 540000,
+  "net_expected": 540000,
+  "payback_years_gen": 0.43,
+  "payback_expected": 0.43,
+  "payback_months_gen": 5,
+  "all_match": true
+}

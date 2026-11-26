@@ -1,0 +1,43 @@
+{
+  "started": "2026-11-27 01:43:28",
+  "cam_id": "demo-mtp160-steam",
+  "camera_before": {
+    "status": "offline",
+    "stream": {
+      "status": "offline",
+      "fps": 0.0,
+      "frames_total": 0,
+      "fail_count": 0,
+      "last_error": null,
+      "online_since": null,
+      "frame_age": null,
+      "ws_connected": false,
+      "connected_clients": 0,
+      "client_state": "waiting_phone",
+      "client_error": null,
+      "last_frame_utc": null
+    }
+  },
+  "camera_after": {
+    "status": "reconnecting",
+    "stream": {
+      "status": "reconnecting",
+      "fps": 3.8,
+      "frames_total": 40,
+      "fail_count": 1,
+      "last_error": "нет кадров от смартфона",
+      "online_since": null,
+      "frame_age": 20.47,
+      "ws_connected": false,
+      "connected_clients": 0,
+      "client_state": "disconnected",
+      "client_error": null,
+      "last_frame_utc": "2026-11-26T22:44:23.776+00:00"
+    },
+    "last_reading": null
+  },
+  "driver_exit": 0,
+  "failures": [],
+  "scenarios": 28,
+  "server_frames_received": 0
+}

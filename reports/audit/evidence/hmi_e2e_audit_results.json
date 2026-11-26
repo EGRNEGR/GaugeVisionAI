@@ -1,0 +1,693 @@
+{
+  "timestamp": "2026-11-26T19:59:01",
+  "cold_start_ready_s": 10.2,
+  "live_wss_cv_sequence": {
+    "hello_type": "hello",
+    "frames_sent": 23,
+    "valid_readings_received": 21,
+    "levels_seen": [
+      "alert",
+      "normal",
+      "warning"
+    ],
+    "last_reading": {
+      "ts": "2026-11-26T16:58:35.382+00:00",
+      "last_frame_ts": "2026-11-26T16:58:35.166+00:00",
+      "value": 14.0675,
+      "raw_value": 12.9907,
+      "angle": 354.22,
+      "valid": true,
+      "out_of_scale": false,
+      "awaiting_post_cal": false,
+      "confidence": 1.0,
+      "level": "normal",
+      "last_valid_value": 14.0675,
+      "last_valid_level": "normal",
+      "dial_found": true,
+      "dial_source": "yolo+ellipse",
+      "method": "hough+moment/blackhat",
+      "process_ms": 44.0,
+      "geom": {
+        "w": 960,
+        "h": 540,
+        "source": "yolo+ellipse",
+        "score": 0.97,
+        "ellipse": [
+          480.0,
+          270.0,
+          186.8,
+          186.8,
+          176.4
+        ],
+        "bbox": [
+          293.2,
+          83.2,
+          373.5,
+          373.6
+        ],
+        "zones": [
+          {
+            "level": "normal",
+            "points": [
+              [
+                319.5,
+                203.5
+              ],
+              [
+                323.3,
+                195.0
+              ],
+              [
+                327.6,
+                186.7
+              ],
+              [
+                332.2,
+                178.7
+              ],
+              [
+                337.3,
+                170.9
+              ],
+              [
+                342.9,
+                163.4
+              ],
+              [
+                348.8,
+                156.2
+              ],
+              [
+                355.1,
+                149.3
+              ],
+              [
+                361.7,
+                142.8
+              ],
+              [
+                368.7,
+                136.6
+              ],
+              [
+                376.0,
+                130.8
+              ],
+              [
+                383.6,
+                125.5
+              ],
+              [
+                391.5,
+                120.5
+              ],
+              [
+                399.7,
+                116.0
+              ],
+              [
+                408.0,
+                111.9
+              ],
+              [
+                416.6,
+                108.2
+              ],
+              [
+                425.4,
+                105.1
+              ],
+              [
+                434.3,
+                102.4
+              ],
+              [
+                443.4,
+                100.2
+              ],
+              [
+                452.5,
+                98.5
+              ],
+              [
+                461.8,
+                97.2
+              ],
+              [
+                471.0,
+                96.5
+              ],
+              [
+                480.4,
+                96.3
+              ],
+              [
+                489.7,
+                96.5
+              ],
+              [
+                499.0,
+                97.3
+              ],
+              [
+                508.2,
+                98.6
+              ],
+              [
+                517.3,
+                100.3
+              ],
+              [
+                526.4,
+                102.6
+              ],
+              [
+                535.3,
+                105.3
+              ],
+              [
+                544.0,
+                108.5
+              ],
+              [
+                552.6,
+                112.2
+              ],
+              [
+                561.0,
+                116.3
+              ],
+              [
+                569.1,
+                120.9
+              ],
+              [
+                576.9,
+                125.9
+              ],
+              [
+                584.5,
+                131.3
+              ],
+              [
+                591.8,
+                137.1
+              ],
+              [
+                598.8,
+                143.3
+              ],
+              [
+                605.4,
+                149.8
+              ],
+              [
+                611.7,
+                156.7
+              ],
+              [
+                617.6,
+                163.9
+              ],
+              [
+                623.0,
+                171.5
+              ],
+              [
+                628.1,
+                179.3
+              ],
+              [
+                632.8,
+                187.4
+              ],
+              [
+                637.0,
+                195.7
+              ],
+              [
+                640.7,
+                204.2
+              ],
+              [
+                644.0,
+                212.9
+              ],
+              [
+                646.9,
+                221.8
+              ],
+              [
+                649.2,
+                230.8
+              ],
+              [
+                651.1,
+                240.0
+              ],
+              [
+                652.4,
+                249.2
+              ],
+              [
+                653.3,
+                258.4
+              ],
+              [
+                653.7,
+                267.8
+              ],
+              [
+                653.5,
+                277.1
+              ],
+              [
+                652.9,
+                286.4
+              ],
+              [
+                651.8,
+                295.6
+              ],
+              [
+                650.2,
+                304.8
+              ],
+              [
+                648.1,
+                313.9
+              ]
+            ]
+          },
+          {
+            "level": "alert",
+            "points": [
+              [
+                357.2,
+                392.9
+              ],
+              [
+                350.2,
+                385.4
+              ],
+              [
+                343.6,
+                377.6
+              ],
+              [
+                337.5,
+                369.4
+              ],
+              [
+                331.9,
+                360.8
+              ],
+              [
+                326.8,
+                351.9
+              ],
+              [
+                322.2,
+                342.7
+              ],
+              [
+                318.2,
+                333.3
+              ],
+              [
+                314.8,
+                323.7
+              ],
+              [
+                311.9,
+                313.9
+              ],
+              [
+                309.6,
+                303.9
+              ]
+            ]
+          },
+          {
+            "level": "warning",
+            "points": [
+              [
+                309.6,
+                303.9
+              ],
+              [
+                307.9,
+                293.8
+              ],
+              [
+                306.8,
+                283.6
+              ],
+              [
+                306.3,
+                273.4
+              ],
+              [
+                306.4,
+                263.2
+              ],
+              [
+                307.1,
+                253.0
+              ],
+              [
+                308.4,
+                242.8
+              ],
+              [
+                310.3,
+                232.8
+              ],
+              [
+                312.8,
+                222.9
+              ],
+              [
+                315.9,
+                213.1
+              ],
+              [
+                319.5,
+                203.5
+              ]
+            ]
+          },
+          {
+            "level": "warning",
+            "points": [
+              [
+                648.1,
+                313.9
+              ],
+              [
+                644.4,
+                326.1
+              ],
+              [
+                639.8,
+                338.1
+              ],
+              [
+                634.4,
+                349.7
+              ],
+              [
+                628.1,
+                360.8
+              ]
+            ]
+          },
+          {
+            "level": "alert",
+            "points": [
+              [
+                628.1,
+                360.8
+              ],
+              [
+                620.5,
+                372.1
+              ],
+              [
+                612.1,
+                382.8
+              ],
+              [
+                602.8,
+                392.9
+              ]
+            ]
+          }
+        ],
+        "rays": [
+          {
+            "name": "min",
+            "theta": 135.0,
+            "points": [
+              [
+                374,
+                375
+              ],
+              [
+                350,
+                399
+              ]
+            ]
+          },
+          {
+            "name": "max",
+            "theta": 45.0,
+            "points": [
+              [
+                585,
+                375
+              ],
+              [
+                609,
+                399
+              ]
+            ]
+          }
+        ],
+        "needle": [
+          [
+            480.0,
+            270.0
+          ],
+          [
+            648.7,
+            253.7
+          ]
+        ]
+      },
+      "last_valid_ts": "2026-11-26T16:58:35.382+00:00",
+      "conn_state": "connected",
+      "meas_state": "valid",
+      "quality": "ok",
+      "phone_stage": "reading_received",
+      "frame_age_s": 0.22,
+      "reading_age_s": 0.0,
+      "has_fresh_frame": true,
+      "has_fresh_reading": true,
+      "sparkline": [
+        12.9907,
+        12.9907,
+        13.4442,
+        13.7843,
+        14.0394,
+        14.2307,
+        14.3742,
+        14.4818,
+        14.7881,
+        15.0177,
+        15.19,
+        15.3192,
+        15.4161,
+        15.4887,
+        15.5432,
+        14.9051,
+        14.4265,
+        14.0675
+      ]
+    }
+  },
+  "primary_stream_after_cv": {
+    "adaptive": {
+      "mode": "event_burst",
+      "mode_label": "ТРЕВОГА / ВЫСОКАЯ ЧАСТОТА",
+      "target_fps": 6.0,
+      "idle_fps": 1.0,
+      "active_fps": 6.0,
+      "reason": "Выход за уставку (ПРЕДУПР.)",
+      "triggers_total": 1,
+      "cpu_savings_pct": 0.0,
+      "inference_ms": 28.9
+    },
+    "ring_buffer": {
+      "pre_buffered": 12,
+      "pre_capacity": 12,
+      "post_target": 8,
+      "capturing_post": true,
+      "archived_clips": 0,
+      "buffer_kb": 321.3
+    },
+    "quality": {
+      "health_status": "ONLINE",
+      "quality_score": 100.0,
+      "mean_luma": 80.7,
+      "sharpness": 1240.3,
+      "glare_pct": 0.0,
+      "frame_diff": 0.0,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "packet_loss_pct": 0.0,
+      "degradation_reasons": [],
+      "injected_fault": null,
+      "updated_at": "2026-11-26T16:58:35.662+00:00"
+    }
+  },
+  "events_count_after_cv": 12,
+  "dispatch_summary_after_cv": {
+    "total": 36,
+    "avg_health_score": 87.9,
+    "critical_wear_count": 3,
+    "degraded_count": 8,
+    "modernization_candidates": 10,
+    "by_root_cause": {
+      "process_anomaly": 5,
+      "instrument_degradation": 4,
+      "optical_degradation": 2,
+      "nominal": 25
+    }
+  },
+  "browser_elapsed_s": 26.07,
+  "browser_report": {
+    "baseUrl": "https://127.0.0.1:18443",
+    "airGappedBlockedExternalUrls": [],
+    "viewports": {
+      "1920x1080": {
+        "vw": 1920,
+        "vh": 1080,
+        "docScrollW": 1920,
+        "headScrollW": 1920,
+        "headClientW": 1920,
+        "maxRight": 1920,
+        "clipped": false,
+        "tilesCount": 36,
+        "middleDotCount": 0,
+        "linkText": "WSS",
+        "cAlarm": "2",
+        "cWarn": "3",
+        "cDev": "5",
+        "cNoData": "1"
+      },
+      "1440x900": {
+        "vw": 1440,
+        "vh": 900,
+        "docScrollW": 1440,
+        "headScrollW": 1440,
+        "headClientW": 1440,
+        "maxRight": 1440,
+        "clipped": false,
+        "tilesCount": 36,
+        "middleDotCount": 0,
+        "linkText": "WSS",
+        "cAlarm": "2",
+        "cWarn": "3",
+        "cDev": "5",
+        "cNoData": "2"
+      },
+      "1280x720": {
+        "vw": 1280,
+        "vh": 720,
+        "docScrollW": 1280,
+        "headScrollW": 1280,
+        "headClientW": 1280,
+        "maxRight": 1280,
+        "clipped": false,
+        "tilesCount": 36,
+        "middleDotCount": 0,
+        "linkText": "WSS",
+        "cAlarm": "2",
+        "cWarn": "3",
+        "cDev": "5",
+        "cNoData": "2"
+      },
+      "arch_1280x720_overflow": {
+        "scrollW": 1280,
+        "vw": 1280,
+        "overflow": false
+      },
+      "dispatch_1280x720_overflow": {
+        "scrollW": 1280,
+        "vw": 1280,
+        "overflow": false
+      }
+    },
+    "steps": {
+      "initialLoadMs": 3400,
+      "liveCardText": "К1-Р01 КАМЕРА НЕКВИТ. К-1 давление острого пара 13,80 МПа Δ −0,32/мин LL2 L4 H14,2 HH15,2",
+      "inspector1920": {
+        "visible": true,
+        "bodyScrollH": 878,
+        "bodyClientH": 878,
+        "trendInViewport": true,
+        "trendH": 200
+      },
+      "archNormal": {
+        "topoSources": "01 Источники видео 3 / 3 ONLINE Потоки: 3 (RTSP / WSS / Стенд) Деградация: 0, обрыв: 0",
+        "topoEdge": "02 Edge-воркеры CV YOLOv8 (CPU) Инференс: 39,1 мс Экономия Adaptive FPS: 0%",
+        "topoBuffer": "03 Store-and-Forward СИНХРОНИЗИРОВАН В очереди: 0 зап. (0,0 КБ) SQLite WAL: 0,801 МБ, seq #20",
+        "topoScada": "04 SCADA / MQTT / Modbus ДОСТАВКА АКТИВНА MQTT: 20 сообщ. (Авт. шина) Modbus TCP: 150 рег. (HR 40001+)",
+        "streamCards": 3,
+        "sfPending": 0,
+        "sfDelivered": 20,
+        "hasModbusRows": 18
+      },
+      "mqttInspectorRows": 18,
+      "archOutage": {
+        "outageBtnText": "Восстановить связь с АСУ ТП (дослать очередь)",
+        "banner": "Обрыв связи с верхним уровнем АСУ ТП — события и телеметрия накапливаются в SQLite WAL на Edge-узле (3 записей, 0,7 КБ)",
+        "sfPending": 3,
+        "linkBroken": "true"
+      },
+      "archRecovered": {
+        "sfPending": 0,
+        "sfDelivered": 28,
+        "batchRows": 2,
+        "batchText": "batch-1795712329-949fae 19:58:49 4 0,8 КБ ДОСТАВЛЕНО batch-1795712306-bf34a5 19:58:26 6 2,4 КБ ДОСТАВЛЕНО"
+      },
+      "archFaultSteam": {
+        "focusTitle": "К1-Т01 — Edge-камера №2 — Котёл К-1 (перегретый пар)",
+        "focusHealth": "DEGRADED"
+      },
+      "dispatchState": {
+        "avgHealth": "88,2%",
+        "critWear": "3",
+        "modCount": "10",
+        "matrixRows": 36,
+        "recsCount": 11,
+        "incidentCards": 8,
+        "llmStatus": "Автономный режим (air-gapped: без облачных API)"
+      },
+      "specPreview": {
+        "len": 16568,
+        "hasCustomPlant": true,
+        "hasCustomDocNum": true,
+        "hasEcoSummary": "Позиций в ТЗ: 11 из 36\n      CAPEX: 1 124,0 тыс. ₽\n      Годовой эффект: 2 676,7 тыс. ₽/год\n      Окупаемость: 5 мес.\n      Движок: deterministic"
+      },
+      "downloadedDocx": {
+        "suggestedFilename": "ТЗ-АУДИТ-E2E-01_Дефектная_ведомость_и_ТЗ.docx",
+        "savedPath": "C:\\Users\\Egoru\\.gemini\\antigravity-cli\\brain\\695f6dc6-c8f0-404f-bda5-7db189aa45a1\\scratch\\audit_evidence\\e2e_downloaded_spec.docx",
+        "sizeBytes": 129874
+      },
+      "downloadedMd": {
+        "suggestedFilename": "ТЗ-АУДИТ-E2E-01_TZ_GaugeVision.md",
+        "savedPath": "C:\\Users\\Egoru\\.gemini\\antigravity-cli\\brain\\695f6dc6-c8f0-404f-bda5-7db189aa45a1\\scratch\\audit_evidence\\e2e_downloaded_spec.md",
+        "sizeBytes": 27448
+      }
+    },
+    "diagnostics": {
+      "consoleErrors": [],
+      "consoleWarningsCount": 0,
+      "pageErrors": [],
+      "failedRequests": [],
+      "externalNetworkRequestsBlocked": 0
+    }
+  },
+  "docx_md_reconciliation": {
+    "docx_contains_custom_plant": true,
+    "docx_contains_custom_doc_num": true,
+    "md_contains_custom_doc_num": true,
+    "docx_media_images_count": 4,
+    "docx_has_all_5_sections": true,
+    "md_has_all_5_sections": true
+  }
+}

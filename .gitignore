@@ -33,3 +33,6 @@ node_modules/
 # Локальные материалы: референсы и исходники видео — вне git
 references/
 desktop.ini
+
+# Локальные пути стендовых инструментов валидации
+reports/remediation/tests/.validation_tools.json

@@ -1,0 +1,599 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-23T09:37:08+00:00",
+  "title": "Design System: GaugeVision AI",
+  "extensions": {
+    "colorMeta": {
+      "paper": {
+        "role": "neutral",
+        "displayName": "Журнальная бумага",
+        "canonical": "oklch(93.7% 0.010 120)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252523",
+          "#41423F",
+          "#60625C",
+          "#81837D",
+          "#A4A6A1",
+          "#C9C9C7",
+          "#EEEEED"
+        ]
+      },
+      "paper-deep": {
+        "role": "neutral",
+        "displayName": "Поле бланка",
+        "canonical": "oklch(90.4% 0.015 123)",
+        "tonalRamp": [
+          "#0B0B0A",
+          "#242622",
+          "#41433D",
+          "#5F6359",
+          "#80847A",
+          "#A4A69F",
+          "#C8CAC5",
+          "#EEEFED"
+        ]
+      },
+      "paper-lift": {
+        "role": "neutral",
+        "displayName": "Выделенная строка",
+        "canonical": "oklch(95.9% 0.008 114)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252523",
+          "#42423F",
+          "#61625D",
+          "#82837E",
+          "#A5A5A1",
+          "#C9C9C7",
+          "#EEEEEE"
+        ]
+      },
+      "ink": {
+        "role": "primary",
+        "displayName": "Графит печати",
+        "canonical": "oklch(21.3% 0.007 258)",
+        "tonalRamp": [
+          "#0B0B0C",
+          "#242526",
+          "#404244",
+          "#5F6165",
+          "#808286",
+          "#A3A5A8",
+          "#C8C9CB",
+          "#EEEEEF"
+        ]
+      },
+      "ink-2": {
+        "role": "neutral",
+        "displayName": "Вторичный графит",
+        "canonical": "oklch(41.0% 0.016 256)",
+        "tonalRamp": [
+          "#0A0B0C",
+          "#232528",
+          "#3E4248",
+          "#5C626A",
+          "#7C838C",
+          "#A1A5AC",
+          "#C6C9CD",
+          "#EDEEF0"
+        ]
+      },
+      "ink-3": {
+        "role": "neutral",
+        "displayName": "Метаданные",
+        "canonical": "oklch(49.4% 0.015 256)",
+        "tonalRamp": [
+          "#0B0B0C",
+          "#232528",
+          "#3E4248",
+          "#5C626A",
+          "#7D838B",
+          "#A1A5AC",
+          "#C6C9CD",
+          "#EDEEF0"
+        ]
+      },
+      "violet": {
+        "role": "secondary",
+        "displayName": "Фиолетовые чернила обходчика",
+        "canonical": "oklch(38.8% 0.172 280)",
+        "tonalRamp": [
+          "#090A16",
+          "#1F1F46",
+          "#38367F",
+          "#534EBD",
+          "#7271E4",
+          "#979CEF",
+          "#C0C5F7",
+          "#EBEDFF"
+        ]
+      },
+      "red": {
+        "role": "tertiary",
+        "displayName": "Красное поле",
+        "canonical": "oklch(52.1% 0.174 32)",
+        "tonalRamp": [
+          "#150705",
+          "#41150D",
+          "#752012",
+          "#AD2A14",
+          "#D5513A",
+          "#E78774",
+          "#F4B9AC",
+          "#FFE9E4"
+        ]
+      },
+      "ok": {
+        "role": "tertiary",
+        "displayName": "Норма",
+        "canonical": "oklch(45.5% 0.095 156)",
+        "tonalRamp": [
+          "#070D09",
+          "#142B1D",
+          "#204C33",
+          "#2C714B",
+          "#4F936B",
+          "#83B294",
+          "#B6D1BF",
+          "#E7F1EB"
+        ]
+      },
+      "warn": {
+        "role": "tertiary",
+        "displayName": "Предупреждение",
+        "canonical": "oklch(47.8% 0.101 75)",
+        "tonalRamp": [
+          "#0F0A05",
+          "#31220C",
+          "#583C0F",
+          "#82570D",
+          "#A57937",
+          "#C09F73",
+          "#DAC6AC",
+          "#F5EDE4"
+        ]
+      },
+      "marker": {
+        "role": "tertiary",
+        "displayName": "Маркер-выделитель",
+        "canonical": "oklch(86.6% 0.143 99)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#2C2501",
+          "#4D4203",
+          "#706103",
+          "#968203",
+          "#BAA637",
+          "#D9CA7D",
+          "#EEEEEE"
+        ]
+      },
+      "plate": {
+        "role": "neutral",
+        "displayName": "Вклейка",
+        "canonical": "oklch(19.8% 0.004 229)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#242526",
+          "#414243",
+          "#5F6263",
+          "#808384",
+          "#A3A5A6",
+          "#C8C9CA",
+          "#EEEEEF"
+        ]
+      },
+      "plate-ink": {
+        "role": "neutral",
+        "displayName": "Текст вклейки",
+        "canonical": "oklch(93.7% 0.010 120)",
+        "tonalRamp": [
+          "#0B0B0B",
+          "#252523",
+          "#41423F",
+          "#60625C",
+          "#81837D",
+          "#A4A6A1",
+          "#C9C9C7",
+          "#EEEEED"
+        ]
+      },
+      "plate-ink-2": {
+        "role": "neutral",
+        "displayName": "Вторичный текст вклейки",
+        "canonical": "oklch(74.7% 0.014 135)",
+        "tonalRamp": [
+          "#0B0B0A",
+          "#242623",
+          "#40433E",
+          "#5E635B",
+          "#7F847C",
+          "#A2A6A0",
+          "#C7CAC6",
+          "#EEEFED"
+        ]
+      },
+      "plate-red": {
+        "role": "tertiary",
+        "displayName": "Красный вклейки",
+        "canonical": "oklch(68.4% 0.171 33)",
+        "tonalRamp": [
+          "#140705",
+          "#41150C",
+          "#742110",
+          "#AC2C10",
+          "#D45338",
+          "#E68873",
+          "#F3B9AC",
+          "#FFE9E3"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Линовка",
+        "canonical": "rgba(66, 104, 150, 0.2)",
+        "tonalRamp": [
+          "#080B11",
+          "#192636",
+          "#2B4361",
+          "#3E6390",
+          "#5E85B4",
+          "#8CA8CA",
+          "#BACBE0",
+          "#E9EFF7"
+        ]
+      },
+      "rule-strong": {
+        "role": "neutral",
+        "displayName": "Линия таблицы",
+        "canonical": "rgba(66, 104, 150, 0.42)",
+        "tonalRamp": [
+          "#080B11",
+          "#192636",
+          "#2B4361",
+          "#3E6390",
+          "#5E85B4",
+          "#8CA8CA",
+          "#BACBE0",
+          "#E9EFF7"
+        ]
+      },
+      "grid": {
+        "role": "neutral",
+        "displayName": "Миллиметровка",
+        "canonical": "rgba(66, 104, 150, 0.1)",
+        "tonalRamp": [
+          "#080B11",
+          "#192636",
+          "#2B4361",
+          "#3E6390",
+          "#5E85B4",
+          "#8CA8CA",
+          "#BACBE0",
+          "#E9EFF7"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Плакат",
+        "purpose": "Только заголовок первого листа."
+      },
+      "headline": {
+        "displayName": "Заголовок листа",
+        "purpose": "Заголовки листов 02–08, не шире 15ch."
+      },
+      "title": {
+        "displayName": "Заголовок блока",
+        "purpose": "Блоки внутри листа."
+      },
+      "title-sm": {
+        "displayName": "Имя в строке",
+        "purpose": "Имена в списках и таблицах, надпись штампа-кнопки, название в шапке."
+      },
+      "lead": {
+        "displayName": "Строка сути",
+        "purpose": "Строка сути первого листа и подводка финала, цвет ink-2, ключевая фраза под маркером."
+      },
+      "lede": {
+        "displayName": "Вывод листа",
+        "purpose": "Одно предложение под заголовком листов 02–07, цвет ink-2, до 32ch, ключевая фраза под маркером; на телефоне 1.375rem."
+      },
+      "body": {
+        "displayName": "Текст",
+        "purpose": "Основной текст."
+      },
+      "caption": {
+        "displayName": "Подпись",
+        "purpose": "Курсив, подписи к иллюстрациям и демонстрациям."
+      },
+      "figure": {
+        "displayName": "Цифра протокола",
+        "purpose": "Крупные значения, широкое начертание Martian Mono."
+      },
+      "mono": {
+        "displayName": "Машинная строка",
+        "purpose": "Строки журнала, параметры, ссылки-стрелки."
+      },
+      "label": {
+        "displayName": "Шапка бланка",
+        "purpose": "Прописные: шапки таблиц, подписи полей, текст штампов."
+      },
+      "hand": {
+        "displayName": "Рука обходчика",
+        "purpose": "Рукописные записи, всегда цветом violet."
+      }
+    },
+    "shadows": [
+      {
+        "name": "pasted-plate",
+        "value": "0 1.5rem 3rem -1.5rem rgba(23, 25, 28, 0.55)",
+        "purpose": "Вклеенный кадр камеры над листом (лист 01 и конвейер)."
+      },
+      {
+        "name": "stamp-double-border",
+        "value": "inset 0 0 0 0.25rem var(--ink), inset 0 0 0 calc(0.25rem + 1px) var(--paper)",
+        "purpose": "Двойная рамка штампа-кнопки; кнопка записи — инверсия толщиной 0.1875rem."
+      },
+      {
+        "name": "form-double-rule",
+        "value": "0 0.25rem 0 -0.1875rem var(--ink)",
+        "purpose": "Вторая линия под шапкой бланка; линия, а не объём."
+      },
+      {
+        "name": "author-panel",
+        "value": "0 1rem 2rem -1rem rgba(23, 25, 28, 0.5)",
+        "purpose": "Панель Tweaks — инструмент автора, на публичной странице не виден."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Основное замедление: проявления, ярлыки, штампы, полосы."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.65, 0, 0.35, 1)",
+        "purpose": "Выпрямление эллипса циферблата в круг на листе 04."
+      },
+      {
+        "name": "ease-write",
+        "value": "cubic-bezier(0.45, 0.05, 0.4, 1)",
+        "purpose": "Шторка рукописного проявления."
+      },
+      {
+        "name": "dur-fast",
+        "value": "160ms",
+        "purpose": "Нажатие, подпись ярлыка."
+      },
+      {
+        "name": "dur-med",
+        "value": "320ms",
+        "purpose": "Сдвиг ярлыка, плюс-минус раскрытия, стрелка ссылки."
+      },
+      {
+        "name": "dur-slow",
+        "value": "700ms",
+        "purpose": "Проявление блоков и времени в поле."
+      },
+      {
+        "name": "dur-write",
+        "value": "1100ms",
+        "purpose": "Рука: шторка scaleX уезжает вправо."
+      },
+      {
+        "name": "reveal-words",
+        "value": "900ms, шаг 70ms",
+        "purpose": "Печать: слова заголовка поднимаются со строки на 0.45em."
+      },
+      {
+        "name": "stamp-drop",
+        "value": "420ms; scale 1.32 → 1, rotate −8° → −3°",
+        "purpose": "Штамп падает на бумагу."
+      },
+      {
+        "name": "machine-row",
+        "value": "каждые 333ms (1000/3), сдвиг ленты 260ms",
+        "purpose": "Машинная строка журнала, PROCESS_FPS = 3."
+      },
+      {
+        "name": "needle-spring",
+        "value": "stiffness 170, damping 18, mass 1",
+        "purpose": "Стрелка прибора на пружине."
+      },
+      {
+        "name": "bar-grow",
+        "value": "1200ms протокол, 1400ms затраты",
+        "purpose": "Полосы вырастают scaleX в точной пропорции."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "tabs-collapse",
+        "value": "1100px"
+      },
+      {
+        "name": "single-column",
+        "value": "900px"
+      },
+      {
+        "name": "phone",
+        "value": "760px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Штамп-кнопка",
+      "kind": "button",
+      "refersTo": "stamp-button",
+      "description": "Главное действие: графитовая заливка, двойная внутренняя рамка, плакатный шрифт прописными.",
+      "html": "<a class=\"ds-stamp\" href=\"#\"><svg class=\"ds-icon\" viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path fill=\"currentColor\" d=\"M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.6 9.6 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2z\"/></svg><span>Код на GitHub</span></a>",
+      "css": ".ds-stamp { display: inline-flex; align-items: center; gap: 1rem; min-height: 3.5rem; padding: 1rem 1.5rem; font-family: var(--font-display); font-weight: 800; font-size: 1.75rem; line-height: 1; letter-spacing: 0.02em; text-transform: uppercase; text-decoration: none; color: var(--paper); background: var(--ink); border-radius: 0.1875rem; box-shadow: inset 0 0 0 0.25rem var(--ink), inset 0 0 0 calc(0.25rem + 1px) var(--paper); transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-stamp:hover { background: var(--ink-press); box-shadow: inset 0 0 0 0.25rem var(--ink-press), inset 0 0 0 calc(0.25rem + 1px) var(--paper); } .ds-stamp:active { transform: scale(0.97); } .ds-stamp:focus-visible { outline: 0.125rem solid var(--violet); outline-offset: 0.1875rem; } .ds-icon { width: 1.25rem; height: 1.25rem; flex: none; }"
+    },
+    {
+      "name": "Кнопка записи",
+      "kind": "button",
+      "refersTo": "write-button",
+      "description": "Вторичное действие на бумаге: двойная графитовая рамка, при наведении инверсия.",
+      "html": "<button class=\"ds-write\" type=\"button\">Записать в журнал</button>",
+      "css": ".ds-write { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 3rem; padding: 0 1.5rem; font-family: var(--font-display); font-weight: 800; font-size: 1.375rem; letter-spacing: 0.02em; text-transform: uppercase; color: var(--ink); background: var(--paper); border: 1px solid var(--ink); border-radius: 0.1875rem; box-shadow: inset 0 0 0 0.1875rem var(--paper), inset 0 0 0 calc(0.1875rem + 1px) var(--ink); cursor: pointer; transition: transform 160ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-write:hover { background: var(--ink); color: var(--paper); box-shadow: inset 0 0 0 0.1875rem var(--ink), inset 0 0 0 calc(0.1875rem + 1px) var(--paper); } .ds-write:active { transform: scale(0.97); } .ds-write:focus-visible { outline: 0.125rem solid var(--violet); outline-offset: 0.1875rem; }"
+    },
+    {
+      "name": "Ссылка-стрелка",
+      "kind": "button",
+      "refersTo": "arrow-link",
+      "description": "Третичное действие: Martian Mono прописными, стрелка опускается при наведении.",
+      "html": "<a class=\"ds-arrow\" href=\"#\">Проверить механизм <svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 5v14M6 13l6 6 6-6\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></a>",
+      "css": ".ds-arrow { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; font-family: var(--font-mono); font-stretch: 87.5%; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.06em; text-decoration: none; color: var(--ink); } .ds-arrow svg { width: 1em; height: 1em; transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-arrow:hover svg { transform: translateY(0.25rem); } .ds-arrow:focus-visible { outline: 0.125rem solid var(--violet); outline-offset: 0.1875rem; border-radius: 0.125rem; }"
+    },
+    {
+      "name": "Ярлыки листов",
+      "kind": "nav",
+      "refersTo": "sheet-tab",
+      "description": "Навигация по листам у правого края: текущий лист залит графитом и выдвинут.",
+      "html": "<nav class=\"ds-tabs\" aria-label=\"Листы журнала\"><a class=\"ds-tab\" href=\"#\">01</a><a class=\"ds-tab\" href=\"#\" aria-current=\"true\">02</a><a class=\"ds-tab\" href=\"#\">03</a></nav>",
+      "css": ".ds-tabs { display: grid; gap: 0.25rem; justify-items: end; } .ds-tab { display: flex; align-items: center; justify-content: flex-end; width: 3.5rem; height: 3rem; padding-right: 1rem; font-family: var(--font-mono); font-size: 0.875rem; font-weight: 500; color: var(--ink-2); text-decoration: none; background: var(--paper-deep); border: 1px solid var(--rule-strong); border-right: 0; border-radius: 0.375rem 0 0 0.375rem; transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-tab:hover, .ds-tab:focus-visible { transform: translateX(-0.375rem); color: var(--ink); } .ds-tab:focus-visible { outline: 0.125rem solid var(--violet); outline-offset: 0.1875rem; } .ds-tab[aria-current=\"true\"] { background: var(--ink); color: var(--paper); border-color: var(--ink); transform: translateX(-0.75rem); }"
+    },
+    {
+      "name": "Штампы статуса",
+      "kind": "chip",
+      "refersTo": "mark-normal",
+      "description": "Статус как повёрнутый штамп с двойной рамкой; план и расчёт — пунктир.",
+      "html": "<div class=\"ds-marks\"><span class=\"ds-mark ds-mark--stamp\" data-tone=\"normal\">Норма</span><span class=\"ds-mark ds-mark--stamp\" data-tone=\"warning\">Предупреждение</span><span class=\"ds-mark ds-mark--stamp\" data-tone=\"alert\">Авария</span><span class=\"ds-mark\" data-tone=\"measured\">Замер</span><span class=\"ds-mark\" data-tone=\"calculated\">Расчёт</span></div>",
+      "css": ".ds-marks { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; } .ds-mark { display: inline-flex; align-items: center; padding: 0.1875rem 0.5rem 0.125rem; font-family: var(--font-mono); font-stretch: 87.5%; font-weight: 600; font-size: 0.75rem; line-height: 1.4; letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; border: 0.1875rem double currentColor; border-radius: 0.25rem; } .ds-mark--stamp { transform: rotate(-3deg); } .ds-mark[data-tone=\"normal\"] { color: var(--ok); } .ds-mark[data-tone=\"warning\"] { color: var(--warn); } .ds-mark[data-tone=\"alert\"] { color: var(--red); } .ds-mark[data-tone=\"measured\"] { color: var(--ink); } .ds-mark[data-tone=\"calculated\"] { color: var(--warn); border: 1px dashed currentColor; }"
+    },
+    {
+      "name": "Фильтр условий",
+      "kind": "chip",
+      "refersTo": "filter-chip",
+      "description": "Переключатель фильтра с рамкой 1px; нажатый залит графитом.",
+      "html": "<div class=\"ds-filter\" role=\"group\" aria-label=\"Условия\"><button class=\"ds-filter__b\" type=\"button\" aria-pressed=\"true\">Все <span class=\"ds-filter__n\">12</span></button><button class=\"ds-filter__b\" type=\"button\" aria-pressed=\"false\">Свет <span class=\"ds-filter__n\">3</span></button></div>",
+      "css": ".ds-filter { display: flex; flex-wrap: wrap; gap: 0.5rem; } .ds-filter__b { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; padding: 0 1rem; font-family: var(--font-mono); font-stretch: 87.5%; font-size: 0.875rem; color: var(--ink); background: none; border: 1px solid var(--ink); border-radius: 0.1875rem; cursor: pointer; } .ds-filter__n { color: var(--ink-3); } .ds-filter__b[aria-pressed=\"true\"] { background: var(--ink); color: var(--paper); } .ds-filter__b[aria-pressed=\"true\"] .ds-filter__n { color: var(--plate-ink-2); } .ds-filter__b:focus-visible { outline: 0.125rem solid var(--violet); outline-offset: 0.1875rem; }"
+    },
+    {
+      "name": "Журнал смены",
+      "kind": "custom",
+      "refersTo": "log-row-machine",
+      "description": "Строка руки обходчика фиолетовым Bad Script, под ней машинные строки Martian Mono на линовке 2rem.",
+      "html": "<div class=\"ds-log\"><div class=\"ds-log__row ds-log__row--head\"><span>Время</span><span>Прибор</span><span>Показание, МПа</span><span>Записал</span></div><div class=\"ds-log__row ds-log__row--hand\"><span class=\"ds-hand\">08:00</span><span class=\"ds-hand\">МН-1</span><span class=\"ds-hand ds-log__v\">4,4</span><span class=\"ds-hand\">обходчик</span></div><div class=\"ds-log__row ds-log__row--machine\"><span>08:00:06,667</span><span>МН-1</span><span class=\"ds-log__v\"><b>4,39</b></span><span class=\"ds-log__who\">камера</span></div><div class=\"ds-log__row ds-log__row--machine is-mine\"><span>08:00:07,000</span><span>МН-1</span><span class=\"ds-log__v\"><b>5,12</b></span><span class=\"ds-log__who\">вы</span></div></div>",
+      "css": ".ds-log { border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); background: var(--paper); font-variant-numeric: tabular-nums lining-nums; } .ds-log__row { display: grid; grid-template-columns: 10.5rem 5rem 8rem minmax(0, 1fr); align-items: center; height: 2rem; border-bottom: 1px solid var(--rule-strong); } .ds-log__row > span { padding-inline: 0.5rem; white-space: nowrap; } .ds-log__row > span + span { border-left: 1px solid var(--rule-strong); height: 100%; display: flex; align-items: center; } .ds-log__v { justify-content: flex-end; } .ds-log__row--head { font-family: var(--font-mono); font-stretch: 75%; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); border-bottom-color: var(--ink); } .ds-log__row--hand { height: 3rem; } .ds-hand { font-family: var(--font-hand); font-size: 1.375rem; line-height: 1; color: var(--violet); } .ds-log__row--machine { font-family: var(--font-mono); font-stretch: 87.5%; font-size: 0.875rem; color: var(--ink-2); } .ds-log__row--machine b { font-weight: 650; font-size: 1rem; color: var(--ink); } .ds-log__who { color: var(--ink-3); } .ds-log__row.is-mine { background: var(--paper-lift); }"
+    },
+    {
+      "name": "Вклеенный кадр камеры",
+      "kind": "card",
+      "refersTo": "plate-frame",
+      "description": "Единственная тёмная поверхность: кадр камеры с тенью вклейки, текст plate-ink, сигнал plate-red.",
+      "html": "<figure class=\"ds-plate\"><div class=\"ds-plate__bar\"><span>Кадр камеры</span><span class=\"ds-plate__rec\"><i></i>МН-1</span></div><div class=\"ds-plate__read\"><span class=\"ds-plate__k\">θ</span><span>253,4°</span><span class=\"ds-plate__k\">V</span><span>4,39 МПа</span></div><figcaption class=\"ds-plate__hint\">Потяните стрелку — показание ляжет строкой в журнал</figcaption></figure>",
+      "css": ".ds-plate { margin: 0; max-width: 24rem; padding: 1rem 1rem 1.5rem; background: var(--plate); color: var(--plate-ink); border-radius: 0.25rem; box-shadow: 0 1.5rem 3rem -1.5rem rgba(23, 25, 28, 0.55); } .ds-plate__bar { display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-stretch: 87.5%; font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--plate-ink-2); } .ds-plate__rec { display: inline-flex; align-items: center; gap: 0.375rem; } .ds-plate__rec i { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--plate-red); } .ds-plate__read { display: grid; grid-template-columns: auto 1fr auto 1fr; align-items: baseline; gap: 0.5rem 1rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(233, 235, 228, 0.18); font-family: var(--font-mono); font-size: 1.125rem; font-weight: 500; font-variant-numeric: tabular-nums; } .ds-plate__k { font-family: var(--font-sans); font-style: italic; color: var(--plate-ink-2); } .ds-plate__hint { margin-top: 1rem; font-family: var(--font-sans); font-size: 0.875rem; line-height: 1.4; color: var(--plate-ink-2); }"
+    },
+    {
+      "name": "Графа бланка",
+      "kind": "card",
+      "refersTo": "field-box",
+      "description": "Главный вывод блока на светлой бумаге с рамкой 1px, подпись врезана в верхнюю линию; у «Не проверено» рамка двойная, как у официальной отметки. Не больше одной графы на лист.",
+      "html": "<div class=\"ds-boxes\"><div class=\"ds-box\"><span class=\"ds-box__legend\">Оценка команды</span><p class=\"ds-box__head\"><span class=\"ds-box__v\">−89 %</span><span class=\"ds-box__l\">затрат на точку</span></p><p class=\"ds-box__note\">26,7 млн ₽ на 100 приборах. Подтвердить оценку должен пилот.</p></div><div class=\"ds-box ds-box--double\"><p class=\"ds-box__t\">Не проверено в поле</p><p class=\"ds-box__note\">Нелинейные шкалы, многострелочные приборы, работа на станции. Испытания пока проходили только на стенде.</p></div></div>",
+      "css": ".ds-boxes { display: grid; gap: 2.5rem; max-width: 28rem; } .ds-box { position: relative; display: grid; gap: 0.5rem; padding: 2rem 2rem 1.5rem; background: var(--paper-lift); border: 1px solid var(--ink); border-radius: 0.25rem; } .ds-box--double { border: 0.1875rem double var(--ink); } .ds-box__legend { position: absolute; top: 0; left: 1.5rem; transform: translateY(-50%); padding: 0 0.5rem; font-family: var(--font-mono); font-stretch: 87.5%; font-size: 0.75rem; font-weight: 500; line-height: 1.6; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); background: linear-gradient(var(--paper) 50%, var(--paper-lift) 50%); } .ds-box p { margin: 0; } .ds-box__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 1rem; } .ds-box__v { font-family: var(--font-mono); font-stretch: 112.5%; font-weight: 500; font-size: 3rem; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums lining-nums; color: var(--ink); } .ds-box__l { font-family: var(--font-display); font-weight: 800; font-size: 1.75rem; line-height: 1; } .ds-box__t { font-family: var(--font-display); font-weight: 850; font-size: 2.5rem; line-height: 1; } .ds-box__note { font-family: var(--font-sans); font-style: italic; font-size: 1.125rem; line-height: 1.45; color: var(--ink-2); } @media (max-width: 760px) { .ds-box { padding-inline: 1.5rem; } }"
+    },
+    {
+      "name": "Строка протокола",
+      "kind": "custom",
+      "description": "Строка бланка испытаний: номер, показатель, условия, цифра Martian Mono в широком начертании; главный замер группы лежит на светлой бумаге.",
+      "html": "<table class=\"ds-proto\"><tbody><tr class=\"ds-proto__row is-key\"><td class=\"ds-proto__n\">01</td><th class=\"ds-proto__label\" scope=\"row\">Максимальная ошибка шкалы</th><td class=\"ds-proto__cond\">28 сцен стенда, средняя ошибка 0,11 %</td><td class=\"ds-proto__value\"><span class=\"ds-proto__v\">0,38</span><span class=\"ds-proto__u\">%</span></td></tr><tr class=\"ds-proto__row\"><td class=\"ds-proto__n\">02</td><th class=\"ds-proto__label\" scope=\"row\">Инференс YOLOv8n на GPU</th><td class=\"ds-proto__cond\">RTX 5060 Laptop, FP16, кадр 1280×720</td><td class=\"ds-proto__value\"><span class=\"ds-proto__v\">7,2</span><span class=\"ds-proto__u\">мс/кадр</span></td></tr></tbody></table>",
+      "css": ".ds-proto { width: 100%; border-collapse: collapse; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); font-variant-numeric: tabular-nums lining-nums; } .ds-proto th, .ds-proto td { padding: 1rem 1rem 1rem 0; text-align: left; vertical-align: middle; border-bottom: 1px solid var(--rule-strong); } .ds-proto__n { width: 3rem; font-family: var(--font-mono); font-size: 0.875rem; color: var(--ink-3); } .ds-proto__label { font-family: var(--font-sans); font-weight: 650; font-size: 1.125rem; line-height: 1.3; color: var(--ink); } .ds-proto__cond { font-family: var(--font-sans); font-size: 1rem; line-height: 1.4; color: var(--ink-2); } .ds-proto__value { text-align: right; white-space: nowrap; } .ds-proto__v { font-family: var(--font-mono); font-stretch: 112.5%; font-weight: 500; font-size: 2.5rem; line-height: 1; letter-spacing: -0.02em; color: var(--ink); } .ds-proto__u { margin-left: 0.375rem; font-family: var(--font-mono); font-stretch: 87.5%; font-size: 0.875rem; color: var(--ink-3); } .ds-proto__row.is-key { background: var(--paper-lift); } .ds-proto__row.is-key > :first-child { padding-left: 0.5rem; } .ds-proto__row.is-key .ds-proto__label { font-weight: 750; }"
+    },
+    {
+      "name": "Вывод листа с маркером",
+      "kind": "custom",
+      "refersTo": "marker-highlight",
+      "description": "Одно предложение под заголовком листа, цвет ink-2; фраза, которую читатель уносит, — под жёлтым маркером цветом ink.",
+      "html": "<p class=\"ds-lede\">Камера измеряет только угол стрелки, а в мегапаскали его переводит <mark class=\"ds-hl\">двухточечная калибровка шкалы</mark>.</p>",
+      "css": ".ds-lede { max-width: 32ch; margin: 0; font-family: var(--font-sans); font-size: 1.75rem; line-height: 1.3; font-weight: 500; color: var(--ink-2); text-wrap: pretty; } .ds-hl { padding: 0 0.12em; margin: 0 -0.04em; border-radius: 0.125rem 0.375rem; color: var(--ink); background: linear-gradient(transparent 40%, var(--marker) 40%, var(--marker) 94%, transparent 94%); -webkit-box-decoration-break: clone; box-decoration-break: clone; } @media (max-width: 760px) { .ds-lede { font-size: 1.375rem; } }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Журнал обходчика",
+    "overview": "Страница — сменный журнал обхода котельного цеха, который пишет сам. Обходчик раз в смену оставляет на линованной бумаге запись фиолетовой ручкой, а под ней камера три раза в секунду печатает машинные строки графитом. Весь визуальный язык выведен из этого предмета: бумага бланка, голубая линовка, красное поле, печатная шапка, ярлыки листов, штампы, вклеенные фотографии. Ничего не добавлено «для технологичности», каждый приём имеет физический прообраз в журнале или на приборном щите.\n\nПлотность журнальная: длинные таблицы на линиях в 1px, цифры одной ширины, много бумаги вокруг заголовков. Заголовки листов набраны в кегле плаката и работают как графика, текст абзаца на порядок мельче. Каждый лист ставит заголовок на свою вертикаль сетки, поэтому композиция меняется от листа к листу, а поле и линовка остаются неподвижными и держат страницу целой.\n\nМир заменил прежний тёмный HUD с неоновым акцентом. Тёмными остаются только вклеенные кадры камеры и фотографии, бумага — основная поверхность.",
+    "keyCharacteristics": [
+      "серо-зелёная бумага с голубой линовкой шагом в одну строку (2rem) по всей странице;",
+      "двойное красное поле слева — единственная сквозная вертикаль, закреплена относительно окна;",
+      "три голоса письма: плакатный узкий гротеск, графитовый моноширинный текст машины, фиолетовая рука обходчика;",
+      "статусы — повёрнутые штампы с двойной рамкой, а не цветные бейджи;",
+      "тёмные поверхности только у вклеенных кадров камеры;",
+      "движение только через `transform` и `opacity`, у каждого эффекта есть статичная замена."
+    ],
+    "rules": [
+      {
+        "name": "The Paper Rule",
+        "body": "Основная поверхность — бумага. Тёмный фон появляется только как вклеенный кадр камеры или фотография (`plate`), графитовая заливка — только у главного штампа и у нажатого или текущего элемента.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink Hands Rule",
+        "body": "Фиолетовые чернила принадлежат человеку: рука обходчика и всё, что сделал посетитель (кольцо фокуса, выделение, каретка). Машина пишет графитом.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Red Rule",
+        "body": "Красное поле присутствует на каждом экране и в счёт не идёт. Сверх него на экране один красный центр внимания: стрелка, выделенная связь или маркер отклонения.",
+        "section": "colors"
+      },
+      {
+        "name": "The Marker Rule",
+        "body": "На листе одна пометка маркером, и она стоит в выводе листа: это фраза, которую читатель уносит с листа. Маркер лежит только на бумаге, никогда на вклейке, на цифрах протокола или на заголовке. Выделенную фразу берут дословно из текста (`accent` в `content.js`, совпадение сверяет `tests/check.js`).",
+        "section": "colors"
+      },
+      {
+        "name": "The Tabular Figures Rule",
+        "body": "Любая цифра — в Martian Mono с `tabular-nums lining-nums`. Числа в русской нотации (0,38 %, 7,2 мс), единица измерения мельче и цветом `ink-3`.",
+        "section": "typography"
+      },
+      {
+        "name": "The Formula Rule",
+        "body": "Формула набирается, а не пишется строкой: деление — дробью в два этажа с чертой по оси знаков, min / max и цифровые индексы — индексом, знаки операций с воздухом (`kit.math`). На широком экране формула идёт одной строкой; на телефоне рвётся один раз на знаке, и знак повторяется в начале новой строки.",
+        "section": "typography"
+      },
+      {
+        "name": "The Three Voices Rule",
+        "body": "Плакат говорит заголовком, машина — моноширинным, человек — рукой. Моноширинный не надевают ради «технологичности»: он стоит только там, где есть строка журнала, число, код или шапка бланка.",
+        "section": "typography"
+      },
+      {
+        "name": "The One Vertical Rule",
+        "body": "Красное поле — единственная сквозная вертикаль страницы, закреплена относительно окна (`position: fixed`) и идёт поверх бумаги. Других сквозных вертикальных линий не проводят.",
+        "section": "layout"
+      },
+      {
+        "name": "The Ruled Paper Rule",
+        "body": "Линовка — свойство бумаги, а не декоративная сетка: одна строка 2rem на весь документ, без перерывов между листами. Миллиметровка появляется только как поле чертежа схемы.",
+        "section": "layout"
+      },
+      {
+        "name": "The Pasted Photo Rule",
+        "body": "Тень есть только у того, что вклеено в журнал. Таблицы, списки и штампы лежат на бумаге плоско.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do держать текст на бумаге не светлее `ink-3` (5,1 : 1) и проверять новый цвет против `paper` до 4,5 : 1.",
+      "Do ставить высоты строк таблиц и журнала кратными строке линовки (2rem), отступы — кратными модулю 8px (`s1`–`s20`).",
+      "Do набирать все цифры Martian Mono с `tabular-nums lining-nums`, в русской нотации.",
+      "Do строить фразу связками и союзами («, и», «чтобы», «запланированы в»), а не длинным тире: тире в текстах страницы — исключение, а не ритм.",
+      "Do показывать статус штампом с двойной рамкой и поворотом −3°, расчётное значение — пунктиром цветом `warn`, отличая его от замера.",
+      "Do давать каждому эффекту движения статичную замену при `prefers-reduced-motion` и анимировать только `transform` и `opacity`.",
+      "Do подписывать сгенерированные изображения и ролики прямо в кадре (например, «Иллюстрация, сгенерированная Gemini, — не съёмка со стенда»).",
+      "Do держать зону попадания интерактивных элементов не меньше 2.75rem."
+    ],
+    "donts": [
+      "Don't заливать лист тёмным фоном: тёмное — только вклеенный кадр (`plate`).",
+      "Don't писать фиолетовым машинные строки, цифры протокола и интерфейсные подписи.",
+      "Don't применять `plate-red` на бумаге и `red` на вклейке: у каждой поверхности свой красный.",
+      "Don't собирать содержимое в ряды одинаковых карточек с тенью: строки бланка лежат на линиях 1px.",
+      "Don't проводить вторую сквозную вертикаль рядом с красным полем.",
+      "Don't ставить над заголовком листа мелкую надпись-категорию: номер листа и время в поле уже говорят, где читатель.",
+      "Don't гасить неактивные элементы прозрачностью текста: гасят рамку и фон, текст держит контраст."
+    ]
+  }
+}

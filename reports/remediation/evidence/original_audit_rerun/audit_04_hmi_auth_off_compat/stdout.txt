@@ -1,0 +1,4 @@
+DRIVER STDOUT: BROWSER_AUDIT_DONE {"extBlocked":0,"consoleErrs":0,"pageErrs":0,"failedReqs":0,"docxBytes":132727,"mdBytes":32245,"v1920Clipped":false,"v1440Clipped":false,"v1280Clipped":false,"outagePending":4,"recoveredPending":0}
+E2E AUDIT COMPLETE -> C:\Hakatons\GaugeVisionAIDesign DashBoard\.claude\worktrees\remediation-acceptance\reports\remediation\evidence\original_audit_rerun\audit_04_hmi_auth_off_compat\hmi_e2e_audit_results.json
+
+--- stderr ---
