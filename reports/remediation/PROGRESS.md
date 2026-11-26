@@ -24,23 +24,23 @@
 7. Материалы Antigravity перенесены в `evidence/antigravity/` (CUDA smoke, бенчмарк, отчёты, скриншоты, исходные скрипты); бенчмарк переносимо — `tests/benchmark_cpu.py`.
 8. Написаны `DEFECT_RESOLUTION_REGISTER.md`, `SECURITY_REVALIDATION.md`, `OFFLINE_INSTALLATION_REPORT.md`; генератор матрицы и оценки `tests/build_rtm.py`; статический скан чист (`evidence/static_scan.json`).
 
-## В работе
+9. Часовой CPU soak работающего конвейера (26.11.2026 22:41–23:41): 17/17 критериев после исправления двух ошибок критериев скрипта, исходный вердикт сохранён — `SOAK_TEST_REPORT.md`, `evidence/soak/`. Найден NEW-12.
+10. Исходные аудиты `audit_01…05` повторены на финальном коде — `evidence/original_audit_rerun/`; экономика `audit_03` сверена с учётом OPEX (`tests/economics_reconcile_audit03.py`).
+11. Повторный интеграционный прогон: 16/16, деградация канала при обрыве RTSP (REQ-VA-08 — PARTIAL, см. матрицу), обнаружение реального отказа брокера (NEW-12).
+12. USB/UVC-камера — 5/5 (`evidence/usb_camera/`).
+13. Реальная локальная LLM (Ollama 0.40.18, qwen3.5) на RTX 5060 по просьбе пользователя — 6/6 после исправления NEW-13 (`evidence/llm/`).
+14. GPU RTX 5060 Laptop по просьбе пользователя, с контролем температуры: точность, задержка, VRAM, 5 мин нагрузки, 0 WHEA (`evidence/gpu_rtx5060_laptop/`).
+15. Финальные прогоны: три исходных набора, независимые тесты 21/21, браузерный E2E, статический скан, CPU-бенчмарк — `evidence/test_runs/`, `evidence/acceptance_tests/`, `evidence/benchmark/`.
+16. Матрица и оценка: 96,65 / 100 (`REQUIREMENTS_TRACEABILITY_MATRIX.csv`, `evidence/score.json`); написаны `EXECUTIVE_SUMMARY.md`, `FULL_REMEDIATION_REPORT.md`, `TEST_RESULTS.md`, `PERFORMANCE_COMPARISON.md`, `SOAK_TEST_REPORT.md`, `FINAL_ACCEPTANCE_REPORT.md`.
 
-- Часовой CPU soak работающего конвейера: `reports/remediation/tests/soak_real_pipeline.py`, запущен 26.11.2026 22:41, результаты пишутся в `evidence/soak/samples.jsonl`, итог — `evidence/soak/summary.json`.
+## Осталось
 
-## Осталось (после soak, в этом порядке)
-
-1. Повторный прогон исходных аудитов на финальном коде: `python reports/remediation/tests/rerun_original_audits.py`.
-2. USB-камера: `python reports/remediation/tests/usb_camera_check.py` (кадры не сохраняются).
-3. Реальная локальная LLM: распаковать Ollama, запустить `ollama serve` с `CUDA_VISIBLE_DEVICES=-1` (только CPU), затем `python reports/remediation/tests/llm_local_check.py --base-url http://127.0.0.1:11434/v1 --model qwen3.5 --timeout 600`.
-4. Интеграционный прогон с проверкой деградации канала при обрыве RTSP (REQ-VA-08): `interop_rtsp_mqtt_modbus.py`.
-5. Финальный прогон всех наборов тестов с сохранением логов в `evidence/test_runs/`, независимых тестов в `evidence/acceptance_tests/`.
-6. Обновить статусы в `tests/build_rtm.py` по фактическим результатам, собрать матрицу и оценку, дописать `EXECUTIVE_SUMMARY.md`, `FULL_REMEDIATION_REPORT.md`, `TEST_RESULTS.md`, `PERFORMANCE_COMPARISON.md`, `SOAK_TEST_REPORT.md`, `FINAL_ACCEPTANCE_REPORT.md`.
-7. Принудительно добавить журналы-доказательства (`*.log` в `.gitignore`), закоммитить, слить в `GaugeVision-2.0` и опубликовать.
+- Слить `remediation/acceptance` в `GaugeVision-2.0` и опубликовать ветку (выполняется в завершение работы).
 
 ## Не проверяется на стенде (зафиксировано как ограничения)
 
 - REQ-API-07: реальные Ignition / MasterSCADA.
 - REQ-CV-05: размеченные фотографии реальных цеховых приборов (данных нет).
-- REQ-CV-06: производительность на GPU — только 5-кадровый smoke Antigravity на RTX 5060 Laptop; бенчмарк для RTX 3090: `tests/gpu_validation_3090.py`.
+- REQ-VA-08: измерение сетевых потерь пакетов RTSP (OpenCV не отдаёт счётчики RTP).
+- Длительная GPU-нагрузка и RTX 3090: `tests/gpu_validation_3090.py`.
 - Docker-образ: нет Docker Engine.
