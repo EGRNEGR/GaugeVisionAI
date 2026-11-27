@@ -1,0 +1,141 @@
+{
+  "original_75": {
+    "directions": {
+      "Архитектурная видеоаналитика": {
+        "PASS": 10,
+        "PARTIAL": 1,
+        "FAIL": 0,
+        "NOT VERIFIED": 0,
+        "n": 11,
+        "max": 12,
+        "points": 11.45,
+        "points_exact": 11.454545
+      },
+      "Store-and-Forward и отказоустойчивость": {
+        "PASS": 12,
+        "PARTIAL": 0,
+        "FAIL": 0,
+        "NOT VERIFIED": 0,
+        "n": 12,
+        "max": 15,
+        "points": 15.0,
+        "points_exact": 15.0
+      },
+      "API и промышленные интеграции": {
+        "PASS": 7,
+        "PARTIAL": 0,
+        "FAIL": 0,
+        "NOT VERIFIED": 0,
+        "n": 7,
+        "max": 8,
+        "points": 8.0,
+        "points_exact": 8.0
+      },
+      "Аналитика и умная диспетчеризация": {
+        "PASS": 9,
+        "PARTIAL": 0,
+        "FAIL": 0,
+        "NOT VERIFIED": 0,
+        "n": 9,
+        "max": 15,
+        "points": 15.0,
+        "points_exact": 15.0
+      },
+      "Генерация инженерной документации": {
+        "PASS": 10,
+        "PARTIAL": 0,
+        "FAIL": 0,
+        "NOT VERIFIED": 0,
+        "n": 10,
+        "max": 15,
+        "points": 15.0,
+        "points_exact": 15.0
+      },
+      "Корректность и сохранение CV-инференса": {
+        "PASS": 4,
+        "PARTIAL": 1,
+        "FAIL": 0,
+        "NOT VERIFIED": 1,
+        "n": 6,
+        "max": 10,
+        "points": 7.5,
+        "points_exact": 7.5
+      },
+      "Функциональность и качество HMI": {
+        "PASS": 7,
+        "PARTIAL": 0,
+        "FAIL": 0,
+        "NOT VERIFIED": 0,
+        "n": 7,
+        "max": 10,
+        "points": 10.0,
+        "points_exact": 10.0
+      },
+      "Безопасность и автономность": {
+        "PASS": 6,
+        "PARTIAL": 0,
+        "FAIL": 0,
+        "NOT VERIFIED": 0,
+        "n": 6,
+        "max": 8,
+        "points": 8.0,
+        "points_exact": 8.0
+      },
+      "Архитектура и качество кода": {
+        "PASS": 4,
+        "PARTIAL": 0,
+        "FAIL": 0,
+        "NOT VERIFIED": 0,
+        "n": 4,
+        "max": 4,
+        "points": 4.0,
+        "points_exact": 4.0
+      },
+      "Тестирование и воспроизводимость": {
+        "PASS": 3,
+        "PARTIAL": 0,
+        "FAIL": 0,
+        "NOT VERIFIED": 0,
+        "n": 3,
+        "max": 3,
+        "points": 3.0,
+        "points_exact": 3.0
+      }
+    },
+    "total": 96.95,
+    "total_exact": 96.954545,
+    "counts": {
+      "PASS": 72,
+      "PARTIAL": 2,
+      "FAIL": 0,
+      "NOT VERIFIED": 1
+    },
+    "compliance_pct": 97.3,
+    "verified_pct": 98.7,
+    "history": {
+      "gemini_audit": 60.3,
+      "gaugevision_2_0": 96.65,
+      "scada_intermediate": 97.79,
+      "gaugevision_3_0_cpu_final": 96.95,
+      "delta_vs_2_0": 0.3,
+      "delta_vs_scada_intermediate": -0.84,
+      "note_delta": "REQ-CV-05: NOT VERIFIED -> PARTIAL (+0,83); REQ-CV-06: PASS -> NOT VERIFIED (-1,67), т. к. app/vision.py изменён, а GPU в этой приёмке не проверялся"
+    }
+  },
+  "next_gen_6": {
+    "counts": {
+      "PASS": 2,
+      "PARTIAL": 3,
+      "FAILED": 1,
+      "NOT VERIFIED": 0
+    },
+    "statuses": {
+      "REQ-CV-05": "PARTIAL",
+      "REQ-API-07": "PASS",
+      "NG-MG-01": "PARTIAL",
+      "NG-AC-01": "FAILED",
+      "NG-PA-01": "PARTIAL",
+      "NG-MO-01": "PASS"
+    }
+  }
+}
