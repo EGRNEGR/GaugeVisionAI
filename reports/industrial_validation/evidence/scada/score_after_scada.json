@@ -1,0 +1,118 @@
+{
+  "req_api_07_status": "PASS",
+  "req_cv_05_status": "NOT VERIFIED",
+  "directions": {
+    "Архитектурная видеоаналитика": {
+      "PASS": 10,
+      "PARTIAL": 1,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 11,
+      "max": 12,
+      "points": 11.45,
+      "points_exact": 11.454545
+    },
+    "Store-and-Forward и отказоустойчивость": {
+      "PASS": 12,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 12,
+      "max": 15,
+      "points": 15.0,
+      "points_exact": 15.0
+    },
+    "API и промышленные интеграции": {
+      "PASS": 7,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 7,
+      "max": 8,
+      "points": 8.0,
+      "points_exact": 8.0
+    },
+    "Аналитика и умная диспетчеризация": {
+      "PASS": 9,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 9,
+      "max": 15,
+      "points": 15.0,
+      "points_exact": 15.0
+    },
+    "Генерация инженерной документации": {
+      "PASS": 10,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 10,
+      "max": 15,
+      "points": 15.0,
+      "points_exact": 15.0
+    },
+    "Корректность и сохранение CV-инференса": {
+      "PASS": 5,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 1,
+      "n": 6,
+      "max": 10,
+      "points": 8.33,
+      "points_exact": 8.333333
+    },
+    "Функциональность и качество HMI": {
+      "PASS": 7,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 7,
+      "max": 10,
+      "points": 10.0,
+      "points_exact": 10.0
+    },
+    "Безопасность и автономность": {
+      "PASS": 6,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 6,
+      "max": 8,
+      "points": 8.0,
+      "points_exact": 8.0
+    },
+    "Архитектура и качество кода": {
+      "PASS": 4,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 4,
+      "max": 4,
+      "points": 4.0,
+      "points_exact": 4.0
+    },
+    "Тестирование и воспроизводимость": {
+      "PASS": 3,
+      "PARTIAL": 0,
+      "FAIL": 0,
+      "NOT VERIFIED": 0,
+      "n": 3,
+      "max": 3,
+      "points": 3.0,
+      "points_exact": 3.0
+    }
+  },
+  "total_before": 96.65,
+  "total_after": 97.79,
+  "total_exact": 97.787879,
+  "delta": 1.14,
+  "counts": {
+    "PASS": 73,
+    "PARTIAL": 1,
+    "FAIL": 0,
+    "NOT VERIFIED": 1
+  },
+  "compliance_pct": 98.0,
+  "verified_pct": 98.7
+}
