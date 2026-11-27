@@ -1,0 +1,54 @@
+{
+  "seed": 42,
+  "epochs": 24,
+  "train_real_count": 435,
+  "val_real_M5_count": 71,
+  "n_synth_train": 1200,
+  "n_synth_val": 160,
+  "keypoint_train_seconds": 347.1,
+  "keypoint_sha256": "1ab9e7e0540604f9b5fd871bdfe5ebb6c53959b75b2127463a092a8e671192fe",
+  "keypoint_size_bytes": 557569,
+  "keypoint_best": {
+    "epoch": 23,
+    "loss": 0.1093,
+    "val_real_M5": {
+      "mae_deg_kpt": 12.233,
+      "med_deg_kpt": 5.166,
+      "p95_deg_kpt": 30.238,
+      "gross_15deg_pct": 9.86,
+      "mae_deg_sincos": 12.893,
+      "vis_acc": 1.0
+    },
+    "val_mix": {
+      "mae_deg_kpt": 10.444,
+      "med_deg_kpt": 5.95,
+      "p95_deg_kpt": 22.29,
+      "gross_15deg_pct": 9.59,
+      "mae_deg_sincos": 13.111,
+      "vis_acc": 1.0
+    }
+  },
+  "seg_train_seconds": 766.0,
+  "seg_sha256": "ca570bd622507c0e9e92875bb1f417f4df5a162e18b1af82ab679c73ecd605ba",
+  "seg_size_bytes": 320823,
+  "seg_best": {
+    "epoch": 24,
+    "loss": 0.3523,
+    "val_real_M5": {
+      "pointer_iou": 0.6166,
+      "valid_rate": 0.9859,
+      "mae_deg_seg": 1.925,
+      "med_deg_seg": 1.883,
+      "p95_deg_seg": 4.438,
+      "gross_15deg_pct": 0.0
+    },
+    "val_mix": {
+      "pointer_iou": 0.7671,
+      "valid_rate": 0.9954,
+      "mae_deg_seg": 0.912,
+      "med_deg_seg": 0.428,
+      "p95_deg_seg": 3.466,
+      "gross_15deg_pct": 0.0
+    }
+  }
+}

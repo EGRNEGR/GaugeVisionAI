@@ -1,0 +1,1856 @@
+{
+  "methods": [
+    "legacy_v8",
+    "opencv_v2",
+    "neural_kpt",
+    "neural_seg",
+    "fusion_balanced",
+    "fusion_precision"
+  ],
+  "subsets": {
+    "val": {
+      "legacy_v8": {
+        "n": 71,
+        "loc_pct": 94.37,
+        "valid_n": 65,
+        "valid_pct": 91.55,
+        "mae_pct": 1.26,
+        "mae_ci95_pct": [
+          1.07,
+          1.45
+        ],
+        "rmse_pct": 1.52,
+        "med_pct": 1.0,
+        "p90_pct": 2.4,
+        "p95_pct": 2.79,
+        "max_pct": 3.7,
+        "gross_n": 0,
+        "gross_pct": 0.0,
+        "gross_ci95_pct": [
+          0.0,
+          0.0
+        ],
+        "needle_ms_mean": 24.36,
+        "needle_ms_p95": 33.7,
+        "by_model": {
+          "M5": {
+            "n": 71,
+            "loc_pct": 94.37,
+            "valid_n": 65,
+            "valid_pct": 91.55,
+            "mae_pct": 1.26,
+            "mae_ci95_pct": [
+              1.07,
+              1.45
+            ],
+            "rmse_pct": 1.52,
+            "med_pct": 1.0,
+            "p90_pct": 2.4,
+            "p95_pct": 2.79,
+            "max_pct": 3.7,
+            "gross_n": 0,
+            "gross_pct": 0.0,
+            "gross_ci95_pct": [
+              0.0,
+              0.0
+            ],
+            "needle_ms_mean": 24.36,
+            "needle_ms_p95": 33.7
+          }
+        }
+      },
+      "opencv_v2": {
+        "n": 71,
+        "loc_pct": 94.37,
+        "valid_n": 65,
+        "valid_pct": 91.55,
+        "mae_pct": 2.26,
+        "mae_ci95_pct": [
+          1.13,
+          4.43
+        ],
+        "rmse_pct": 8.31,
+        "med_pct": 1.0,
+        "p90_pct": 2.4,
+        "p95_pct": 2.76,
+        "max_pct": 65.91,
+        "gross_n": 1,
+        "gross_pct": 1.54,
+        "gross_ci95_pct": [
+          0.0,
+          4.62
+        ],
+        "needle_ms_mean": 30.46,
+        "needle_ms_p95": 39.95,
+        "by_model": {
+          "M5": {
+            "n": 71,
+            "loc_pct": 94.37,
+            "valid_n": 65,
+            "valid_pct": 91.55,
+            "mae_pct": 2.26,
+            "mae_ci95_pct": [
+              1.13,
+              4.43
+            ],
+            "rmse_pct": 8.31,
+            "med_pct": 1.0,
+            "p90_pct": 2.4,
+            "p95_pct": 2.76,
+            "max_pct": 65.91,
+            "gross_n": 1,
+            "gross_pct": 1.54,
+            "gross_ci95_pct": [
+              0.0,
+              4.62
+            ],
+            "needle_ms_mean": 30.46,
+            "needle_ms_p95": 39.95
+          }
+        }
+      },
+      "neural_kpt": {
+        "n": 71,
+        "loc_pct": 94.37,
+        "valid_n": 68,
+        "valid_pct": 95.77,
+        "mae_pct": 3.79,
+        "mae_ci95_pct": [
+          2.57,
+          5.56
+        ],
+        "rmse_pct": 7.77,
+        "med_pct": 2.33,
+        "p90_pct": 5.89,
+        "p95_pct": 9.12,
+        "max_pct": 55.19,
+        "gross_n": 4,
+        "gross_pct": 5.88,
+        "gross_ci95_pct": [
+          1.47,
+          11.76
+        ],
+        "needle_ms_mean": 4.73,
+        "needle_ms_p95": 7.46,
+        "by_model": {
+          "M5": {
+            "n": 71,
+            "loc_pct": 94.37,
+            "valid_n": 68,
+            "valid_pct": 95.77,
+            "mae_pct": 3.79,
+            "mae_ci95_pct": [
+              2.57,
+              5.56
+            ],
+            "rmse_pct": 7.77,
+            "med_pct": 2.33,
+            "p90_pct": 5.89,
+            "p95_pct": 9.12,
+            "max_pct": 55.19,
+            "gross_n": 4,
+            "gross_pct": 5.88,
+            "gross_ci95_pct": [
+              1.47,
+              11.76
+            ],
+            "needle_ms_mean": 4.73,
+            "needle_ms_p95": 7.46
+          }
+        }
+      },
+      "neural_seg": {
+        "n": 71,
+        "loc_pct": 94.37,
+        "valid_n": 69,
+        "valid_pct": 97.18,
+        "mae_pct": 2.1,
+        "mae_ci95_pct": [
+          1.04,
+          3.67
+        ],
+        "rmse_pct": 6.49,
+        "med_pct": 1.09,
+        "p90_pct": 2.45,
+        "p95_pct": 2.85,
+        "max_pct": 47.18,
+        "gross_n": 2,
+        "gross_pct": 2.9,
+        "gross_ci95_pct": [
+          0.0,
+          7.25
+        ],
+        "needle_ms_mean": 5.6,
+        "needle_ms_p95": 7.67,
+        "by_model": {
+          "M5": {
+            "n": 71,
+            "loc_pct": 94.37,
+            "valid_n": 69,
+            "valid_pct": 97.18,
+            "mae_pct": 2.1,
+            "mae_ci95_pct": [
+              1.04,
+              3.67
+            ],
+            "rmse_pct": 6.49,
+            "med_pct": 1.09,
+            "p90_pct": 2.45,
+            "p95_pct": 2.85,
+            "max_pct": 47.18,
+            "gross_n": 2,
+            "gross_pct": 2.9,
+            "gross_ci95_pct": [
+              0.0,
+              7.25
+            ],
+            "needle_ms_mean": 5.6,
+            "needle_ms_p95": 7.67
+          }
+        }
+      },
+      "fusion_balanced": {
+        "n": 71,
+        "loc_pct": 94.37,
+        "valid_n": 69,
+        "valid_pct": 97.18,
+        "mae_pct": 2.04,
+        "mae_ci95_pct": [
+          1.07,
+          3.35
+        ],
+        "rmse_pct": 5.74,
+        "med_pct": 1.02,
+        "p90_pct": 2.41,
+        "p95_pct": 2.73,
+        "max_pct": 39.92,
+        "gross_n": 2,
+        "gross_pct": 2.9,
+        "gross_ci95_pct": [
+          0.0,
+          7.25
+        ],
+        "needle_ms_mean": 39.67,
+        "needle_ms_p95": 46.38,
+        "by_model": {
+          "M5": {
+            "n": 71,
+            "loc_pct": 94.37,
+            "valid_n": 69,
+            "valid_pct": 97.18,
+            "mae_pct": 2.04,
+            "mae_ci95_pct": [
+              1.07,
+              3.35
+            ],
+            "rmse_pct": 5.74,
+            "med_pct": 1.02,
+            "p90_pct": 2.41,
+            "p95_pct": 2.73,
+            "max_pct": 39.92,
+            "gross_n": 2,
+            "gross_pct": 2.9,
+            "gross_ci95_pct": [
+              0.0,
+              7.25
+            ],
+            "needle_ms_mean": 39.67,
+            "needle_ms_p95": 46.38
+          }
+        }
+      },
+      "fusion_precision": {
+        "n": 71,
+        "loc_pct": 94.37,
+        "valid_n": 68,
+        "valid_pct": 95.77,
+        "mae_pct": 2.19,
+        "mae_ci95_pct": [
+          1.22,
+          3.89
+        ],
+        "rmse_pct": 6.91,
+        "med_pct": 1.1,
+        "p90_pct": 2.9,
+        "p95_pct": 3.66,
+        "max_pct": 55.13,
+        "gross_n": 1,
+        "gross_pct": 1.47,
+        "gross_ci95_pct": [
+          0.0,
+          4.41
+        ],
+        "needle_ms_mean": 44.35,
+        "needle_ms_p95": 56.03,
+        "by_model": {
+          "M5": {
+            "n": 71,
+            "loc_pct": 94.37,
+            "valid_n": 68,
+            "valid_pct": 95.77,
+            "mae_pct": 2.19,
+            "mae_ci95_pct": [
+              1.22,
+              3.89
+            ],
+            "rmse_pct": 6.91,
+            "med_pct": 1.1,
+            "p90_pct": 2.9,
+            "p95_pct": 3.66,
+            "max_pct": 55.13,
+            "gross_n": 1,
+            "gross_pct": 1.47,
+            "gross_ci95_pct": [
+              0.0,
+              4.41
+            ],
+            "needle_ms_mean": 44.35,
+            "needle_ms_p95": 56.03
+          }
+        }
+      }
+    },
+    "primary": {
+      "legacy_v8": {
+        "n": 315,
+        "loc_pct": 79.05,
+        "valid_n": 210,
+        "valid_pct": 66.67,
+        "mae_pct": 5.82,
+        "mae_ci95_pct": [
+          4.02,
+          7.9
+        ],
+        "rmse_pct": 16.05,
+        "med_pct": 1.08,
+        "p90_pct": 13.09,
+        "p95_pct": 32.71,
+        "max_pct": 88.08,
+        "gross_n": 24,
+        "gross_pct": 11.43,
+        "gross_ci95_pct": [
+          7.62,
+          16.19
+        ],
+        "needle_ms_mean": 27.97,
+        "needle_ms_p95": 57.47,
+        "by_model": {
+          "M1": {
+            "n": 127,
+            "loc_pct": 96.06,
+            "valid_n": 86,
+            "valid_pct": 67.72,
+            "mae_pct": 5.56,
+            "mae_ci95_pct": [
+              3.68,
+              7.9
+            ],
+            "rmse_pct": 11.3,
+            "med_pct": 1.54,
+            "p90_pct": 23.3,
+            "p95_pct": 31.75,
+            "max_pct": 46.18,
+            "gross_n": 13,
+            "gross_pct": 15.12,
+            "gross_ci95_pct": [
+              8.14,
+              23.26
+            ],
+            "needle_ms_mean": 31.82,
+            "needle_ms_p95": 58.72
+          },
+          "M4": {
+            "n": 44,
+            "loc_pct": 88.64,
+            "valid_n": 41,
+            "valid_pct": 93.18,
+            "mae_pct": 4.49,
+            "mae_ci95_pct": [
+              1.05,
+              9.95
+            ],
+            "rmse_pct": 15.77,
+            "med_pct": 0.97,
+            "p90_pct": 3.72,
+            "p95_pct": 5.62,
+            "max_pct": 88.08,
+            "gross_n": 2,
+            "gross_pct": 4.88,
+            "gross_ci95_pct": [
+              0.0,
+              12.2
+            ],
+            "needle_ms_mean": 35.98,
+            "needle_ms_p95": 54.38
+          },
+          "M6": {
+            "n": 22,
+            "loc_pct": 90.91,
+            "valid_n": 19,
+            "valid_pct": 86.36,
+            "mae_pct": 1.33,
+            "mae_ci95_pct": [
+              1.02,
+              1.65
+            ],
+            "rmse_pct": 1.5,
+            "med_pct": 1.13,
+            "p90_pct": 2.31,
+            "p95_pct": 2.55,
+            "max_pct": 2.77,
+            "gross_n": 0,
+            "gross_pct": 0.0,
+            "gross_ci95_pct": [
+              0.0,
+              0.0
+            ],
+            "needle_ms_mean": 26.26,
+            "needle_ms_p95": 42.27
+          },
+          "misc": {
+            "n": 122,
+            "loc_pct": 55.74,
+            "valid_n": 64,
+            "valid_pct": 52.46,
+            "mae_pct": 8.37,
+            "mae_ci95_pct": [
+              3.61,
+              13.62
+            ],
+            "rmse_pct": 22.68,
+            "med_pct": 0.47,
+            "p90_pct": 18.49,
+            "p95_pct": 70.63,
+            "max_pct": 81.97,
+            "gross_n": 9,
+            "gross_pct": 14.06,
+            "gross_ci95_pct": [
+              6.25,
+              21.88
+            ],
+            "needle_ms_mean": 21.37,
+            "needle_ms_p95": 57.78
+          }
+        }
+      },
+      "opencv_v2": {
+        "n": 315,
+        "loc_pct": 79.05,
+        "valid_n": 207,
+        "valid_pct": 65.71,
+        "mae_pct": 3.94,
+        "mae_ci95_pct": [
+          2.3,
+          5.83
+        ],
+        "rmse_pct": 13.6,
+        "med_pct": 0.97,
+        "p90_pct": 3.81,
+        "p95_pct": 8.74,
+        "max_pct": 89.0,
+        "gross_n": 10,
+        "gross_pct": 4.83,
+        "gross_ci95_pct": [
+          1.93,
+          7.73
+        ],
+        "needle_ms_mean": 29.33,
+        "needle_ms_p95": 52.61,
+        "by_model": {
+          "M1": {
+            "n": 127,
+            "loc_pct": 96.06,
+            "valid_n": 85,
+            "valid_pct": 66.93,
+            "mae_pct": 2.18,
+            "mae_ci95_pct": [
+              1.35,
+              3.49
+            ],
+            "rmse_pct": 5.91,
+            "med_pct": 1.26,
+            "p90_pct": 3.6,
+            "p95_pct": 4.07,
+            "max_pct": 50.43,
+            "gross_n": 1,
+            "gross_pct": 1.18,
+            "gross_ci95_pct": [
+              0.0,
+              3.53
+            ],
+            "needle_ms_mean": 29.25,
+            "needle_ms_p95": 43.98
+          },
+          "M4": {
+            "n": 44,
+            "loc_pct": 88.64,
+            "valid_n": 41,
+            "valid_pct": 93.18,
+            "mae_pct": 4.51,
+            "mae_ci95_pct": [
+              1.05,
+              10.01
+            ],
+            "rmse_pct": 15.88,
+            "med_pct": 0.97,
+            "p90_pct": 3.71,
+            "p95_pct": 5.62,
+            "max_pct": 89.0,
+            "gross_n": 2,
+            "gross_pct": 4.88,
+            "gross_ci95_pct": [
+              0.0,
+              12.2
+            ],
+            "needle_ms_mean": 41.03,
+            "needle_ms_p95": 54.92
+          },
+          "M6": {
+            "n": 22,
+            "loc_pct": 90.91,
+            "valid_n": 19,
+            "valid_pct": 86.36,
+            "mae_pct": 1.3,
+            "mae_ci95_pct": [
+              1.01,
+              1.58
+            ],
+            "rmse_pct": 1.45,
+            "med_pct": 1.13,
+            "p90_pct": 2.18,
+            "p95_pct": 2.29,
+            "max_pct": 2.52,
+            "gross_n": 0,
+            "gross_pct": 0.0,
+            "gross_ci95_pct": [
+              0.0,
+              0.0
+            ],
+            "needle_ms_mean": 31.32,
+            "needle_ms_p95": 46.95
+          },
+          "misc": {
+            "n": 122,
+            "loc_pct": 55.74,
+            "valid_n": 62,
+            "valid_pct": 50.82,
+            "mae_pct": 6.79,
+            "mae_ci95_pct": [
+              2.61,
+              11.69
+            ],
+            "rmse_pct": 20.05,
+            "med_pct": 0.3,
+            "p90_pct": 12.46,
+            "p95_pct": 63.44,
+            "max_pct": 80.39,
+            "gross_n": 7,
+            "gross_pct": 11.29,
+            "gross_ci95_pct": [
+              4.8,
+              19.35
+            ],
+            "needle_ms_mean": 24.84,
+            "needle_ms_p95": 54.26
+          }
+        }
+      },
+      "neural_kpt": {
+        "n": 315,
+        "loc_pct": 79.05,
+        "valid_n": 265,
+        "valid_pct": 84.13,
+        "mae_pct": 9.08,
+        "mae_ci95_pct": [
+          7.27,
+          10.96
+        ],
+        "rmse_pct": 18.26,
+        "med_pct": 2.93,
+        "p90_pct": 29.97,
+        "p95_pct": 49.08,
+        "max_pct": 83.35,
+        "gross_n": 48,
+        "gross_pct": 18.11,
+        "gross_ci95_pct": [
+          13.58,
+          22.64
+        ],
+        "needle_ms_mean": 6.49,
+        "needle_ms_p95": 14.79,
+        "by_model": {
+          "M1": {
+            "n": 127,
+            "loc_pct": 96.06,
+            "valid_n": 121,
+            "valid_pct": 95.28,
+            "mae_pct": 4.9,
+            "mae_ci95_pct": [
+              3.7,
+              6.31
+            ],
+            "rmse_pct": 8.96,
+            "med_pct": 2.81,
+            "p90_pct": 9.18,
+            "p95_pct": 13.93,
+            "max_pct": 45.0,
+            "gross_n": 10,
+            "gross_pct": 8.26,
+            "gross_ci95_pct": [
+              3.31,
+              13.22
+            ],
+            "needle_ms_mean": 6.09,
+            "needle_ms_p95": 12.88
+          },
+          "M4": {
+            "n": 44,
+            "loc_pct": 88.64,
+            "valid_n": 43,
+            "valid_pct": 97.73,
+            "mae_pct": 8.27,
+            "mae_ci95_pct": [
+              3.74,
+              13.81
+            ],
+            "rmse_pct": 19.09,
+            "med_pct": 2.37,
+            "p90_pct": 19.18,
+            "p95_pct": 51.78,
+            "max_pct": 83.35,
+            "gross_n": 6,
+            "gross_pct": 13.95,
+            "gross_ci95_pct": [
+              4.65,
+              25.58
+            ],
+            "needle_ms_mean": 7.84,
+            "needle_ms_p95": 22.63
+          },
+          "M6": {
+            "n": 22,
+            "loc_pct": 90.91,
+            "valid_n": 19,
+            "valid_pct": 86.36,
+            "mae_pct": 4.35,
+            "mae_ci95_pct": [
+              1.36,
+              9.16
+            ],
+            "rmse_pct": 10.6,
+            "med_pct": 1.45,
+            "p90_pct": 5.56,
+            "p95_pct": 16.88,
+            "max_pct": 43.52,
+            "gross_n": 2,
+            "gross_pct": 10.53,
+            "gross_ci95_pct": [
+              0.0,
+              26.32
+            ],
+            "needle_ms_mean": 6.22,
+            "needle_ms_p95": 19.43
+          },
+          "misc": {
+            "n": 122,
+            "loc_pct": 55.74,
+            "valid_n": 82,
+            "valid_pct": 67.21,
+            "mae_pct": 16.76,
+            "mae_ci95_pct": [
+              12.36,
+              21.5
+            ],
+            "rmse_pct": 27.24,
+            "med_pct": 6.43,
+            "p90_pct": 53.24,
+            "p95_pct": 63.54,
+            "max_pct": 82.5,
+            "gross_n": 30,
+            "gross_pct": 36.59,
+            "gross_ci95_pct": [
+              25.61,
+              47.56
+            ],
+            "needle_ms_mean": 6.47,
+            "needle_ms_p95": 14.37
+          }
+        }
+      },
+      "neural_seg": {
+        "n": 315,
+        "loc_pct": 79.05,
+        "valid_n": 266,
+        "valid_pct": 84.44,
+        "mae_pct": 4.43,
+        "mae_ci95_pct": [
+          3.26,
+          5.69
+        ],
+        "rmse_pct": 11.36,
+        "med_pct": 1.58,
+        "p90_pct": 6.99,
+        "p95_pct": 23.5,
+        "max_pct": 65.47,
+        "gross_n": 22,
+        "gross_pct": 8.27,
+        "gross_ci95_pct": [
+          5.26,
+          11.65
+        ],
+        "needle_ms_mean": 6.9,
+        "needle_ms_p95": 11.77,
+        "by_model": {
+          "M1": {
+            "n": 127,
+            "loc_pct": 96.06,
+            "valid_n": 124,
+            "valid_pct": 97.64,
+            "mae_pct": 2.57,
+            "mae_ci95_pct": [
+              1.85,
+              3.69
+            ],
+            "rmse_pct": 6.01,
+            "med_pct": 1.7,
+            "p90_pct": 4.06,
+            "p95_pct": 5.77,
+            "max_pct": 58.77,
+            "gross_n": 2,
+            "gross_pct": 1.61,
+            "gross_ci95_pct": [
+              0.0,
+              4.03
+            ],
+            "needle_ms_mean": 6.95,
+            "needle_ms_p95": 12.12
+          },
+          "M4": {
+            "n": 44,
+            "loc_pct": 88.64,
+            "valid_n": 41,
+            "valid_pct": 93.18,
+            "mae_pct": 3.88,
+            "mae_ci95_pct": [
+              1.37,
+              7.64
+            ],
+            "rmse_pct": 10.39,
+            "med_pct": 1.43,
+            "p90_pct": 3.02,
+            "p95_pct": 20.44,
+            "max_pct": 47.91,
+            "gross_n": 3,
+            "gross_pct": 7.32,
+            "gross_ci95_pct": [
+              0.0,
+              17.07
+            ],
+            "needle_ms_mean": 6.34,
+            "needle_ms_p95": 10.8
+          },
+          "M6": {
+            "n": 22,
+            "loc_pct": 90.91,
+            "valid_n": 21,
+            "valid_pct": 95.45,
+            "mae_pct": 3.24,
+            "mae_ci95_pct": [
+              1.1,
+              7.14
+            ],
+            "rmse_pct": 9.14,
+            "med_pct": 1.59,
+            "p90_pct": 2.05,
+            "p95_pct": 3.09,
+            "max_pct": 41.3,
+            "gross_n": 1,
+            "gross_pct": 4.76,
+            "gross_ci95_pct": [
+              0.0,
+              14.29
+            ],
+            "needle_ms_mean": 8.49,
+            "needle_ms_p95": 11.79
+          },
+          "misc": {
+            "n": 122,
+            "loc_pct": 55.74,
+            "valid_n": 80,
+            "valid_pct": 65.57,
+            "mae_pct": 7.9,
+            "mae_ci95_pct": [
+              4.94,
+              11.35
+            ],
+            "rmse_pct": 17.21,
+            "med_pct": 1.21,
+            "p90_pct": 29.62,
+            "p95_pct": 43.71,
+            "max_pct": 65.47,
+            "gross_n": 16,
+            "gross_pct": 20.0,
+            "gross_ci95_pct": [
+              12.5,
+              30.0
+            ],
+            "needle_ms_mean": 6.77,
+            "needle_ms_p95": 11.14
+          }
+        }
+      },
+      "fusion_balanced": {
+        "n": 315,
+        "loc_pct": 79.05,
+        "valid_n": 292,
+        "valid_pct": 92.7,
+        "mae_pct": 6.55,
+        "mae_ci95_pct": [
+          4.74,
+          8.35
+        ],
+        "rmse_pct": 17.37,
+        "med_pct": 1.33,
+        "p90_pct": 12.6,
+        "p95_pct": 47.37,
+        "max_pct": 89.0,
+        "gross_n": 35,
+        "gross_pct": 11.99,
+        "gross_ci95_pct": [
+          8.56,
+          15.42
+        ],
+        "needle_ms_mean": 44.68,
+        "needle_ms_p95": 64.11,
+        "by_model": {
+          "M1": {
+            "n": 127,
+            "loc_pct": 96.06,
+            "valid_n": 126,
+            "valid_pct": 99.21,
+            "mae_pct": 2.69,
+            "mae_ci95_pct": [
+              1.62,
+              4.21
+            ],
+            "rmse_pct": 8.07,
+            "med_pct": 1.35,
+            "p90_pct": 3.83,
+            "p95_pct": 5.58,
+            "max_pct": 63.88,
+            "gross_n": 2,
+            "gross_pct": 1.59,
+            "gross_ci95_pct": [
+              0.0,
+              3.97
+            ],
+            "needle_ms_mean": 40.87,
+            "needle_ms_p95": 55.2
+          },
+          "M4": {
+            "n": 44,
+            "loc_pct": 88.64,
+            "valid_n": 43,
+            "valid_pct": 97.73,
+            "mae_pct": 6.26,
+            "mae_ci95_pct": [
+              2.01,
+              12.09
+            ],
+            "rmse_pct": 18.47,
+            "med_pct": 1.27,
+            "p90_pct": 4.08,
+            "p95_pct": 45.27,
+            "max_pct": 89.0,
+            "gross_n": 4,
+            "gross_pct": 9.3,
+            "gross_ci95_pct": [
+              2.33,
+              18.6
+            ],
+            "needle_ms_mean": 50.23,
+            "needle_ms_p95": 72.68
+          },
+          "M6": {
+            "n": 22,
+            "loc_pct": 90.91,
+            "valid_n": 21,
+            "valid_pct": 95.45,
+            "mae_pct": 3.22,
+            "mae_ci95_pct": [
+              1.12,
+              7.1
+            ],
+            "rmse_pct": 9.13,
+            "med_pct": 1.43,
+            "p90_pct": 2.06,
+            "p95_pct": 2.76,
+            "max_pct": 41.3,
+            "gross_n": 1,
+            "gross_pct": 4.76,
+            "gross_ci95_pct": [
+              0.0,
+              14.29
+            ],
+            "needle_ms_mean": 44.91,
+            "needle_ms_p95": 62.21
+          },
+          "misc": {
+            "n": 122,
+            "loc_pct": 55.74,
+            "valid_n": 102,
+            "valid_pct": 83.61,
+            "mae_pct": 12.12,
+            "mae_ci95_pct": [
+              7.85,
+              16.31
+            ],
+            "rmse_pct": 24.94,
+            "med_pct": 1.24,
+            "p90_pct": 46.28,
+            "p95_pct": 65.25,
+            "max_pct": 85.0,
+            "gross_n": 28,
+            "gross_pct": 27.45,
+            "gross_ci95_pct": [
+              19.61,
+              36.27
+            ],
+            "needle_ms_mean": 46.6,
+            "needle_ms_p95": 65.23
+          }
+        }
+      },
+      "fusion_precision": {
+        "n": 315,
+        "loc_pct": 79.05,
+        "valid_n": 248,
+        "valid_pct": 78.73,
+        "mae_pct": 2.52,
+        "mae_ci95_pct": [
+          1.88,
+          3.39
+        ],
+        "rmse_pct": 6.57,
+        "med_pct": 1.29,
+        "p90_pct": 4.57,
+        "p95_pct": 6.38,
+        "max_pct": 67.86,
+        "gross_n": 8,
+        "gross_pct": 3.23,
+        "gross_ci95_pct": [
+          1.21,
+          5.65
+        ],
+        "needle_ms_mean": 52.88,
+        "needle_ms_p95": 81.04,
+        "by_model": {
+          "M1": {
+            "n": 127,
+            "loc_pct": 96.06,
+            "valid_n": 119,
+            "valid_pct": 93.7,
+            "mae_pct": 1.78,
+            "mae_ci95_pct": [
+              1.5,
+              2.12
+            ],
+            "rmse_pct": 2.4,
+            "med_pct": 1.38,
+            "p90_pct": 4.12,
+            "p95_pct": 5.04,
+            "max_pct": 9.29,
+            "gross_n": 0,
+            "gross_pct": 0.0,
+            "gross_ci95_pct": [
+              0.0,
+              0.0
+            ],
+            "needle_ms_mean": 48.38,
+            "needle_ms_p95": 77.46
+          },
+          "M4": {
+            "n": 44,
+            "loc_pct": 88.64,
+            "valid_n": 38,
+            "valid_pct": 86.36,
+            "mae_pct": 1.49,
+            "mae_ci95_pct": [
+              1.13,
+              1.83
+            ],
+            "rmse_pct": 1.84,
+            "med_pct": 1.32,
+            "p90_pct": 2.69,
+            "p95_pct": 2.99,
+            "max_pct": 5.63,
+            "gross_n": 0,
+            "gross_pct": 0.0,
+            "gross_ci95_pct": [
+              0.0,
+              0.0
+            ],
+            "needle_ms_mean": 61.66,
+            "needle_ms_p95": 107.54
+          },
+          "M6": {
+            "n": 22,
+            "loc_pct": 90.91,
+            "valid_n": 21,
+            "valid_pct": 95.45,
+            "mae_pct": 3.11,
+            "mae_ci95_pct": [
+              0.96,
+              7.02
+            ],
+            "rmse_pct": 9.12,
+            "med_pct": 0.99,
+            "p90_pct": 2.65,
+            "p95_pct": 2.81,
+            "max_pct": 41.3,
+            "gross_n": 1,
+            "gross_pct": 4.76,
+            "gross_ci95_pct": [
+              0.0,
+              14.29
+            ],
+            "needle_ms_mean": 50.51,
+            "needle_ms_p95": 70.84
+          },
+          "misc": {
+            "n": 122,
+            "loc_pct": 55.74,
+            "valid_n": 70,
+            "valid_pct": 57.38,
+            "mae_pct": 4.17,
+            "mae_ci95_pct": [
+              2.25,
+              6.72
+            ],
+            "rmse_pct": 10.79,
+            "med_pct": 1.19,
+            "p90_pct": 9.73,
+            "p95_pct": 13.11,
+            "max_pct": 67.86,
+            "gross_n": 7,
+            "gross_pct": 10.0,
+            "gross_ci95_pct": [
+              4.29,
+              17.14
+            ],
+            "needle_ms_mean": 54.83,
+            "needle_ms_p95": 78.05
+          }
+        }
+      }
+    },
+    "final": {
+      "legacy_v8": {
+        "n": 985,
+        "loc_pct": 89.14,
+        "valid_n": 726,
+        "valid_pct": 73.71,
+        "mae_pct": 5.12,
+        "mae_ci95_pct": [
+          4.36,
+          6.03
+        ],
+        "rmse_pct": 12.44,
+        "med_pct": 1.22,
+        "p90_pct": 16.14,
+        "p95_pct": 31.79,
+        "max_pct": 88.08,
+        "gross_n": 89,
+        "gross_pct": 12.26,
+        "gross_ci95_pct": [
+          10.06,
+          14.74
+        ],
+        "needle_ms_mean": 32.04,
+        "needle_ms_p95": 58.17,
+        "by_model": {
+          "M1": {
+            "n": 664,
+            "loc_pct": 99.1,
+            "valid_n": 515,
+            "valid_pct": 77.56,
+            "mae_pct": 5.48,
+            "mae_ci95_pct": [
+              4.68,
+              6.3
+            ],
+            "rmse_pct": 11.43,
+            "med_pct": 1.48,
+            "p90_pct": 23.22,
+            "p95_pct": 32.03,
+            "max_pct": 57.8,
+            "gross_n": 77,
+            "gross_pct": 14.95,
+            "gross_ci95_pct": [
+              12.04,
+              17.86
+            ],
+            "needle_ms_mean": 35.28,
+            "needle_ms_p95": 59.33
+          },
+          "M4": {
+            "n": 105,
+            "loc_pct": 94.29,
+            "valid_n": 97,
+            "valid_pct": 92.38,
+            "mae_pct": 2.97,
+            "mae_ci95_pct": [
+              1.19,
+              5.25
+            ],
+            "rmse_pct": 11.08,
+            "med_pct": 0.94,
+            "p90_pct": 3.17,
+            "p95_pct": 3.97,
+            "max_pct": 88.08,
+            "gross_n": 3,
+            "gross_pct": 3.09,
+            "gross_ci95_pct": [
+              0.0,
+              7.22
+            ],
+            "needle_ms_mean": 33.91,
+            "needle_ms_p95": 50.11
+          },
+          "M6": {
+            "n": 53,
+            "loc_pct": 96.23,
+            "valid_n": 47,
+            "valid_pct": 88.68,
+            "mae_pct": 1.44,
+            "mae_ci95_pct": [
+              1.2,
+              1.69
+            ],
+            "rmse_pct": 1.68,
+            "med_pct": 1.22,
+            "p90_pct": 2.78,
+            "p95_pct": 2.92,
+            "max_pct": 3.44,
+            "gross_n": 0,
+            "gross_pct": 0.0,
+            "gross_ci95_pct": [
+              0.0,
+              0.0
+            ],
+            "needle_ms_mean": 25.79,
+            "needle_ms_p95": 35.56
+          },
+          "misc": {
+            "n": 163,
+            "loc_pct": 42.94,
+            "valid_n": 67,
+            "valid_pct": 41.1,
+            "mae_pct": 8.11,
+            "mae_ci95_pct": [
+              3.48,
+              13.56
+            ],
+            "rmse_pct": 22.18,
+            "med_pct": 0.55,
+            "p90_pct": 16.66,
+            "p95_pct": 69.59,
+            "max_pct": 81.97,
+            "gross_n": 9,
+            "gross_pct": 13.43,
+            "gross_ci95_pct": [
+              5.97,
+              22.39
+            ],
+            "needle_ms_mean": 19.67,
+            "needle_ms_p95": 59.13
+          }
+        }
+      },
+      "opencv_v2": {
+        "n": 985,
+        "loc_pct": 89.14,
+        "valid_n": 708,
+        "valid_pct": 71.88,
+        "mae_pct": 2.42,
+        "mae_ci95_pct": [
+          1.88,
+          3.05
+        ],
+        "rmse_pct": 8.35,
+        "med_pct": 1.0,
+        "p90_pct": 3.35,
+        "p95_pct": 4.54,
+        "max_pct": 89.0,
+        "gross_n": 15,
+        "gross_pct": 2.12,
+        "gross_ci95_pct": [
+          1.13,
+          3.25
+        ],
+        "needle_ms_mean": 31.81,
+        "needle_ms_p95": 50.25,
+        "by_model": {
+          "M1": {
+            "n": 664,
+            "loc_pct": 99.1,
+            "valid_n": 497,
+            "valid_pct": 74.85,
+            "mae_pct": 1.86,
+            "mae_ci95_pct": [
+              1.52,
+              2.28
+            ],
+            "rmse_pct": 4.96,
+            "med_pct": 1.02,
+            "p90_pct": 3.33,
+            "p95_pct": 4.21,
+            "max_pct": 57.81,
+            "gross_n": 5,
+            "gross_pct": 1.01,
+            "gross_ci95_pct": [
+              0.2,
+              2.01
+            ],
+            "needle_ms_mean": 33.15,
+            "needle_ms_p95": 50.15
+          },
+          "M4": {
+            "n": 105,
+            "loc_pct": 94.29,
+            "valid_n": 99,
+            "valid_pct": 94.29,
+            "mae_pct": 2.93,
+            "mae_ci95_pct": [
+              1.16,
+              5.16
+            ],
+            "rmse_pct": 11.04,
+            "med_pct": 0.94,
+            "p90_pct": 3.09,
+            "p95_pct": 3.95,
+            "max_pct": 89.0,
+            "gross_n": 3,
+            "gross_pct": 3.03,
+            "gross_ci95_pct": [
+              0.0,
+              6.06
+            ],
+            "needle_ms_mean": 39.94,
+            "needle_ms_p95": 50.12
+          },
+          "M6": {
+            "n": 53,
+            "loc_pct": 96.23,
+            "valid_n": 47,
+            "valid_pct": 88.68,
+            "mae_pct": 1.43,
+            "mae_ci95_pct": [
+              1.2,
+              1.68
+            ],
+            "rmse_pct": 1.66,
+            "med_pct": 1.22,
+            "p90_pct": 2.7,
+            "p95_pct": 2.92,
+            "max_pct": 3.44,
+            "gross_n": 0,
+            "gross_pct": 0.0,
+            "gross_ci95_pct": [
+              0.0,
+              0.0
+            ],
+            "needle_ms_mean": 31.15,
+            "needle_ms_p95": 41.07
+          },
+          "misc": {
+            "n": 163,
+            "loc_pct": 42.94,
+            "valid_n": 65,
+            "valid_pct": 39.88,
+            "mae_pct": 6.59,
+            "mae_ci95_pct": [
+              2.75,
+              11.25
+            ],
+            "rmse_pct": 19.59,
+            "med_pct": 0.35,
+            "p90_pct": 10.94,
+            "p95_pct": 59.53,
+            "max_pct": 80.39,
+            "gross_n": 7,
+            "gross_pct": 10.77,
+            "gross_ci95_pct": [
+              4.58,
+              18.46
+            ],
+            "needle_ms_mean": 21.33,
+            "needle_ms_p95": 52.33
+          }
+        }
+      },
+      "neural_kpt": {
+        "n": 985,
+        "loc_pct": 89.14,
+        "valid_n": 898,
+        "valid_pct": 91.17,
+        "mae_pct": 6.52,
+        "mae_ci95_pct": [
+          5.72,
+          7.35
+        ],
+        "rmse_pct": 13.77,
+        "med_pct": 2.84,
+        "p90_pct": 12.25,
+        "p95_pct": 33.27,
+        "max_pct": 85.0,
+        "gross_n": 106,
+        "gross_pct": 11.8,
+        "gross_ci95_pct": [
+          9.8,
+          14.03
+        ],
+        "needle_ms_mean": 6.04,
+        "needle_ms_p95": 10.14,
+        "by_model": {
+          "M1": {
+            "n": 664,
+            "loc_pct": 99.1,
+            "valid_n": 649,
+            "valid_pct": 97.74,
+            "mae_pct": 4.93,
+            "mae_ci95_pct": [
+              4.38,
+              5.56
+            ],
+            "rmse_pct": 9.44,
+            "med_pct": 2.92,
+            "p90_pct": 8.37,
+            "p95_pct": 12.72,
+            "max_pct": 60.45,
+            "gross_n": 50,
+            "gross_pct": 7.7,
+            "gross_ci95_pct": [
+              5.86,
+              9.71
+            ],
+            "needle_ms_mean": 6.65,
+            "needle_ms_p95": 11.9
+          },
+          "M4": {
+            "n": 105,
+            "loc_pct": 94.29,
+            "valid_n": 103,
+            "valid_pct": 98.1,
+            "mae_pct": 6.5,
+            "mae_ci95_pct": [
+              4.12,
+              9.36
+            ],
+            "rmse_pct": 15.04,
+            "med_pct": 2.24,
+            "p90_pct": 18.15,
+            "p95_pct": 32.67,
+            "max_pct": 83.35,
+            "gross_n": 13,
+            "gross_pct": 12.62,
+            "gross_ci95_pct": [
+              6.8,
+              19.42
+            ],
+            "needle_ms_mean": 5.05,
+            "needle_ms_p95": 8.82
+          },
+          "M6": {
+            "n": 53,
+            "loc_pct": 96.23,
+            "valid_n": 50,
+            "valid_pct": 94.34,
+            "mae_pct": 2.74,
+            "mae_ci95_pct": [
+              1.5,
+              4.55
+            ],
+            "rmse_pct": 6.77,
+            "med_pct": 1.59,
+            "p90_pct": 3.58,
+            "p95_pct": 5.23,
+            "max_pct": 43.52,
+            "gross_n": 2,
+            "gross_pct": 4.0,
+            "gross_ci95_pct": [
+              0.0,
+              10.0
+            ],
+            "needle_ms_mean": 4.44,
+            "needle_ms_p95": 6.14
+          },
+          "misc": {
+            "n": 163,
+            "loc_pct": 42.94,
+            "valid_n": 96,
+            "valid_pct": 58.9,
+            "mae_pct": 19.28,
+            "mae_ci95_pct": [
+              14.6,
+              23.75
+            ],
+            "rmse_pct": 30.1,
+            "med_pct": 7.09,
+            "p90_pct": 59.16,
+            "p95_pct": 66.46,
+            "max_pct": 85.0,
+            "gross_n": 41,
+            "gross_pct": 42.71,
+            "gross_ci95_pct": [
+              33.33,
+              52.08
+            ],
+            "needle_ms_mean": 4.71,
+            "needle_ms_p95": 7.19
+          }
+        }
+      },
+      "neural_seg": {
+        "n": 985,
+        "loc_pct": 89.14,
+        "valid_n": 889,
+        "valid_pct": 90.25,
+        "mae_pct": 3.6,
+        "mae_ci95_pct": [
+          2.93,
+          4.45
+        ],
+        "rmse_pct": 12.39,
+        "med_pct": 1.48,
+        "p90_pct": 4.35,
+        "p95_pct": 10.05,
+        "max_pct": 238.72,
+        "gross_n": 45,
+        "gross_pct": 5.06,
+        "gross_ci95_pct": [
+          3.71,
+          6.52
+        ],
+        "needle_ms_mean": 6.56,
+        "needle_ms_p95": 11.11,
+        "by_model": {
+          "M1": {
+            "n": 664,
+            "loc_pct": 99.1,
+            "valid_n": 647,
+            "valid_pct": 97.44,
+            "mae_pct": 2.69,
+            "mae_ci95_pct": [
+              2.23,
+              3.23
+            ],
+            "rmse_pct": 7.38,
+            "med_pct": 1.58,
+            "p90_pct": 3.92,
+            "p95_pct": 7.32,
+            "max_pct": 70.24,
+            "gross_n": 19,
+            "gross_pct": 2.94,
+            "gross_ci95_pct": [
+              1.85,
+              4.33
+            ],
+            "needle_ms_mean": 7.07,
+            "needle_ms_p95": 13.24
+          },
+          "M4": {
+            "n": 105,
+            "loc_pct": 94.29,
+            "valid_n": 101,
+            "valid_pct": 96.19,
+            "mae_pct": 2.46,
+            "mae_ci95_pct": [
+              1.16,
+              4.0
+            ],
+            "rmse_pct": 7.76,
+            "med_pct": 0.83,
+            "p90_pct": 2.27,
+            "p95_pct": 3.51,
+            "max_pct": 47.91,
+            "gross_n": 4,
+            "gross_pct": 3.96,
+            "gross_ci95_pct": [
+              0.99,
+              7.92
+            ],
+            "needle_ms_mean": 6.29,
+            "needle_ms_p95": 9.48
+          },
+          "M6": {
+            "n": 53,
+            "loc_pct": 96.23,
+            "valid_n": 52,
+            "valid_pct": 98.11,
+            "mae_pct": 2.13,
+            "mae_ci95_pct": [
+              1.22,
+              3.78
+            ],
+            "rmse_pct": 5.93,
+            "med_pct": 1.35,
+            "p90_pct": 2.11,
+            "p95_pct": 3.04,
+            "max_pct": 41.3,
+            "gross_n": 1,
+            "gross_pct": 1.92,
+            "gross_ci95_pct": [
+              0.0,
+              5.77
+            ],
+            "needle_ms_mean": 5.39,
+            "needle_ms_p95": 7.27
+          },
+          "misc": {
+            "n": 163,
+            "loc_pct": 42.94,
+            "valid_n": 89,
+            "valid_pct": 54.6,
+            "mae_pct": 12.4,
+            "mae_ci95_pct": [
+              7.14,
+              19.36
+            ],
+            "rmse_pct": 32.39,
+            "med_pct": 1.52,
+            "p90_pct": 41.76,
+            "p95_pct": 59.82,
+            "max_pct": 238.72,
+            "gross_n": 21,
+            "gross_pct": 23.6,
+            "gross_ci95_pct": [
+              15.73,
+              32.58
+            ],
+            "needle_ms_mean": 5.04,
+            "needle_ms_p95": 6.95
+          }
+        }
+      },
+      "fusion_balanced": {
+        "n": 985,
+        "loc_pct": 89.14,
+        "valid_n": 938,
+        "valid_pct": 95.23,
+        "mae_pct": 4.53,
+        "mae_ci95_pct": [
+          3.68,
+          5.48
+        ],
+        "rmse_pct": 14.98,
+        "med_pct": 1.34,
+        "p90_pct": 4.78,
+        "p95_pct": 20.34,
+        "max_pct": 238.72,
+        "gross_n": 64,
+        "gross_pct": 6.82,
+        "gross_ci95_pct": [
+          5.22,
+          8.42
+        ],
+        "needle_ms_mean": 43.5,
+        "needle_ms_p95": 58.87,
+        "by_model": {
+          "M1": {
+            "n": 664,
+            "loc_pct": 99.1,
+            "valid_n": 659,
+            "valid_pct": 99.25,
+            "mae_pct": 2.55,
+            "mae_ci95_pct": [
+              2.04,
+              3.16
+            ],
+            "rmse_pct": 7.73,
+            "med_pct": 1.38,
+            "p90_pct": 3.43,
+            "p95_pct": 5.29,
+            "max_pct": 70.24,
+            "gross_n": 16,
+            "gross_pct": 2.43,
+            "gross_ci95_pct": [
+              1.37,
+              3.64
+            ],
+            "needle_ms_mean": 43.24,
+            "needle_ms_p95": 58.69
+          },
+          "M4": {
+            "n": 105,
+            "loc_pct": 94.29,
+            "valid_n": 103,
+            "valid_pct": 98.1,
+            "mae_pct": 3.52,
+            "mae_ci95_pct": [
+              1.55,
+              6.37
+            ],
+            "rmse_pct": 12.59,
+            "med_pct": 0.86,
+            "p90_pct": 2.84,
+            "p95_pct": 4.4,
+            "max_pct": 89.0,
+            "gross_n": 5,
+            "gross_pct": 4.85,
+            "gross_ci95_pct": [
+              0.97,
+              9.71
+            ],
+            "needle_ms_mean": 48.16,
+            "needle_ms_p95": 58.52
+          },
+          "M6": {
+            "n": 53,
+            "loc_pct": 96.23,
+            "valid_n": 52,
+            "valid_pct": 98.11,
+            "mae_pct": 2.18,
+            "mae_ci95_pct": [
+              1.26,
+              3.8
+            ],
+            "rmse_pct": 5.94,
+            "med_pct": 1.37,
+            "p90_pct": 2.38,
+            "p95_pct": 2.72,
+            "max_pct": 41.3,
+            "gross_n": 1,
+            "gross_pct": 1.92,
+            "gross_ci95_pct": [
+              0.0,
+              5.77
+            ],
+            "needle_ms_mean": 42.22,
+            "needle_ms_p95": 52.79
+          },
+          "misc": {
+            "n": 163,
+            "loc_pct": 42.94,
+            "valid_n": 124,
+            "valid_pct": 76.07,
+            "mae_pct": 16.86,
+            "mae_ci95_pct": [
+              11.67,
+              22.56
+            ],
+            "rmse_pct": 35.13,
+            "med_pct": 2.53,
+            "p90_pct": 56.17,
+            "p95_pct": 76.7,
+            "max_pct": 238.72,
+            "gross_n": 42,
+            "gross_pct": 33.87,
+            "gross_ci95_pct": [
+              25.81,
+              41.94
+            ],
+            "needle_ms_mean": 41.96,
+            "needle_ms_p95": 60.17
+          }
+        }
+      },
+      "fusion_precision": {
+        "n": 985,
+        "loc_pct": 89.14,
+        "valid_n": 846,
+        "valid_pct": 85.89,
+        "mae_pct": 2.45,
+        "mae_ci95_pct": [
+          1.93,
+          3.16
+        ],
+        "rmse_pct": 9.82,
+        "med_pct": 1.32,
+        "p90_pct": 3.78,
+        "p95_pct": 5.36,
+        "max_pct": 238.72,
+        "gross_n": 20,
+        "gross_pct": 2.36,
+        "gross_ci95_pct": [
+          1.42,
+          3.43
+        ],
+        "needle_ms_mean": 49.39,
+        "needle_ms_p95": 69.28,
+        "by_model": {
+          "M1": {
+            "n": 664,
+            "loc_pct": 99.1,
+            "valid_n": 620,
+            "valid_pct": 93.37,
+            "mae_pct": 1.87,
+            "mae_ci95_pct": [
+              1.68,
+              2.12
+            ],
+            "rmse_pct": 3.4,
+            "med_pct": 1.39,
+            "p90_pct": 3.59,
+            "p95_pct": 4.86,
+            "max_pct": 56.77,
+            "gross_n": 6,
+            "gross_pct": 0.97,
+            "gross_ci95_pct": [
+              0.32,
+              1.77
+            ],
+            "needle_ms_mean": 49.73,
+            "needle_ms_p95": 71.74
+          },
+          "M4": {
+            "n": 105,
+            "loc_pct": 94.29,
+            "valid_n": 97,
+            "valid_pct": 92.38,
+            "mae_pct": 1.54,
+            "mae_ci95_pct": [
+              1.0,
+              2.46
+            ],
+            "rmse_pct": 4.25,
+            "med_pct": 1.04,
+            "p90_pct": 2.39,
+            "p95_pct": 3.01,
+            "max_pct": 39.26,
+            "gross_n": 1,
+            "gross_pct": 1.03,
+            "gross_ci95_pct": [
+              0.0,
+              3.09
+            ],
+            "needle_ms_mean": 53.91,
+            "needle_ms_p95": 69.53
+          },
+          "M6": {
+            "n": 53,
+            "loc_pct": 96.23,
+            "valid_n": 52,
+            "valid_pct": 98.11,
+            "mae_pct": 2.12,
+            "mae_ci95_pct": [
+              1.15,
+              3.74
+            ],
+            "rmse_pct": 5.95,
+            "med_pct": 1.21,
+            "p90_pct": 2.79,
+            "p95_pct": 3.28,
+            "max_pct": 41.3,
+            "gross_n": 1,
+            "gross_pct": 1.92,
+            "gross_ci95_pct": [
+              0.0,
+              5.77
+            ],
+            "needle_ms_mean": 46.33,
+            "needle_ms_p95": 57.53
+          },
+          "misc": {
+            "n": 163,
+            "loc_pct": 42.94,
+            "valid_n": 77,
+            "valid_pct": 47.24,
+            "mae_pct": 8.48,
+            "mae_ci95_pct": [
+              3.69,
+              16.22
+            ],
+            "rmse_pct": 30.34,
+            "med_pct": 1.37,
+            "p90_pct": 12.88,
+            "p95_pct": 30.23,
+            "max_pct": 238.72,
+            "gross_n": 12,
+            "gross_pct": 15.58,
+            "gross_ci95_pct": [
+              7.79,
+              23.41
+            ],
+            "needle_ms_mean": 46.08,
+            "needle_ms_p95": 64.3
+          }
+        }
+      }
+    },
+    "unusable": {
+      "legacy_v8": {
+        "total_n": 300,
+        "reject_pct": 98.0,
+        "by_kind": {
+          "dark": 100.0,
+          "overexposed": 100.0,
+          "occluded": 98.33,
+          "blur": 100.0,
+          "non_dial_linear": 92.0,
+          "non_dial_digital": 90.0
+        }
+      },
+      "opencv_v2": {
+        "total_n": 300,
+        "reject_pct": 98.0,
+        "by_kind": {
+          "dark": 100.0,
+          "overexposed": 100.0,
+          "occluded": 98.33,
+          "blur": 100.0,
+          "non_dial_linear": 92.0,
+          "non_dial_digital": 90.0
+        }
+      },
+      "neural_kpt": {
+        "total_n": 300,
+        "reject_pct": 98.0,
+        "by_kind": {
+          "dark": 100.0,
+          "overexposed": 100.0,
+          "occluded": 98.33,
+          "blur": 100.0,
+          "non_dial_linear": 92.0,
+          "non_dial_digital": 90.0
+        }
+      },
+      "neural_seg": {
+        "total_n": 300,
+        "reject_pct": 99.0,
+        "by_kind": {
+          "dark": 100.0,
+          "overexposed": 100.0,
+          "occluded": 100.0,
+          "blur": 100.0,
+          "non_dial_linear": 94.0,
+          "non_dial_digital": 100.0
+        }
+      },
+      "fusion_balanced": {
+        "total_n": 300,
+        "reject_pct": 97.33,
+        "by_kind": {
+          "dark": 100.0,
+          "overexposed": 100.0,
+          "occluded": 98.33,
+          "blur": 100.0,
+          "non_dial_linear": 88.0,
+          "non_dial_digital": 90.0
+        }
+      },
+      "fusion_precision": {
+        "total_n": 300,
+        "reject_pct": 99.0,
+        "by_kind": {
+          "dark": 100.0,
+          "overexposed": 100.0,
+          "occluded": 100.0,
+          "blur": 100.0,
+          "non_dial_linear": 94.0,
+          "non_dial_digital": 100.0
+        }
+      }
+    }
+  }
+}

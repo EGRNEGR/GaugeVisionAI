@@ -1,0 +1,67 @@
+﻿[
+    {
+        "suite":  "tests/test_instruments_db.py",
+        "exit":  0,
+        "seconds":  0.4
+    },
+    {
+        "suite":  "tests/test_multigauge.py",
+        "exit":  0,
+        "seconds":  62.3
+    },
+    {
+        "suite":  "tests/test_multigauge_api.py",
+        "exit":  0,
+        "seconds":  16.5
+    },
+    {
+        "suite":  "tests/test_autocal.py",
+        "exit":  0,
+        "seconds":  2
+    },
+    {
+        "suite":  "tests/test_demo_dashboard.py",
+        "exit":  0,
+        "seconds":  21.5
+    },
+    {
+        "suite":  "tests/test_tracks_e2e.py",
+        "exit":  0,
+        "seconds":  14.2
+    },
+    {
+        "suite":  "tests/test_remediation_full.py",
+        "exit":  0,
+        "seconds":  14.7
+    },
+    {
+        "suite":  "tests/test_acceptance_independent.py",
+        "exit":  0,
+        "seconds":  35.7
+    },
+    {
+        "suite":  "tests/test_modbus_register_map.py",
+        "exit":  0,
+        "seconds":  0.3
+    },
+    {
+        "suite":  "tests/test_predictive_analytics.py",
+        "exit":  0,
+        "seconds":  0.5
+    },
+    {
+        "suite":  "tests/test_modernization_optimizer.py",
+        "exit":  0,
+        "seconds":  5.5
+    },
+    {
+        "suite":  "tests/test_next_gen_integration_contract.py",
+        "exit":  0,
+        "seconds":  0.6
+    },
+    {
+        "suite":  "tests/test_final_integration.py",
+        "exit":  0,
+        "seconds":  39.8
+    }
+]
