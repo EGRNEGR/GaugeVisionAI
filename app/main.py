@@ -284,25 +284,80 @@ class PassportUpdateRequest(BaseModel):
     custom_downtime_risk_rub_yr: int | None = Field(None, ge=0, le=100_000_000)
     notes: str | None = Field(None, max_length=500)
 
+    @field_validator("criticality_weight")
+    @classmethod
+    def _finite_weight(cls, v: float | None) -> float | None:
+        if v is not None and not math.isfinite(v):
+            raise ValueError("criticality_weight должен быть конечным числом")
+        return v
+
+    @field_validator("verification_due_date")
+    @classmethod
+    def _valid_iso_date(cls, v: str | None) -> str | None:
+        if v is None or v == "":
+            return None
+        try:
+            _dt.date.fromisoformat(v.strip())
+        except ValueError as exc:
+            raise ValueError("verification_due_date должен быть в формате YYYY-MM-DD") from exc
+        return v.strip()
+
 
 class OptimizerSolveRequest(BaseModel):
     budget_rub: int = Field(500_000, ge=0, le=500_000_000)
     objective: Literal["weighted_utility", "max_risk_reduction", "max_net_effect"] = "weighted_utility"
     alpha_risk: float = Field(0.65, ge=0.0, le=1.0)
     beta_economics: float = Field(0.35, ge=0.0, le=1.0)
-    max_items: int | None = Field(None, ge=1, le=200)
-    group: str = "all"
+    max_items: int | None = Field(None, ge=1, le=1000)
+    group: str = Field("all", max_length=120)
     min_per_group: dict[str, int] | None = None
     max_per_group: dict[str, int] | None = None
-    mandatory_ids: list[str] | None = None
-    excluded_ids: list[str] | None = None
+    mandatory_ids: list[str] | None = Field(None, max_length=250)
+    excluded_ids: list[str] | None = Field(None, max_length=250)
     dependencies: dict[str, list[str]] | None = None
     auto_mandatory_critical: bool = False
     include_healthy: bool = False
     window_min: float = Field(60.0, ge=5.0, le=1440.0)
     horizon_min: float = Field(60.0, ge=5.0, le=720.0)
     include_frontier: bool = True
+    time_limit_s: float = Field(2.0, ge=0.05, le=5.0)
     economics_config: EconomicsConfigModel | None = None
+
+    @field_validator("alpha_risk", "beta_economics", "window_min", "horizon_min", "time_limit_s")
+    @classmethod
+    def _finite_opt_floats(cls, v: float) -> float:
+        if not math.isfinite(v):
+            raise ValueError("числовой параметр оптимизатора должен быть конечным")
+        return v
+
+    @field_validator("min_per_group", "max_per_group")
+    @classmethod
+    def _bounded_group_quotas(cls, v: dict[str, int] | None) -> dict[str, int] | None:
+        if v is None:
+            return None
+        if len(v) > 50:
+            raise ValueError("слишком много групп в ограничениях квот (макс. 50)")
+        out: dict[str, int] = {}
+        for k, cnt in v.items():
+            if not k or len(k) > 120:
+                raise ValueError("некорректное имя группы в квотах")
+            iv = int(cnt)
+            if iv < 0 or iv > 1000:
+                raise ValueError(f"квота группы «{k}» должна быть в диапазоне 0..1000")
+            out[k] = iv
+        return out
+
+    @field_validator("dependencies")
+    @classmethod
+    def _bounded_dependencies(cls, v: dict[str, list[str]] | None) -> dict[str, list[str]] | None:
+        if v is None:
+            return None
+        if len(v) > 250:
+            raise ValueError("слишком много правил зависимостей (макс. 250)")
+        for k, reqs in v.items():
+            if len(k) > 120 or len(reqs) > 20 or any(len(r) > 120 for r in reqs):
+                raise ValueError("превышен допустимый размер графа зависимостей")
+        return v
 
 
 class OptimizerPlanSaveRequest(OptimizerSolveRequest):
@@ -405,12 +460,17 @@ class GaugeService:
         self.dispatch = DispatchAnalyzer()
         self.predictive = PredictiveAnalyzer()
         self._last_predictive_overview: dict[str, Any] | None = None
+        self._predictive_cache: dict[tuple[float, float, int], tuple[float, dict[str, Any]]] = {}
+        self._predictive_cache_ttl_s: float = 5.0
         self._sse_clients: set[asyncio.Queue[str]] = set()
         self.bench_channels: dict[str, dict[str, Any]] = {}
         self.bench_last: dict[str, dict[str, Any]] = {}
         self._bench_tasks: dict[str, asyncio.Task] = {}
         self.executor = ThreadPoolExecutor(max_workers=config.VISION_EXECUTOR_WORKERS,
                                            thread_name_prefix="vision")
+        self.analytics_executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="analytics")
+        self._optimizer_sem: asyncio.Semaphore | None = None
+        self._active_opt_cancels: dict[str, Any] = {}
         self.cameras: dict[str, dict[str, Any]] = {}
         self.pipelines: dict[str, vision.GaugePipeline] = {}
         self.last: dict[str, dict[str, Any]] = {}
@@ -883,15 +943,67 @@ class GaugeService:
         window_min: float = 60.0,
         horizon_min: float = 60.0,
         persist: bool = False,
+        use_cache: bool = True,
     ) -> dict[str, Any]:
         insts = instruments if instruments is not None else self.public_instruments()
+        cache_key = (round(float(window_min), 1), round(float(horizon_min), 1), len(insts))
+        now_m = time.monotonic()
+        if use_cache and not persist:
+            cached = self._predictive_cache.get(cache_key)
+            if cached is not None and (now_m - cached[0]) <= self._predictive_cache_ttl_s:
+                return cached[1]
         now = time.time()
         series_map = await self.collect_predictive_series(insts, window_min=window_min, now_unix=now)
-        ov = self.predictive.overview(insts, series_map, window_min=window_min, horizon_min=horizon_min, now_unix=now)
+        loop = asyncio.get_running_loop()
+        ov = await loop.run_in_executor(
+            self.analytics_executor,
+            lambda: self.predictive.overview(
+                insts, series_map, window_min=window_min, horizon_min=horizon_min, now_unix=now
+            ),
+        )
         self._last_predictive_overview = ov
+        self._predictive_cache[cache_key] = (time.monotonic(), ov)
+        if len(self._predictive_cache) > 16:
+            oldest_k = min(self._predictive_cache, key=lambda k: self._predictive_cache[k][0])
+            self._predictive_cache.pop(oldest_k, None)
         if persist and ov.get("instruments"):
             await db.save_predictive_snapshots(ov["instruments"])
         return ov
+
+    async def run_optimizer_nonblocking(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Выполняет 0-1 ILP оптимизацию в выделенном пуле потоков с ограничением
+        конкурентности (защита от CPU DoS) и кооперативной отменой, не блокируя
+        asyncio event loop мониторинга, телеметрии и Modbus TCP.
+        """
+        import threading as _threading
+
+        if self._optimizer_sem is None:
+            self._optimizer_sem = asyncio.Semaphore(2)
+        try:
+            await asyncio.wait_for(self._optimizer_sem.acquire(), timeout=2.5)
+        except asyncio.TimeoutError as exc:
+            raise HTTPException(
+                429,
+                "Оптимизатор занят обработкой параллельных расчётов. Повторите запрос через несколько секунд.",
+            ) from exc
+
+        cancel_ev = _threading.Event()
+        job_id = db.new_uuid()
+        self._active_opt_cancels[job_id] = cancel_ev
+        loop = asyncio.get_running_loop()
+        try:
+            return await loop.run_in_executor(
+                self.analytics_executor,
+                lambda: optimize_modernization_budget(**kwargs, cancel_event=cancel_ev),
+            )
+        except asyncio.CancelledError:
+            cancel_ev.set()
+            raise
+        finally:
+            cancel_ev.set()
+            self._active_opt_cancels.pop(job_id, None)
+            self._optimizer_sem.release()
 
     async def get_merged_passports(self, instruments: list[dict[str, Any]] | None = None) -> dict[str, dict[str, Any]]:
         insts = instruments if instruments is not None else self.public_instruments()
@@ -2850,7 +2962,14 @@ async def api_predictive_history(
     limit: int = Query(30, ge=1, le=200),
     _user: dict[str, Any] = Depends(auth.require_role("operator")),
 ) -> list[dict[str, Any]]:
-    return await db.list_predictive_snapshots(inst_id, limit=limit)
+    if not inst_id or len(inst_id) > 120 or any(ord(ch) < 32 for ch in inst_id):
+        raise HTTPException(422, "Некорректный идентификатор прибора")
+    instruments = service.public_instruments()
+    known_ids = {resolve_instrument_identity(x).instrument_id for x in instruments}
+    rows = await db.list_predictive_snapshots(inst_id, limit=limit)
+    if inst_id not in known_ids and not rows:
+        raise HTTPException(404, "Прибор не найден")
+    return rows
 
 
 @app.get("/api/passports")
@@ -2890,12 +3009,17 @@ async def api_passport_update(
 @app.post("/api/optimizer/solve")
 async def api_optimizer_solve(
     req: OptimizerSolveRequest,
-    _user: dict[str, Any] = Depends(auth.require_role("engineer")),
+    request: Request,
+    user: dict[str, Any] = Depends(auth.require_role("engineer")),
 ) -> dict[str, Any]:
     await service._flush_db()
     instruments = service.public_instruments()
     events = service.events.list(limit=500)
-    disp = service.dispatch.overview(instruments, events, service.stream_telemetry_map())
+    loop = asyncio.get_running_loop()
+    disp = await loop.run_in_executor(
+        service.analytics_executor,
+        lambda: service.dispatch.overview(instruments, events, service.stream_telemetry_map()),
+    )
     pred = await service.compute_predictive_overview(
         instruments=instruments,
         window_min=req.window_min,
@@ -2903,7 +3027,7 @@ async def api_optimizer_solve(
     )
     passports = await service.get_merged_passports(instruments)
     try:
-        return optimize_modernization_budget(
+        res = await service.run_optimizer_nonblocking(
             dispatch_overview=disp,
             predictive_overview=pred,
             passports_by_id=passports,
@@ -2922,9 +3046,16 @@ async def api_optimizer_solve(
             include_healthy=req.include_healthy,
             economics_config=req.economics_config.model_dump(exclude_none=True) if req.economics_config else None,
             include_frontier=req.include_frontier,
+            time_limit_s=req.time_limit_s,
         )
     except ValueError as exc:
         raise HTTPException(422, str(exc)) from exc
+    await db.log_audit(
+        username=user["username"], role=user["role"], action="OPTIMIZER_SOLVE",
+        target=f"budget={req.budget_rub}:{req.objective}:{res.get('status')}",
+        status_code=200, ip=request.client.host if request.client else None,
+    )
+    return res
 
 
 @app.post("/api/optimizer/plans")
@@ -2933,7 +3064,7 @@ async def api_optimizer_plan_save(
     request: Request,
     user: dict[str, Any] = Depends(auth.require_role("engineer")),
 ) -> dict[str, Any]:
-    result = await api_optimizer_solve(req, _user=user)
+    result = await api_optimizer_solve(req, request=request, user=user)
     if result.get("status") == "infeasible":
         raise HTTPException(422, (result.get("solver") or {}).get("infeasibility_reason") or "План несовместим с ограничениями")
     saved = await db.save_modernization_plan(name=req.name, created_by=user["username"], result=result)
@@ -3113,7 +3244,7 @@ async def _resolve_spec_optimization(
         sel_ids = plan.get("selected_ids") or []
     elif req.optimization_budget_rub is not None:
         passports = await service.get_merged_passports(instruments)
-        opt_res = optimize_modernization_budget(
+        opt_res = await service.run_optimizer_nonblocking(
             dispatch_overview=disp,
             predictive_overview=pred,
             passports_by_id=passports,
@@ -3122,6 +3253,7 @@ async def _resolve_spec_optimization(
             group_filter=req.group,
             economics_config=req.economics_config.model_dump(exclude_none=True) if req.economics_config else None,
             include_frontier=False,
+            time_limit_s=2.0,
         )
         if opt_res.get("status") == "infeasible":
             raise HTTPException(422, (opt_res.get("solver") or {}).get("infeasibility_reason") or "Бюджет недостаточен")

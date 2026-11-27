@@ -169,15 +169,20 @@ class ModbusTcpGateway:
     PREDICTIVE_BASE = 3600
     PREDICTIVE_STRIDE = 8
     PREDICTIVE_MAX_INSTRUMENTS = 61  # 3600..4087 (4095 остаётся свободным, MAX_REGISTERS=4096 сохраняется)
+    MAX_SLOTS = 200
     MAX_REGISTERS = 4096
     REGISTER_MAP_VERSION = 2
+    MAX_CLIENTS = 32
+    CLIENT_IDLE_TIMEOUT_S = 300.0
 
     def __init__(self) -> None:
         self._regs: list[int] = [0] * self.MAX_REGISTERS
         self._meta_rows: list[dict[str, Any]] = []
+        self._used_slots: set[int] = set()
         self._server: asyncio.AbstractServer | None = None
         self._requests_served: int = 0
         self._rejected_unit_ids: int = 0
+        self._rejected_clients: int = 0
         self._active_clients: int = 0
         self._listening: bool = False
         self._last_error: str | None = None
@@ -190,6 +195,58 @@ class ModbusTcpGateway:
         self._regs[self.SYSTEM_BASE + 11] = self.EXTENDED_STRIDE
         self._regs[self.SYSTEM_BASE + 14] = self.PREDICTIVE_BASE
         self._regs[self.SYSTEM_BASE + 15] = self.PREDICTIVE_STRIDE
+
+    @classmethod
+    def place_instruments(cls, instruments: list[dict[str, Any]]) -> list[tuple[int, dict[str, Any]]]:
+        """Слот прибора (SHARED_DATA_CONTRACT v1.1 § 5.3): постоянный `modbus_slot` из реестра;
+        приборы без слота (симуляция стенда) занимают свободные слоты по порядку списка."""
+        placed: list[tuple[int, dict[str, Any]]] = []
+        used: set[int] = set()
+        rest: list[dict[str, Any]] = []
+        for inst in instruments:
+            slot = inst.get("modbus_slot")
+            if isinstance(slot, int) and not isinstance(slot, bool) and 0 <= slot < cls.MAX_SLOTS and slot not in used:
+                placed.append((slot, inst))
+                used.add(slot)
+            else:
+                rest.append(inst)
+        free = (k for k in range(cls.MAX_SLOTS) if k not in used)
+        for inst in rest:
+            k = next(free, None)
+            if k is None:
+                break
+            placed.append((k, inst))
+        placed.sort(key=lambda t: t[0])
+        return placed
+
+    def _clear_slot(self, slot: int) -> None:
+        """Переводит освободившийся слот удалённого прибора в состояние NaN / STALE во всех 3 блоках."""
+        base = slot * 4
+        self._regs[base] = _IEEE754_QNAN_HI
+        self._regs[base + 1] = _IEEE754_QNAN_LO
+        self._regs[base + 2] = 3  # STALE
+        self._regs[base + 3] = 0
+
+        ext = self.EXTENDED_BASE + slot * self.EXTENDED_STRIDE
+        self._regs[ext + 0] = 65535
+        self._regs[ext + 1] = 0
+        self._regs[ext + 2] = FLAG_READING_STALE
+        self._regs[ext + 3] = 0
+        self._regs[ext + 4] = 0
+        self._regs[ext + 5] = _IEEE754_QNAN_HI
+        self._regs[ext + 6] = _IEEE754_QNAN_LO
+        self._regs[ext + 7] = 0
+
+        if slot < self.PREDICTIVE_MAX_INSTRUMENTS:
+            p_base = self.PREDICTIVE_BASE + slot * self.PREDICTIVE_STRIDE
+            self._regs[p_base + 0] = _IEEE754_QNAN_HI
+            self._regs[p_base + 1] = _IEEE754_QNAN_LO
+            self._regs[p_base + 2] = _IEEE754_QNAN_HI
+            self._regs[p_base + 3] = _IEEE754_QNAN_LO
+            self._regs[p_base + 4] = 0
+            self._regs[p_base + 5] = 0
+            self._regs[p_base + 6] = 6  # insufficient_data
+            self._regs[p_base + 7] = 0
 
     @property
     def heartbeat(self) -> int:
@@ -228,9 +285,16 @@ class ModbusTcpGateway:
         crit_cnt = warn_cnt = stale_cnt = 0
         pred_anom_cnt = pred_imminent_cnt = 0
 
-        for idx, inst in enumerate(instruments[:200]):
+        placed = self.place_instruments(instruments)
+        active_slots = {k for k, _ in placed}
+        for removed_slot in self._used_slots - active_slots:
+            self._clear_slot(removed_slot)
+        self._used_slots = active_slots
+
+        for idx, inst in placed:
             base = idx * 4
             ext = self.EXTENDED_BASE + idx * self.EXTENDED_STRIDE
+            inst_key = str(inst.get("instrument_id") or inst["id"])
             rd = inst.get("reading") or {}
             raw_v = rd.get("value")
             valid = bool(rd.get("valid")) and raw_v is not None
@@ -254,7 +318,7 @@ class ModbusTcpGateway:
             elif code == 3:
                 stale_cnt += 1
 
-            raw_hs = hmap.get(inst["id"], 100.0 if code == 0 else (72.0 if code == 1 else 42.0))
+            raw_hs = hmap.get(inst_key, hmap.get(inst["id"], 100.0 if code == 0 else (72.0 if code == 1 else 42.0)))
             try:
                 hs = float(raw_hs)
                 if not math.isfinite(hs):
@@ -368,7 +432,7 @@ class ModbusTcpGateway:
             self._regs[ext + 7] = 0
 
             # Прогнозный блок прибора (3600 + idx*8, обратно совместимо в рамках 0..4095)
-            pinfo = pmap.get(inst["id"]) or {}
+            pinfo = pmap.get(inst_key) or pmap.get(inst["id"]) or {}
             eta_alert = pinfo.get("eta_alert_min")
             eta_warn = pinfo.get("eta_warning_min")
             prob_alert = float(pinfo.get("breach_prob_alert_horizon") or 0.0)
@@ -394,8 +458,9 @@ class ModbusTcpGateway:
                 self._regs[p_base + 7] = max(0, min(1000, int(round(pred_conf * 1000.0))))
 
             rows.append({
-                "instrument_id": inst["id"],
-                "code": inst.get("code") or inst["id"],
+                "instrument_id": inst_key,
+                "modbus_slot": idx,
+                "code": inst.get("code") or inst_key,
                 "name": inst.get("short_name") or inst.get("name") or "",
                 "unit": inst.get("unit") or "",
                 "hr_value": 40001 + base,
@@ -472,14 +537,22 @@ class ModbusTcpGateway:
         self._listening = False
 
     async def _handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        if self._active_clients >= self.MAX_CLIENTS:
+            self._rejected_clients += 1
+            writer.close()
+            try:
+                await writer.wait_closed()
+            except Exception:
+                pass
+            return
         self._active_clients += 1
         try:
             while True:
-                mbap = await reader.readexactly(7)
+                mbap = await asyncio.wait_for(reader.readexactly(7), timeout=self.CLIENT_IDLE_TIMEOUT_S)
                 tx_id, proto_id, length, unit_id = struct.unpack(">HHHB", mbap)
                 if proto_id != 0 or length < 2 or length > 256:
                     break
-                pdu = await reader.readexactly(length - 1)
+                pdu = await asyncio.wait_for(reader.readexactly(length - 1), timeout=10.0)
                 fc = pdu[0]
                 # Строгая проверка Unit ID (DEF-13): чужой unit_id отклоняется кодом 0x0B
                 if unit_id != config.MODBUS_UNIT_ID:
@@ -504,7 +577,7 @@ class ModbusTcpGateway:
                 resp_mbap = struct.pack(">HHHB", tx_id, 0, len(resp_pdu) + 1, unit_id)
                 writer.write(resp_mbap + resp_pdu)
                 await writer.drain()
-        except (asyncio.IncompleteReadError, ConnectionResetError, BrokenPipeError):
+        except (asyncio.IncompleteReadError, asyncio.TimeoutError, ConnectionResetError, BrokenPipeError):
             pass
         finally:
             self._active_clients = max(0, self._active_clients - 1)
