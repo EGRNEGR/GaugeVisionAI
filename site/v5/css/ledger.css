@@ -1,0 +1,258 @@
+/*
+ * Бланки журнала: протокол испытаний (лист 08), готовность и ограничения (лист 10),
+ * сдача смены (лист 11). Таблицы на линиях 1px, без карточек.
+ */
+.gv-h3 {
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+
+/* ---------- 5 главных доказательств листа 08 ---------- */
+.gv-proofs {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--s3) var(--gutter);
+  padding-block: var(--s4);
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+  margin-bottom: var(--s8);
+}
+.gv-proof { display: grid; gap: var(--s1); align-content: start; }
+.gv-proof__num { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem; }
+.gv-proof__v {
+  font-family: var(--font-mono);
+  font-stretch: 112.5%;
+  font-weight: 600;
+  font-size: var(--fs-2xl);
+  line-height: 1;
+}
+.gv-proof__u { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--ink-3); }
+.gv-proof__l { font-size: var(--fs-s); line-height: 1.35; color: var(--ink-2); }
+
+/* ---------- протокол ---------- */
+.gv-proto__head {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--s2);
+  margin-bottom: var(--s3);
+}
+.gv-proto__scroll { grid-column: 1 / -1; }
+.gv-proto {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--ink);
+}
+.gv-proto th,
+.gv-proto td {
+  padding: var(--s2) var(--s2) var(--s2) 0;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--rule-strong);
+}
+.gv-proto thead th {
+  padding-block: var(--s1);
+  font-family: var(--font-mono);
+  font-stretch: 75%;
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom-color: var(--ink);
+}
+.gv-proto__h--3 { text-align: right !important; }
+.gv-proto__gh th {
+  padding-top: var(--s5);
+  font-family: var(--font-display);
+  font-weight: 850;
+  font-size: var(--fs-xl);
+  line-height: 1;
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+.gv-proto__row.is-key { background: var(--paper-lift); }
+.gv-proto__row.is-key > :first-child { padding-left: var(--s1); }
+.gv-proto__row.is-key .gv-proto__label { font-weight: 700; }
+.gv-proto__n { width: 3rem; font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--ink-3); }
+.gv-proto__label { width: 34%; font-weight: 600; font-size: var(--fs-s); line-height: 1.35; }
+.gv-proto__cond { color: var(--ink-2); font-size: var(--fs-s); line-height: 1.4; }
+.gv-proto__value { text-align: right !important; white-space: nowrap; }
+.gv-proto__v {
+  font-family: var(--font-mono);
+  font-stretch: 112.5%;
+  font-weight: 600;
+  font-size: var(--fs-xl);
+  line-height: 1;
+}
+.gv-proto__kind { width: 12rem; text-align: right !important; padding-right: 0 !important; }
+
+/* ---------- чипы и фильтры ---------- */
+.gv-filter { display: flex; flex-wrap: wrap; gap: var(--s1); }
+.gv-filter__b {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s1);
+  min-height: 2.75rem;
+  padding: 0 var(--s2);
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-xs);
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  border-radius: 0.1875rem;
+  background: var(--paper);
+}
+.gv-filter__b:hover,
+.gv-filter__b[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ---------- готовность и ограничения (лист 10) ---------- */
+.gv-readywrap { grid-column: 1 / -1; }
+.gv-envwrap { grid-column: 1 / -1; margin-top: var(--s10); }
+.gv-envwrap__head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--s2) var(--s4);
+  margin-bottom: var(--s3);
+}
+.gv-env {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1px solid var(--ink);
+}
+.gv-env th,
+.gv-env td {
+  padding: var(--s2) var(--s2) var(--s2) 0;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--rule-strong);
+  line-height: 1.45;
+}
+.gv-env thead th {
+  padding-block: var(--s1);
+  font-family: var(--font-mono);
+  font-stretch: 75%;
+  font-size: var(--fs-2xs);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  border-bottom-color: var(--ink);
+}
+.gv-env__row.is-alert { background: var(--paper-lift); }
+.gv-env__cond { width: 32%; }
+.gv-env__name {
+  display: inline-block;
+  margin-bottom: var(--s1);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-xl);
+  line-height: 1.05;
+}
+.gv-trade__n { font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--ink-3); margin-right: 0.375rem; }
+.gv-ready-table__st { width: 15rem; }
+.gv-env__resp { font-size: var(--fs-s); color: var(--ink-2); }
+.gv-env__src { width: 13rem; text-align: right !important; padding-right: 0 !important; }
+
+.gv-untested {
+  grid-column: 2 / span 10;
+  display: grid;
+  gap: var(--s1);
+  margin-top: var(--s10);
+  padding: var(--s3) var(--s4);
+  border: 0.1875rem double var(--ink);
+  border-radius: 0.25rem;
+}
+.gv-untested__t { font-family: var(--font-display); font-weight: 850; font-size: var(--fs-2xl); line-height: 1; }
+.gv-untested .gv-note { font-size: var(--fs-l); }
+
+/* ---------- сдача смены (лист 11) ---------- */
+.gv-sheet--contact { padding-bottom: var(--s16); }
+.gv-close__handover { grid-column: 4 / span 9; border-top: 1px solid var(--ink); }
+.gv-close__line {
+  display: grid;
+  grid-template-columns: 11rem minmax(0, 1fr);
+  align-items: center;
+  min-height: calc(var(--row) * 2.5);
+  border-bottom: 1px solid var(--rule-strong);
+}
+.gv-close__line dd { margin: 0; }
+.gv-close__sign { font-size: var(--fs-2xl); line-height: 1; }
+.gv-close__seal { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s1) var(--s3); }
+.gv-close__seal .gv-mark { font-size: var(--fs-s); padding: 0.375rem 0.75rem 0.25rem; }
+.gv-close__time { font-family: var(--font-mono); font-size: var(--fs-s); font-weight: 600; }
+.gv-close__mine { font-size: var(--fs-s); color: var(--ink-2); }
+.gv-close__act {
+  grid-column: 4 / span 9;
+  display: grid;
+  justify-items: start;
+  min-width: 0;
+  gap: var(--s4);
+  margin-top: var(--s8);
+}
+.gv-close__act > * { max-width: 100%; }
+.gv-close__lead { max-width: 42ch; font-size: var(--fs-l); line-height: 1.4; color: var(--ink-2); }
+.gv-close__btns { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); }
+.gv-close__cta { min-height: 5rem; padding: var(--s2) var(--s5) var(--s2) var(--s4); font-size: var(--fs-2xl); }
+.gv-close__cta .gv-icon { width: 1.75rem; height: 1.75rem; }
+.gv-close__cta-t { display: grid; gap: 0.375rem; }
+.gv-close__links { display: flex; flex-wrap: wrap; gap: var(--s1) var(--s4); }
+.gv-close__license {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 2.75rem;
+  font-family: var(--font-mono);
+  font-stretch: 87.5%;
+  font-size: var(--fs-xs);
+}
+
+@media (max-width: 1000px) {
+  .gv-proofs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gv-untested,
+  .gv-close__handover,
+  .gv-close__act { grid-column: 1 / -1; }
+}
+
+@media (max-width: 900px) {
+  .gv-proto thead { display: none; }
+  .gv-proto tr.gv-proto__row {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr);
+    column-gap: var(--s1);
+    row-gap: 0.25rem;
+    padding: var(--s2) 0;
+    border-bottom: 1px solid var(--rule-strong);
+  }
+  .gv-proto tr.gv-proto__row > * { border: 0; padding: 0; width: auto; }
+  .gv-proto tr.gv-proto__row.is-key { padding-inline: var(--s1); }
+  .gv-proto__label,
+  .gv-proto__cond,
+  .gv-proto__value,
+  .gv-proto__kind { grid-column: 2; text-align: left !important; }
+  .gv-proto__gh th { display: block; }
+}
+
+@media (max-width: 760px) {
+  .gv-proofs { grid-template-columns: minmax(0, 1fr); }
+  .gv-proto__value { white-space: normal; }
+  .gv-proto__v { font-size: var(--fs-l); overflow-wrap: anywhere; }
+  .gv-env thead { display: none; }
+  .gv-env tr { display: grid; gap: 0.375rem; padding: var(--s2) 0; border-bottom: 1px solid var(--rule-strong); }
+  .gv-env th,
+  .gv-env td { width: auto; border: 0; padding: 0; text-align: left !important; }
+  .gv-close__line { grid-template-columns: minmax(0, 1fr); padding: var(--s1) 0; }
+  .gv-close__cta { font-size: var(--fs-xl); padding-inline: var(--s3); width: 100%; }
+  .gv-close__cta .gv-stamp__sub { overflow-wrap: anywhere; }
+}

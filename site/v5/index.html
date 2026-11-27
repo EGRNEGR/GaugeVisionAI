@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GaugeVision AI 3.0 — прибор пишет журнал сам</title>
+  <meta name="description" content="GaugeVision AI 3.0 (v3.0.0): камера снимает показания стрелочных приборов КИПиА снаружи контура, ведёт щит приборов, Ignition SCADA, прогноз трендов и план модернизации под бюджет.">
+  <meta name="theme-color" content="#E9EBE4">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/sofia-xcond-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/sofia-sans-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/martian-mono-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- Порядок стилей: шрифты → токены → база → движение → страница → прибор → листы → Tweaks -->
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/page.css">
+  <link rel="stylesheet" href="css/gauge.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/shift.css">
+  <link rel="stylesheet" href="css/v3-sheets.css">
+  <link rel="stylesheet" href="css/ledger.css">
+  <link rel="stylesheet" href="css/tweaks.css">
+
+  <script>
+    /* Настройки Tweaks — до первой отрисовки, без скачка вёрстки. */
+    (function () {
+      var d = document.documentElement;
+      var q = location.search;
+      var on = /[?&]tweaks(=on|=1)?(&|$)/.test(q);
+      var off = /[?&]tweaks=off(&|$)/.test(q);
+      try {
+        if (on) localStorage.setItem('gv.tweaks.on', '1');
+        if (off) localStorage.removeItem('gv.tweaks.on');
+        if (localStorage.getItem('gv.tweaks.on') === '1') d.setAttribute('data-tweaks', 'on');
+        var t = JSON.parse(localStorage.getItem('gv.tweaks') || '{}');
+        if ([0.9, 1, 1.1, 1.25].indexOf(t.scale) >= 0) d.style.setProperty('--ui-scale', String(t.scale));
+        if (['ledger', 'graph', 'tracing'].indexOf(t.paper) >= 0) d.setAttribute('data-paper', t.paper);
+      } catch (e) {
+        if (on) d.setAttribute('data-tweaks', 'on');
+      }
+    })();
+  </script>
+</head>
+<body>
+  <a class="gv-skip" href="#gv-main">К содержанию</a>
+
+  <div id="gv-root"></div>
+
+  <noscript>
+    <div class="gv-noscript">
+      <p>Журнал обхода и показаний КИП, GaugeVision AI 3.0 (v3.0.0)</p>
+      <h1>Прибор пишет журнал сам</h1>
+      <p>Промышленность будущего. На оборудовании настоящего. Камера снимает стрелку снаружи контура, а GaugeVision 3.0 ведёт щит, SCADA, прогноз и план модернизации.</p>
+      <p><a href="https://github.com/EGRNEGR/GaugeVisionAI/releases/tag/v3.0.0">Версия v3.0.0 на GitHub</a></p>
+    </div>
+  </noscript>
+
+  <aside id="gv-tweaks" aria-label="Настройки внешнего вида"></aside>
+
+  <!-- Порядок скриптов: content → util → motion → optimizer-core → kit → draw → components/* → showcase → tweaks → page -->
+  <script src="js/content.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/motion.js"></script>
+  <script src="js/optimizer-core.js"></script>
+  <script src="js/components/kit.js"></script>
+  <script src="js/components/draw.js"></script>
+  <script src="js/components/journal.js"></script>
+  <script src="js/components/shift.js"></script>
+  <script src="js/components/multigauge.js"></script>
+  <script src="js/components/resilience.js"></script>
+  <script src="js/components/scada.js"></script>
+  <script src="js/components/forecast.js"></script>
+  <script src="js/components/optimizer.js"></script>
+  <script src="js/components/metrics.js"></script>
+  <script src="js/components/evolution.js"></script>
+  <script src="js/components/limits.js"></script>
+  <script src="js/components/contact.js"></script>
+  <script src="js/showcase.js"></script>
+  <script src="js/tweaks.js"></script>
+  <script src="js/page.js"></script>
+</body>
+</html>

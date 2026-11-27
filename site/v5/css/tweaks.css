@@ -1,0 +1,77 @@
+/* Tweaks — инструмент автора: виден только при html[data-tweaks='on'] (ADR 0010). */
+.gv-tw {
+  display: none;
+}
+html[data-tweaks='on'] .gv-tw {
+  display: grid;
+  justify-items: start;
+  gap: var(--s1);
+  position: fixed;
+  z-index: 40;
+  left: var(--s2);
+  bottom: var(--s2);
+}
+.gv-tw__btn {
+  min-height: 2.75rem;
+  padding: 0 var(--s2);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  color: var(--paper);
+  background: var(--violet);
+  border-radius: 0.1875rem;
+}
+.gv-tw__panel {
+  display: grid;
+  gap: var(--s2);
+  padding: var(--s2);
+  background: var(--paper);
+  border: 1px solid var(--ink);
+  border-radius: 0.25rem;
+  box-shadow: 0 1rem 2rem -1rem rgba(23, 25, 28, 0.5);
+}
+.gv-tw__panel[hidden] {
+  display: none;
+}
+.gv-tw__group {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.gv-tw__opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.375rem;
+}
+.gv-tw__opt {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.25rem;
+  padding: 0 0.625rem;
+  font-size: var(--fs-xs);
+  border: 1px solid var(--rule-strong);
+  border-radius: 0.1875rem;
+  cursor: pointer;
+}
+.gv-tw__radio {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.gv-tw__opt:has(.gv-tw__radio:checked) {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.gv-tw__opt:has(.gv-tw__radio:focus-visible) {
+  outline: 0.125rem solid var(--violet);
+  outline-offset: 0.125rem;
+}
+@media (max-width: 900px) {
+  html[data-tweaks='on'] .gv-tw {
+    bottom: calc(3.5rem + env(safe-area-inset-bottom));
+  }
+}
