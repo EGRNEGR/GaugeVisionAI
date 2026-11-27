@@ -168,7 +168,9 @@ function renderCamerasView() {
   const cam = livePrimaryCam();
   if (state.meta) {
     $('#camLanHost').textContent = state.meta.urls?.[1] || `https://${state.meta.lan_ip}:${state.meta.port}`;
+    // ссылка на внешний симулятор — только если сервер её выдал (демопрофиль, OBS-SHARED-05)
     if (state.meta.simulator_url) $('#lnkSimulator').href = state.meta.simulator_url;
+    $('#simulatorHint').hidden = !state.meta.simulator_url;
   }
   if (!cam) return;
 

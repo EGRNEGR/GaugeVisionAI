@@ -928,6 +928,7 @@
             <button type="button" data-f="warning" aria-pressed="false">Предупр. <span class="c" id="jcWarn">0</span></button>
             <button type="button" data-f="return" aria-pressed="false">Возврат в норму</button>
             <button type="button" data-f="link" aria-pressed="false">Связь</button>
+            <button type="button" data-f="prediction" aria-pressed="false">Прогноз</button>
             <button type="button" data-f="action" aria-pressed="false">Квитирование и настройки</button>
           </div>
           <label class="toolbar-select">
@@ -1062,7 +1063,7 @@
               <strong>Порядок подключения перед судьями:</strong>
               <ol class="steps">
                 <li>Убедитесь, что ноутбук и Android находятся в одной Wi-Fi сети или точке доступа (адрес сервера: <span class="mono" id="camLanHost">—</span>).</li>
-                <li>Откройте на экране для съёмки симулятор прибора (<a id="lnkSimulator" href="https://gaugevision-simulator.goodlyoatmeal32.chatgpt.site/" target="_blank" rel="noopener">открыть симулятор МТП-160</a>, режим камеры, 0–16 МПа).</li>
+                <li id="simulatorHint" hidden>Откройте на экране для съёмки симулятор прибора (<a id="lnkSimulator" target="_blank" rel="noopener">открыть симулятор МТП-160</a>, режим камеры, 0–16 МПа).</li>
                 <li>Отсканируйте QR-код на Android, при первом входе подтвердите доверие к HTTPS-сертификату сервера (<a href="/api/cert.pem" download>скачать cert.pem</a>).</li>
                 <li>Разрешите доступ к задней камере и нажмите «Начать трансляцию» в открытой вкладке смартфона.</li>
               </ol>

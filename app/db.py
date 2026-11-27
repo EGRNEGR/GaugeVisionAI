@@ -1477,6 +1477,11 @@ async def get_instrument_series(
     Возвращает хронологические временные ряды `(unix_ts, value)` по `instrument_id`
     из объединённого архива `readings` (по `COALESCE(instrument_id, camera_id)`) и
     `instrument_readings` за окно `[since_iso, until_iso]`.
+
+    Для приборов реестра `instruments` берутся только строки текущей ревизии калибровки
+    (`readings.calibration_rev`, NULL = ревизия 0): после смены шкалы ряд начинается заново, и прогноз
+    не видит ложного скачка. Строки приборов вне реестра (стенд `instrument_readings`, удалённые
+    приборы) не фильтруются — калибровки у них нет.
     """
     clauses = ["timestamp >= ?", "value IS NOT NULL"]
     params: list[Any] = [since_iso]
@@ -1489,15 +1494,20 @@ async def get_instrument_series(
     id_params: list[Any] = []
     if instrument_ids:
         ph = ",".join("?" for _ in instrument_ids)
-        id_clause_r = f" AND COALESCE(instrument_id, camera_id) IN ({ph})"
+        id_clause_r = f" AND COALESCE(r.instrument_id, r.camera_id) IN ({ph})"
         id_clause_ir = f" AND instrument_id IN ({ph})"
         id_params = list(instrument_ids)
 
     where_sql = " AND ".join(clauses)
+    where_sql_r = " AND ".join(f"r.{c}" for c in clauses)
     sql = f"""
         SELECT iid, ts, val FROM (
-            SELECT COALESCE(instrument_id, camera_id) AS iid, timestamp AS ts, value AS val, id AS rid
-            FROM readings WHERE {where_sql}{id_clause_r}
+            SELECT COALESCE(r.instrument_id, r.camera_id) AS iid, r.timestamp AS ts, r.value AS val,
+                   r.id AS rid
+            FROM readings r
+            LEFT JOIN instruments i ON i.id = COALESCE(r.instrument_id, r.camera_id)
+            WHERE {where_sql_r}{id_clause_r}
+              AND (i.id IS NULL OR COALESCE(r.calibration_rev, 0) = i.calibration_rev)
             UNION ALL
             SELECT instrument_id AS iid, timestamp AS ts, value AS val, id AS rid
             FROM instrument_readings WHERE {where_sql}{id_clause_ir}

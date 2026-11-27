@@ -14,6 +14,7 @@ GaugeVision AI — оптимизатор бюджета модернизаци�
 from __future__ import annotations
 
 import math
+import time
 from typing import Any
 
 from . import config
@@ -330,13 +331,17 @@ def optimize_modernization_budget(
         )
 
     main_tl = max(0.05, min(15.0, float(time_limit_s)))
+    # time_limit_s ограничивает весь расчёт, включая кривую Парето: основной задаче — 60 % лимита,
+    # точкам кривой — остаток до общего срока; не уложившиеся точки помечаются not_computed
+    t_start = time.monotonic()
+    deadline = t_start + main_tl
     sol = solve_binary_ilp(
         ilp_items,
         budget=float(budget_rub),
         max_items=max_items,
         min_per_group=min_per_group,
         max_per_group=max_per_group,
-        time_limit_s=main_tl,
+        time_limit_s=main_tl * 0.6 if include_frontier else main_tl,
         cancel_event=cancel_event,
         solver_backend=solver_backend,
     )
@@ -412,16 +417,22 @@ def optimize_modernization_budget(
         }
         for frac in (0.20, 0.35, 0.50, 0.65, 0.80, 1.0):
             grid_set.add(int(round(total_all_capex * frac / 10_000.0) * 10_000))
-        for b_pt in sorted(b for b in grid_set if b >= 0):
+        grid = sorted(b for b in grid_set if b >= 0)
+        for k_pt, b_pt in enumerate(grid):
             if cancel_event is not None and callable(getattr(cancel_event, "is_set", None)) and cancel_event.is_set():
                 break
+            remaining = deadline - time.monotonic()
+            if remaining < 0.02:
+                frontier.append({"budget_rub": b_pt, "status": "not_computed", "reason": "time_limit",
+                                 "is_current_budget": (b_pt == int(budget_rub))})
+                continue
             f_sol = solve_binary_ilp(
                 ilp_items,
                 budget=float(b_pt),
                 max_items=max_items,
                 min_per_group=min_per_group,
                 max_per_group=max_per_group,
-                time_limit_s=min(0.4, main_tl * 0.35),
+                time_limit_s=min(0.4, remaining / (len(grid) - k_pt)),
                 cancel_event=cancel_event,
                 solver_backend=solver_backend,
             )
@@ -496,4 +507,7 @@ def optimize_modernization_budget(
         "deferred": deferred,
         "greedy_comparison": greedy_comp,
         "budget_frontier": frontier,
+        "frontier_complete": all(f.get("status") != "not_computed" for f in frontier),
+        "elapsed_s": round(time.monotonic() - t_start, 3),
+        "time_limit_s": main_tl,
     }

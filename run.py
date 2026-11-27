@@ -102,6 +102,10 @@ def main() -> None:
     if args.port != config.HTTPS_PORT:
         config.HTTPS_PORT = args.port  # ссылки QR-кодов используют фактический порт
 
+    # 0. Сетевая политика (OBS-SHARED-01..04): предупреждения, в строгом режиме — отказ запуска
+    from app import net_policy
+    net_policy.startup_check(args.host)
+
     # 1. SSL-сертификат с SAN (localhost, 127.0.0.1, LAN IP)
     cert_file, key_file = ensure_certs()
     # 2. Реальный LAN IP

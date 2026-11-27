@@ -53,6 +53,7 @@ from .contracts import default_passport_for_instrument, resolve_instrument_ident
 from .dispatch_analyzer import DispatchAnalyzer
 from .events import EventLog, crossed_setpoint
 from .modernization_optimizer import OBJECTIVE_META, optimize_modernization_budget
+from .prediction_events import PredictionEventTracker
 from .predictive_analytics import PredictiveAnalyzer
 from .scada_gateway import ScadaGateway
 from .security import (
@@ -501,6 +502,7 @@ class GaugeService(MultiGaugeServiceMixin):
         self.dispatch = DispatchAnalyzer()
         self.predictive = PredictiveAnalyzer()
         self._last_predictive_overview: dict[str, Any] | None = None
+        self.prediction_events = PredictionEventTracker()
         self._predictive_cache: dict[tuple[float, float, int], tuple[float, dict[str, Any]]] = {}
         self._predictive_cache_ttl_s: float = 5.0
         self._sse_clients: set[asyncio.Queue[str]] = set()
@@ -564,11 +566,13 @@ class GaugeService(MultiGaugeServiceMixin):
         try:
             # Персистентное сохранение события и стоп-кадра в SQLite (DEF-20)
             self._spawn_io(db.save_event(ev, snap))
-            if kind in ("alarm", "link"):
+            if kind in ("alarm", "link", "prediction"):
                 sev = ev.get("level") or ("warning" if ev.get("text") in ("offline", "reconnecting") else "info")
+                if kind == "prediction":
+                    sev = "warning" if ev.get("text") == "imminent" else "info"
                 self._spawn_io(self.store_forward.enqueue(
                     channel_id=str(ev.get("cam_id") or "station"),
-                    payload_type="alarm" if kind == "alarm" else "health",
+                    payload_type="alarm" if kind in ("alarm", "prediction") else "health",
                     severity=str(sev),
                     payload={k: v for k, v in ev.items() if k != "has_frame"},
                     frame_blob=snap,
@@ -998,13 +1002,16 @@ class GaugeService(MultiGaugeServiceMixin):
         use_cache: bool = True,
     ) -> dict[str, Any]:
         insts = instruments if instruments is not None else self.public_instruments()
-        cache_key = (round(float(window_min), 1), round(float(horizon_min), 1), len(insts))
+        cache_key = (round(float(window_min), 1), round(float(horizon_min), 1),
+                     tuple((str(i.get("id")), i.get("calibration_rev")) for i in insts))
         now_m = time.monotonic()
         if use_cache and not persist:
             cached = self._predictive_cache.get(cache_key)
             if cached is not None and (now_m - cached[0]) <= self._predictive_cache_ttl_s:
                 return cached[1]
         now = time.time()
+        insts = [i if demo.reading_is_live(i) or not i.get("reading") else
+                 {**i, "reading": {**i["reading"], "valid": False}} for i in insts]
         series_map = await self.collect_predictive_series(insts, window_min=window_min, now_unix=now)
         loop = asyncio.get_running_loop()
         ov = await loop.run_in_executor(
@@ -1021,6 +1028,24 @@ class GaugeService(MultiGaugeServiceMixin):
         if persist and ov.get("instruments"):
             await db.save_predictive_snapshots(ov["instruments"])
         return ov
+
+    def _publish_prediction_events(self, pred_ov: dict[str, Any] | None) -> list[dict[str, Any]]:
+        """Переходы прогноза прибора (app/prediction_events.py) — в журнал, SQLite, пульты и S&F."""
+        if not pred_ov:
+            return []
+        preds = {str(x["instrument_id"]): x for x in pred_ov.get("instruments") or [] if x.get("instrument_id")}
+        revs = {iid: (self.instruments.get(iid) or {}).get("calibration_rev") for iid in preds}
+        emitted: list[dict[str, Any]] = []
+        for tr in self.prediction_events.update(preds, time.time(), revs):
+            p = tr["pred"]
+            iid = tr["instrument_id"]
+            eta = p.get("eta_alert_min")
+            emitted.append(self.emit(
+                "prediction", cam_id=iid, cam_name=p.get("code") or p.get("name") or iid,
+                level=tr["level"], value=round(float(eta), 1) if isinstance(eta, (int, float)) else None,
+                unit="мин", setpoint=tr["setpoint"], setpoint_value=tr["setpoint_value"], text=tr["text"],
+            ))
+        return emitted
 
     async def run_optimizer_nonblocking(self, **kwargs: Any) -> dict[str, Any]:
         """
@@ -1089,7 +1114,9 @@ class GaugeService(MultiGaugeServiceMixin):
                         window_min=60.0,
                         horizon_min=60.0,
                         persist=(tick_n % 15 == 0),
+                        use_cache=False,
                     )
+                    self._publish_prediction_events(pred_ov)
                 else:
                     pred_ov = self._last_predictive_overview
                 pred_by_id = {
@@ -1354,6 +1381,7 @@ class GaugeService(MultiGaugeServiceMixin):
                         self._mg_after_frame(cam_id, views, res, snaps, adaptive,
                                              degraded=(qrep.health_status == "DEGRADED"))
                     else:
+                        cam_rev = int((self.instruments.get(cam_id) or {}).get("calibration_rev") or 0)
                         reading, jpeg, snap = await loop.run_in_executor(
                             self.executor, self._run_pipeline, pipeline, eff_frame, cam)
                         if jpeg:
@@ -1368,22 +1396,35 @@ class GaugeService(MultiGaugeServiceMixin):
                             degraded=(qrep.health_status == "DEGRADED"),
                             process_ms=reading.process_ms,
                         )
-                        self._on_reading(cam_id, cam, reading, snap)
+                        self._on_reading(cam_id, {**cam, "calibration_rev": cam_rev}, reading, snap)
             except asyncio.CancelledError:
                 raise
             except Exception as exc:
                 logger.exception("[%s] ошибка конвейера: %s", cam_id[:8], exc)
             await self._sleep_with_motion_wakeup(cam_id, adaptive, last_no, max(0.05, adaptive.interval - (time.monotonic() - t0)))
 
+    def _reset_instrument_filter(self, inst_id: str, source_id: str) -> None:
+        mp = self.mg.get(source_id)
+        if mp is not None and inst_id in mp.pipelines:
+            mp.pipelines[inst_id].reset()
+        elif inst_id in self.pipelines:
+            self.pipelines[inst_id].reset(keep_roi=True)
+
     def _on_reading(self, cam_id: str, cam: dict[str, Any], r: vision.GaugeReading,
                     snap: bytes | None = None, source_id: str | None = None) -> None:
         """Отсчёт прибора cam_id (= instrument_id; для однокамерного источника — id камеры)."""
-        ts = db.utcnow_iso()
-        prev = self.last.get(cam_id) or {}
         source_id = source_id or cam_id
-        stream_info = self.streams.info(source_id)
         inst_row = self.instruments.get(cam_id) or {}
         cal_rev = int(inst_row.get("calibration_rev") or 0)
+        used_rev = cam.get("calibration_rev")
+        if used_rev is not None and int(used_rev) != cal_rev:
+            # кадр обрабатывался по прежней шкале, пока инженер её менял: такой отсчёт не принадлежит
+            # ни старой, ни новой ревизии — отбрасывается, сглаживание прибора начинается заново
+            self._reset_instrument_filter(cam_id, source_id)
+            return
+        ts = db.utcnow_iso()
+        prev = self.last.get(cam_id) or {}
+        stream_info = self.streams.info(source_id)
         out_of_scale = bool(r.debug.get("out_of_scale"))
 
         last_valid_ts = ts if r.valid else prev.get("last_valid_ts")
@@ -1580,7 +1621,7 @@ class GaugeService(MultiGaugeServiceMixin):
             "enabled": True,
             "live_cam_id": config.DEMO_LIVE_CAM_ID,
             "total_positions": config.DEMO_TOTAL_POSITIONS,
-            "simulator_url": config.SIMULATOR_URL,
+            "simulator_url": config.simulator_url(),
             "stale_seconds": config.READING_STALE_SECONDS,
             "db_path": str(config.get_db_path()),
             "scenario": self.sim_adapter.scenario,
@@ -2029,7 +2070,7 @@ async def api_meta(request: Request) -> dict[str, Any]:
         "disclaimer": LEGAL_DISCLAIMER,
         "db_path": str(config.get_db_path()),
         "stale_seconds": config.READING_STALE_SECONDS,
-        "simulator_url": config.SIMULATOR_URL,
+        "simulator_url": config.simulator_url(),
         "demo": await service.demo_state(),
     }
 

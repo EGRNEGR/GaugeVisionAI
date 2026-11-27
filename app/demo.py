@@ -582,6 +582,21 @@ class SimulatedTelemetryAdapter:
         return out
 
 
+STALE_MEAS_STATES = frozenset({"no_fresh_data", "no_data"})
+
+
+def reading_is_live(inst: dict[str, Any]) -> bool:
+    """Отсчёт прибора можно выдавать наружу как текущий: он достоверен и кадры источника свежие.
+
+    Последний достоверный отсчёт остаётся в `reading` и после остановки потока без разрыва соединения
+    (смартфон свёрнут, камера зависла); такой отсчёт — `meas_state = no_fresh_data`, а не текущее значение.
+    """
+    rd = inst.get("reading") or {}
+    if not rd.get("valid") or rd.get("value") is None:
+        return False
+    return inst.get("meas_state") not in STALE_MEAS_STATES
+
+
 def compute_live_states(
     cam: dict[str, Any],
     stream_info: dict[str, Any],

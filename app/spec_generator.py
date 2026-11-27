@@ -30,7 +30,7 @@ from typing import Any
 
 import httpx
 
-from . import config
+from . import config, net_policy
 from .docx_builder import DocxBuilder
 from .stream_manager import encode_jpeg, render_gauge_frame
 
@@ -218,6 +218,9 @@ async def _try_llm_enrichment(summary_prompt: str) -> tuple[str | None, str]:
     """Опциональное стилистическое обогащение выводов через Ollama/vLLM/OpenAI-compatible API."""
     if not config.LLM_BASE_URL:
         return None, "deterministic (LLM URL не задан)"
+    url_err = net_policy.llm_url_error(config.LLM_BASE_URL)
+    if url_err:
+        return None, f"deterministic (LLM отклонён сетевой политикой: {url_err})"
     endpoint = config.LLM_BASE_URL.rstrip("/")
     if not endpoint.endswith("/chat/completions"):
         endpoint = f"{endpoint}/chat/completions"

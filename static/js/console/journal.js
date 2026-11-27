@@ -15,6 +15,19 @@ const LINK_TEXT = {
   reconnecting: 'Поток кадров прерван — ожидание восстановления',
   offline: 'Камера отключена (офлайн)',
 };
+// Прогнозные события (app/prediction_events.py) и сопровождение приборов щита (Multi-Gauge)
+const PREDICTION_TEXT = {
+  cleared: 'Прогноз снят: тренд больше не ведёт к аварийной уставке',
+  realized: 'Прогноз подтвердился: уставка пробита, дальше — по журналу тревог',
+  withdrawn: 'Прогноз отозван: нет достоверного ряда (обрыв, отказ CV или смена калибровки)',
+};
+const INSTRUMENT_TEXT = {
+  track_lost: 'Циферблат потерян в кадре — показания прибора не выдаются',
+  track_ambiguous: 'Положение циферблата неоднозначно — показания прибора не выдаются',
+  reacquired: 'Циферблат снова найден — показания восстановлены',
+  added: 'Прибор щита зарегистрирован',
+  removed: 'Прибор щита удалён, его слот Modbus освобождён',
+};
 const FIELD_TEXT = {
   name: 'наименование',
   type: 'тип источника',
@@ -157,6 +170,7 @@ function matchesEvent(ev) {
   if (filterKind === 'return') return ev.kind === 'alarm' && ev.level === 'normal';
   if (filterKind === 'link') return ev.kind === 'link';
   if (filterKind === 'action') return ev.kind === 'ack' || ev.kind === 'config';
+  if (filterKind === 'prediction') return ev.kind === 'prediction';
   return true;
 }
 
@@ -167,6 +181,11 @@ function tagInfo(ev) {
   }
   if (ev.kind === 'link') return { level: ev.text === 'online' ? 'info' : 'stale', text: 'СВЯЗЬ' };
   if (ev.kind === 'ack') return { level: 'info', text: 'КВИТИРОВАНИЕ' };
+  if (ev.kind === 'prediction') return { level: ev.text === 'imminent' ? 'warning' : 'info', text: 'ПРОГНОЗ' };
+  if (ev.kind === 'instrument') {
+    const bad = ev.text === 'track_lost' || ev.text === 'track_ambiguous';
+    return { level: bad ? 'stale' : 'info', text: bad ? 'СОПРОВОЖДЕНИЕ' : 'ЩИТ' };
+  }
   return { level: 'info', text: 'НАСТРОЙКА' };
 }
 
@@ -178,6 +197,15 @@ function describeEvent(ev) {
     if (ev.ref_event_id) return `Квитировано событие №${ev.ref_event_id} (оператор ${ev.text || 'локальный'})`;
     return `Квитировано событий: ${Math.round(ev.value || 0)} (оператор ${ev.text || 'локальный'})`;
   }
+  if (ev.kind === 'prediction') {
+    if (ev.text !== 'imminent') return PREDICTION_TEXT[ev.text] || ev.text;
+    const sp = ev.setpoint ? `уставки ${ev.setpoint}` : 'аварийной уставки';
+    const spv = ev.setpoint_value != null ? ` (${String(ev.setpoint_value).replace('.', ',')})` : '';
+    return ev.value != null
+      ? `Прогноз: достижение ${sp}${spv} примерно через ${String(ev.value).replace('.', ',')} мин`
+      : `Прогноз: высокая вероятность достижения ${sp}${spv} на горизонте 60 мин`;
+  }
+  if (ev.kind === 'instrument') return INSTRUMENT_TEXT[ev.text] || ev.text;
   if (ev.text === 'added') return 'Прибор добавлен в конфигурацию';
   if (ev.text === 'deleted') return 'Прибор удалён';
   return `Сохранены параметры: ${String(ev.text || '').split(',').map((k) => FIELD_TEXT[k] || k).join(', ')}`;
@@ -207,12 +235,13 @@ export function renderJournal() {
     const cam = state.cams.get(ev.cam_id);
     const who = cam ? `${cam.data.code ? `${cam.data.code} ` : ''}${cam.data.short_name || cam.data.name}` : (ev.cam_name || 'Система');
     const desc = describeEvent(ev);
-    const ackMeta = ev.kind === 'alarm' && ev.level !== 'normal'
+    // потеря сопровождения прибора щита тоже требует квитирования (app/events.py, _ACK_TEXTS)
+    const canAck = (ev.kind === 'alarm' && ev.level !== 'normal') || (ev.kind === 'instrument' && (ev.text === 'track_lost' || ev.text === 'track_ambiguous'));
+    const ackMeta = canAck
       ? (ev.acked
         ? `<small>Оператор ознакомлен${ev.acked_ts ? ` в ${timeStr(new Date(ev.acked_ts))}` : ''}</small>`
         : '<small>Требуется квитирование оператором</small>')
       : '';
-    const canAck = ev.kind === 'alarm' && ev.level !== 'normal';
     const ackControl = canAck
       ? `<button class="btn sm ${ev.acked ? '' : 'ack'}" type="button" data-ev-ack="${ev.id}">${ev.acked ? 'Квитировано' : 'Квитировать'}</button>`
       : '';

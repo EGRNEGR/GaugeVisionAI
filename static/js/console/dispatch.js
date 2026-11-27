@@ -835,7 +835,8 @@ function drawParetoFrontierCanvas(res) {
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, w, h);
 
-  const pts = (res?.budget_frontier || []).filter((p) => p.status !== 'infeasible');
+  // только посчитанные точки: несовместимые и не уложившиеся в лимит времени (not_computed) не рисуются
+  const pts = (res?.budget_frontier || []).filter((p) => p.status === 'optimal' || p.status === 'time_limit');
   const padL = 44;
   const padR = 20;
   const padT = 14;

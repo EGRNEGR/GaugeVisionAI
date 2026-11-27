@@ -193,6 +193,11 @@ SIMULATOR_URL: str = os.environ.get(
     "https://gaugevision-simulator.goodlyoatmeal32.chatgpt.site/",
 )
 
+
+def simulator_url() -> str:
+    """Внешний симулятор прибора — подсказка демопрофиля; в рабочем профиле ссылки нет (OBS-SHARED-05)."""
+    return SIMULATOR_URL if is_demo_mode() else os.environ.get("GAUGEVISION_SIMULATOR_URL", "")
+
 # ---------------------------------------------------------------------------
 # Захват потоков (раздел 2 ТЗ)
 # ---------------------------------------------------------------------------
@@ -426,7 +431,13 @@ def candidate_lan_ips() -> list[str]:
     выбранный таблицей маршрутизации.
     """
     found: list[str] = []
-    for probe in ("8.8.8.8", "192.168.255.255", "10.255.255.255", "172.31.255.255"):
+    override = os.environ.get("GAUGEVISION_LAN_IP")
+    if override:
+        # адрес задан явно: внешний адрес-зонд 8.8.8.8 не используется (OBS-SHARED-05)
+        found.append(override.strip())
+    probes = ("192.168.255.255", "10.255.255.255", "172.31.255.255") if override else (
+        "8.8.8.8", "192.168.255.255", "10.255.255.255", "172.31.255.255")
+    for probe in probes:
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         try:
             sock.connect((probe, 80))

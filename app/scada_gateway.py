@@ -29,8 +29,9 @@ import time
 from collections import OrderedDict, deque
 from typing import Any
 
-from . import config
+from . import config, net_policy
 from .db import utcnow_iso
+from .demo import reading_is_live
 
 logger = logging.getLogger("gaugevision.scada")
 
@@ -168,9 +169,13 @@ class ModbusTcpGateway:
     EXTENDED_STRIDE = 8
     PREDICTIVE_BASE = 3600
     PREDICTIVE_STRIDE = 8
-    PREDICTIVE_MAX_INSTRUMENTS = 61  # 3600..4087 (4095 остаётся свободным, MAX_REGISTERS=4096 сохраняется)
+    PREDICTIVE_MAX_INSTRUMENTS = 61  # 3600..4087 — слоты 0..60, адреса не менялись с карты v2
+    # Продолжение прогнозного блока для слотов 61..199 (добавлено при интеграции, адреса 4096..5207):
+    # прежние адреса не сдвигаются, привязки Ignition к слотам 0..60 остаются в силе.
+    PREDICTIVE_EXT_BASE = 4096
+    PREDICTIVE_EXT_FIRST_SLOT = PREDICTIVE_MAX_INSTRUMENTS
     MAX_SLOTS = 200
-    MAX_REGISTERS = 4096
+    MAX_REGISTERS = PREDICTIVE_EXT_BASE + (MAX_SLOTS - PREDICTIVE_EXT_FIRST_SLOT) * PREDICTIVE_STRIDE  # 5208
     REGISTER_MAP_VERSION = 2
     MAX_CLIENTS = 32
     CLIENT_IDLE_TIMEOUT_S = 300.0
@@ -195,6 +200,18 @@ class ModbusTcpGateway:
         self._regs[self.SYSTEM_BASE + 11] = self.EXTENDED_STRIDE
         self._regs[self.SYSTEM_BASE + 14] = self.PREDICTIVE_BASE
         self._regs[self.SYSTEM_BASE + 15] = self.PREDICTIVE_STRIDE
+        self._regs[self.SYSTEM_BASE + 16] = self.PREDICTIVE_EXT_BASE
+        self._regs[self.SYSTEM_BASE + 17] = self.PREDICTIVE_EXT_FIRST_SLOT
+        # слот без прибора — «нет данных» (NaN / STALE), а не 0,0 со статусом OK
+        for slot in range(self.MAX_SLOTS):
+            self._clear_slot(slot)
+
+    @classmethod
+    def predictive_base(cls, slot: int) -> int:
+        """0-based адрес прогнозного блока слота: 3600 + slot*8 для 0..60, 4096 + (slot-61)*8 для 61..199."""
+        if slot < cls.PREDICTIVE_MAX_INSTRUMENTS:
+            return cls.PREDICTIVE_BASE + slot * cls.PREDICTIVE_STRIDE
+        return cls.PREDICTIVE_EXT_BASE + (slot - cls.PREDICTIVE_EXT_FIRST_SLOT) * cls.PREDICTIVE_STRIDE
 
     @classmethod
     def place_instruments(cls, instruments: list[dict[str, Any]]) -> list[tuple[int, dict[str, Any]]]:
@@ -237,8 +254,8 @@ class ModbusTcpGateway:
         self._regs[ext + 6] = _IEEE754_QNAN_LO
         self._regs[ext + 7] = 0
 
-        if slot < self.PREDICTIVE_MAX_INSTRUMENTS:
-            p_base = self.PREDICTIVE_BASE + slot * self.PREDICTIVE_STRIDE
+        if slot < self.MAX_SLOTS:
+            p_base = self.predictive_base(slot)
             self._regs[p_base + 0] = _IEEE754_QNAN_HI
             self._regs[p_base + 1] = _IEEE754_QNAN_LO
             self._regs[p_base + 2] = _IEEE754_QNAN_HI
@@ -297,7 +314,8 @@ class ModbusTcpGateway:
             inst_key = str(inst.get("instrument_id") or inst["id"])
             rd = inst.get("reading") or {}
             raw_v = rd.get("value")
-            valid = bool(rd.get("valid")) and raw_v is not None
+            # отсчёт без свежих кадров источника — STALE, а не последнее значение со статусом OK
+            valid = reading_is_live(inst)
             val: float | None = None
             if valid:
                 try:
@@ -444,8 +462,8 @@ class ModbusTcpGateway:
             if prob_alert >= 0.5 or (eta_alert is not None and float(eta_alert) <= 60.0):
                 pred_imminent_cnt += 1
 
-            p_base = self.PREDICTIVE_BASE + idx * self.PREDICTIVE_STRIDE
-            if idx < self.PREDICTIVE_MAX_INSTRUMENTS:
+            p_base = self.predictive_base(idx)
+            if idx < self.MAX_SLOTS:
                 ea_hi, ea_lo = _pack_f32_words(None if eta_alert is None else float(eta_alert))
                 ew_hi, ew_lo = _pack_f32_words(None if eta_warn is None else float(eta_warn))
                 self._regs[p_base + 0] = ea_hi
@@ -467,7 +485,7 @@ class ModbusTcpGateway:
                 "hr_status": 40001 + base + 2,
                 "hr_health": 40001 + base + 3,
                 "hr_ext_base": 40001 + ext,
-                "hr_pred_base": (40001 + p_base) if idx < self.PREDICTIVE_MAX_INSTRUMENTS else None,
+                "hr_pred_base": 40001 + p_base,
                 "value": round(val, 4) if (valid and val is not None) else None,
                 "ieee754_nan": not valid,
                 "raw_hi": hi,
@@ -511,10 +529,18 @@ class ModbusTcpGateway:
         self._regs[self.SYSTEM_BASE + 13] = min(65535, pred_imminent_cnt)
         self._regs[self.SYSTEM_BASE + 14] = self.PREDICTIVE_BASE
         self._regs[self.SYSTEM_BASE + 15] = self.PREDICTIVE_STRIDE
+        self._regs[self.SYSTEM_BASE + 16] = self.PREDICTIVE_EXT_BASE
+        self._regs[self.SYSTEM_BASE + 17] = self.PREDICTIVE_EXT_FIRST_SLOT
         self._meta_rows = rows
 
     async def start(self) -> None:
         if not config.MODBUS_ENABLED or self._server is not None:
+            return
+        bind_err = net_policy.modbus_bind_error()
+        if bind_err:
+            self._listening = False
+            self._last_error = bind_err
+            logger.warning("Modbus TCP не запущен: %s", bind_err)
             return
         try:
             self._server = await asyncio.start_server(
@@ -537,7 +563,9 @@ class ModbusTcpGateway:
         self._listening = False
 
     async def _handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
-        if self._active_clients >= self.MAX_CLIENTS:
+        peer = writer.get_extra_info("peername")
+        if self._active_clients >= self.MAX_CLIENTS or not net_policy.modbus_client_allowed(
+                peer[0] if isinstance(peer, tuple) and peer else None):
             self._rejected_clients += 1
             writer.close()
             try:
@@ -627,6 +655,8 @@ class ModbusTcpGateway:
                 "HR40914_predictive_imminent_alerts": self._regs[self.SYSTEM_BASE + 13],
                 "HR40915_predictive_base": self._regs[self.SYSTEM_BASE + 14],
                 "HR40916_predictive_stride": self._regs[self.SYSTEM_BASE + 15],
+                "HR40917_predictive_ext_base": self._regs[self.SYSTEM_BASE + 16],
+                "HR40918_predictive_ext_first_slot": self._regs[self.SYSTEM_BASE + 17],
             },
             "instruments": self._meta_rows[:limit],
         }
@@ -758,7 +788,12 @@ class MqttAsyncAdapter:
             return True
         await self._close_locked()
         try:
-            ssl_ctx = ssl.create_default_context() if config.MQTT_TLS else None
+            transport_err = net_policy.mqtt_transport_error()
+            if transport_err:
+                self._last_error = transport_err
+                self._connected = False
+                return False
+            ssl_ctx = net_policy.mqtt_ssl_context() if config.MQTT_TLS else None
             self._reader, self._writer = await asyncio.wait_for(
                 asyncio.open_connection(config.MQTT_HOST, config.MQTT_PORT, ssl=ssl_ctx),
                 timeout=max(0.5, min(5.0, float(config.MQTT_ACK_TIMEOUT))),
