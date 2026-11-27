@@ -192,23 +192,28 @@
 
     /* ---------- колонка текста ---------- */
     var items = st.scenes.map(function (scn, i) {
-      var srcObj = scn.source ? C.src[scn.source] : null;
       return h('li', { class: 'gv-story__item', 'data-i': i },
         h('button', { class: 'gv-story__btn', type: 'button', 'aria-controls': 'gv-story-stage' },
           h('span', { class: 'gv-story__num' }, String(i + 1).padStart(2, '0')),
-          h('span', { class: 'gv-story__tag' }, scn.tag)),
-        h('div', { class: 'gv-story__body' },
-          h('h3', { class: 'gv-story__title' }, scn.title),
-          h('p', { class: 'gv-story__text' }, scn.text),
-          scn.proof ? h('p', { class: 'gv-story__proof' }, h('span', { class: 'gv-story__proof-mark', 'aria-hidden': 'true' }), scn.proof,
-            srcObj ? h('span', null, ' — ', kit.extLink({ class: 'gv-src', href: srcObj.href }, srcObj.label)) : null) : null));
+          h('span', { class: 'gv-story__tag' }, scn.tag)));
     });
+    /* Описания всех этапов лежат в одной ячейке сетки: высота блока равна самому длинному описанию,
+       смена этапа меняет только opacity — без сдвига вёрстки */
+    var bodies = st.scenes.map(function (scn, i) {
+      var srcObj = scn.source ? C.src[scn.source] : null;
+      return h('div', { class: 'gv-story__body', 'data-i': i, 'aria-hidden': 'true' },
+        h('h3', { class: 'gv-story__title' }, scn.title),
+        h('p', { class: 'gv-story__text' }, scn.text),
+        scn.proof ? h('p', { class: 'gv-story__proof' }, h('span', { class: 'gv-story__proof-mark', 'aria-hidden': 'true' }), scn.proof,
+          srcObj ? h('span', null, ' — ', kit.extLink({ class: 'gv-src', href: srcObj.href, tabindex: '-1' }, srcObj.label)) : null) : null);
+    });
+    var detail = h('div', { class: 'gv-story__detail' }, bodies);
     var list = h('ol', { class: 'gv-story__list', role: 'list' }, items);
     var progress = h('span', { class: 'gv-story__progress-fill' });
     var col = h('div', { class: 'gv-story__col' },
       opts && opts.head ? opts.head : null,
       h('div', { class: 'gv-story__progress', 'aria-hidden': 'true' }, progress),
-      list);
+      list, detail);
     var badge = h('p', { class: 'gv-story__badge' }, C.labels.sim, ' — ', 'данные сквозного испытания v3.0.0');
     var stageBox = h('div', { class: 'gv-story__stage', id: 'gv-story-stage' }, svg, badge);
     var sticky = h('div', { class: 'gv-story__sticky' }, h('div', { class: 'gv-container gv-story__grid' }, col, stageBox));
@@ -224,6 +229,11 @@
         it.toggleAttribute('data-active', k === i);
         it.toggleAttribute('data-done', k < i);
         it.querySelector('.gv-story__btn').setAttribute('aria-current', k === i ? 'step' : 'false');
+      });
+      bodies.forEach(function (b, k) {
+        b.toggleAttribute('data-active', k === i);
+        b.setAttribute('aria-hidden', k === i ? 'false' : 'true');
+        b.querySelectorAll('a').forEach(function (a) { a.setAttribute('tabindex', k === i ? '0' : '-1'); });
       });
       svg.querySelectorAll('.gv-st__layer').forEach(function (layer) {
         var on = (' ' + layer.getAttribute('data-for') + ' ').indexOf(' ' + i + ' ') >= 0;

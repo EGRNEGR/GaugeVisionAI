@@ -253,7 +253,7 @@
 .gv-tile__nums { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin: 0; }
 .gv-tile__nums dt { font-size: 0.6875rem; color: var(--text-faint); }
 .gv-tile__nums dd { margin: 0; font-family: var(--font-mono); font-size: var(--fs-xs); font-weight: 700; }
-.gv-tile__mand { display: flex; align-items: center; gap: var(--space-2); font-size: var(--fs-2xs); color: var(--text-muted); cursor: pointer; }
+.gv-tile__mand { display: flex; align-items: center; gap: var(--space-2); min-height: 1.5rem; font-size: var(--fs-2xs); color: var(--text-muted); cursor: pointer; }
 .gv-tile__mand input { accent-color: var(--status-warn); width: 1rem; height: 1rem; }
 
 .gv-opt__side { display: grid; gap: var(--space-5); }

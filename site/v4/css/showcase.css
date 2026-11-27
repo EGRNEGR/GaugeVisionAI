@@ -7,7 +7,8 @@ html[data-showcase] .gv-hero__showcase,
 html[data-showcase] #gv-tweaks { display: none !important; }
 
 html[data-showcase] { scroll-padding-top: 0; }
-html[data-showcase] .gv-story__sticky { top: 0; height: 100vh; height: 100svh; }
+html[data-showcase] .gv-story__sticky { top: 0; height: calc(100vh - 7.5rem); height: calc(100svh - 7.5rem); }
+html[data-showcase] .gv-head--pinned .gv-head__lede { display: none; }
 html[data-showcase] body { padding-bottom: 7rem; }
 
 .gv-sc {
@@ -55,5 +56,13 @@ html[data-showcase] body { padding-bottom: 7rem; }
   .gv-sc { grid-template-columns: 1fr; padding: var(--space-3); }
   .gv-sc__ctl { flex-wrap: wrap; }
   .gv-sc__btn { width: 2.5rem; height: 2.5rem; }
+  .gv-sc__hint { display: none; }
+}
+
+/* Проектор 1280×720 и другие низкие экраны: компактный пульт и заголовок закреплённой сцены */
+@media (max-height: 820px) {
+  html[data-showcase] .gv-head--pinned .gv-head__title { font-size: var(--fs-xl); }
+  html[data-showcase] .gv-story__sticky { height: calc(100vh - 6rem); height: calc(100svh - 6rem); }
+  .gv-sc { padding: var(--space-3) var(--space-4); bottom: var(--space-3); }
   .gv-sc__hint { display: none; }
 }
