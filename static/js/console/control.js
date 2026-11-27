@@ -2,7 +2,7 @@
 // стоп-кадр, ручная/авто ROI, калибровка кликом по делениям ИЛИ по живой стрелке,
 // настройка зон LL/L/H/HH с предпроверкой и сравнением «Сохранено / Черновик».
 import { $, $$, esc, api, toast, confirmDlg, fmt, fmtInput, fmtFixed, parseNum, num, decimalsFor, DIAL_SOURCE, SOURCE_TEXT } from './util.js';
-import { state, on, emit, camList, livePrimaryCam, isSimulated, setView } from './store.js';
+import { state, on, emit, camList, livePrimaryCam, isSimulated, setView, sourceIdOf, isSecondary } from './store.js';
 import { renderRuler } from './ruler.js';
 import { fillGaugeSelect, fillUnitSelect } from './devices.js';
 import { jumpToInstrument } from './instruments.js';
@@ -82,7 +82,7 @@ function syncCalFrames() {
       return;
     }
     try {
-      const res = await fetch(`/api/cameras/${encodeURIComponent(id)}/frame.jpg?overlay=0`, { cache: 'no-store' });
+      const res = await fetch(`/api/cameras/${encodeURIComponent(sourceIdOf(cam))}/frame.jpg?overlay=0`, { cache: 'no-store' });
       if (res.ok) {
         const url = URL.createObjectURL(await res.blob());
         if (state.view !== 'calibration' || frozen || targetId !== id) { URL.revokeObjectURL(url); return; }
@@ -631,10 +631,9 @@ async function saveCalibration(returnToMonitor = false) {
   $('#btnCalSave').disabled = true;
   $('#btnCalSaveAndMonitor').disabled = true;
   try {
-    const updated = await api(`/api/cameras/${encodeURIComponent(cam.id)}`, {
-      method: 'PATCH',
-      body: v.body,
-    });
+    // дополнительный прибор щита хранит шкалу и уставки в реестре приборов, основной — в записи камеры
+    const url = isSecondary(cam) ? `/api/instruments/${encodeURIComponent(cam.id)}` : `/api/cameras/${encodeURIComponent(cam.id)}`;
+    const updated = await api(url, { method: 'PATCH', body: v.body });
     dirty = false;
     const stBox = $('#calSaveStatus');
     stBox.hidden = false;
@@ -777,7 +776,7 @@ export function initControl() {
     const cam = targetCam();
     if (!cam || isSimulated(cam)) return;
     try {
-      await api(`/api/cameras/${encodeURIComponent(cam.id)}/redetect`, { method: 'POST' });
+      await api(`/api/cameras/${encodeURIComponent(sourceIdOf(cam))}/redetect`, { method: 'POST' });
       toast('Запрошена повторная локализация циферблата');
     } catch (e) {
       toast(e.message, 'err');
@@ -794,7 +793,8 @@ export function initControl() {
     );
     if (!ok) return;
     try {
-      await api(`/api/cameras/${encodeURIComponent(cam.id)}/history`, { method: 'DELETE' });
+      const histUrl = isSecondary(cam) ? `/api/instruments/${encodeURIComponent(cam.id)}/history` : `/api/cameras/${encodeURIComponent(cam.id)}/history`;
+      await api(histUrl, { method: 'DELETE' });
       emit('cam-config', cam.id);
       toast('Архив показаний очищен');
     } catch (e) {
@@ -805,16 +805,20 @@ export function initControl() {
   $('#btnCalDeleteCam').addEventListener('click', async () => {
     const cam = targetCam();
     if (!cam || isSimulated(cam)) return;
+    const secondary = isSecondary(cam);
     const ok = await confirmDlg(
-      'Удалить камеру?',
-      `Камера «${cam.data.name}» и её архив будут удалены с пульта.`,
+      secondary ? 'Удалить прибор щита?' : 'Удалить камеру?',
+      secondary
+        ? `Прибор «${cam.data.name}» и его архив будут удалены; камера и остальные приборы щита продолжат работу.`
+        : `Камера «${cam.data.name}» и её архив будут удалены с пульта.`,
       'Удалить'
     );
     if (!ok) return;
     try {
-      await api(`/api/cameras/${encodeURIComponent(cam.id)}`, { method: 'DELETE' });
+      const delUrl = secondary ? `/api/instruments/${encodeURIComponent(cam.id)}` : `/api/cameras/${encodeURIComponent(cam.id)}`;
+      await api(delUrl, { method: 'DELETE' });
       targetId = null;
-      toast('Камера удалена');
+      toast(secondary ? 'Прибор удалён' : 'Камера удалена');
     } catch (e) {
       toast(e.message, 'err');
     }

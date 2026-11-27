@@ -1,0 +1,164 @@
+{
+ "role": "dev",
+ "items_pool": 75,
+ "seed": 0,
+ "frame": [
+  1280,
+  720
+ ],
+ "frames_per_mosaic": 4,
+ "device": "cpu",
+ "yolo": true,
+ "results": [
+  {
+   "gauges_per_frame": 1,
+   "gauges_total": 40,
+   "registered_pct": 97.5,
+   "valid_pct_of_all": 97.5,
+   "multi": {
+    "mean": 1.03,
+    "median": 0.67,
+    "p95": 2.26,
+    "gross": 0.0
+   },
+   "manual_registered": 1,
+   "manual_valid_pct": 0.0,
+   "manual": {
+    "mean": null,
+    "median": null,
+    "p95": null,
+    "gross": null
+   },
+   "single_alone_valid_pct": 77.5,
+   "single_alone": {
+    "mean": 1.0,
+    "median": 0.71,
+    "p95": 1.99,
+    "gross": 0.0
+   },
+   "id_switches": 0,
+   "latency_ms_mean": 125.6,
+   "detect_frames": 40
+  },
+  {
+   "gauges_per_frame": 2,
+   "gauges_total": 40,
+   "registered_pct": 95.0,
+   "valid_pct_of_all": 92.5,
+   "multi": {
+    "mean": 0.87,
+    "median": 0.75,
+    "p95": 1.63,
+    "gross": 0.0
+   },
+   "manual_registered": 2,
+   "manual_valid_pct": 50.0,
+   "manual": {
+    "mean": 0.48,
+    "median": 0.48,
+    "p95": 0.48,
+    "gross": 0.0
+   },
+   "single_alone_valid_pct": 87.5,
+   "single_alone": {
+    "mean": 0.86,
+    "median": 0.62,
+    "p95": 1.87,
+    "gross": 0.0
+   },
+   "id_switches": 0,
+   "latency_ms_mean": 219.4,
+   "detect_frames": 20
+  },
+  {
+   "gauges_per_frame": 4,
+   "gauges_total": 40,
+   "registered_pct": 100.0,
+   "valid_pct_of_all": 100.0,
+   "multi": {
+    "mean": 0.85,
+    "median": 0.58,
+    "p95": 2.0,
+    "gross": 0.0
+   },
+   "manual_registered": 0,
+   "manual_valid_pct": null,
+   "manual": {
+    "mean": null,
+    "median": null,
+    "p95": null,
+    "gross": null
+   },
+   "single_alone_valid_pct": 90.0,
+   "single_alone": {
+    "mean": 0.8,
+    "median": 0.63,
+    "p95": 1.79,
+    "gross": 0.0
+   },
+   "id_switches": 0,
+   "latency_ms_mean": 167.0,
+   "detect_frames": 10
+  },
+  {
+   "gauges_per_frame": 8,
+   "gauges_total": 48,
+   "registered_pct": 100.0,
+   "valid_pct_of_all": 97.92,
+   "multi": {
+    "mean": 0.83,
+    "median": 0.59,
+    "p95": 1.94,
+    "gross": 0.0
+   },
+   "manual_registered": 0,
+   "manual_valid_pct": null,
+   "manual": {
+    "mean": null,
+    "median": null,
+    "p95": null,
+    "gross": null
+   },
+   "single_alone_valid_pct": 93.75,
+   "single_alone": {
+    "mean": 0.77,
+    "median": 0.68,
+    "p95": 1.43,
+    "gross": 0.0
+   },
+   "id_switches": 0,
+   "latency_ms_mean": 277.7,
+   "detect_frames": 6
+  },
+  {
+   "gauges_per_frame": 16,
+   "gauges_total": 48,
+   "registered_pct": 77.08,
+   "valid_pct_of_all": 68.75,
+   "multi": {
+    "mean": 1.34,
+    "median": 0.52,
+    "p95": 1.84,
+    "gross": 3.03
+   },
+   "manual_registered": 11,
+   "manual_valid_pct": 90.91,
+   "manual": {
+    "mean": 0.98,
+    "median": 1.08,
+    "p95": 1.3,
+    "gross": 0.0
+   },
+   "single_alone_valid_pct": 89.58,
+   "single_alone": {
+    "mean": 0.82,
+    "median": 0.57,
+    "p95": 2.01,
+    "gross": 0.0
+   },
+   "id_switches": 0,
+   "latency_ms_mean": 464.9,
+   "detect_frames": 3
+  }
+ ]
+}

@@ -1,0 +1,54 @@
+/* Вкладка «Щит» (Multi-Gauge Vision): токены и элементы — из console.css */
+.mg-layout { display: flex; flex-direction: column; gap: .75rem; padding: .75rem; min-height: 0; height: 100%; }
+.mg-bar { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.mg-bar .sp { flex: 1; }
+.mg-status { color: var(--text-2); font-size: var(--fs-s); }
+.mg-main { display: grid; grid-template-columns: minmax(0, 1fr) 27rem; gap: .75rem; min-height: 0; flex: 1; }
+@media (max-width: 1100px) { .mg-main { grid-template-columns: 1fr; } }
+
+.mg-frame-sec { display: flex; flex-direction: column; min-height: 0; }
+.mg-media { position: relative; background: var(--stage); border: 1px solid var(--line); min-height: 18rem; }
+.mg-media img { display: block; width: 100%; height: auto; }
+.mg-media img[data-empty="true"] { min-height: 18rem; }
+.mg-media .ov { position: absolute; inset: 0; width: 100%; height: 100%; }
+.mg-empty { position: absolute; inset: 0; display: grid; place-items: center; color: var(--text-3); font-size: var(--fs-s); }
+.mg-hint { margin: .5rem .75rem .75rem; color: var(--text-3); font-size: var(--fs-xs); line-height: 1.45; }
+
+.mg-inst, .mg-cand { cursor: pointer; outline: none; }
+.mg-inst ellipse { fill: transparent; stroke-width: 3; vector-effect: non-scaling-stroke; }
+.mg-inst text { fill: var(--text); font-family: var(--mono); paint-order: stroke; stroke: var(--stage); stroke-width: 4px; }
+.mg-inst .needle { stroke-width: 3; vector-effect: non-scaling-stroke; stroke-linecap: round; }
+.mg-inst.lvl-normal ellipse, .mg-inst.lvl-normal .needle { stroke: var(--ok); }
+.mg-inst.lvl-warning ellipse, .mg-inst.lvl-warning .needle { stroke: var(--warn); }
+.mg-inst.lvl-alert ellipse, .mg-inst.lvl-alert .needle { stroke: var(--alarm); }
+.mg-inst.lvl-invalid ellipse { stroke: var(--stale); stroke-dasharray: 2 4; }
+.mg-inst.is-picked ellipse, .mg-inst:focus-visible ellipse { stroke-width: 5; filter: drop-shadow(0 0 4px #ffffff); }
+.mg-cand ellipse { fill: rgba(225, 229, 233, .06); stroke: var(--text); stroke-width: 2; stroke-dasharray: 8 6; vector-effect: non-scaling-stroke; }
+.mg-cand text { fill: var(--text); font-family: var(--mono); font-weight: 700; paint-order: stroke; stroke: var(--stage); stroke-width: 4px; }
+.mg-cand.is-picked ellipse, .mg-cand:focus-visible ellipse { stroke-width: 4; fill: rgba(225, 229, 233, .14); }
+
+.mg-side { display: flex; flex-direction: column; gap: .75rem; min-height: 0; }
+.mg-side .body { padding: .6rem .75rem; }
+.mg-zoom { display: block; width: 100%; max-width: 220px; aspect-ratio: 1; margin: 0 auto .6rem; border: 1px solid var(--line); background: var(--stage); }
+.mg-kv { display: grid; gap: .25rem; margin: 0 0 .6rem; font-size: var(--fs-s); }
+.mg-kv div { display: grid; grid-template-columns: 9.5rem 1fr; gap: .5rem; }
+.mg-kv dt { color: var(--text-3); }
+.mg-kv dd { margin: 0; color: var(--text); font-family: var(--mono); }
+.mg-side .foot { display: flex; gap: .4rem; flex-wrap: wrap; }
+.mg-muted { color: var(--text-3); font-size: var(--fs-xs); margin: 0; line-height: 1.45; }
+.mg-form { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem .6rem; }
+.mg-form .span2 { grid-column: span 2; }
+.mg-form .field { display: flex; flex-direction: column; gap: .2rem; font-size: var(--fs-xs); color: var(--text-2); }
+
+.mg-table-wrap { max-height: 22rem; overflow: auto; padding: 0; }
+.mg-table { width: 100%; border-collapse: collapse; font-size: var(--fs-s); }
+.mg-table th { position: sticky; top: 0; background: var(--panel-2); color: var(--text-3); font-weight: 500; text-align: left; padding: .35rem .5rem; border-bottom: 1px solid var(--line); }
+.mg-table td { padding: .35rem .5rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.mg-table tr[data-id] { cursor: pointer; }
+.mg-table tr[data-id]:hover { background: var(--panel-3); }
+.mg-table tr.is-picked { background: var(--panel-3); box-shadow: inset 3px 0 0 var(--text); }
+.mg-table .lvl-warning { color: var(--warn); }
+.mg-table .lvl-alert { color: var(--alarm); }
+.mg-table .lvl-invalid { color: var(--stale); }
+.mg-tag { font-size: var(--fs-xs); color: var(--text-3); border: 1px solid var(--line-2); padding: 0 .3rem; margin-left: .25rem; }
+.mg-table td.mono { white-space: nowrap; }

@@ -13,6 +13,7 @@ import { initControl } from './control.js';
 import { initDevices } from './devices.js';
 import { initArchitecture } from './architecture.js';
 import { initDispatch } from './dispatch.js';
+import { initMultiGauge } from './multigauge.js';
 
 const BACKOFF = [1, 2, 4, 8, 15];
 let wsAttempt = 0;
@@ -150,6 +151,20 @@ function handleMessage(msg) {
       removeInstrument(msg.cam_id);
       ensureSelection();
       emit('cams');
+      break;
+    case 'instrument_added':
+    case 'instrument_updated':
+      if (msg.instrument && msg.instrument.id) {
+        upsertInstrument(msg.instrument);
+        emit('cams');
+        emit('instruments-changed', msg.instrument.source_id);
+      }
+      break;
+    case 'instrument_deleted':
+      removeInstrument(msg.instrument_id);
+      ensureSelection();
+      emit('cams');
+      emit('instruments-changed', null);
       break;
     case 'event':
       state.events.set(msg.event.id, msg.event);
@@ -387,6 +402,7 @@ async function init() {
     initTrend();
     initArchitecture();
     initDispatch();
+    initMultiGauge();
     initHeader();
     setInterval(checkFreshnessTick, 1000);
     setInterval(pollRealStreams, 5000);

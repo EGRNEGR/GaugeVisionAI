@@ -2,7 +2,7 @@
 // Жёсткое правило HMI: статус потери потока НИКОГДА не перекрывает область ROI/стрелки/шкалы,
 // а выводится в компактный верхний баннер #staleNote над окном кадра.
 import { $, $$, esc, fmt, decimalsFor, timeStr, durStr, LEVEL_TAG, DIAL_SOURCE, PHONE_STAGE_TEXT, evText } from './util.js';
-import { state, on, emit, selected, select, setDetailOpen, isSimulated, evaluateInstrument, snapshotsOf } from './store.js';
+import { state, on, emit, selected, select, setDetailOpen, isSimulated, evaluateInstrument, snapshotsOf, sourceIdOf } from './store.js';
 import { openPhoneDialog } from './devices.js';
 
 const videoSec = $('#detVideoSec');
@@ -61,6 +61,7 @@ function syncPolling() {
   stopPolling(false);
   activeCamId = cam.id;
   const targetId = cam.id;
+  const frameSrcId = sourceIdOf(cam);
 
   const tick = async () => {
     if (!shouldPollLiveFrame() || activeCamId !== targetId) {
@@ -74,7 +75,7 @@ function syncPolling() {
     const t0 = performance.now();
     const wantServerOv = frameMode === 'server' ? 1 : 0;
     try {
-      const res = await fetch(`/api/cameras/${encodeURIComponent(targetId)}/frame.jpg?overlay=${wantServerOv}`, { cache: 'no-store' });
+      const res = await fetch(`/api/cameras/${encodeURIComponent(frameSrcId)}/frame.jpg?overlay=${wantServerOv}`, { cache: 'no-store' });
       if (!res.ok) throw new Error(String(res.status));
       const url = URL.createObjectURL(await res.blob());
       if (!shouldPollLiveFrame() || activeCamId !== targetId) {

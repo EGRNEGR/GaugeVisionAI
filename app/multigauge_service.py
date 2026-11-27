@@ -227,7 +227,7 @@ class MultiGaugeServiceMixin:
             k = config.MAX_PROCESS_WIDTH / float(w)
             frame = cv2.resize(frame, (int(w * k), int(h * k)), interpolation=cv2.INTER_AREA)
         loop = asyncio.get_running_loop()
-        dets, info = await loop.run_in_executor(self.executor, multigauge.detect_dials_multi, frame)
+        dets, info = await loop.run_in_executor(self.executor, multigauge.detect_dials_multi, frame, True)
         shape = frame.shape[:2]
         self._mg_frame_shape[source_id] = (shape[0], shape[1])
         cands = [{"index": k, "source": d.source, "score": round(float(d.score), 3),

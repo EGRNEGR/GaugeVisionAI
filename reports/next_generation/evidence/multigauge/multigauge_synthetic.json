@@ -49,12 +49,12 @@
    "occluded_frames": 7,
    "occluded_refused": 7,
    "occluded_gross": 0,
-   "latency_ms_mean": 57.5,
-   "latency_ms_p95": 85.7,
-   "latency_ms_max": 109.8,
+   "latency_ms_mean": 60.6,
+   "latency_ms_p95": 93.3,
+   "latency_ms_max": 149.2,
    "detect_frames": 4,
-   "fps": 17.39,
-   "cpu_cores_busy": 2.0
+   "fps": 16.49,
+   "cpu_cores_busy": 1.98
   },
   {
    "gauges": 2,
@@ -80,12 +80,12 @@
    "occluded_frames": 7,
    "occluded_refused": 7,
    "occluded_gross": 0,
-   "latency_ms_mean": 78.5,
-   "latency_ms_p95": 98.5,
-   "latency_ms_max": 124.3,
+   "latency_ms_mean": 79.7,
+   "latency_ms_p95": 113.1,
+   "latency_ms_max": 206.1,
    "detect_frames": 4,
-   "fps": 12.74,
-   "cpu_cores_busy": 2.15
+   "fps": 12.55,
+   "cpu_cores_busy": 2.3
   },
   {
    "gauges": 4,
@@ -101,7 +101,7 @@
    ],
    "valid_rate": 100.0,
    "miss_rate": 0.0,
-   "mae_norm_pct": 0.315,
+   "mae_norm_pct": 0.318,
    "p95_norm_pct": 0.791,
    "max_norm_pct": 1.034,
    "gross_rate_pct": 0.0,
@@ -111,12 +111,12 @@
    "occluded_frames": 7,
    "occluded_refused": 7,
    "occluded_gross": 0,
-   "latency_ms_mean": 112.1,
-   "latency_ms_p95": 135.4,
-   "latency_ms_max": 154.4,
+   "latency_ms_mean": 113.6,
+   "latency_ms_p95": 155.5,
+   "latency_ms_max": 283.1,
    "detect_frames": 4,
-   "fps": 8.92,
-   "cpu_cores_busy": 2.69
+   "fps": 8.8,
+   "cpu_cores_busy": 2.84
   },
   {
    "gauges": 8,
@@ -132,8 +132,8 @@
    ],
    "valid_rate": 100.0,
    "miss_rate": 0.0,
-   "mae_norm_pct": 0.365,
-   "p95_norm_pct": 0.945,
+   "mae_norm_pct": 0.361,
+   "p95_norm_pct": 0.944,
    "max_norm_pct": 1.396,
    "gross_rate_pct": 0.0,
    "id_switches": 0,
@@ -142,12 +142,12 @@
    "occluded_frames": 7,
    "occluded_refused": 7,
    "occluded_gross": 0,
-   "latency_ms_mean": 219.2,
-   "latency_ms_p95": 258.3,
-   "latency_ms_max": 317.6,
+   "latency_ms_mean": 220.2,
+   "latency_ms_p95": 260.2,
+   "latency_ms_max": 442.7,
    "detect_frames": 4,
-   "fps": 4.56,
-   "cpu_cores_busy": 2.72
+   "fps": 4.54,
+   "cpu_cores_busy": 2.73
   },
   {
    "gauges": 16,
@@ -163,7 +163,7 @@
    ],
    "valid_rate": 100.0,
    "miss_rate": 0.0,
-   "mae_norm_pct": 0.553,
+   "mae_norm_pct": 0.555,
    "p95_norm_pct": 1.761,
    "max_norm_pct": 3.409,
    "gross_rate_pct": 0.0,
@@ -173,12 +173,12 @@
    "occluded_frames": 7,
    "occluded_refused": 7,
    "occluded_gross": 0,
-   "latency_ms_mean": 402.5,
-   "latency_ms_p95": 438.6,
-   "latency_ms_max": 628.0,
+   "latency_ms_mean": 430.7,
+   "latency_ms_p95": 488.7,
+   "latency_ms_max": 698.9,
    "detect_frames": 4,
-   "fps": 2.48,
-   "cpu_cores_busy": 2.97
+   "fps": 2.32,
+   "cpu_cores_busy": 2.93
   }
  ]
 }

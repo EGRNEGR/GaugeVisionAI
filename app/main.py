@@ -2220,6 +2220,20 @@ async def api_clear_history(
     return Response(status_code=204)
 
 
+@app.delete("/api/instruments/{inst_id}/history", status_code=204)
+async def api_clear_instrument_history(
+    inst_id: str,
+    request: Request,
+    user: dict[str, Any] = Depends(auth.require_role("admin")),
+) -> Response:
+    _instrument_public(inst_id)
+    await service._flush_db()
+    await db.clear_history(inst_id)
+    await db.log_audit(username=user["username"], role=user["role"], action="CLEAR_HISTORY",
+                       target=inst_id, status_code=204, ip=request.client.host if request.client else None)
+    return Response(status_code=204)
+
+
 def _csv_response(csv_text: str, prefix: str, ascii_prefix: str, stamp: str | None = None) -> Response:
     st = stamp or time.strftime("%Y%m%d_%H%M%S")
     safe = "".join(ch if ch.isalnum() or ch in "-_" else "_" for ch in prefix)[:60] or "gauge"

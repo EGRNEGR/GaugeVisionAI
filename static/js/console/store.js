@@ -114,6 +114,16 @@ export const camList = () => state.order.map((id) => state.cams.get(id)).filter(
 export const realCamList = () => camList().filter((c) => c.data.source_kind !== 'simulated');
 export const selected = () => (state.selectedId ? state.cams.get(state.selectedId) : null);
 
+// Multi-Gauge: прибор и его видеоисточник. У основного прибора id совпадает с id камеры,
+// у дополнительного кадр и поток берутся с камеры-источника (SHARED_DATA_CONTRACT § 1).
+export function sourceIdOf(cam) {
+  return cam?.data?.camera_id || cam?.id || null;
+}
+
+export function isSecondary(cam) {
+  return cam?.data?.is_primary === false;
+}
+
 export function livePrimaryCam() {
   const pref = state.demo?.live_cam_id || 'demo-mtp160-steam';
   if (state.cams.has(pref)) return state.cams.get(pref);
@@ -121,7 +131,7 @@ export function livePrimaryCam() {
 }
 
 export function setView(viewName) {
-  if (!['monitor', 'architecture', 'dispatch', 'events', 'history', 'cameras', 'calibration'].includes(viewName)) return;
+  if (!['monitor', 'architecture', 'dispatch', 'events', 'history', 'cameras', 'panel', 'calibration'].includes(viewName)) return;
   if (state.view === viewName) return;
   state.view = viewName;
   emit('view', viewName);

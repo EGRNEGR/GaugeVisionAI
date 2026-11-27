@@ -297,7 +297,7 @@ function syncTabs() {
     const active = t.dataset.view === state.view;
     t.setAttribute('aria-selected', String(active));
   });
-  for (const name of ['monitor', 'architecture', 'dispatch', 'events', 'history', 'cameras', 'calibration']) {
+  for (const name of ['monitor', 'architecture', 'dispatch', 'events', 'history', 'cameras', 'panel', 'calibration']) {
     const sec = $(`#view-${name}`);
     if (sec) sec.hidden = name !== state.view;
   }

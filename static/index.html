@@ -9,6 +9,7 @@
   <link rel="preload" href="/static/fonts/jetbrains-mono-latin-500.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/static/fonts/ibm-plex-sans-cyrillic-400.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/static/css/console.css">
+  <link rel="stylesheet" href="/static/css/multigauge.css">
 </head>
 <body>
 
@@ -69,6 +70,9 @@
       </button>
       <button role="tab" type="button" class="nav-tab nav-tab-eng" data-view="cameras" aria-selected="false">
         <span>Камеры</span>
+      </button>
+      <button role="tab" type="button" class="nav-tab nav-tab-eng" data-view="panel" aria-selected="false" title="Несколько приборов одной камерой: обнаружение, регистрация, разметка">
+        <span>Щит</span><span class="tab-cnt mono" id="tabCntPanel">—</span>
       </button>
       <button role="tab" type="button" class="nav-tab nav-tab-eng" data-view="calibration" aria-selected="false">
         <span>Калибровка</span>
@@ -959,6 +963,52 @@
   </section>
 
   <!-- ==================== ВКЛАДКА 5: ПРИБОРЫ И КАЛИБРОВКА ==================== -->
+  <section class="workspace page-pane" id="view-panel" hidden aria-label="Щит: несколько приборов одной камерой">
+    <div class="mg-layout">
+      <div class="mg-bar">
+        <label class="field-inline">
+          <span>Камера щита:</span>
+          <select class="input sm" id="mgSource" aria-label="Видеоисточник щита"></select>
+        </label>
+        <button class="btn primary sm" type="button" id="btnMgDetect">Найти приборы на кадре</button>
+        <button class="btn sm" type="button" id="btnMgClear" hidden>Скрыть найденные</button>
+        <span class="sp"></span>
+        <span class="mg-status mono" id="mgStatus" role="status" aria-live="polite">—</span>
+      </div>
+      <div class="mg-main">
+        <section class="block mg-frame-sec">
+          <header>
+            <span>Общий кадр источника и разметка приборов</span>
+            <span class="mono" id="mgCount">—</span>
+          </header>
+          <div class="mg-media" id="mgMedia">
+            <img id="mgFrameImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-empty="true" alt="Кадр щита приборов" decoding="async">
+            <svg class="ov" id="mgOverlay" role="img" aria-label="Разметка приборов на кадре"></svg>
+            <div class="mg-empty" id="mgEmpty">Нет кадра с выбранной камеры</div>
+          </div>
+          <p class="mg-hint">Щелчок по прибору на кадре открывает его карточку. После «Найти приборы» незарегистрированные
+            циферблаты обведены пунктиром — щелчок по такому открывает форму регистрации. Повторная детекция не создаёт
+            дублей: уже зарегистрированные приборы узнаются по положению.</p>
+        </section>
+        <aside class="mg-side">
+          <section class="block" id="mgDetail" aria-live="polite">
+            <header><span id="mgDetailTitle">Прибор не выбран</span></header>
+            <div class="body" id="mgDetailBody"><p class="mg-muted">Выберите прибор на кадре или в списке.</p></div>
+          </section>
+          <section class="block">
+            <header><span>Приборы источника</span></header>
+            <div class="body mg-table-wrap">
+              <table class="mg-table" id="mgTable">
+                <thead><tr><th>Код</th><th>Наименование</th><th>Показание</th><th>Состояние</th><th title="Слот Modbus">MB</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </div>
+  </section>
+
   <section class="workspace page-pane" id="view-calibration" hidden aria-label="Настройка прибора, шкалы и уставок">
     <div class="cal-layout">
       <div class="cal-selector-bar">

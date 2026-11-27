@@ -65,10 +65,35 @@ def _overlaps(cx: float, cy: float, r: float, roi: DialROI) -> bool:
     return math.hypot(cx - roi.center[0], cy - roi.center[1]) < 0.8 * max(r, _radius(roi))
 
 
-def detect_dials_multi(frame_bgr: np.ndarray) -> tuple[list[DialROI], dict[str, Any]]:
-    """Все циферблаты кадра: [DialROI] по убыванию размера и сведения о проходе детектора."""
+def _tiled_boxes(frame_bgr: np.ndarray) -> list[tuple[int, int, int, int, float]]:
+    """YOLO по перекрывающимся плиткам 2×2: мелкие приборы плотного щита на входе 640 px всего кадра
+    уменьшаются вдвое и теряются. Рамки, разрезанные краем плитки, отбрасываются — их найдёт соседняя
+    (перекрытие 20 %). Сетка 3×2 на испытаниях dev не нашла больше приборов при полуторной цене."""
+    h, w = frame_bgr.shape[:2]
+    tw, th = int(w * 0.6), int(h * 0.6)
+    out: list[tuple[int, int, int, int, float]] = []
+    for ty in (0, h - th):
+        for tx in (0, w - tw):
+            boxes = vision.yolo_gauge_boxes(frame_bgr[ty:ty + th, tx:tx + tw]) or []
+            for x, y, bw, bh, conf in boxes:
+                cut = (x <= 2 and tx > 0) or (y <= 2 and ty > 0) or                       (x + bw >= tw - 2 and tx + tw < w) or (y + bh >= th - 2 and ty + th < h)
+                if not cut:
+                    out.append((x + tx, y + ty, bw, bh, conf))
+    return out
+
+
+def detect_dials_multi(frame_bgr: np.ndarray, tiled: bool = False,
+                       ) -> tuple[list[DialROI], dict[str, Any]]:
+    """Все циферблаты кадра: [DialROI] по убыванию размера и сведения о проходе детектора.
+
+    tiled — дополнительно YOLO по плиткам 2×2 (регистрация приборов и случаи, когда полный проход
+    нашёл не все зарегистрированные приборы); по умолчанию — один проход на кадр.
+    """
     t0 = time.perf_counter()
     boxes = vision.yolo_gauge_boxes(frame_bgr)
+    n_full = len(boxes or [])
+    if tiled and boxes is not None:
+        boxes = boxes + _tiled_boxes(frame_bgr)
     found: list[DialROI] = []
     refined = []
     for x, y, w, h, conf in boxes or []:
@@ -96,10 +121,36 @@ def detect_dials_multi(frame_bgr: np.ndarray) -> tuple[list[DialROI], dict[str, 
                                              source="ellipse"))
     found.sort(key=_radius, reverse=True)
     info = {
-        "yolo": boxes is not None, "yolo_boxes": len(boxes or []), "from_yolo": n_yolo,
+        "yolo": boxes is not None, "yolo_boxes": n_full, "tiled": bool(tiled),
+        "tiled_boxes": len(boxes or []) - n_full, "from_yolo": n_yolo,
         "from_ellipse": len(found) - n_yolo, "detect_ms": round((time.perf_counter() - t0) * 1000.0, 1),
     }
     return found, info
+
+
+def local_dial_search(frame_bgr: np.ndarray, expected: DialROI) -> DialROI | None:
+    """Циферблат рядом с ожидаемым местом неподвижного прибора: OpenCV (Hough + эллипс) в окне 2,6 радиуса.
+
+    Нужен, когда YOLO не распознаёт прибор ни во всём кадре, ни по плиткам: в окне прибор один, как в
+    однокамерном режиме. Принимается только эллипс с центром ≤ 0,35 радиуса от ожидаемого и близким размером.
+    """
+    h, w = frame_bgr.shape[:2]
+    r = _radius(expected)
+    half = 1.3 * r
+    x0, y0 = max(0, int(expected.center[0] - half)), max(0, int(expected.center[1] - half))
+    x1, y1 = min(w, int(expected.center[0] + half)), min(h, int(expected.center[1] + half))
+    crop = frame_bgr[y0:y1, x0:x1]
+    if crop.size == 0 or min(crop.shape[:2]) < 40:
+        return None
+    cv_roi = vision._find_dial_opencv(crop)
+    if cv_roi is None:
+        return None
+    gx, gy = cv_roi.center[0] + x0, cv_roi.center[1] + y0
+    ratio = _radius(cv_roi) / r
+    if math.hypot(gx - expected.center[0], gy - expected.center[1]) > 0.35 * r or             not (config.MG_RADIUS_RATIO[0] <= ratio <= config.MG_RADIUS_RATIO[1]):
+        return None
+    return vision.roi_from_ellipse(gx, gy, cv_roi.axes[0], cv_roi.axes[1], cv_roi.angle_deg,
+                                   score=round(0.8 * cv_roi.score, 3), source="local")
 
 
 def roi_to_anchor(roi: DialROI, frame_shape: tuple[int, ...], mode: str = "auto") -> dict[str, Any]:
@@ -382,6 +433,32 @@ class MultiGaugeProcessor:
     def request_redetect(self) -> None:
         self._frames_since_detect = 10 ** 6
 
+    def _uncovered(self, frame_shape: tuple[int, ...], dets: list[DialROI]) -> list[DialROI]:
+        """Ожидаемые ROI автоматических приборов, рядом с которыми детектор ничего не нашёл."""
+        out = []
+        for iid, a in self.tracker.anchors.items():
+            if a.get("mode") == "manual":
+                continue
+            p = anchor_to_roi(a, frame_shape, self.tracker.shift)
+            if p is None:
+                continue
+            pr = _radius(p)
+            if not any(math.hypot(d.center[0] - p.center[0], d.center[1] - p.center[1]) <= 0.6 * pr for d in dets):
+                out.append(p)
+        return out
+
+    def _local_search(self, frame: np.ndarray, dets: list[DialROI]) -> list[DialROI]:
+        found = []
+        for p in self._uncovered(frame.shape, dets):
+            d = local_dial_search(frame, p)
+            if d is not None:
+                found.append(d)
+        return found
+
+    def _uncovered_anchors(self, frame_shape: tuple[int, ...], dets: list[DialROI]) -> int:
+        """Сколько автоматических приборов не имеют ни одного циферблата рядом с ожидаемым местом."""
+        return len(self._uncovered(frame_shape, dets))
+
     def _need_detect(self) -> bool:
         tracks = self.tracker.tracks
         auto = [i for i, a in self.tracker.anchors.items() if a.get("mode") != "manual"]
@@ -414,6 +491,12 @@ class MultiGaugeProcessor:
             dets: list[DialROI] | None = None
             if self._need_detect():
                 dets, res.detect_info = detect_dials_multi(frame)
+                if self._uncovered_anchors(frame.shape, dets):
+                    dets, res.detect_info = detect_dials_multi(frame, tiled=True)
+                    extra = self._local_search(frame, dets)
+                    if extra:
+                        dets = dets + extra
+                        res.detect_info["from_local"] = len(extra)
                 self._frames_since_detect = 0
                 res.detected = True
                 res.detections = [{**d.to_json(), "anchor": roi_to_anchor(d, frame.shape)} for d in dets]

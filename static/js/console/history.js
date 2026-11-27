@@ -1,7 +1,7 @@
 // Вкладка «История и CSV»: выбор любого из 36 приборов (включая демопрогоны живой камеры),
 // журнал инцидентов всех узлов ТЭЦ (WARNING / CRITICAL / NO_DATA), тренд с разрывами и CSV.
 import { $, $$, esc, api, toast, fmt, decimalsFor, timeStr, dateStr, LEVEL_TAG, LEVEL_FULL, SOURCE_KIND_TEXT, evText } from './util.js';
-import { state, on, emit, camList, livePrimaryCam, isSimulated, setView, eventsSorted } from './store.js';
+import { state, on, emit, camList, livePrimaryCam, isSimulated, setView, eventsSorted, isSecondary } from './store.js';
 import { drawTrend, pointAt, tipText } from './plot.js';
 import { openSnapshotDialog } from './journal.js';
 import { jumpToInstrument } from './instruments.js';
@@ -129,9 +129,9 @@ export async function refreshHistory() {
       state.demo = demoSt;
       renderSelectors();
     }
-    if (isSimulated(cam)) {
+    if (isSimulated(cam) || isSecondary(cam)) {
       loadedRun = null;
-      loadedRows = await api(`/api/instruments/${encodeURIComponent(cam.id)}/history?limit=120`);
+      loadedRows = await api(`/api/instruments/${encodeURIComponent(cam.id)}/history?limit=${isSecondary(cam) ? 1000 : 120}`);
     } else if (selectedRunId && selectedRunId !== 'all') {
       const data = await api(`/api/demo/runs/${encodeURIComponent(selectedRunId)}/readings?limit=5000`);
       loadedRun = data.run;
@@ -200,7 +200,7 @@ function renderHistoryContent(cam) {
 
   // Ссылка скачивания CSV строго соответствует выбранному фильтру
   const dlBtn = $('#btnDownloadCsv');
-  const csvHref = isSimulated(cam)
+  const csvHref = (isSimulated(cam) || isSecondary(cam))
     ? `/api/instruments/${encodeURIComponent(cam.id)}/export.csv`
     : (loadedRun
       ? `/api/demo/runs/${encodeURIComponent(loadedRun.id)}/export.csv`
