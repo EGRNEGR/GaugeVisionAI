@@ -1,88 +1,67 @@
-# Перенос сайта v4 на Tilda: руководство
+# Публикация сайта GaugeVision AI 3.0 (v5) на Tilda
 
-**Статус: не опубликовано.** Действующая страница https://gaugevs.tilda.ws/ (проект 7124340, страница 409200509)
-и настройки проекта Tilda не изменялись. Перенос и публикация выполняются только после отдельного разрешения
-владельца проекта.
+**Статус: опубликовано и назначено главной страницей (`28.11.2026`).**
 
-## 1. Исходные условия
+- Главный адрес сайта: `https://gaugevs.tilda.ws/` (проект `7124340`, `indexpageid = 424686809`)
+- Прямой адрес страницы v5: `https://gaugevs.tilda.ws/gaugevision-3` (страница `424686809`)
+- Резервная страница отката (старая v3 с содержанием 2.0): `https://gaugevs.tilda.ws/gaugevision` (страница `409200509`, не изменялась и не удалялась)
+- Сборщик и манифесты: [`tilda/v5/`](../../tilda/v5/README.md) (`build.mjs`, `assets.json`, `records.json`, `scripts/probe_live.mjs`)
 
-| Условие | Следствие для v4 |
-|---|---|
-| Код передаётся в Tilda MCP одним вызовом, поле держится в пределах ~37 КБ | v4 весит 359 КБ кода (34 файла CSS и JS) — нужно 13–14 блоков |
-| Код `<head>` проекта сохраняется только у аккаунта с подтверждённой почтой | всё общее — в коде `<head>` страницы и в первых блоках, как в v3 |
-| Видео через MCP не загружается | ролики первого экрана — с jsDelivr по закреплённому коммиту ветки |
-| `upload_image` принимает шрифты только содержимым | шрифты Manrope и JetBrains Mono — с jsDelivr (пакеты fontsource), md5 сверяется с `site/v4/assets/fonts` |
-| Стили Tilda и сайта не должны пересекаться | каждое правило CSS получает префикс `.gvt`; правила `html` и `body` — только под `html.gvt-page` |
-| В параметрах вызова `\uXXXX` раскрывается в символ | в коде v4 `\u` только внутри строк и классов символов — запись эквивалентна; сверка приводит обе стороны к символам |
+## 1. Архитектура публикации
 
-Готовый инструмент — `tilda/build.mjs` (собирал v3, 388 строк): разбор CSS с префиксом, разнос по Vibe-блокам
-(tplid 1370), эмуляция страницы Tilda `dist/emulation.html`, манифест блоков, сверка md5. Для v4 его нужно
-перенастроить на `site/v4` — список файлов и деление по блокам ниже. Архитектура v4 та же (каркас `GV` из v2),
-поэтому механизм переносится без изменений: меняется таблица «файл → блок».
+Для публикации переиспользована существующая страница `424686809` (`/gaugevision-3`), ранее содержавшая 8 блоков отклонённой тёмной v4. В сборке v5 код уложен в `<head>` страницы и **9 Vibe-блоков (`tplid 1370`)** — добавлен 9-й блок `6307265201` после `6306430801`. Все блоки укладываются в лимит `≤ 33 КБ` на вызов MCP.
 
-## 2. Деление на блоки
+| Место | ID блока | Файл в `tilda/v5/dist/` | Размер | Содержимое |
+|---|---|---|---|---|
+| `<head>` страницы | — | `head.html` | 6,4 КБ | `theme-color`, `preload` шрифтов, скрипт `html.gvt-page` и Tweaks, `@font-face` (11 `.woff2`), правила `body` и линовки |
+| Блок 01 | `6306427101` | `blocks/01.html` | 30,0 КБ | CSS чанк 1 (префикс `.gvt`, минификация `esbuild`) |
+| Блок 02 | `6306429901` | `blocks/02.html` | 30,1 КБ | CSS чанк 2 (префикс `.gvt`) |
+| Блок 03 | `6306430001` | `blocks/03.html` | 11,0 КБ | CSS чанк 3 (префикс `.gvt`) |
+| Блок 04 | `6306430101` | `blocks/04.html` | 26,9 КБ | `GV.content` чанк 1 (`src`, `panel`, `forecast`, `catalog`, `fleet`, `meta`, `sections`, `hero`…`diagnostics`) |
+| Блок 05 | `6306430201` | `blocks/05.html` | 24,7 КБ | `GV.content` чанк 2 (`forecastSection`…`labels`), `typo()`, `util.js` |
+| Блок 06 | `6306430601` | `blocks/06.html` | 25,5 КБ | `motion.js`, `optimizer-core.js`, `kit.js`, `draw.js` |
+| Блок 07 | `6306430701` | `blocks/07.html` | 32,0 КБ | `journal.js`, `shift.js`, `multigauge.js`, `resilience.js`, `scada.js` |
+| Блок 08 | `6306430801` | `blocks/08.html` | 32,4 КБ | `forecast.js`, `optimizer.js`, `metrics.js`, `evolution.js`, `limits.js`, `contact.js`, `showcase.js`, `tweaks.js` |
+| Блок 09 | `6307265201` | `blocks/09.html` | 5,1 КБ | `<div class="gvt">`, `.gv-skip`, `#gv-root`, `<noscript>`, `#gv-tweaks`, `page.js` |
 
-Размеры — сумма исходных файлов до префикса; префикс `.gvt ` добавляет около 6 % к CSS.
+У всех 9 блоков выставлены `margintop: "0px"`, `margintop_res_480: "0px"`, `marginbottom: "0px"`, `marginbottom_res_480: "0px"`, `animationoff: "y"`. В результате первые 8 блоков имеют высоту `0 px`, а вся вёрстка рендерится внутри блока `6307265201`.
 
-| Место | Содержимое | Оценка, КБ |
-|---|---|---|
-| код `<head>` страницы | `theme-color`; скрипт до первой отрисовки (класс `html.gvt-page`, Tweaks `gv4.tweaks`); `@font-face` только Manrope и JetBrains Mono с адресами jsDelivr; `tokens.css`, `base.css`, `motion.css` | ≈ 24 |
-| 01 `lib` (невидимый) | `util.js`, `motion.js` | 28,3 |
-| 02 `core` (невидимый) | `kit.js`, `draw.js`, общая часть `content.js` (`src`, `meta`, `labels`, `panel`, `hero`, `forecast`, `catalog`, `fleet`, `typo`), `optimizer-core.js` | ≈ 34 |
-| 03 `top` | `page.js` (шапка, строка телеметрии, фоновые слои, сборщик), `components.css`, `page.css` | ≈ 33 |
-| 04 `hero` | тексты `heroSection`, `hero.css`, `hero.js` | ≈ 20 |
-| 05 `problem` | тексты `problem`, часть `sections.css` (`gv-cmp`, `gv-problem`), `problem.js` | ≈ 12 |
-| 06 `story` | тексты `story`, `story.css`, `story.js` | ≈ 33 |
-| 07 `multigauge` + `resilience` | тексты, часть `sections.css` (`gv-mg`, `gv-sf`), `multigauge.js`, `resilience.js` | ≈ 33 |
-| 08 `scada` + `diagnostics` + `forecast` | тексты, часть `sections.css`, три модуля | ≈ 25 |
-| 09 `optimizer` + `document` | тексты, часть `sections.css` (`gv-opt`, `gv-tile`, `gv-doc`), два модуля | ≈ 36 |
-| 10 `evolution` + `economics` | тексты, часть `sections.css`, два модуля | ≈ 22 |
-| 11 `evidence` + `readiness` + финал | тексты, часть `sections.css`, два модуля, финал | ≈ 22 |
-| 12 `showcase` | шаги, `showcase.css`, `showcase.js` | ≈ 14 |
-| 13 `tweaks` | `tweaks.css`, `tweaks.js` (видит только автор, адрес с `?tweaks`) | ≈ 18 |
+## 2. Настройки страницы `424686809` и проекта `7124340`
 
-Если блок после префикса превышает 37 КБ (риск — 06 и 09), он делится пополам по модулям. `sections.css`
-(41 КБ) делится по классам-владельцам, как `ledger.css` в v3: правила секций не пересекаются, каскад
-сохраняется.
+- **Страница `424686809`:** `title = "GaugeVision AI 3.0 — прибор пишет журнал сам"`, `alias = "gaugevision-3"`, `animationoff = true`, `fb_img = https://static.tildacdn.com/tila3262-6464-4261-b833-306634363339/shift-before.jpg`.
+- **Проект `7124340`:** обновлено только поле `indexpageid = 424686809` (частичным вызовом `update_project_settings`); остальные параметры проекта не изменялись.
+- **Внешние ресурсы (`tilda/v5/assets.json`):** 15 изображений `.jpg` раздаются с CDN Tilda (`static.tildacdn.com`, проверены по совпадению MD5), 11 шрифтов `.woff2` и 2 ролика `shift.scrub.mp4` / `shift.scrub-m.mp4` — с `cdn.jsdelivr.net` по закреплённому коммиту `c12b2a9` ветки `redesign/website-v5` (все проверены `HTTP 200`).
 
-## 3. Изменения кода для Tilda
+## 3. Команды пересборки и проверки
 
-1. **Сборщик по блокам.** `page.js` монтирует 15 секций в свой корень. На Tilda каждый блок монтирует свою
-   секцию в корень блока и в конце скрипта вызывает `GV.tilda.boot()`; на `DOMContentLoaded` все блоки
-   монтируются одним проходом. Образец — `tilda/src/runtime.js` v3.
-2. **Якоря.** У блоков — якоря `#hero` … `#final`, совпадающие с `id` секций: на них опираются навигация шапки,
-   строка телеметрии и шаги режима демонстрации (`FOCUS` в `showcase.js` ищет демонстрацию внутри секции).
-3. **`GV.api`.** Компоненты регистрируют свои API в `GV.api` при монтировании; режим демонстрации читает их
-   лениво через `apiGetter`, поэтому порядок блоков не важен, если 01–03 стоят первыми.
-4. **Липкие сцены.** История и первый экран закреплены внутри своей секции (`position: sticky` в пределах
-   родителя). Обёртки Tilda `t-rec` не должны иметь `overflow: hidden` — проверяется на эмуляции.
-5. **`animationoff`** у всех блоков, иначе Tilda прячет блок до прокрутки.
-6. **Редактор Tilda.** Скрипт в `<head>` не ставит `html.gvt-page` в редакторе; анимации сразу в конечном
-   состоянии, видео не грузится.
+```bash
+# 1. Локальная эмуляция Tilda
+node tilda/v5/build.mjs --local
 
-## 4. Файлы
+# 2. Продакшен-сборка (CDN Tilda + jsDelivr)
+node tilda/v5/build.mjs
 
-| Файл | Куда |
-|---|---|
-| 19 изображений `site/v4/assets/img` (2,7 МБ) | CDN Tilda через `upload_image`, байт в байт; адреса — в `tilda/assets.json` |
-| `gauge_pullback.scrub.mp4` (8,3 МБ), `gauge_pullback.scrub-m.mp4` (4,3 МБ) | jsDelivr: `https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@<коммит>/site/v4/assets/video/…` по коммиту ветки `redesign/website-v4` |
-| шрифты Manrope 400–800 и JetBrains Mono 400–700 | jsDelivr, fontsource; Onest и IBM Plex Sans (варианты Tweaks) на Tilda не переносятся — панель Tweaks показывает только Manrope |
-| `favicon.svg` | иконка проекта меняется только с разрешения: это настройка проекта |
+# 3. Проверка живой страницы (видео, шрифты, высота блоков, CLS)
+node tilda/v5/scripts/probe_live.mjs https://gaugevs.tilda.ws/gaugevision-3 390 844
+node tilda/v5/scripts/probe_live.mjs https://gaugevs.tilda.ws/gaugevision-3 1440 900
 
-## 5. Порядок работ (после разрешения)
+# 4. Полная браузерная и интерактивная приёмка живой страницы
+PAGE=/gaugevision-3 node reports/website_redesign/evidence/scripts/accept_v5.mjs https://gaugevs.tilda.ws reports/website_redesign/evidence/v5/tilda --no-offline
+node reports/website_redesign/evidence/scripts/interact_v5.mjs https://gaugevs.tilda.ws/gaugevision-3 reports/website_redesign/evidence/v5/tilda
+```
 
-1. Пересобрать: `node tilda/build.mjs --local`, открыть `tilda/dist/local/emulation.html`, прогнать
-   `evidence/scripts/accept.mjs` по эмуляции (те же пороги: 0 ошибок, нет переполнения, CLS < 0,1).
-2. **Работать на копии.** `duplicate_page` действующей страницы → новая неопубликованная страница. Действующая
-   страница остаётся главной и не меняется до согласования.
-3. На копии: `update_page_head_code` — `dist/head.html`; блоки — `update_record`, `tab="content"`,
-   `only_field="code"`, ответ ровно `OK`; номера — в `tilda/records.json`.
-4. `page_preview` копии, приёмка в браузере на пяти разрешениях и в режиме `?showcase=1`.
-5. Публикация копии по отдельному адресу, затем — по решению владельца — назначение главной.
-6. Откат: главной снова назначается страница 409200509, она не изменялась.
+## 4. Процедура отката
 
-## 6. Вариант без переноса кода
+Чтобы мгновенно вернуть старую журнальную страницу v3 (`2.0`) в качестве главной:
 
-Если перенос в блоки не нужен, v4 можно опубликовать как статический сайт (GitHub Pages ветки, любой
-статический хостинг), а на Tilda поставить ссылку. Встраивать v4 в Tilda через `iframe` не рекомендуется:
-ломаются закреплённые сцены, прокрутка ролика и полноэкранный режим демонстрации.
+```json
+{
+  "tool": "update_project_settings",
+  "arguments": {
+    "projectid": 7124340,
+    "indexpageid": 409200509
+  }
+}
+```
+
+После этого `https://gaugevs.tilda.ws/` снова откроет нетронутую страницу `409200509` (`/gaugevision`), а версия v5 останется доступна по адресу `https://gaugevs.tilda.ws/gaugevision-3`.
