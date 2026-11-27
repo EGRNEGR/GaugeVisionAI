@@ -221,6 +221,11 @@ class OutageToggleRequest(BaseModel):
     reason: str = Field("Симуляция обрыва канала АСУ ТП", max_length=200)
 
 
+class ModbusFreezeRequest(BaseModel):
+    frozen: bool
+    reason: str = Field("Стендовая проверка зависания heartbeat без обрыва TCP", max_length=200)
+
+
 class DegradeRequest(BaseModel):
     stream_id: str = Field(..., min_length=1, max_length=120)
     mode: Literal["freeze", "steam", "low_light", "glare", "packet_loss", "offline", "partial_occlusion", "recover", "none"]
@@ -2524,22 +2529,38 @@ async def api_scada_status(
     return service.scada.status()
 
 
+@app.post("/api/architecture/modbus/freeze")
+async def api_architecture_modbus_freeze(
+    req: ModbusFreezeRequest,
+    request: Request,
+    user: dict[str, Any] = Depends(auth.require_role("admin")),
+) -> dict[str, Any]:
+    if not auth.is_fault_injection_allowed():
+        raise HTTPException(403, "Симуляция зависания Modbus отключена вне демонстрационного/стендового профиля")
+    frozen = service.scada.modbus.set_sync_frozen(req.frozen)
+    await db.log_audit(username=user["username"], role=user["role"], action="FAULT_MODBUS_FREEZE",
+                       target=f"frozen={frozen}", status_code=200, ip=request.client.host if request.client else None)
+    return {"ok": True, "sync_frozen": frozen, "modbus": service.scada.modbus.status()}
+
+
 @app.get("/api/scada/modbus/registers")
 async def api_scada_modbus_registers(
     limit: int = Query(36, ge=1, le=100),
     _user: dict[str, Any] = Depends(auth.require_role("operator")),
 ) -> dict[str, Any]:
-    instruments = service.public_instruments()
-    events = service.events.list(limit=300)
-    disp = service.dispatch.overview(instruments, events, service.stream_telemetry_map())
-    health_by_id = {x["id"]: x["health_score"] for x in disp["instruments"]}
-    sf_pending = await service.store_forward.pending_count()
-    service.scada.modbus.update_from_instruments(
-        instruments,
-        health_by_id=health_by_id,
-        sf_pending=sf_pending,
-        outage_active=service.store_forward.outage_active,
-    )
+    if not service.scada.modbus.sync_frozen:
+        instruments = service.public_instruments()
+        events = service.events.list(limit=300)
+        disp = service.dispatch.overview(instruments, events, service.stream_telemetry_map())
+        health_by_id = {x["id"]: x["health_score"] for x in disp["instruments"]}
+        sf_pending = await service.store_forward.pending_count()
+        service.scada.modbus.update_from_instruments(
+            instruments,
+            health_by_id=health_by_id,
+            sf_pending=sf_pending,
+            outage_active=service.store_forward.outage_active,
+            advance_heartbeat=(service.scada.modbus.heartbeat == 0),
+        )
     return service.scada.modbus.registers_snapshot(limit=limit)
 
 
