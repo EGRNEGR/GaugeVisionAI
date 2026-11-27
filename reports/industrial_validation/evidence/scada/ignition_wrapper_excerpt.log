@@ -1,0 +1,164 @@
+﻿=== IGNITION 8.3.10 WRAPPER.LOG EXCERPT ===
+--- STARTUP (first 45 lines) ---
+STATUS | wrapper  | 2026/11/27 10:07:31 | --> Wrapper Started as Console
+STATUS | wrapper  | 2026/11/27 10:07:31 | Java Service Wrapper Standard Edition 64-bit 3.6.5
+STATUS | wrapper  | 2026/11/27 10:07:31 |   Copyright (C) 1999-2026 Tanuki Software, Ltd. All Rights Reserved.
+STATUS | wrapper  | 2026/11/27 10:07:31 |     https://wrapper.tanukisoftware.com
+STATUS | wrapper  | 2026/11/27 10:07:31 |   Licensed to Inductive Automation for Inductive Automation
+STATUS | wrapper  | 2026/11/27 10:07:31 | 
+STATUS | wrapper  | 2026/11/27 10:07:34 | Launching a JVM...
+INFO   | jvm 1    | 2026/11/27 10:07:34 | WrapperManager: Initializing...
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.CompositeClassRejectListFilter] [10:07:39.099]: Initialization performed successfully 
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.CompositeClassRejectListFilter] [10:07:39.100]: JVM-wide ObjectInputFilter set up successfully 
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.CompositeClassRejectListFilter] [10:07:39.100]: Platform serialFilter has 88 pattern(s) 
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [IgnitionGateway               ] [10:07:39.122]: Created DefaultSystemEncryptionService 
+INFO   | jvm 1    | 2026/11/27 10:07:39 | W [WebResourceManagerImpl        ] [10:07:39.433]: Unable to read "gateway.metroKeystoreAlias" gateway.xml property. Assuming metro keystore alias is: metro-key 
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.WebServerManager            ] [10:07:39.653]: Starting setup 
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.WebServerManager            ] [10:07:39.655]: gateway.forceSecureRedirect property is not set. Defaulting to false 
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.WebServerManager            ] [10:07:39.660]: gateway.includedCipherSuites property is not set. Defaulting to [] 
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.WebServerManager            ] [10:07:39.670]: gateway.excludedCipherSuites property is not set. Defaulting to [] 
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.WebServerManager            ] [10:07:39.674]: gateway.publicAddress.autoDetect property is not set. Defaulting to true 
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.WebServerManager            ] [10:07:39.677]: gateway.publicAddress.address property is not set. Defaulting to  
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.WebServerManager            ] [10:07:39.680]: gateway.publicAddress.httpPort property is not set. Defaulting to  
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.WebServerManager            ] [10:07:39.684]: gateway.publicAddress.httpsPort property is not set. Defaulting to  
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.WebServerManager            ] [10:07:39.688]: gateway.useProxyForwardedHeader property is not set. Defaulting to false 
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.WebServerManager            ] [10:07:39.697]: gateway.resolveHostNames property is not set. Defaulting to false 
+INFO   | jvm 1    | 2026/11/27 10:07:39 | I [g.WebServerManager            ] [10:07:39.706]: Setup complete 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [Commissioning                 ] [10:07:40.127]: Resources needing commissioning: eula,authSetup,connections,activated 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [Commissioning                 ] [10:07:40.127]: Commissioning State updated from commissioning to needs_commissioning 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [g.WebServerManager            ] [10:07:40.196]: Starting up 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [C.SecureRandomProvider        ] [10:07:40.283]: Secure random seed generated in 0ms 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [o.e.j.s.Server                ] [10:07:40.284]: jetty-12.0.34; built: 2026-04-01T05:45:03.823Z; git: 57e7adb250592bd15f573e7820be9b64632c6637; jvm 17.0.20.1+1-LTS 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [o.e.j.s.DefaultSessionIdManager] [10:07:40.461]: Session workerName=node0 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [o.e.j.s.h.ContextHandler      ] [10:07:40.468]: Started oeje10w.WebAppContext@28b4de60{Commissioning,/,b=file:///C:/Hakatons/gv_scada_lab/ignition-8.3.10/webserver/webapps/commissioning/,a=AVAILABLE,h=oeje10s.SessionHandler@2a5704be{STARTED}} 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [o.e.j.e.s.ServletContextHandler] [10:07:40.495]: Started oeje10w.WebAppContext@28b4de60{Commissioning,/,b=file:///C:/Hakatons/gv_scada_lab/ignition-8.3.10/webserver/webapps/commissioning/,a=AVAILABLE,h=oeje10s.SessionHandler@2a5704be{STARTED}} 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [o.e.j.s.AbstractConnector     ] [10:07:40.548]: Started ServerConnector@75e7b8e6{HTTP/1.1, (http/1.1)}{0.0.0.0:8088} 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [o.e.j.s.Server                ] [10:07:40.550]: Started oejs.Server@237bac1b{STARTING}[12.0.34,sto=10000] @6432ms 
+INFO   | jvm 1    | 2026/11/27 10:13:36 | I [o.e.j.s.AbstractConnector     ] [10:13:36.491]: Started ServerConnector@54521a32{SSL, (ssl, http/1.1)}{0.0.0.0:8060} 
+INFO   | jvm 1    | 2026/11/27 10:13:36 | I [o.e.j.e.s.ServletContextHandler] [10:13:36.501]: Stopped oeje10w.WebAppContext@28b4de60{Commissioning,/,b=file:///C:/Hakatons/gv_scada_lab/ignition-8.3.10/webserver/webapps/commissioning/,a=AVAILABLE,h=oeje10s.SessionHandler@2a5704be{STOPPED}} 
+INFO   | jvm 1    | 2026/11/27 10:13:36 | I [Commissioning                 ] [10:13:36.502]: Commissioning State updated from needs_commissioning to commissioned 
+INFO   | jvm 1    | 2026/11/27 10:13:36 | I [o.e.j.s.h.ContextHandler      ] [10:13:36.522]: Started cic.IgnitionServer$IgnitionWebAppContext@694bbcb4{Ignition,/,b=file:///C:/Hakatons/gv_scada_lab/ignition-8.3.10/webserver/webapps/main/,a=AVAILABLE,h=oeje10s.SessionHandler@6b82e45f{STARTED}} 
+INFO   | jvm 1    | 2026/11/27 10:13:36 | I [IgnitionGateway               ] [10:13:36.524]: Ignition[state=STOPPED] ContextState = STARTING 
+INFO   | jvm 1    | 2026/11/27 10:13:36 | I [IgnitionGateway               ] [10:13:36.527]: Starting Ignition 8.3.10 (b2026100610) 
+INFO   | jvm 1    | 2026/11/27 10:13:36 | I [R.StateMonitoring             ] [10:13:36.584]: Redundancy state changed: Role=Independent, Activity level=Active, Project state=Good, History level=Full redundant-provider=system
+INFO   | jvm 1    | 2026/11/27 10:13:36 | I [o.e.j.e.s.ServletContextHandler] [10:13:36.929]: Started cic.IgnitionServer$IgnitionWebAppContext@694bbcb4{Ignition,/,b=file:///C:/Hakatons/gv_scada_lab/ignition-8.3.10/webserver/webapps/main/,a=AVAILABLE,h=oeje10s.SessionHandler@6b82e45f{STARTED}} 
+INFO   | jvm 1    | 2026/11/27 10:13:37 | I [g.InternalDatabaseManager     ] [10:13:37.007]: Starting up... 
+INFO   | jvm 1    | 2026/11/27 10:13:37 | I [P.InternalDatabase            ] [10:13:37.008]: ... no files found, will create. 
+INFO   | jvm 1    | 2026/11/27 10:13:37 | I [P.InternalDatabase            ] [10:13:37.008]: Creating new internal database "config.idb". 
+
+--- KEY MODBUS / OPC-UA / PERSPECTIVE / CONNECTION EVENTS ---
+STATUS | wrapper  | 2026/11/27 10:07:31 | --> Wrapper Started as Console
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [o.e.j.s.h.ContextHandler      ] [10:07:40.468]: Started oeje10w.WebAppContext@28b4de60{Commissioning,/,b=file:///C:/Hakatons/gv_scada_lab/ignition-8.3.10/webserver/webapps/commissioning/,a=AVAILABLE,h=oeje10s.SessionHandler@2a5704be{STARTED}} 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [o.e.j.e.s.ServletContextHandler] [10:07:40.495]: Started oeje10w.WebAppContext@28b4de60{Commissioning,/,b=file:///C:/Hakatons/gv_scada_lab/ignition-8.3.10/webserver/webapps/commissioning/,a=AVAILABLE,h=oeje10s.SessionHandler@2a5704be{STARTED}} 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [o.e.j.s.AbstractConnector     ] [10:07:40.548]: Started ServerConnector@75e7b8e6{HTTP/1.1, (http/1.1)}{0.0.0.0:8088} 
+INFO   | jvm 1    | 2026/11/27 10:07:40 | I [o.e.j.s.Server                ] [10:07:40.550]: Started oejs.Server@237bac1b{STARTING}[12.0.34,sto=10000] @6432ms 
+INFO   | jvm 1    | 2026/11/27 10:13:36 | I [o.e.j.s.AbstractConnector     ] [10:13:36.491]: Started ServerConnector@54521a32{SSL, (ssl, http/1.1)}{0.0.0.0:8060} 
+INFO   | jvm 1    | 2026/11/27 10:13:36 | I [o.e.j.s.h.ContextHandler      ] [10:13:36.522]: Started cic.IgnitionServer$IgnitionWebAppContext@694bbcb4{Ignition,/,b=file:///C:/Hakatons/gv_scada_lab/ignition-8.3.10/webserver/webapps/main/,a=AVAILABLE,h=oeje10s.SessionHandler@6b82e45f{STARTED}} 
+INFO   | jvm 1    | 2026/11/27 10:13:36 | I [o.e.j.e.s.ServletContextHandler] [10:13:36.929]: Started cic.IgnitionServer$IgnitionWebAppContext@694bbcb4{Ignition,/,b=file:///C:/Hakatons/gv_scada_lab/ignition-8.3.10/webserver/webapps/main/,a=AVAILABLE,h=oeje10s.SessionHandler@6b82e45f{STARTED}} 
+INFO   | jvm 1    | 2026/11/27 10:13:37 | I [P.InternalDatabase            ] [10:13:37.049]: internal database "config.idb" started up successfully. 
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.MigrationLog      ] [10:13:49.260]: Migrated table(s) [ModbusTcpDriverSettings, DeviceSettings] in 0ms migration-strategy=Device (ModbusTcp) Migrator
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.MigrationLog      ] [10:13:49.261]: Migrated table(s) [ModbusTcpDriverSettings, DeviceSettings] in 0ms migration-strategy=Device (ModbusRtuOverTcp) Migrator
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.MigrationLog      ] [10:13:49.261]: Migrated table(s) [ModbusRtuDriverSettings, DeviceSettings] in 0ms migration-strategy=Device (ModbusRtu) Migrator
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.ExtensionPointRecordMigrationStrategy] [10:13:49.264]: All records of type 'TagHistoryProviderEP' have been migrated 
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.MigrationLog      ] [10:13:49.264]: Migrated table(s) [HDAHistoryProviderSettings, TagHistoryProviderEP] in 0ms migration-strategy=TagHistoryProviderEP (HDA) Migrator
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.ExtensionPointRecordMigrationStrategy] [10:13:49.265]: All records of type 'TagHistoryProviderEP' have been migrated 
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.MigrationLog      ] [10:13:49.265]: Migrated table(s) [edgeHistorianSettings, TagHistoryProviderEP] in 0ms migration-strategy=TagHistoryProviderEP (EdgeHistorian) Migrator
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.ExtensionPointRecordMigrationStrategy] [10:13:49.265]: All records of type 'TagHistoryProviderEP' have been migrated 
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.MigrationLog      ] [10:13:49.265]: Migrated table(s) [remotehistoriansettings, TagHistoryProviderEP] in 0ms migration-strategy=TagHistoryProviderEP (RemoteHistorian) Migrator
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.ExtensionPointRecordMigrationStrategy] [10:13:49.265]: All records of type 'TagHistoryProviderEP' have been migrated 
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.MigrationLog      ] [10:13:49.265]: Migrated table(s) [TagHistorySplitterSettings, TagHistoryProviderEP] in 0ms migration-strategy=TagHistoryProviderEP (SplittingProvider) Migrator
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.ExtensionPointRecordMigrationStrategy] [10:13:49.266]: All records of type 'TagHistoryProviderEP' have been migrated 
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.MigrationLog      ] [10:13:49.266]: Migrated table(s) [WideDbHistorianProviderSettings, TagHistoryProviderEP] in 0ms migration-strategy=TagHistoryProviderEP (widedb) Migrator
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.ExtensionPointRecordMigrationStrategy] [10:13:49.266]: All records of type 'TagHistoryProviderEP' have been migrated 
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.MigrationLog      ] [10:13:49.266]: Migrated table(s) [TagHistoryProviderEP] in 0ms migration-strategy=TagHistoryProviderEP (history_sim) Migrator
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.ExtensionPointRecordMigrationStrategy] [10:13:49.266]: All records of type 'TagHistoryProviderEP' have been migrated 
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.MigrationLog      ] [10:13:49.266]: Migrated table(s) [csvHistorianSettings, TagHistoryProviderEP] in 0ms migration-strategy=TagHistoryProviderEP (CsvHistorian) Migrator
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.ExtensionPointRecordMigrationStrategy] [10:13:49.267]: All records of type 'TagHistoryProviderEP' have been migrated 
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [c.i.i.g.c.m.MigrationLog      ] [10:13:49.267]: Migrated table(s) [TagHistorianProviderSettings, TagHistoryProviderEP] in 0ms migration-strategy=TagHistoryProviderEP (datasource) Migrator
+INFO   | jvm 1    | 2026/11/27 10:13:49 | I [P.InternalDatabase            ] [10:13:49.848]: internal database "valueStore.idb" started up successfully. 
+INFO   | jvm 1    | 2026/11/27 10:13:51 | W [g.LicenseManager              ] [10:13:51.535]: Could not read license from HASP key. HASP login() failed. Last error = 14. 
+INFO   | jvm 1    | 2026/11/27 10:13:57 | I [g.LicenseManager              ] [10:13:57.256]: Trial time reset.  Time remaining = 7200. 
+INFO   | jvm 1    | 2026/11/27 10:14:08 | I [g.OIDCProviderManager         ] [10:14:08.919]: Started up complete in 65 ms 
+INFO   | jvm 1    | 2026/11/27 10:14:09 | I [P.InternalDatabase            ] [10:14:09.116]: internal database "references.idb" started up successfully. provider=System
+INFO   | jvm 1    | 2026/11/27 10:14:09 | I [c.i.i.g.t.r.DbTagReferenceStore] [10:14:09.127]: Tag Trace store started. provider=System
+INFO   | jvm 1    | 2026/11/27 10:14:09 | I [P.InternalDatabase            ] [10:14:09.262]: internal database "references.idb" started up successfully. provider=default
+INFO   | jvm 1    | 2026/11/27 10:14:09 | I [c.i.i.g.t.r.DbTagReferenceStore] [10:14:09.271]: Tag Trace store started. provider=default
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [G.Manager                     ] [10:14:17.341]: WSChannel manager started. 
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [g.g.WSChannelManager          ] [10:14:17.377]: Gateway network channel manager started successfully. Protobuf gzip compression threshold set to 1000 bytes 
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [c.i.e.g.GatewayEventStreamManager] [10:14:17.389]: Started module-name=Event Streams
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [ModuleInstance                ] [10:14:17.392]: Starting up module 'com.inductiveautomation.perspective' v3.3.10 (b2026100610)... module-name=Perspective
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [PerspectiveAuthTokenRecords   ] [10:14:17.569]: Starting up... module-name=Perspective
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [PerspectiveAuthTokenRecords   ] [10:14:17.572]: Startup completed in 2 ms module-name=Perspective
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [ModuleInstance                ] [10:14:17.617]: Starting up module 'com.inductiveautomation.opcua' v10.3.10 (b2026100610)... module-name=OPC-UA
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [o.e.m.o.s.s.OpcUaServer       ] [10:14:17.681]: Binding endpoint opc.tcp://NUC:62541 to localhost:62541 [Basic256Sha256/SignAndEncrypt] module-name=OPC-UA
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [o.e.m.o.s.s.OpcUaServer       ] [10:14:17.815]: Binding endpoint opc.tcp://NUC:62541/discovery to localhost:62541 [None/None] module-name=OPC-UA
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [o.e.m.o.s.s.OpcUaServer       ] [10:14:17.815]: Binding endpoint opc.tcp://localhost:62541 to localhost:62541 [Basic256Sha256/SignAndEncrypt] module-name=OPC-UA
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [o.e.m.o.s.s.OpcUaServer       ] [10:14:17.815]: Binding endpoint opc.tcp://localhost:62541/discovery to localhost:62541 [None/None] module-name=OPC-UA
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [o.e.m.o.s.s.OpcUaServer       ] [10:14:17.815]: Binding endpoint opc.tcp://127.0.0.1:62541 to localhost:62541 [Basic256Sha256/SignAndEncrypt] module-name=OPC-UA
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [o.e.m.o.s.s.OpcUaServer       ] [10:14:17.815]: Binding endpoint opc.tcp://127.0.0.1:62541/discovery to localhost:62541 [None/None] module-name=OPC-UA
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [OpcUaModule                   ] [10:14:17.850]: Routes mounted module-name=OPC-UA
+INFO   | jvm 1    | 2026/11/27 10:14:17 | I [h.ModuleHook                  ] [10:14:17.851]: Historian module started. module-name=Historian Core
+INFO   | jvm 1    | 2026/11/27 10:14:18 | I [ModuleInstance                ] [10:14:18.033]: Starting up module 'com.inductiveautomation.opcua.drivers.modbus' v8.3.10 (b2026100610)... module-name=Modbus Driver
+INFO   | jvm 1    | 2026/11/27 10:14:18 | I [IgnitionGateway               ] [10:14:18.819]: Gateway started in 42 seconds. 
+INFO   | jvm 1    | 2026/11/27 10:14:36 | I [s.f.e.sample_sqlite_database  ] [10:14:36.716]: Store and forward engine 'sample_sqlite_database' started up. engine=sample_sqlite_database, collection=core
+INFO   | jvm 1    | 2026/11/27 10:14:37 | I [s.f.e.sample_sqlite_database  ] [10:14:37.731]: Started pipeline for 'sample_sqlite_database/alarm_journal_event/sample_alarm_journal_profile' store-forward-id=sample_sqlite_database, collection=core, sf-pipeline=sample_sqlite_database/alarm_journal_event/sample_alarm_journal_profile, engine=sample_sqlite_database
+INFO   | jvm 1    | 2026/11/27 10:14:37 | I [a.J.DatabaseAlarmJournal      ] [10:14:37.772]: Database alarm journal 'Sample_Alarm_Journal_Profile' started. collection=core
+INFO   | jvm 1    | 2026/11/27 10:14:37 | I [P.InternalDatabase            ] [10:14:37.811]: internal database "references.idb" started up successfully. provider=Sample_Tags
+INFO   | jvm 1    | 2026/11/27 10:14:37 | I [c.i.i.g.t.r.DbTagReferenceStore] [10:14:37.825]: Tag Trace store started. provider=Sample_Tags
+INFO   | jvm 1    | 2026/11/27 10:14:37 | I [s.f.e.sample_sqlite_database  ] [10:14:37.837]: Started pipeline for 'sample_sqlite_database/audit_record/sample_audit_profile' store-forward-id=sample_sqlite_database, collection=core, sf-pipeline=sample_sqlite_database/audit_record/sample_audit_profile, engine=sample_sqlite_database
+INFO   | jvm 1    | 2026/11/27 10:14:38 | I [s.f.e.sample_sqlite_database  ] [10:14:38.031]: Started pipeline for 'sample_sqlite_database/tag_history_data/sample_sqlite_database' store-forward-id=sample_sqlite_database, collection=core, sf-pipeline=sample_sqlite_database/tag_history_data/sample_sqlite_database, engine=sample_sqlite_database
+INFO   | jvm 1    | 2026/11/27 10:14:38 | I [s.f.s.TagHistoryDatasourceSink] [10:14:38.143]: Tag history sink initialized successfully against datasource 'sample_sqlite_database' store-forward-id=sample_sqlite_database, collection=core, sink=sample_sqlite_database
+INFO   | jvm 1    | 2026/11/27 10:14:45 | I [s.ProjectRunner               ] [10:14:45.246]: Project started. project-name=samplequickstart, collection=samplequickstart
+INFO   | jvm 1    | 2026/11/27 10:37:54 | I [s.ProjectRunner               ] [10:37:54.930]: Project started. project-name=GaugeVisionLab, collection=GaugeVisionLab
+INFO   | jvm 1    | 2026/11/27 10:42:57 | I [p.ClientSession               ] [10:42:57.789]: WebSocket disconnected from session. session-project=GaugeVisionLab
+INFO   | jvm 1    | 2026/11/27 10:47:43 | I [p.ClientSession               ] [10:47:43.079]: WebSocket disconnected from session. session-project=GaugeVisionLab
+INFO   | jvm 1    | 2026/11/27 10:50:13 | E [d.M.SocketIODelegate          ] [10:50:13.375]: [hostname=127.0.0.1,port=15020] Socket connection closed, DriverState was Connected. device-name=GaugeVisionModbus
+INFO   | jvm 1    | 2026/11/27 10:50:13 | W [d.M.ReadHoldingRegistersRequest] [10:50:13.378]: Request failed. FailureType==DISCONNECTED device-name=GaugeVisionModbus
+INFO   | jvm 1    | 2026/11/27 10:50:13 | java.lang.Exception: Driver is disconnected.
+INFO   | jvm 1    | 2026/11/27 10:50:13 | W [d.M.ReadHoldingRegistersRequest] [10:50:13.378]: Request failed. FailureType==DISCONNECTED device-name=GaugeVisionModbus
+INFO   | jvm 1    | 2026/11/27 10:50:13 | java.lang.Exception: Driver is disconnected.
+INFO   | jvm 1    | 2026/11/27 10:50:13 | W [d.M.ReadHoldingRegistersRequest] [10:50:13.379]: Request failed. FailureType==DISCONNECTED device-name=GaugeVisionModbus
+INFO   | jvm 1    | 2026/11/27 10:50:13 | java.lang.Exception: Driver is disconnected.
+INFO   | jvm 1    | 2026/11/27 10:50:13 | W [d.M.ReadHoldingRegistersRequest] [10:50:13.379]: Request failed. FailureType==DISCONNECTED device-name=GaugeVisionModbus
+INFO   | jvm 1    | 2026/11/27 10:50:13 | java.lang.Exception: Driver is disconnected.
+INFO   | jvm 1    | 2026/11/27 10:50:13 | W [d.M.ReadHoldingRegistersRequest] [10:50:13.379]: Request failed. FailureType==DISCONNECTED device-name=GaugeVisionModbus
+INFO   | jvm 1    | 2026/11/27 10:50:13 | java.lang.Exception: Driver is disconnected.
+INFO   | jvm 1    | 2026/11/27 10:50:13 | W [d.M.ReadHoldingRegistersRequest] [10:50:13.379]: Request failed. FailureType==DISCONNECTED device-name=GaugeVisionModbus
+INFO   | jvm 1    | 2026/11/27 10:50:13 | java.lang.Exception: Driver is disconnected.
+
+--- TAIL (last 35 lines) ---
+INFO   | jvm 1    | 2026/11/27 11:29:38 | java.lang.Exception: RequestCycle stopped.
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at com.inductiveautomation.xopc.driver.api.BasicRequestCycle$AddToQueue.run(BasicRequestCycle.java:108)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.lang.Thread.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | W [d.M.ReadHoldingRegistersRequest] [11:29:38.798]: Request failed. FailureType==DISCONNECTED device-name=GaugeVisionModbus
+INFO   | jvm 1    | 2026/11/27 11:29:38 | java.lang.Exception: RequestCycle stopped.
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at com.inductiveautomation.xopc.driver.api.BasicRequestCycle$AddToQueue.run(BasicRequestCycle.java:108)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.lang.Thread.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | W [d.M.ReadHoldingRegistersRequest] [11:29:38.798]: Request failed. FailureType==DISCONNECTED device-name=GaugeVisionModbus
+INFO   | jvm 1    | 2026/11/27 11:29:38 | java.lang.Exception: RequestCycle stopped.
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at com.inductiveautomation.xopc.driver.api.BasicRequestCycle$AddToQueue.run(BasicRequestCycle.java:108)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.lang.Thread.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | W [d.M.ReadHoldingRegistersRequest] [11:29:38.798]: Request failed. FailureType==DISCONNECTED device-name=GaugeVisionModbus
+INFO   | jvm 1    | 2026/11/27 11:29:38 | java.lang.Exception: RequestCycle stopped.
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at com.inductiveautomation.xopc.driver.api.BasicRequestCycle$AddToQueue.run(BasicRequestCycle.java:108)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.FutureTask.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+INFO   | jvm 1    | 2026/11/27 11:29:38 | 	at java.base/java.lang.Thread.run(Unknown Source)

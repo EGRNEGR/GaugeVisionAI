@@ -18,6 +18,7 @@ data/
 !reports/**/REQUIREMENTS_TRACEABILITY_MATRIX*.csv
 !reports/industrial_validation/evidence/scada/*.csv
 *.log
+!reports/industrial_validation/evidence/scada/*.log
 
 # IDE / OS
 .idea/
