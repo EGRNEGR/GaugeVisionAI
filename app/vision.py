@@ -128,30 +128,36 @@ def yolo_device() -> str | None:
     return _YOLO_DEVICE_NAME if _load_yolo() is not None else None
 
 
-def _yolo_gauge_bbox(frame_bgr: np.ndarray) -> tuple[int, int, int, int] | None:
-    """BBox (x, y, w, h) самого крупного прибора из классов config.YOLO_CLASSES."""
+def yolo_gauge_boxes(frame_bgr: np.ndarray) -> list[tuple[int, int, int, int, float]] | None:
+    """Все приборы кадра за один проход YOLO: [(x, y, w, h, conf)] по убыванию площади.
+
+    None — YOLO недоступна или инференс не удался (не то же, что «приборов нет» — []).
+    """
     model = _load_yolo()
     if model is None:
         return None
     try:
         with _YOLO_INFER_LOCK:
             results = model.predict(frame_bgr, conf=config.YOLO_CONF, **_predict_kwargs())
-        best = None
-        best_area = 0.0
+        boxes: list[tuple[int, int, int, int, float]] = []
         for r in results:
             names = r.names or {}
             for box in r.boxes:
                 cls_name = str(names.get(int(box.cls), "")).lower()
                 if any(k in cls_name for k in config.YOLO_CLASSES):
                     x1, y1, x2, y2 = map(float, box.xyxy[0])
-                    area = (x2 - x1) * (y2 - y1)
-                    if area > best_area:
-                        best_area = area
-                        best = (int(x1), int(y1), int(x2 - x1), int(y2 - y1))
-        return best
+                    boxes.append((int(x1), int(y1), int(x2 - x1), int(y2 - y1), float(box.conf)))
+        boxes.sort(key=lambda b: b[2] * b[3], reverse=True)
+        return boxes
     except Exception as exc:
         logger.debug("YOLO inference failed: %s", exc)
         return None
+
+
+def _yolo_gauge_bbox(frame_bgr: np.ndarray) -> tuple[int, int, int, int] | None:
+    """BBox (x, y, w, h) самого крупного прибора из классов config.YOLO_CLASSES."""
+    boxes = yolo_gauge_boxes(frame_bgr)
+    return boxes[0][:4] if boxes else None
 
 
 # ---------------------------------------------------------------------------
@@ -254,10 +260,12 @@ def _prep_gray(frame_bgr: np.ndarray) -> np.ndarray:
     return clahe.apply(gray)
 
 
-def _ellipse_candidates(gray: np.ndarray) -> list[tuple[float, float, float, float, float, float]]:
+def _ellipse_candidates(gray: np.ndarray, min_area_frac: float = 0.015,
+                        ) -> list[tuple[float, float, float, float, float, float]]:
     """
     Эллиптическая аппроксимация крупных округлых контуров.
     Возвращает [(cx, cy, a, b, φ, score)], a/b — полуоси.
+    min_area_frac — минимальная площадь контура в долях кадра (меньше — для щита из многих приборов).
     """
     h, w = gray.shape
     blur = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -265,7 +273,7 @@ def _ellipse_candidates(gray: np.ndarray) -> list[tuple[float, float, float, flo
     edges = cv2.dilate(edges, np.ones((3, 3), np.uint8))
     contours, _ = cv2.findContours(edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
     out = []
-    min_area = 0.015 * h * w
+    min_area = min_area_frac * h * w
     for cnt in contours:
         if len(cnt) < 20:
             continue
@@ -727,6 +735,9 @@ def scale_arc_evidence(dial_bgr: np.ndarray, allowed: np.ndarray) -> tuple[float
     coherence — радиальная когерентность рисок: наибольшая корреляция угловых профилей градиента
     двух соседних подполос кольца (риски шкалы радиальны и совпадают по углу на разных радиусах,
     а надписи, цифровые индикаторы и прямые края линеек — нет).
+    Риски, нанесённые узким кольцом у края, в среднем по всей полосе «растворяются», поэтому gap и
+    coverage дополнительно считаются по каждому кольцу с когерентностью ≥ SCALE_COHERENCE_MIN и
+    берётся кольцо с наибольшим покрытием.
     """
     size = config.DIAL_SIZE
     gray = cv2.cvtColor(dial_bgr, cv2.COLOR_BGR2GRAY).astype(np.float32)
@@ -740,14 +751,22 @@ def scale_arc_evidence(dial_bgr: np.ndarray, allowed: np.ndarray) -> tuple[float
         brk = np.where(np.diff(idx) > 1)[0]
         if len(brk):
             idx = np.concatenate([idx[brk[0] + 1:], idx[:brk[0] + 1]])
-    sectors = np.array([profile[idx[i:i + 10]].mean() for i in range(0, len(idx) - 9, 10)])
-    if not len(sectors):
+    def gap_coverage(prof: np.ndarray) -> tuple[float, float] | None:
+        sectors = np.array([prof[idx[i:i + 10]].mean() for i in range(0, len(idx) - 9, 10)])
+        if not len(sectors):
+            return None
+        run = best = 0
+        for flat in sectors < 1.0:
+            run = run + 1 if flat else 0
+            best = max(best, run)
+        return best / len(sectors), float(np.mean(sectors > 2.0))
+
+    whole = gap_coverage(profile)
+    if whole is None:
         return 1.0, 0.0, 0.0
-    run = best = 0
-    for flat in sectors < 1.0:
-        run = run + 1 if flat else 0
-        best = max(best, run)
+    gap, coverage = whole
     coherence = 0.0
+    rings: list[tuple[int, int]] = []   # кольца с радиально когерентными рисками
     step = 0.03 * size / 2.0
     for r0 in np.arange(0.55, 0.95, 0.03) * size / 2.0:
         prof = []
@@ -756,8 +775,16 @@ def scale_arc_evidence(dial_bgr: np.ndarray, allowed: np.ndarray) -> tuple[float
             g = np.abs(np.diff(sub, axis=0, append=sub[:1])).mean(axis=1)[idx].astype(np.float32)
             prof.append(g - cv2.GaussianBlur(g.reshape(-1, 1), (1, 21), 0).ravel())
         if prof[0].std() > 0.3 and prof[1].std() > 0.3:
-            coherence = max(coherence, float(np.corrcoef(prof[0], prof[1])[0, 1]))
-    return best / len(sectors), float(np.mean(sectors > 2.0)), coherence
+            c = float(np.corrcoef(prof[0], prof[1])[0, 1])
+            coherence = max(coherence, c)
+            if c >= SCALE_COHERENCE_MIN:
+                rings.append((int(r0), int(r0 + 2 * step)))
+    for lo, hi in rings:
+        sub = polar[:, lo:hi]
+        in_ring = gap_coverage(np.abs(np.diff(sub, axis=0, append=sub[:1])).mean(axis=1))
+        if in_ring is not None and in_ring[1] > coverage:
+            gap, coverage = in_ring
+    return gap, coverage, coherence
 
 
 def estimate_needle(dial_bgr: np.ndarray, allowed: np.ndarray | None = None) -> NeedleResult:
@@ -1209,12 +1236,17 @@ class GaugePipeline:
 
     def process(self, frame_bgr: np.ndarray, calibration: dict[str, Any],
                 thresholds: dict[str, Any], unit: str,
-                with_overlay: bool = True) -> GaugeReading:
+                with_overlay: bool = True, roi_override: DialROI | None = None) -> GaugeReading:
+        """Один кадр одного прибора.
+
+        roi_override — циферблат, уже найденный трекером Multi-Gauge в координатах этого кадра
+        (кадр тогда не масштабируется: трекер работает на кадре ширины ≤ MAX_PROCESS_WIDTH).
+        """
         t0 = time.perf_counter()
         with self._lock:
             frame = frame_bgr
             h, w = frame.shape[:2]
-            if w > config.MAX_PROCESS_WIDTH:
+            if w > config.MAX_PROCESS_WIDTH and roi_override is None:
                 k = config.MAX_PROCESS_WIDTH / float(w)
                 frame = cv2.resize(frame, (int(w * k), int(h * k)), interpolation=cv2.INTER_AREA)
 
@@ -1224,7 +1256,7 @@ class GaugePipeline:
                 self.ema.reset()
                 self._calib_sig = sig
 
-            roi = self._locate(frame, calibration)
+            roi = roi_override if roi_override is not None else self._locate(frame, calibration)
             dial = normalize_dial(frame, roi)
             suitable, invalid_reason, dial_quality = assess_dial_suitability(dial)
             arc = needle_search_arc(calibration)
