@@ -35,17 +35,23 @@
   карты Neon.
 - `static/index.html`: на пульте есть и вкладка «Щит», и секции `#predictiveSection` и `#optimizerSection`;
   в браузере проверено на трёх разрешениях (`HMI_ACCEPTANCE` в `TEST_RESULTS.md`).
-- Контракт данных v1.2: идентификаторы `instrument_id`, `source_id`, `gauge_slot`, `modbus_slot`,
-  `calibration_rev` сверены по коду обеих веток и проверены тестами (`tests/test_final_integration.py`).
+- Контракт данных поднят с v1.2 до **v1.3** (`reports/next_generation/SHARED_DATA_CONTRACT.md` — рабочая спецификация, коммит `3272dcc`):
+  - зафиксированы идентификаторы `instrument_id`, `source_id`, `gauge_slot`, `modbus_slot`, `calibration_rev` (проверены в `tests/test_final_integration.py`);
+  - описаны поля события прогноза `prediction` (`imminent` / `cleared` / `realized` / `withdrawn`) и его доставка в MQTT;
+  - зафиксировано продолжение прогнозного блока Modbus для слотов 61–199 (адреса 4096–5207, `MAX_REGISTERS = 5208`) и системные регистры `HR 905` (включая реальный отказ брокера), `HR 916` (4096) и `HR 917` (61).
 
 ## 4. Коммиты интеграционной ветки
 
 | Коммит | Содержание |
 |---|---|
-| c0d839c | слияние веток |
-| 11c6d1a | задачи после слияния и дефекты, найденные при приёмке (см. `DEFECT_REGISTER.md`) |
-| 615a697 | независимый набор `tests/test_final_integration.py` и правки существующих наборов |
-| последующие | диагностика задержки event loop, сигнал HR 905 при реальном отказе брокера, испытательные стенды и итоговые документы |
+| `c0d839c` | слияние веток `next-gen/platform` (`90dcadf`) и `next-gen/analytics-validation` (`285e896`) |
+| `11c6d1a` | задачи после слияния и дефекты, найденные при приёмке (`DEF-INT-01..07`, сетевая политика `app/net_policy.py`) |
+| `615a697` | независимый набор `tests/test_final_integration.py` и правки существующих наборов (`DEF-INT-08`) |
+| `f3dea4d` | HR 905 при реальном отказе брокера (`DEF-INT-04`), корзины 30 с для ряда CV (`DEF-INT-13`), задержка event loop в `/api/health`, приоритет кода основного прибора (`DEF-INT-14`), правка шапки CSS |
+| `3272dcc` | тест порядка слотов миграции по `created_at`, тест `cv_forecast_input`, контракт данных v1.3, обновление `README.md`, `MODBUS_REGISTER_MAP.md` и `DEMO_DEFENSE_GUIDE.md` |
+| `bf09895` | стенды E2E/soak/HMI, промежуточные доказательства и отчёты приёмки |
+| `660e87f` | доказательства 62-минутного soak-испытания (`evidence/soak/soak_results.json`) |
+| финальные | исправление стартовой гонки `is_primary_dial` в стенде `run_e2e.py`, прогон 5 E2E с Ignition 8.3.10, доказательства post-soak/interop/offline/probe_lag, `build_rtm_final.py`, матрицы RTM и итоговые отчёты |
 
 ## 5. Регрессия сразу после слияния (c0d839c, до правок)
 
