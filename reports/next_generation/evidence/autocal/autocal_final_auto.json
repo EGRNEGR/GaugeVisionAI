@@ -1,0 +1,13137 @@
+{
+ "summary": {
+  "role": "final",
+  "mode": "auto",
+  "images": 201,
+  "models": 30,
+  "coverage_pct": 14.93,
+  "accurate_of_accepted_pct": 20.0,
+  "gross_of_all_pct": 4.98,
+  "gross_of_accepted_pct": 33.33,
+  "limits_ok_of_accepted_pct": 46.67,
+  "median_ms": 177.5,
+  "p95_ms": 504.2,
+  "err_median_pct": 2.71,
+  "refusals": {
+   "bad_label_spacing": 58,
+   "few_labels": 8,
+   "narrow_label_span": 3,
+   "labels_off_ticks": 45,
+   "ambiguous_fit": 8,
+   "few_consistent_labels": 14,
+   "no_tick_lattice": 3,
+   "bad_sweep": 9,
+   "irregular_ticks": 16,
+   "no_labels": 6,
+   "no_dial": 1
+  },
+  "gates": {
+   "G1": false,
+   "G2": false,
+   "G3": false,
+   "G4": false,
+   "G5": true
+  },
+  "admitted": false
+ },
+ "by_group": {
+  "MB:ammeter_51": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:ammeter_5": {
+   "n": 1,
+   "accepted": 1,
+   "good": 1,
+   "gross": 0
+  },
+  "MB:pressure_gauge_36": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "M4": {
+   "n": 37,
+   "accepted": 5,
+   "good": 1,
+   "gross": 2
+  },
+  "M6": {
+   "n": 15,
+   "accepted": 8,
+   "good": 4,
+   "gross": 1
+  },
+  "MB:pressure_gauge_67": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:pressure_gauge_71": {
+   "n": 1,
+   "accepted": 1,
+   "good": 0,
+   "gross": 1
+  },
+  "MB:pressure_gauge_102": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:pressure_gauge_22": {
+   "n": 1,
+   "accepted": 1,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:pressure_gauge_41": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:pressure_gauge_47": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "M1": {
+   "n": 122,
+   "accepted": 12,
+   "good": 0,
+   "gross": 4
+  },
+  "MB:pressure_gauge_14": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:pressure_gauge_21": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:pressure_gauge_27": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:pressure_gauge_44": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:pressure_gauge_55": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:pressure_gauge_57": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:pressure_gauge_18": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:pressure_gauge_88": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:sphygmomanometer_5": {
+   "n": 1,
+   "accepted": 1,
+   "good": 0,
+   "gross": 1
+  },
+  "MB:sphygmomanometer_11": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:sphygmomanometer_15": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:sphygmomanometer_4": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:tachometer_54": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:tachometer_16": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:tachometer_4": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:tachometer_64": {
+   "n": 1,
+   "accepted": 1,
+   "good": 0,
+   "gross": 1
+  },
+  "MB:tachometer_67": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:voltmeter_13": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  }
+ },
+ "rows": [
+  {
+   "file": "ammeter_51.png",
+   "group": "MB:ammeter_51",
+   "model": "misc",
+   "scale": [
+    0,
+    20
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 574.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 20.0,
+    "direction": "cw",
+    "theta_min": 145.6,
+    "theta_max": 34.01
+   },
+   "labels": [
+    [
+     "10",
+     241.8
+    ],
+    [
+     "15",
+     340.1
+    ],
+    [
+     "5",
+     165.3
+    ],
+    [
+     "20",
+     36.8
+    ],
+    [
+     "0",
+     142.5
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 22,
+    "tick_band": [
+     0.997,
+     1.057
+    ],
+    "n_peaks": 132,
+    "tick_spacing": -0.105,
+    "n_labels": 5,
+    "n_inliers": 3,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.019,
+    "ecc_deg": 62.78
+   }
+  },
+  {
+   "file": "ammeter_5.png",
+   "group": "MB:ammeter_5",
+   "model": "misc",
+   "scale": [
+    0,
+    3000
+   ],
+   "n_ticks": 61,
+   "ok": true,
+   "reason": null,
+   "ms": 157.1,
+   "confidence": 0.676,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 151.25,
+    "v_max": 3000.0,
+    "theta_max": 28.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 3000.0,
+    "direction": "cw",
+    "theta_min": 150.64,
+    "theta_max": 28.8
+   },
+   "labels": [
+    [
+     "1000",
+     232.4
+    ],
+    [
+     "2000",
+     305.9
+    ],
+    [
+     "0",
+     152.3
+    ],
+    [
+     "3000",
+     29.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 61,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 61,
+    "tick_spacing": 3.977,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 61,
+    "lattice_rms_deg": 0.248,
+    "ecc_deg": 1.28,
+    "ticks_per_label": 20,
+    "label_resid_ticks": 0.71
+   },
+   "err": 0.0026,
+   "limits_ok": true
+  },
+  {
+   "file": "pressure_gauge_36.png",
+   "group": "MB:pressure_gauge_36",
+   "model": "M4",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 51,
+   "ok": false,
+   "reason": "few_labels",
+   "ms": 286.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 16.46,
+    "theta_max": 7.96
+   },
+   "labels": [
+    [
+     "5",
+     348.8
+    ],
+    [
+     "0",
+     9.0
+    ]
+   ],
+   "inliers": [],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 9,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 31,
+    "tick_spacing": 4.0
+   }
+  },
+  {
+   "file": "voc_new_132.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 326.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 141.52,
+    "theta_max": 53.26
+   },
+   "labels": [
+    [
+     "0.8",
+     277.5
+    ],
+    [
+     "0.4",
+     203.9
+    ],
+    [
+     "1.2",
+     347.8
+    ],
+    [
+     "0",
+     142.8
+    ],
+    [
+     "1.6",
+     51.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 34,
+    "tick_spacing": 8.657,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.174,
+    "ecc_deg": 1.1
+   }
+  },
+  {
+   "file": "voc_new_399.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "few_labels",
+   "ms": 330.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 230.04,
+    "theta_max": 134.45
+   },
+   "labels": [
+    [
+     "0",
+     236.6
+    ]
+   ],
+   "inliers": [],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 45,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 49,
+    "tick_spacing": 5.25
+   }
+  },
+  {
+   "file": "pressure_gauge_67.png",
+   "group": "MB:pressure_gauge_67",
+   "model": "M1",
+   "scale": [
+    0,
+    0.2
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 148.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.2,
+    "direction": "cw",
+    "theta_min": 144.4,
+    "theta_max": 39.46
+   },
+   "labels": [
+    [
+     "0.1",
+     273.6
+    ],
+    [
+     "0.15",
+     333.4
+    ],
+    [
+     "0",
+     145.2
+    ],
+    [
+     "0.2",
+     37.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 14,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 100,
+    "tick_spacing": 0.017,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 18,
+    "lattice_rms_deg": 0.008,
+    "ecc_deg": 56.7
+   }
+  },
+  {
+   "file": "pressure_gauge_71.png",
+   "group": "MB:pressure_gauge_71",
+   "model": "M4",
+   "scale": [
+    0,
+    60
+   ],
+   "n_ticks": 53,
+   "ok": true,
+   "reason": null,
+   "ms": 197.9,
+   "confidence": 0.673,
+   "calibration": {
+    "v_min": 10.0,
+    "theta_min": 193.0,
+    "v_max": 20.0,
+    "theta_max": 233.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 60.0,
+    "direction": "cw",
+    "theta_min": 168.86,
+    "theta_max": 58.54
+   },
+   "labels": [
+    [
+     "30",
+     283.2
+    ],
+    [
+     "20",
+     246.9
+    ],
+    [
+     "10",
+     192.9
+    ],
+    [
+     "50",
+     9.8
+    ],
+    [
+     "60",
+     54.3
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 19,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 49,
+    "tick_spacing": 4.981,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 19,
+    "lattice_rms_deg": 0.254,
+    "ecc_deg": 5.17,
+    "ticks_per_label": 9,
+    "label_resid_ticks": 1.46
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "pressure_gauge_102.png",
+   "group": "MB:pressure_gauge_102",
+   "model": "M4",
+   "scale": [
+    0,
+    100
+   ],
+   "n_ticks": 97,
+   "ok": false,
+   "reason": "narrow_label_span",
+   "ms": 97.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 100.0,
+    "direction": "cw",
+    "theta_min": 17.06,
+    "theta_max": 13.57
+   },
+   "labels": [
+    [
+     "30",
+     352.1
+    ],
+    [
+     "20",
+     359.1
+    ],
+    [
+     "10",
+     8.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 19,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 27,
+    "tick_spacing": 1.25,
+    "n_labels": 3,
+    "n_inliers": 3
+   }
+  },
+  {
+   "file": "pressure_gauge_22.png",
+   "group": "MB:pressure_gauge_22",
+   "model": "M6",
+   "scale": [
+    0,
+    160
+   ],
+   "n_ticks": 79,
+   "ok": true,
+   "reason": null,
+   "ms": 220.9,
+   "confidence": 0.831,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 315.5,
+    "v_max": 160.0,
+    "theta_max": 229.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 160.0,
+    "direction": "cw",
+    "theta_min": 322.51,
+    "theta_max": 230.45
+   },
+   "labels": [
+    [
+     "160",
+     230.8
+    ],
+    [
+     "140",
+     196.6
+    ],
+    [
+     "20",
+     347.7
+    ],
+    [
+     "126",
+     160.9
+    ],
+    [
+     "40",
+     20.7
+    ],
+    [
+     "100",
+     126.8
+    ],
+    [
+     "60",
+     55.9
+    ],
+    [
+     "80",
+     90.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    4,
+    5,
+    6,
+    7
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 79,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 92,
+    "tick_spacing": 3.428,
+    "n_labels": 8,
+    "n_inliers": 7,
+    "lattice_ticks": 79,
+    "lattice_rms_deg": 0.27,
+    "ecc_deg": 1.28,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.59
+   },
+   "err": 0.0256,
+   "limits_ok": true
+  },
+  {
+   "file": "pressure_gauge_41.png",
+   "group": "MB:pressure_gauge_41",
+   "model": "M4",
+   "scale": [
+    0,
+    1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "few_labels",
+   "ms": 126.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.0,
+    "direction": "cw",
+    "theta_min": 178.93,
+    "theta_max": 176.28
+   },
+   "labels": [
+    [
+     "0,8",
+     201.3
+    ],
+    [
+     "1,0",
+     182.2
+    ]
+   ],
+   "inliers": [],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 10,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 42,
+    "tick_spacing": 1.5
+   }
+  },
+  {
+   "file": "pressure_gauge_47.png",
+   "group": "MB:pressure_gauge_47",
+   "model": "M4",
+   "scale": [
+    0.02,
+    0.4
+   ],
+   "n_ticks": 20,
+   "ok": false,
+   "reason": "few_labels",
+   "ms": 137.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.02,
+    "v_max": 0.4,
+    "direction": "cw",
+    "theta_min": 103.14,
+    "theta_max": 67.17
+   },
+   "labels": [
+    [
+     "0.3",
+     66.3
+    ],
+    [
+     "0.4",
+     70.5
+    ]
+   ],
+   "inliers": [],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 14,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 41,
+    "tick_spacing": 1.5
+   }
+  },
+  {
+   "file": "voc_new_017.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 540.1,
+   "confidence": 0.909,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 128.4,
+    "v_max": 10.0,
+    "theta_max": 38.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 133.53,
+    "theta_max": 38.39
+   },
+   "labels": [
+    [
+     "6",
+     294.0
+    ],
+    [
+     "4",
+     233.5
+    ],
+    [
+     "8",
+     344.7
+    ],
+    [
+     "2",
+     182.4
+    ],
+    [
+     "10",
+     36.4
+    ],
+    [
+     "0",
+     139.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 58,
+    "tick_spacing": 5.429,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.146,
+    "ecc_deg": 0.88,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.67
+   },
+   "err": 0.019,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_143.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "few_labels",
+   "ms": 129.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 32.43,
+    "theta_max": 297.3
+   },
+   "labels": [
+    [
+     "6",
+     189.1
+    ]
+   ],
+   "inliers": [],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 36,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 58,
+    "tick_spacing": 5.38
+   }
+  },
+  {
+   "file": "voc_new_191.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 504.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 140.47,
+    "theta_max": 43.88
+   },
+   "labels": [
+    [
+     "4",
+     247.5
+    ],
+    [
+     "6",
+     306.1
+    ],
+    [
+     "2",
+     193.2
+    ],
+    [
+     "8",
+     352.5
+    ],
+    [
+     "0",
+     146.5
+    ],
+    [
+     "10",
+     40.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 36,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 42,
+    "tick_spacing": 5.499,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 36,
+    "lattice_rms_deg": 0.082,
+    "ecc_deg": 5.62,
+    "ticks_per_label": 5,
+    "label_resid_ticks": 34.37
+   }
+  },
+  {
+   "file": "voc_new_206.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": true,
+   "reason": null,
+   "ms": 173.6,
+   "confidence": 0.664,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 128.06,
+    "v_max": 1.6,
+    "theta_max": 42.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 135.56,
+    "theta_max": 42.16
+   },
+   "labels": [
+    [
+     "0.8",
+     268.7
+    ],
+    [
+     "1.2",
+     335.3
+    ],
+    [
+     "0.4",
+     197.3
+    ],
+    [
+     "1.6",
+     40.3
+    ],
+    [
+     "1",
+     135.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.706,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.272,
+    "ecc_deg": 3.23,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 0.3
+   },
+   "err": 0.0273,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_304.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "ambiguous_fit",
+   "ms": 237.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 143.28,
+    "theta_max": 52.42
+   },
+   "labels": [
+    [
+     "0.8",
+     279.2
+    ],
+    [
+     "0.4",
+     204.4
+    ],
+    [
+     "12",
+     349.0
+    ],
+    [
+     "0",
+     141.6
+    ],
+    [
+     "16",
+     50.8
+    ]
+   ],
+   "inliers": [
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.716,
+     0.776
+    ],
+    "n_peaks": 35,
+    "tick_spacing": 8.75,
+    "n_labels": 5,
+    "n_inliers": 3
+   }
+  },
+  {
+   "file": "voc_new_317.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 196.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 144.19,
+    "theta_max": 53.21
+   },
+   "labels": [
+    [
+     "0.8",
+     278.7
+    ],
+    [
+     "0.4",
+     204.4
+    ],
+    [
+     "1.2",
+     347.7
+    ],
+    [
+     "0",
+     143.0
+    ],
+    [
+     "1.6",
+     51.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.672,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.192,
+    "ecc_deg": 1.64
+   }
+  },
+  {
+   "file": "voc_new_406.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 226.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 148.21,
+    "theta_max": 49.35
+   },
+   "labels": [
+    [
+     "0.8",
+     274.4
+    ],
+    [
+     "04",
+     206.7
+    ],
+    [
+     "12",
+     341.3
+    ],
+    [
+     "0",
+     148.2
+    ],
+    [
+     "1.6",
+     46.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 27,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 29,
+    "tick_spacing": 8.33,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 27,
+    "lattice_rms_deg": 0.165,
+    "ecc_deg": 0.53,
+    "ticks_per_label": 1,
+    "label_resid_ticks": 18.18
+   }
+  },
+  {
+   "file": "voc_new_425.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 399.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 144.94,
+    "theta_max": 47.89
+   },
+   "labels": [
+    [
+     "004",
+     257.8
+    ],
+    [
+     "0.06",
+     315.0
+    ],
+    [
+     "0.02",
+     198.7
+    ],
+    [
+     "0.08",
+     356.6
+    ],
+    [
+     "0",
+     144.9
+    ],
+    [
+     "0.1",
+     44.9
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 13,
+    "tick_band": [
+     1.016,
+     1.076
+    ],
+    "n_peaks": 95,
+    "tick_spacing": 0.016,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 13,
+    "lattice_rms_deg": 0.006,
+    "ecc_deg": 56.75
+   }
+  },
+  {
+   "file": "voc_new_426.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 150.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 147.03,
+    "theta_max": 47.07
+   },
+   "labels": [
+    [
+     "0.06",
+     306.9
+    ],
+    [
+     "0.02",
+     194.4
+    ],
+    [
+     "0.08",
+     351.8
+    ],
+    [
+     "0.1",
+     46.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 29,
+    "tick_spacing": 13.507,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 14,
+    "lattice_rms_deg": 0.775,
+    "ecc_deg": 1.56,
+    "ticks_per_label": 3,
+    "label_resid_ticks": 9.44
+   }
+  },
+  {
+   "file": "voc_new_427.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 169.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 144.69,
+    "theta_max": 45.26
+   },
+   "labels": [
+    [
+     "004",
+     249.0
+    ],
+    [
+     "0.06",
+     308.1
+    ],
+    [
+     "0.02",
+     194.6
+    ],
+    [
+     "0.08",
+     351.6
+    ],
+    [
+     "0.1",
+     42.9
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 17,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 117,
+    "tick_spacing": 0.02,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 20,
+    "lattice_rms_deg": 0.009,
+    "ecc_deg": 56.62
+   }
+  },
+  {
+   "file": "voc_new_431.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 164.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 144.19,
+    "theta_max": 47.43
+   },
+   "labels": [
+    [
+     "0.04",
+     238.8
+    ],
+    [
+     "0.06",
+     303.1
+    ],
+    [
+     "0.02",
+     188.7
+    ],
+    [
+     "0.08",
+     352.7
+    ],
+    [
+     "0.1",
+     47.9
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 10,
+    "tick_band": [
+     1.073,
+     1.132
+    ],
+    "n_peaks": 150,
+    "tick_spacing": -0.006,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 11,
+    "lattice_rms_deg": 0.003,
+    "ecc_deg": 57.67
+   }
+  },
+  {
+   "file": "voc_new_432.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 177.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 148.59,
+    "theta_max": 50.94
+   },
+   "labels": [
+    [
+     "0204",
+     250.9
+    ],
+    [
+     "0.06",
+     313.9
+    ],
+    [
+     "0.02",
+     196.2
+    ],
+    [
+     "0.08",
+     359.3
+    ],
+    [
+     "0",
+     149.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 15,
+    "tick_band": [
+     0.96,
+     1.02
+    ],
+    "n_peaks": 150,
+    "tick_spacing": 0.028,
+    "n_labels": 5,
+    "n_inliers": 3,
+    "lattice_ticks": 15,
+    "lattice_rms_deg": 0.008,
+    "ecc_deg": 56.07
+   }
+  },
+  {
+   "file": "voc_new_433.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 162.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 150.8,
+    "theta_max": 55.6
+   },
+   "labels": [
+    [
+     "0.04",
+     246.6
+    ],
+    [
+     "0.06",
+     310.5
+    ],
+    [
+     "0.02",
+     194.2
+    ],
+    [
+     "0.08",
+     0.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 15,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 107,
+    "tick_spacing": -0.052,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 19,
+    "lattice_rms_deg": 0.01,
+    "ecc_deg": 60.07
+   }
+  },
+  {
+   "file": "voc_new_434.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 197.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 150.99,
+    "theta_max": 58.13
+   },
+   "labels": [
+    [
+     "0.04",
+     246.6
+    ],
+    [
+     "0.06",
+     311.3
+    ],
+    [
+     "0.02",
+     193.3
+    ],
+    [
+     "0.08",
+     3.7
+    ],
+    [
+     "0",
+     152.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 15,
+    "tick_band": [
+     0.885,
+     0.945
+    ],
+    "n_peaks": 121,
+    "tick_spacing": -0.009,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 15,
+    "lattice_rms_deg": 0.007,
+    "ecc_deg": 57.9
+   }
+  },
+  {
+   "file": "voc_new_442.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 198.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 139.29,
+    "theta_max": 48.14
+   },
+   "labels": [
+    [
+     "804",
+     243.5
+    ],
+    [
+     "0.06",
+     313.8
+    ],
+    [
+     "0.02",
+     181.6
+    ],
+    [
+     "0.08",
+     0.7
+    ],
+    [
+     "0",
+     137.6
+    ]
+   ],
+   "inliers": [
+    1,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 104,
+    "tick_spacing": 1.25,
+    "n_labels": 5,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_new_443.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 160.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 139.03,
+    "theta_max": 47.19
+   },
+   "labels": [
+    [
+     "804",
+     242.8
+    ],
+    [
+     "0.06",
+     305.8
+    ],
+    [
+     "0.08",
+     353.2
+    ],
+    [
+     "0",
+     138.7
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 13,
+    "tick_band": [
+     0.716,
+     0.776
+    ],
+    "n_peaks": 32,
+    "tick_spacing": 12.749,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 19,
+    "lattice_rms_deg": 0.664,
+    "ecc_deg": 4.65,
+    "ticks_per_label": 3,
+    "label_resid_ticks": 5.37
+   }
+  },
+  {
+   "file": "voc_new_444.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 167.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 137.52,
+    "theta_max": 50.02
+   },
+   "labels": [
+    [
+     "804",
+     234.8
+    ],
+    [
+     "0.06",
+     310.2
+    ],
+    [
+     "0.02",
+     177.3
+    ],
+    [
+     "0.08",
+     2.3
+    ],
+    [
+     "0",
+     137.3
+    ],
+    [
+     "0.1",
+     51.4
+    ]
+   ],
+   "inliers": [
+    1,
+    3,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 83,
+    "tick_spacing": 0.024,
+    "n_labels": 6,
+    "n_inliers": 3,
+    "lattice_ticks": 11,
+    "lattice_rms_deg": 0.004,
+    "ecc_deg": 56.46
+   }
+  },
+  {
+   "file": "voc_new_445.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 189.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 153.65,
+    "theta_max": 41.23
+   },
+   "labels": [
+    [
+     "0.06",
+     304.1
+    ],
+    [
+     "0.02",
+     202.0
+    ],
+    [
+     "0.08",
+     345.5
+    ],
+    [
+     "0",
+     156.7
+    ],
+    [
+     "0.1",
+     38.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 13,
+    "tick_band": [
+     0.716,
+     0.776
+    ],
+    "n_peaks": 22,
+    "tick_spacing": 13.725,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 13,
+    "lattice_rms_deg": 0.125,
+    "ecc_deg": 4.62,
+    "ticks_per_label": 3,
+    "label_resid_ticks": 6.74
+   }
+  },
+  {
+   "file": "voc_new_446.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "ambiguous_fit",
+   "ms": 190.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 140.99,
+    "theta_max": 49.63
+   },
+   "labels": [
+    [
+     "0.04",
+     240.5
+    ],
+    [
+     "0.06",
+     311.7
+    ],
+    [
+     "0.02",
+     186.0
+    ],
+    [
+     "0.08",
+     2.0
+    ],
+    [
+     "0.1",
+     49.4
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 104,
+    "tick_spacing": 1.25,
+    "n_labels": 5,
+    "n_inliers": 3
+   }
+  },
+  {
+   "file": "voc_new_448.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 170.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 146.17,
+    "theta_max": 49.73
+   },
+   "labels": [
+    [
+     "0.04",
+     241.0
+    ],
+    [
+     "0.06",
+     307.6
+    ],
+    [
+     "0.02",
+     192.2
+    ],
+    [
+     "0.08",
+     357.9
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 19,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 123,
+    "tick_spacing": -0.047,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 19,
+    "lattice_rms_deg": 0.017,
+    "ecc_deg": 59.79
+   }
+  },
+  {
+   "file": "voc_new_449.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 177.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 144.28,
+    "theta_max": 52.42
+   },
+   "labels": [
+    [
+     "0.04",
+     240.4
+    ],
+    [
+     "0.06",
+     306.1
+    ],
+    [
+     "0.02",
+     189.6
+    ],
+    [
+     "0.08",
+     357.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 10,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 103,
+    "tick_spacing": -0.012,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 11,
+    "lattice_rms_deg": 0.002,
+    "ecc_deg": 57.97
+   }
+  },
+  {
+   "file": "voc_new_450.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 167.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 141.87,
+    "theta_max": 47.45
+   },
+   "labels": [
+    [
+     "0.04",
+     239.9
+    ],
+    [
+     "0.06",
+     309.1
+    ],
+    [
+     "0.02",
+     185.2
+    ],
+    [
+     "0.08",
+     355.8
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 14,
+    "tick_band": [
+     0.885,
+     0.945
+    ],
+    "n_peaks": 131,
+    "tick_spacing": -0.016,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 15,
+    "lattice_rms_deg": 0.005,
+    "ecc_deg": 58.2
+   }
+  },
+  {
+   "file": "voc_new_451.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 157.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 141.09,
+    "theta_max": 45.73
+   },
+   "labels": [
+    [
+     "0.04",
+     250.6
+    ],
+    [
+     "06",
+     312.8
+    ],
+    [
+     "0.02",
+     190.5
+    ],
+    [
+     "0.08",
+     356.8
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 13,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 65,
+    "tick_spacing": -0.039,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 14,
+    "lattice_rms_deg": 0.006,
+    "ecc_deg": 59.31
+   }
+  },
+  {
+   "file": "voc_new_454.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 20,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 266.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 138.07,
+    "theta_max": 48.32
+   },
+   "labels": [
+    [
+     "0.04",
+     244.5
+    ],
+    [
+     "006",
+     312.7
+    ],
+    [
+     "0.08",
+     0.0
+    ],
+    [
+     "0",
+     137.1
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 14,
+    "tick_band": [
+     1.016,
+     1.076
+    ],
+    "n_peaks": 90,
+    "tick_spacing": -0.01,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 14,
+    "lattice_rms_deg": 0.007,
+    "ecc_deg": 57.93
+   }
+  },
+  {
+   "file": "voc_new_455.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 216.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 145.41,
+    "theta_max": 55.91
+   },
+   "labels": [
+    [
+     "0.0",
+     227.2
+    ],
+    [
+     "0.06",
+     321.8
+    ],
+    [
+     "0.02",
+     177.5
+    ],
+    [
+     "0.08",
+     14.7
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     1.073,
+     1.132
+    ],
+    "n_peaks": 62,
+    "tick_spacing": -0.024,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 12,
+    "lattice_rms_deg": 0.004,
+    "ecc_deg": 58.6
+   }
+  },
+  {
+   "file": "voc_new_456.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 154.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 148.45,
+    "theta_max": 56.65
+   },
+   "labels": [
+    [
+     "0.04",
+     256.1
+    ],
+    [
+     "0.06",
+     322.1
+    ],
+    [
+     "0.0269",
+     194.0
+    ],
+    [
+     "0.08",
+     8.7
+    ],
+    [
+     "0",
+     147.7
+    ],
+    [
+     "0.1",
+     55.2
+    ]
+   ],
+   "inliers": [
+    0,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 11,
+    "tick_band": [
+     0.941,
+     1.001
+    ],
+    "n_peaks": 79,
+    "tick_spacing": 0.011,
+    "n_labels": 6,
+    "n_inliers": 4,
+    "lattice_ticks": 14,
+    "lattice_rms_deg": 0.002,
+    "ecc_deg": 56.83
+   }
+  },
+  {
+   "file": "voc_new_460.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "ambiguous_fit",
+   "ms": 160.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 147.04,
+    "theta_max": 61.02
+   },
+   "labels": [
+    [
+     "0.04",
+     229.5
+    ],
+    [
+     "0.06",
+     311.7
+    ],
+    [
+     "0.02",
+     181.8
+    ],
+    [
+     "0",
+     147.4
+    ],
+    [
+     "0.1",
+     64.4
+    ]
+   ],
+   "inliers": [
+    1,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 12,
+    "tick_band": [
+     1.016,
+     1.076
+    ],
+    "n_peaks": 69,
+    "tick_spacing": 1.25,
+    "n_labels": 5,
+    "n_inliers": 3
+   }
+  },
+  {
+   "file": "voc_new_461.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 166.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 137.46,
+    "theta_max": 60.36
+   },
+   "labels": [
+    [
+     "0.06",
+     342.9
+    ],
+    [
+     "0.02",
+     164.8
+    ],
+    [
+     "000",
+     23.5
+    ],
+    [
+     "0",
+     133.1
+    ],
+    [
+     "0.1",
+     61.8
+    ]
+   ],
+   "inliers": [
+    0,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 12,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 72,
+    "tick_spacing": 1.25,
+    "n_labels": 5,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_new_462.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 196.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 147.98,
+    "theta_max": 52.53
+   },
+   "labels": [
+    [
+     "0.04",
+     245.9
+    ],
+    [
+     "0.06",
+     311.8
+    ],
+    [
+     "0.02",
+     192.9
+    ],
+    [
+     "008",
+     357.7
+    ],
+    [
+     "0",
+     148.1
+    ],
+    [
+     "0.1",
+     51.9
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 15,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 28,
+    "tick_spacing": 13.297,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 19,
+    "lattice_rms_deg": 0.222,
+    "ecc_deg": 3.54,
+    "ticks_per_label": 1,
+    "label_resid_ticks": 10.12
+   }
+  },
+  {
+   "file": "voc_new_463.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "no_tick_lattice",
+   "ms": 145.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 132.95,
+    "theta_max": 46.72
+   },
+   "labels": [
+    [
+     "0.06",
+     303.3
+    ],
+    [
+     "0.04",
+     233.4
+    ],
+    [
+     "0.02",
+     176.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 9,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 29,
+    "tick_spacing": 14.75,
+    "n_labels": 3,
+    "n_inliers": 3
+   }
+  },
+  {
+   "file": "voc_new_465.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": true,
+   "reason": null,
+   "ms": 155.1,
+   "confidence": 0.679,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 135.35,
+    "v_max": 0.1,
+    "theta_max": 45.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 142.01,
+    "theta_max": 45.69
+   },
+   "labels": [
+    [
+     "0.04",
+     244.8
+    ],
+    [
+     "0.06",
+     308.2
+    ],
+    [
+     "0.029",
+     187.5
+    ],
+    [
+     "0.08",
+     353.8
+    ],
+    [
+     "0.1",
+     45.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 25,
+    "tick_spacing": 13.322,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 20,
+    "lattice_rms_deg": 0.243,
+    "ecc_deg": 2.64,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.61
+   },
+   "err": 0.0246,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_478.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 164.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 142.81,
+    "theta_max": 43.37
+   },
+   "labels": [
+    [
+     "0.04",
+     249.3
+    ],
+    [
+     "0.06",
+     304.8
+    ],
+    [
+     "0.02",
+     193.9
+    ],
+    [
+     "0.08",
+     346.6
+    ],
+    [
+     "0.1",
+     40.9
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 13,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 24,
+    "tick_spacing": 12.192,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 16,
+    "lattice_rms_deg": 0.787,
+    "ecc_deg": 4.99,
+    "ticks_per_label": 5,
+    "label_resid_ticks": 10.43
+   }
+  },
+  {
+   "file": "voc_new_485.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 251.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 154.01,
+    "theta_max": 52.17
+   },
+   "labels": [
+    [
+     "0.04",
+     261.4
+    ],
+    [
+     "0.06",
+     319.0
+    ],
+    [
+     "0.02",
+     204.1
+    ],
+    [
+     "0.08",
+     359.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 12,
+    "tick_band": [
+     1.016,
+     1.076
+    ],
+    "n_peaks": 111,
+    "tick_spacing": 0.034,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 12,
+    "lattice_rms_deg": 0.007,
+    "ecc_deg": 55.92
+   }
+  },
+  {
+   "file": "voc_new_486.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 170.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 170.82,
+    "theta_max": 65.17
+   },
+   "labels": [
+    [
+     "0.02",
+     227.9
+    ],
+    [
+     "0.06",
+     337.0
+    ],
+    [
+     "0",
+     171.4
+    ],
+    [
+     "0.08",
+     14.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 15,
+    "tick_band": [
+     0.941,
+     1.001
+    ],
+    "n_peaks": 64,
+    "tick_spacing": 0.028,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 15,
+    "lattice_rms_deg": 0.006,
+    "ecc_deg": 56.16
+   }
+  },
+  {
+   "file": "voc_new_487.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 19,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 154.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 168.31,
+    "theta_max": 62.1
+   },
+   "labels": [
+    [
+     "0.02",
+     225.1
+    ],
+    [
+     "0.06",
+     335.1
+    ],
+    [
+     "0.08",
+     12.5
+    ],
+    [
+     "0",
+     168.7
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 16,
+    "tick_band": [
+     1.073,
+     1.132
+    ],
+    "n_peaks": 92,
+    "tick_spacing": 0.005,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 18,
+    "lattice_rms_deg": 0.006,
+    "ecc_deg": 57.2
+   }
+  },
+  {
+   "file": "voc_new_488.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 186.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 165.1,
+    "theta_max": 60.96
+   },
+   "labels": [
+    [
+     "0.06",
+     334.7
+    ],
+    [
+     "0.02",
+     219.1
+    ],
+    [
+     "0.08",
+     12.4
+    ],
+    [
+     "0",
+     164.7
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     1.073,
+     1.132
+    ],
+    "n_peaks": 92,
+    "tick_spacing": 0.02,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 11,
+    "lattice_rms_deg": 0.003,
+    "ecc_deg": 56.44
+   }
+  },
+  {
+   "file": "voc_new_536.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 182.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 158.27,
+    "theta_max": 63.13
+   },
+   "labels": [
+    [
+     "0.04",
+     254.8
+    ],
+    [
+     "0.06",
+     321.7
+    ],
+    [
+     "0.02",
+     198.2
+    ],
+    [
+     "0.08",
+     8.9
+    ],
+    [
+     "0",
+     158.7
+    ],
+    [
+     "0.1",
+     62.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 12,
+    "tick_band": [
+     1.054,
+     1.114
+    ],
+    "n_peaks": 87,
+    "tick_spacing": 0.046,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 12,
+    "lattice_rms_deg": 0.008,
+    "ecc_deg": 55.38
+   }
+  },
+  {
+   "file": "voc_new_568.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 130.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 148.74,
+    "theta_max": 49.47
+   },
+   "labels": [
+    [
+     "0.06",
+     311.8
+    ],
+    [
+     "0.02",
+     196.5
+    ],
+    [
+     "0.08",
+     355.0
+    ],
+    [
+     "0",
+     149.9
+    ],
+    [
+     "0.1",
+     47.1
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 13,
+    "tick_band": [
+     0.997,
+     1.057
+    ],
+    "n_peaks": 116,
+    "tick_spacing": 0.032,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 13,
+    "lattice_rms_deg": 0.008,
+    "ecc_deg": 55.99
+   }
+  },
+  {
+   "file": "voc_new_569.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 125.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 148.47,
+    "theta_max": 48.87
+   },
+   "labels": [
+    [
+     "0.06",
+     312.9
+    ],
+    [
+     "0.02",
+     199.8
+    ],
+    [
+     "0.08",
+     355.0
+    ],
+    [
+     "0.1",
+     45.6
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 13,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 110,
+    "tick_spacing": 0.012,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 15,
+    "lattice_rms_deg": 0.006,
+    "ecc_deg": 56.88
+   }
+  },
+  {
+   "file": "voc_new_570.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 148.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 147.08,
+    "theta_max": 49.02
+   },
+   "labels": [
+    [
+     "0.0",
+     255.9
+    ],
+    [
+     "0.06",
+     314.7
+    ],
+    [
+     "0.08",
+     356.4
+    ],
+    [
+     "0",
+     147.2
+    ],
+    [
+     "0.1",
+     46.4
+    ]
+   ],
+   "inliers": [
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 12,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 31,
+    "tick_spacing": 11.775,
+    "n_labels": 5,
+    "n_inliers": 3,
+    "lattice_ticks": 16,
+    "lattice_rms_deg": 0.639,
+    "ecc_deg": 4.93,
+    "ticks_per_label": 2,
+    "label_resid_ticks": 4.06
+   }
+  },
+  {
+   "file": "voc_new_593.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 174.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 149.03,
+    "theta_max": 45.04
+   },
+   "labels": [
+    [
+     "0.04",
+     245.5
+    ],
+    [
+     "0.06",
+     298.5
+    ],
+    [
+     "0.02",
+     200.1
+    ],
+    [
+     "0.08",
+     341.5
+    ],
+    [
+     "0",
+     152.9
+    ],
+    [
+     "0.1",
+     42.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 124,
+    "tick_spacing": -0.019,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 11,
+    "lattice_rms_deg": 0.002,
+    "ecc_deg": 58.32
+   }
+  },
+  {
+   "file": "voc_new_596.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 221.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 149.44,
+    "theta_max": 56.0
+   },
+   "labels": [
+    [
+     "0.04",
+     242.6
+    ],
+    [
+     "0.06",
+     313.7
+    ],
+    [
+     "0.02",
+     192.0
+    ],
+    [
+     "0.08",
+     3.8
+    ],
+    [
+     "0",
+     150.1
+    ],
+    [
+     "0.1",
+     56.8
+    ]
+   ],
+   "inliers": [
+    1,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 12,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 20,
+    "tick_spacing": 14.169,
+    "n_labels": 6,
+    "n_inliers": 4,
+    "lattice_ticks": 12,
+    "lattice_rms_deg": 0.219,
+    "ecc_deg": 3.97,
+    "ticks_per_label": 2,
+    "label_resid_ticks": 7.47
+   }
+  },
+  {
+   "file": "voc_new_607.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 183.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 142.45,
+    "theta_max": 45.5
+   },
+   "labels": [
+    [
+     "0.04",
+     241.1
+    ],
+    [
+     "0.06",
+     309.8
+    ],
+    [
+     "0.02",
+     187.0
+    ],
+    [
+     "0.08",
+     355.4
+    ],
+    [
+     "0.1",
+     44.6
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 14,
+    "tick_band": [
+     0.941,
+     1.001
+    ],
+    "n_peaks": 93,
+    "tick_spacing": -0.037,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 17,
+    "lattice_rms_deg": 0.005,
+    "ecc_deg": 59.25
+   }
+  },
+  {
+   "file": "voc_new_610.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_sweep",
+   "ms": 163.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 136.94,
+    "theta_max": 34.52
+   },
+   "labels": [
+    [
+     "0.06",
+     297.9
+    ],
+    [
+     "0.04",
+     240.2
+    ],
+    [
+     "0.08",
+     341.5
+    ],
+    [
+     "0.02",
+     185.0
+    ],
+    [
+     "01",
+     33.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 19,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 30,
+    "tick_spacing": 13.143,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.781,
+    "ecc_deg": 1.35,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.56
+   }
+  },
+  {
+   "file": "voc_new_611.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "no_tick_lattice",
+   "ms": 139.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 140.67,
+    "theta_max": 43.01
+   },
+   "labels": [
+    [
+     "0.04",
+     250.6
+    ],
+    [
+     "0.06",
+     307.4
+    ],
+    [
+     "0.08",
+     350.9
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 18,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 23,
+    "tick_spacing": 13.19,
+    "n_labels": 3,
+    "n_inliers": 3
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104257.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 165.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 150.62,
+    "theta_max": 52.04
+   },
+   "labels": [
+    [
+     "0.04",
+     246.3
+    ],
+    [
+     "0.06",
+     306.0
+    ],
+    [
+     "0.02",
+     197.6
+    ],
+    [
+     "0.08",
+     353.6
+    ],
+    [
+     "0",
+     152.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 15,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 36,
+    "tick_spacing": 13.246,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 25,
+    "lattice_rms_deg": 1.268,
+    "ecc_deg": 4.43
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104407.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 162.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 159.07,
+    "theta_max": 56.97
+   },
+   "labels": [
+    [
+     "804",
+     255.5
+    ],
+    [
+     "0.06",
+     311.9
+    ],
+    [
+     "0.08",
+     357.3
+    ]
+   ],
+   "inliers": [
+    0,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 14,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 14.0,
+    "n_labels": 3,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104412.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 172.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 150.3,
+    "theta_max": 52.01
+   },
+   "labels": [
+    [
+     "804",
+     257.7
+    ],
+    [
+     "0.06",
+     313.2
+    ],
+    [
+     "0.02",
+     203.7
+    ],
+    [
+     "0.08",
+     355.1
+    ],
+    [
+     "0.1",
+     49.6
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 14,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 28,
+    "tick_spacing": 13.661,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 16,
+    "lattice_rms_deg": 0.513,
+    "ecc_deg": 6.23,
+    "ticks_per_label": 3,
+    "label_resid_ticks": 9.44
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104427.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 148.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 147.29,
+    "theta_max": 43.83
+   },
+   "labels": [
+    [
+     "0.04",
+     257.9
+    ],
+    [
+     "0.06",
+     311.0
+    ],
+    [
+     "0.02",
+     204.4
+    ],
+    [
+     "0.08",
+     349.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 14,
+    "tick_band": [
+     0.885,
+     0.945
+    ],
+    "n_peaks": 15,
+    "tick_spacing": 12.432,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 14,
+    "lattice_rms_deg": 0.725,
+    "ecc_deg": 2.23,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 14.82
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104428.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 229.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 148.8,
+    "theta_max": 44.02
+   },
+   "labels": [
+    [
+     "0.04",
+     257.9
+    ],
+    [
+     "0.06",
+     311.8
+    ],
+    [
+     "0.02",
+     203.1
+    ],
+    [
+     "0.08",
+     350.3
+    ],
+    [
+     "0",
+     150.6
+    ],
+    [
+     "0.1",
+     40.5
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 11,
+    "tick_band": [
+     0.941,
+     1.001
+    ],
+    "n_peaks": 112,
+    "tick_spacing": -0.006,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 11,
+    "lattice_rms_deg": 0.003,
+    "ecc_deg": 57.67
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104441.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "no_tick_lattice",
+   "ms": 160.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 150.05,
+    "theta_max": 44.93
+   },
+   "labels": [
+    [
+     "0.06",
+     315.8
+    ],
+    [
+     "-0.02",
+     205.1
+    ],
+    [
+     "0.08",
+     354.5
+    ],
+    [
+     "0.1",
+     40.6
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 9,
+    "tick_band": [
+     0.96,
+     1.02
+    ],
+    "n_peaks": 103,
+    "tick_spacing": 1.25,
+    "n_labels": 4,
+    "n_inliers": 3
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104533.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 202.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 150.49,
+    "theta_max": 49.19
+   },
+   "labels": [
+    [
+     "0.0",
+     245.6
+    ],
+    [
+     "0.06",
+     309.3
+    ],
+    [
+     "0.02",
+     197.5
+    ],
+    [
+     "0.08",
+     354.4
+    ],
+    [
+     "0",
+     152.7
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 18,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 31,
+    "tick_spacing": 13.064,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 23,
+    "lattice_rms_deg": 0.349,
+    "ecc_deg": 1.97,
+    "ticks_per_label": 2,
+    "label_resid_ticks": 14.87
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104536.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 173.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 148.0,
+    "theta_max": 48.06
+   },
+   "labels": [
+    [
+     "0.0",
+     245.9
+    ],
+    [
+     "0.06",
+     309.1
+    ],
+    [
+     "0.02",
+     197.2
+    ],
+    [
+     "0.08",
+     353.9
+    ]
+   ],
+   "inliers": [
+    1,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 14,
+    "tick_band": [
+     1.073,
+     1.132
+    ],
+    "n_peaks": 110,
+    "tick_spacing": 1.25,
+    "n_labels": 4,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104537.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 169.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 148.23,
+    "theta_max": 50.02
+   },
+   "labels": [
+    [
+     "0.0",
+     244.2
+    ],
+    [
+     "0.06",
+     306.8
+    ],
+    [
+     "0.02",
+     195.7
+    ],
+    [
+     "0.08",
+     353.2
+    ],
+    [
+     "0.1",
+     48.9
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 12,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 23,
+    "tick_spacing": 12.663,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 12,
+    "lattice_rms_deg": 0.096,
+    "ecc_deg": 5.69,
+    "ticks_per_label": 3,
+    "label_resid_ticks": 9.47
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104538.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 178.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 146.3,
+    "theta_max": 46.99
+   },
+   "labels": [
+    [
+     "0.04",
+     248.6
+    ],
+    [
+     "0.06",
+     308.5
+    ],
+    [
+     "0.02",
+     195.9
+    ],
+    [
+     "0.08",
+     353.2
+    ],
+    [
+     "0",
+     147.6
+    ],
+    [
+     "0.1",
+     45.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 12,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 26,
+    "tick_spacing": 12.585,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 12,
+    "lattice_rms_deg": 0.172,
+    "ecc_deg": 3.33,
+    "ticks_per_label": 3,
+    "label_resid_ticks": 10.52
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104752.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 228.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 149.0,
+    "theta_max": 47.59
+   },
+   "labels": [
+    [
+     "0.04",
+     247.5
+    ],
+    [
+     "0.06",
+     308.4
+    ],
+    [
+     "0.02",
+     196.4
+    ],
+    [
+     "0.08",
+     353.9
+    ],
+    [
+     "0",
+     150.5
+    ],
+    [
+     "0.1",
+     46.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 38,
+    "tick_spacing": 14.293,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 18,
+    "lattice_rms_deg": 1.117,
+    "ecc_deg": 5.03
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104841.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 20,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 120.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 166.68,
+    "theta_max": 59.67
+   },
+   "labels": [
+    [
+     "-0.02",
+     214.5
+    ],
+    [
+     "0.08",
+     359.3
+    ],
+    [
+     "0.1",
+     56.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 18,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 22,
+    "tick_spacing": 12.75,
+    "n_labels": 3,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104842.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 184.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 158.99,
+    "theta_max": 56.09
+   },
+   "labels": [
+    [
+     "0.04",
+     258.6
+    ],
+    [
+     "0.02",
+     208.4
+    ],
+    [
+     "0.08",
+     1.2
+    ],
+    [
+     "0",
+     160.6
+    ],
+    [
+     "0.1",
+     54.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 17,
+    "tick_band": [
+     1.054,
+     1.114
+    ],
+    "n_peaks": 109,
+    "tick_spacing": -0.003,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 18,
+    "lattice_rms_deg": 0.007,
+    "ecc_deg": 57.62
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104846.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 22,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 174.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 133.07,
+    "theta_max": 48.67
+   },
+   "labels": [
+    [
+     "0.04",
+     250.4
+    ],
+    [
+     "0.06",
+     312.9
+    ],
+    [
+     "0.08",
+     356.2
+    ],
+    [
+     "0",
+     147.4
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 32,
+    "tick_spacing": 13.561,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 1.021,
+    "ecc_deg": 1.8
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104855.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 187.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 147.03,
+    "theta_max": 44.52
+   },
+   "labels": [
+    [
+     "0.04",
+     253.7
+    ],
+    [
+     "0.06",
+     310.4
+    ],
+    [
+     "0.08",
+     351.9
+    ],
+    [
+     "0",
+     148.9
+    ],
+    [
+     "0.1",
+     41.2
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 10,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 92,
+    "tick_spacing": 0.006,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 10,
+    "lattice_rms_deg": 0.001,
+    "ecc_deg": 57.05
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712104938.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 20,
+   "ok": false,
+   "reason": "bad_sweep",
+   "ms": 176.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 160.6,
+    "theta_max": 65.8
+   },
+   "labels": [
+    [
+     "0.04",
+     255.0
+    ],
+    [
+     "0.08",
+     316.5
+    ],
+    [
+     "0.02",
+     204.5
+    ],
+    [
+     "0.08",
+     7.2
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 31,
+    "tick_spacing": 13.539,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 25,
+    "lattice_rms_deg": 0.686,
+    "ecc_deg": 2.97,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.18
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105014.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 22,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 190.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 139.37,
+    "theta_max": 69.65
+   },
+   "labels": [
+    [
+     "0.04",
+     265.1
+    ],
+    [
+     "-0.02",
+     212.6
+    ],
+    [
+     "0.06",
+     326.7
+    ],
+    [
+     "0.08",
+     15.1
+    ],
+    [
+     "0",
+     167.3
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 34,
+    "tick_spacing": 13.479,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 1.042,
+    "ecc_deg": 1.09
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105100.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 170.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 157.99,
+    "theta_max": 58.83
+   },
+   "labels": [
+    [
+     "0.04",
+     256.9
+    ],
+    [
+     "0.06",
+     318.2
+    ],
+    [
+     "0.02",
+     204.9
+    ],
+    [
+     "0.08",
+     4.2
+    ],
+    [
+     "0",
+     159.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 14,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 22,
+    "tick_spacing": 13.442,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 20,
+    "lattice_rms_deg": 0.354,
+    "ecc_deg": 0.33,
+    "ticks_per_label": 1,
+    "label_resid_ticks": 11.43
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105149.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 20,
+   "ok": true,
+   "reason": null,
+   "ms": 182.8,
+   "confidence": 0.431,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 145.28,
+    "v_max": 0.12,
+    "theta_max": 103.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 153.45,
+    "theta_max": 52.27
+   },
+   "labels": [
+    [
+     "0.04",
+     250.7
+    ],
+    [
+     "0.06",
+     311.6
+    ],
+    [
+     "0.02",
+     200.1
+    ],
+    [
+     "0.00",
+     1.0
+    ],
+    [
+     "0.1",
+     51.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 35,
+    "tick_spacing": 13.377,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 23,
+    "lattice_rms_deg": 0.738,
+    "ecc_deg": 0.87,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.54
+   },
+   "err": 0.0308,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_roi_image_0_20240712105150.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 224.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 148.04,
+    "theta_max": 49.22
+   },
+   "labels": [
+    [
+     "0.04",
+     255.8
+    ],
+    [
+     "0.06",
+     312.2
+    ],
+    [
+     "0.02",
+     201.4
+    ],
+    [
+     "0.00",
+     359.4
+    ],
+    [
+     "0.1",
+     46.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 15,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 32,
+    "tick_spacing": 14.417,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 19,
+    "lattice_rms_deg": 1.096,
+    "ecc_deg": 10.12
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105154.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_sweep",
+   "ms": 175.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 148.07,
+    "theta_max": 46.11
+   },
+   "labels": [
+    [
+     "0.04",
+     249.4
+    ],
+    [
+     "0.06",
+     308.4
+    ],
+    [
+     "0.02",
+     196.9
+    ],
+    [
+     "0.00",
+     355.7
+    ],
+    [
+     "0.1",
+     43.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 40,
+    "tick_spacing": 13.112,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 26,
+    "lattice_rms_deg": 0.684,
+    "ecc_deg": 1.56,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.54
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105155.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 22,
+   "ok": false,
+   "reason": "bad_sweep",
+   "ms": 169.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 147.91,
+    "theta_max": 45.37
+   },
+   "labels": [
+    [
+     "0.04",
+     248.3
+    ],
+    [
+     "0.06",
+     307.2
+    ],
+    [
+     "0.02",
+     196.5
+    ],
+    [
+     "0.00",
+     355.1
+    ],
+    [
+     "0.1",
+     43.3
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 37,
+    "tick_spacing": 13.085,
+    "n_labels": 5,
+    "n_inliers": 3,
+    "lattice_ticks": 25,
+    "lattice_rms_deg": 0.694,
+    "ecc_deg": 0.82,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.17
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105159.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 203.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 145.2,
+    "theta_max": 46.57
+   },
+   "labels": [
+    [
+     "0.04",
+     247.0
+    ],
+    [
+     "0.06",
+     308.9
+    ],
+    [
+     "0.02",
+     193.4
+    ],
+    [
+     "0.00",
+     359.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 13,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 36,
+    "tick_spacing": 12.775,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 19,
+    "lattice_rms_deg": 0.59,
+    "ecc_deg": 2.94,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 13.14
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105229.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": true,
+   "reason": null,
+   "ms": 204.2,
+   "confidence": 0.537,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 149.22,
+    "v_max": 0.12,
+    "theta_max": 99.14,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 155.01,
+    "theta_max": 48.41
+   },
+   "labels": [
+    [
+     "0.04",
+     246.9
+    ],
+    [
+     "0.06",
+     304.2
+    ],
+    [
+     "0.02",
+     200.9
+    ],
+    [
+     "0.08",
+     347.3
+    ],
+    [
+     "0.1",
+     46.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 36,
+    "tick_spacing": 12.862,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 23,
+    "lattice_rms_deg": 0.527,
+    "ecc_deg": 3.25,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.43
+   },
+   "err": 0.0224,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_roi_image_0_20240712105231.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 22,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 179.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 144.23,
+    "theta_max": 41.21
+   },
+   "labels": [
+    [
+     "0.04",
+     252.3
+    ],
+    [
+     "0.06",
+     308.6
+    ],
+    [
+     "0.02",
+     196.8
+    ],
+    [
+     "0.08",
+     348.5
+    ],
+    [
+     "0",
+     145.3
+    ],
+    [
+     "0.1",
+     38.2
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 14,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 63,
+    "tick_spacing": -0.005,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 16,
+    "lattice_rms_deg": 0.009,
+    "ecc_deg": 57.75
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105234.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 180.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 141.96,
+    "theta_max": 45.79
+   },
+   "labels": [
+    [
+     "0.04",
+     245.4
+    ],
+    [
+     "0.06",
+     304.6
+    ],
+    [
+     "0.02",
+     190.5
+    ],
+    [
+     "0.08",
+     351.6
+    ],
+    [
+     "0.1",
+     45.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 13,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 105,
+    "tick_spacing": 0.022,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 13,
+    "lattice_rms_deg": 0.004,
+    "ecc_deg": 56.39
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105235.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 182.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 142.09,
+    "theta_max": 45.76
+   },
+   "labels": [
+    [
+     "0.04",
+     245.6
+    ],
+    [
+     "0.06",
+     304.9
+    ],
+    [
+     "0.02",
+     190.2
+    ],
+    [
+     "0.08",
+     351.6
+    ],
+    [
+     "0.1",
+     45.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 14,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 116,
+    "tick_spacing": -0.013,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 16,
+    "lattice_rms_deg": 0.005,
+    "ecc_deg": 58.06
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105236.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 182.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 142.65,
+    "theta_max": 39.66
+   },
+   "labels": [
+    [
+     "0.06",
+     309.9
+    ],
+    [
+     "0.04",
+     251.7
+    ],
+    [
+     "0.02",
+     193.0
+    ],
+    [
+     "0.08",
+     349.0
+    ],
+    [
+     "0",
+     143.5
+    ],
+    [
+     "0.1",
+     36.4
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 10,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 27,
+    "tick_spacing": 11.604,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 14,
+    "lattice_rms_deg": 0.482,
+    "ecc_deg": 12.7
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105237.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 164.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 144.02,
+    "theta_max": 47.34
+   },
+   "labels": [
+    [
+     "0.04",
+     251.0
+    ],
+    [
+     "0.06",
+     307.4
+    ],
+    [
+     "0.02",
+     193.8
+    ],
+    [
+     "0.08",
+     351.7
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 12,
+    "tick_band": [
+     0.941,
+     1.001
+    ],
+    "n_peaks": 115,
+    "tick_spacing": -0.011,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 12,
+    "lattice_rms_deg": 0.003,
+    "ecc_deg": 57.92
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105245.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 162.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 138.84,
+    "theta_max": 37.16
+   },
+   "labels": [
+    [
+     "0.06",
+     310.1
+    ],
+    [
+     "0.04",
+     262.7
+    ],
+    [
+     "0.08",
+     345.9
+    ],
+    [
+     "0.1",
+     32.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 15,
+    "tick_band": [
+     0.885,
+     0.945
+    ],
+    "n_peaks": 101,
+    "tick_spacing": -0.067,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 18,
+    "lattice_rms_deg": 0.008,
+    "ecc_deg": 60.69
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105246.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 152.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 140.45,
+    "theta_max": 36.95
+   },
+   "labels": [
+    [
+     "0.06",
+     314.6
+    ],
+    [
+     "0.04",
+     261.5
+    ],
+    [
+     "0.08",
+     350.1
+    ],
+    [
+     "0.01",
+     196.8
+    ],
+    [
+     "0.1",
+     32.8
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 11,
+    "tick_band": [
+     1.073,
+     1.132
+    ],
+    "n_peaks": 113,
+    "tick_spacing": -0.005,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 12,
+    "lattice_rms_deg": 0.003,
+    "ecc_deg": 57.63
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105254.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_sweep",
+   "ms": 161.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 137.55,
+    "theta_max": 35.99
+   },
+   "labels": [
+    [
+     "0.06",
+     300.8
+    ],
+    [
+     "0.04",
+     242.0
+    ],
+    [
+     "0.08",
+     343.3
+    ],
+    [
+     "0.02",
+     188.1
+    ],
+    [
+     "0.1",
+     33.5
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 17,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 36,
+    "tick_spacing": 13.078,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 25,
+    "lattice_rms_deg": 0.671,
+    "ecc_deg": 2.42,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.19
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105324.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 160.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 151.69,
+    "theta_max": 53.68
+   },
+   "labels": [
+    [
+     "0.04",
+     254.7
+    ],
+    [
+     "0.06",
+     316.0
+    ],
+    [
+     "0.02",
+     202.3
+    ],
+    [
+     "0.08",
+     1.0
+    ],
+    [
+     "0.1",
+     51.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 18,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 13.502,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.82,
+    "ecc_deg": 1.47
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105325.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 212.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 149.32,
+    "theta_max": 52.54
+   },
+   "labels": [
+    [
+     "0.04",
+     250.4
+    ],
+    [
+     "0.06",
+     310.5
+    ],
+    [
+     "0.02",
+     197.9
+    ],
+    [
+     "0.08",
+     357.8
+    ],
+    [
+     "0.1",
+     51.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 18,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 27,
+    "tick_spacing": 13.945,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 22,
+    "lattice_rms_deg": 0.856,
+    "ecc_deg": 3.9
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105326.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 195.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 148.46,
+    "theta_max": 47.68
+   },
+   "labels": [
+    [
+     "0.04",
+     248.7
+    ],
+    [
+     "0.06",
+     309.3
+    ],
+    [
+     "0.02",
+     197.6
+    ],
+    [
+     "0.08",
+     353.7
+    ],
+    [
+     "0.1",
+     46.3
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 35,
+    "tick_spacing": 13.029,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 25,
+    "lattice_rms_deg": 0.83,
+    "ecc_deg": 1.9
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105327.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_sweep",
+   "ms": 177.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 146.39,
+    "theta_max": 46.53
+   },
+   "labels": [
+    [
+     "0.04",
+     250.5
+    ],
+    [
+     "0.06",
+     308.2
+    ],
+    [
+     "0.025",
+     198.1
+    ],
+    [
+     "0.08",
+     351.7
+    ],
+    [
+     "0.1",
+     44.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 18,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 34,
+    "tick_spacing": 13.577,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.388,
+    "ecc_deg": 3.35,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.52
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105434.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 167.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 160.07,
+    "theta_max": 62.66
+   },
+   "labels": [
+    [
+     "0.04",
+     257.3
+    ],
+    [
+     "0.06",
+     317.7
+    ],
+    [
+     "0.023",
+     207.6
+    ],
+    [
+     "0.08",
+     5.3
+    ],
+    [
+     "0",
+     161.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 18,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 25,
+    "tick_spacing": 13.756,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 20,
+    "lattice_rms_deg": 0.484,
+    "ecc_deg": 3.56,
+    "ticks_per_label": 3,
+    "label_resid_ticks": 10.12
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105435.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": true,
+   "reason": null,
+   "ms": 170.6,
+   "confidence": 0.406,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 149.19,
+    "v_max": 0.12,
+    "theta_max": 106.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 155.87,
+    "theta_max": 54.07
+   },
+   "labels": [
+    [
+     "0.04",
+     255.5
+    ],
+    [
+     "0.06",
+     315.0
+    ],
+    [
+     "0.02",
+     205.3
+    ],
+    [
+     "0.08",
+     358.4
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 36,
+    "tick_spacing": 13.325,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.517,
+    "ecc_deg": 1.21,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.17
+   },
+   "err": 0.0253,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_roi_image_0_20240712105436.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": true,
+   "reason": null,
+   "ms": 177.6,
+   "confidence": 0.617,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 142.28,
+    "v_max": 0.12,
+    "theta_max": 101.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 150.09,
+    "theta_max": 47.99
+   },
+   "labels": [
+    [
+     "0.04",
+     249.0
+    ],
+    [
+     "0.06",
+     307.0
+    ],
+    [
+     "0.02",
+     198.5
+    ],
+    [
+     "0.08",
+     350.7
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 36,
+    "tick_spacing": 13.405,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 23,
+    "lattice_rms_deg": 0.367,
+    "ecc_deg": 2.0,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.48
+   },
+   "err": 0.0293,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_roi_image_0_20240712105437.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 164.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 146.61,
+    "theta_max": 44.98
+   },
+   "labels": [
+    [
+     "0.04",
+     246.0
+    ],
+    [
+     "0.06",
+     304.4
+    ],
+    [
+     "0.02",
+     194.6
+    ],
+    [
+     "0.08",
+     347.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 19,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 34,
+    "tick_spacing": 13.578,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 23,
+    "lattice_rms_deg": 0.877,
+    "ecc_deg": 3.51
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105438.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": true,
+   "reason": null,
+   "ms": 230.1,
+   "confidence": 0.37,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 137.64,
+    "v_max": 0.12,
+    "theta_max": 96.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 146.09,
+    "theta_max": 43.56
+   },
+   "labels": [
+    [
+     "0.04",
+     245.3
+    ],
+    [
+     "0.06",
+     303.7
+    ],
+    [
+     "0.02",
+     194.1
+    ],
+    [
+     "0.08",
+     347.0
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 39,
+    "tick_spacing": 13.418,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.613,
+    "ecc_deg": 2.29,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.16
+   },
+   "err": 0.0318,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_roi_image_0_20240712105439.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 204.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 144.68,
+    "theta_max": 42.74
+   },
+   "labels": [
+    [
+     "0.04",
+     245.3
+    ],
+    [
+     "0.06",
+     303.9
+    ],
+    [
+     "0.02",
+     193.1
+    ],
+    [
+     "0.08",
+     346.7
+    ],
+    [
+     "0",
+     146.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 39,
+    "tick_spacing": 13.272,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.628,
+    "ecc_deg": 1.38,
+    "ticks_per_label": 2,
+    "label_resid_ticks": 12.88
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105440.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 157.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 146.48,
+    "theta_max": 42.79
+   },
+   "labels": [
+    [
+     "0.04",
+     247.4
+    ],
+    [
+     "0.06",
+     305.2
+    ],
+    [
+     "0.02",
+     194.9
+    ],
+    [
+     "0.08",
+     347.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 13,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 39,
+    "tick_spacing": 13.872,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 21,
+    "lattice_rms_deg": 1.069,
+    "ecc_deg": 6.5
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143222.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 23,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 162.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 135.38,
+    "theta_max": 64.4
+   },
+   "labels": [
+    [
+     "0.04",
+     259.5
+    ],
+    [
+     "0.06",
+     322.3
+    ],
+    [
+     "0.02",
+     208.7
+    ],
+    [
+     "0.08",
+     9.8
+    ],
+    [
+     "0",
+     163.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 44,
+    "tick_spacing": 13.007,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 26,
+    "lattice_rms_deg": 0.719,
+    "ecc_deg": 3.76,
+    "ticks_per_label": 2,
+    "label_resid_ticks": 11.93
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143223.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 20,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 165.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 159.18,
+    "theta_max": 59.52
+   },
+   "labels": [
+    [
+     "0.04",
+     256.6
+    ],
+    [
+     "0.06",
+     318.3
+    ],
+    [
+     "0.02",
+     205.5
+    ],
+    [
+     "0.08",
+     3.9
+    ],
+    [
+     "0",
+     160.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 32,
+    "tick_spacing": 13.43,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.746,
+    "ecc_deg": 0.76,
+    "ticks_per_label": 1,
+    "label_resid_ticks": 11.45
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143232.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 171.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 151.61,
+    "theta_max": 45.46
+   },
+   "labels": [
+    [
+     "0.04",
+     259.5
+    ],
+    [
+     "0.06",
+     314.7
+    ],
+    [
+     "0.02",
+     205.6
+    ],
+    [
+     "0.08",
+     353.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 13,
+    "tick_band": [
+     1.016,
+     1.076
+    ],
+    "n_peaks": 115,
+    "tick_spacing": 0.01,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 13,
+    "lattice_rms_deg": 0.004,
+    "ecc_deg": 56.9
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143235.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 179.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 150.49,
+    "theta_max": 43.79
+   },
+   "labels": [
+    [
+     "0.04",
+     255.3
+    ],
+    [
+     "0.06",
+     309.7
+    ],
+    [
+     "0.02",
+     203.7
+    ],
+    [
+     "0.08",
+     348.2
+    ],
+    [
+     "0",
+     152.3
+    ],
+    [
+     "0.1",
+     40.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 10,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 29,
+    "tick_spacing": 12.611,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 14,
+    "lattice_rms_deg": 0.765,
+    "ecc_deg": 6.33
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143259.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 22,
+   "ok": false,
+   "reason": "few_labels",
+   "ms": 157.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 147.61,
+    "theta_max": 52.52
+   },
+   "labels": [
+    [
+     "0.06",
+     335.7
+    ],
+    [
+     "0.08",
+     25.4
+    ]
+   ],
+   "inliers": [],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 14,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 64,
+    "tick_spacing": 1.25
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143300.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 20,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 177.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 145.33,
+    "theta_max": 45.18
+   },
+   "labels": [
+    [
+     "0.06",
+     331.7
+    ],
+    [
+     "0",
+     173.3
+    ],
+    [
+     "0.08",
+     16.3
+    ],
+    [
+     "0.1",
+     71.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 18,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 13.511,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 25,
+    "lattice_rms_deg": 0.807,
+    "ecc_deg": 1.83
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143301.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 23,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 210.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 137.63,
+    "theta_max": 67.29
+   },
+   "labels": [
+    [
+     "0.04",
+     269.3
+    ],
+    [
+     "0.02",
+     219.2
+    ],
+    [
+     "0.06",
+     327.3
+    ],
+    [
+     "0.08",
+     10.2
+    ],
+    [
+     "0",
+     169.6
+    ],
+    [
+     "0.1",
+     64.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 39,
+    "tick_spacing": 13.574,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 25,
+    "lattice_rms_deg": 0.662,
+    "ecc_deg": 3.5
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143311.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 20,
+   "ok": false,
+   "reason": "bad_sweep",
+   "ms": 181.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 148.48,
+    "theta_max": 46.18
+   },
+   "labels": [
+    [
+     "0.04",
+     248.3
+    ],
+    [
+     "0.06",
+     308.6
+    ],
+    [
+     "0.02",
+     196.3
+    ],
+    [
+     "0.08",
+     352.2
+    ],
+    [
+     "0.1",
+     44.7
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 13.085,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 25,
+    "lattice_rms_deg": 0.681,
+    "ecc_deg": 1.42,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.13
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143338.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 24,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 180.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 169.8,
+    "theta_max": 67.35
+   },
+   "labels": [
+    [
+     "0.04",
+     270.6
+    ],
+    [
+     "0.02",
+     219.7
+    ],
+    [
+     "0.06",
+     328.1
+    ],
+    [
+     "0.08",
+     11.3
+    ],
+    [
+     "0",
+     171.2
+    ],
+    [
+     "0.1",
+     64.9
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 16,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 59,
+    "tick_spacing": 0.01,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 17,
+    "lattice_rms_deg": 0.009,
+    "ecc_deg": 57.01
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143340.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 24,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 159.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 160.83,
+    "theta_max": 55.44
+   },
+   "labels": [
+    [
+     "0.06",
+     322.4
+    ],
+    [
+     "0.08",
+     1.0
+    ],
+    [
+     "0",
+     163.0
+    ],
+    [
+     "0.1",
+     51.7
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 10,
+    "tick_band": [
+     0.96,
+     1.02
+    ],
+    "n_peaks": 113,
+    "tick_spacing": -0.01,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 10,
+    "lattice_rms_deg": 0.003,
+    "ecc_deg": 57.86
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143425.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 173.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 160.99,
+    "theta_max": 61.0
+   },
+   "labels": [
+    [
+     "0.04",
+     257.4
+    ],
+    [
+     "0.06",
+     317.7
+    ],
+    [
+     "0.02",
+     209.0
+    ],
+    [
+     "0.08",
+     2.4
+    ],
+    [
+     "0",
+     162.8
+    ],
+    [
+     "0.1",
+     59.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 13.564,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.757,
+    "ecc_deg": 3.05
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143426.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 23,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 174.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 155.88,
+    "theta_max": 58.92
+   },
+   "labels": [
+    [
+     "0.04",
+     255.8
+    ],
+    [
+     "0.06",
+     315.6
+    ],
+    [
+     "0.02",
+     205.1
+    ],
+    [
+     "0.08",
+     359.8
+    ],
+    [
+     "0",
+     157.7
+    ],
+    [
+     "0.1",
+     56.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 14,
+    "tick_band": [
+     0.941,
+     1.001
+    ],
+    "n_peaks": 127,
+    "tick_spacing": 0.046,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 14,
+    "lattice_rms_deg": 0.006,
+    "ecc_deg": 55.18
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143429.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "ambiguous_fit",
+   "ms": 167.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 159.75,
+    "theta_max": 61.68
+   },
+   "labels": [
+    [
+     "0.04",
+     258.2
+    ],
+    [
+     "0.06",
+     313.5
+    ],
+    [
+     "0.025",
+     206.8
+    ],
+    [
+     "0.08",
+     352.1
+    ],
+    [
+     "0",
+     162.7
+    ]
+   ],
+   "inliers": [
+    0,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 13,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 77,
+    "tick_spacing": 1.25,
+    "n_labels": 5,
+    "n_inliers": 3
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143430.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 197.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 151.78,
+    "theta_max": 45.57
+   },
+   "labels": [
+    [
+     "0.0",
+     254.0
+    ],
+    [
+     "0.06",
+     308.7
+    ],
+    [
+     "0.08",
+     349.1
+    ],
+    [
+     "0",
+     154.7
+    ],
+    [
+     "0.1",
+     41.7
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 22,
+    "tick_spacing": 11.415,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 13,
+    "lattice_rms_deg": 0.379,
+    "ecc_deg": 7.75,
+    "ticks_per_label": 2,
+    "label_resid_ticks": 8.44
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143442.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 17,
+   "ok": true,
+   "reason": null,
+   "ms": 132.2,
+   "confidence": 0.33,
+   "calibration": {
+    "v_min": -0.0,
+    "theta_min": 144.32,
+    "v_max": 0.12,
+    "theta_max": 104.45,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 152.67,
+    "theta_max": 49.13
+   },
+   "labels": [
+    [
+     "0.04",
+     250.8
+    ],
+    [
+     "0.06",
+     313.1
+    ],
+    [
+     "-0.02",
+     199.9
+    ],
+    [
+     "0.08",
+     356.0
+    ],
+    [
+     "0.1",
+     46.5
+    ]
+   ],
+   "inliers": [
+    0,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 19,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 26,
+    "tick_spacing": 13.393,
+    "n_labels": 5,
+    "n_inliers": 3,
+    "lattice_ticks": 20,
+    "lattice_rms_deg": 0.721,
+    "ecc_deg": 1.91,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.25
+   },
+   "err": 0.0313,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_roi_image_0_20240713143529.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 22,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 180.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 165.31,
+    "theta_max": 64.55
+   },
+   "labels": [
+    [
+     "0.04",
+     262.3
+    ],
+    [
+     "0.02",
+     214.9
+    ],
+    [
+     "0.06",
+     314.2
+    ],
+    [
+     "0.08",
+     6.0
+    ],
+    [
+     "0.1",
+     62.9
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 35,
+    "tick_spacing": 13.177,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 22,
+    "lattice_rms_deg": 0.972,
+    "ecc_deg": 3.33
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143530.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 162.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 153.5,
+    "theta_max": 52.7
+   },
+   "labels": [
+    [
+     "0.04",
+     251.5
+    ],
+    [
+     "0.06",
+     308.9
+    ],
+    [
+     "0.02",
+     202.4
+    ],
+    [
+     "0.08",
+     353.9
+    ],
+    [
+     "0",
+     155.7
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 30,
+    "tick_spacing": 13.37,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 22,
+    "lattice_rms_deg": 0.826,
+    "ecc_deg": 2.33
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143531.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 176.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 151.71,
+    "theta_max": 47.47
+   },
+   "labels": [
+    [
+     "0.04",
+     248.0
+    ],
+    [
+     "0.06",
+     306.3
+    ],
+    [
+     "0.02",
+     200.0
+    ],
+    [
+     "0.08",
+     350.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 13,
+    "tick_band": [
+     0.979,
+     1.039
+    ],
+    "n_peaks": 128,
+    "tick_spacing": 0.002,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 13,
+    "lattice_rms_deg": 0.006,
+    "ecc_deg": 57.39
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143641.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 20,
+   "ok": true,
+   "reason": null,
+   "ms": 176.1,
+   "confidence": 0.576,
+   "calibration": {
+    "v_min": 0.02,
+    "theta_min": 194.25,
+    "v_max": 0.1,
+    "theta_max": 53.0,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 150.26,
+    "theta_max": 52.92
+   },
+   "labels": [
+    [
+     "0.04",
+     246.8
+    ],
+    [
+     "0.06",
+     309.3
+    ],
+    [
+     "0.02",
+     194.7
+    ],
+    [
+     "0.08",
+     356.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 19,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 20,
+    "tick_spacing": 13.531,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 19,
+    "lattice_rms_deg": 0.448,
+    "ecc_deg": 1.46,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.53
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_roi_image_0_20240713143701.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 22,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 193.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 147.02,
+    "theta_max": 50.31
+   },
+   "labels": [
+    [
+     "0.04",
+     240.3
+    ],
+    [
+     "0.06",
+     305.8
+    ],
+    [
+     "0.02",
+     192.2
+    ],
+    [
+     "0.0",
+     358.5
+    ],
+    [
+     "0",
+     147.9
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 12,
+    "tick_band": [
+     0.716,
+     0.776
+    ],
+    "n_peaks": 44,
+    "tick_spacing": 0.065,
+    "n_labels": 5,
+    "n_inliers": 3,
+    "lattice_ticks": 12,
+    "lattice_rms_deg": 0.008,
+    "ecc_deg": 55.08
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143703.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 182.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 147.54,
+    "theta_max": 47.61
+   },
+   "labels": [
+    [
+     "0.04",
+     245.4
+    ],
+    [
+     "0.06",
+     307.4
+    ],
+    [
+     "0.02",
+     195.0
+    ],
+    [
+     "0.1",
+     46.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     0.979,
+     1.039
+    ],
+    "n_peaks": 93,
+    "tick_spacing": 0.012,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 13,
+    "lattice_rms_deg": 0.003,
+    "ecc_deg": 56.85
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143705.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 20,
+   "ok": true,
+   "reason": null,
+   "ms": 235.6,
+   "confidence": 0.624,
+   "calibration": {
+    "v_min": 0.02,
+    "theta_min": 181.0,
+    "v_max": 0.04,
+    "theta_max": 248.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 147.34,
+    "theta_max": 45.94
+   },
+   "labels": [
+    [
+     "0.04",
+     249.0
+    ],
+    [
+     "0.06",
+     309.7
+    ],
+    [
+     "0.02",
+     195.9
+    ],
+    [
+     "0.08",
+     353.1
+    ],
+    [
+     "0.1",
+     44.1
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 10,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 32,
+    "tick_spacing": 11.103,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 10,
+    "lattice_rms_deg": 0.353,
+    "ecc_deg": 11.2,
+    "ticks_per_label": 5,
+    "label_resid_ticks": 1.12
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_roi_image_0_20240713143823.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 22,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 172.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 159.02,
+    "theta_max": 57.82
+   },
+   "labels": [
+    [
+     "0.04",
+     255.9
+    ],
+    [
+     "0.02",
+     205.2
+    ],
+    [
+     "0.08",
+     2.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 14,
+    "tick_band": [
+     0.979,
+     1.039
+    ],
+    "n_peaks": 92,
+    "tick_spacing": -0.022,
+    "n_labels": 3,
+    "n_inliers": 3,
+    "lattice_ticks": 14,
+    "lattice_rms_deg": 0.008,
+    "ecc_deg": 58.49
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143824.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 192.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 153.97,
+    "theta_max": 53.09
+   },
+   "labels": [
+    [
+     "0.04",
+     253.8
+    ],
+    [
+     "0.02",
+     201.0
+    ],
+    [
+     "0.08",
+     358.2
+    ],
+    [
+     "0",
+     154.9
+    ],
+    [
+     "0.1",
+     52.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 13,
+    "tick_band": [
+     0.96,
+     1.02
+    ],
+    "n_peaks": 123,
+    "tick_spacing": 0.028,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 17,
+    "lattice_rms_deg": 0.004,
+    "ecc_deg": 56.09
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143913.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 171.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 150.56,
+    "theta_max": 48.66
+   },
+   "labels": [
+    [
+     "0.04",
+     252.4
+    ],
+    [
+     "0.08",
+     309.7
+    ],
+    [
+     "0.02",
+     201.4
+    ],
+    [
+     "0.08",
+     353.1
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 17,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 29,
+    "tick_spacing": 13.598,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 19,
+    "lattice_rms_deg": 0.674,
+    "ecc_deg": 3.73,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 15.95
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143914.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 179.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 149.83,
+    "theta_max": 48.78
+   },
+   "labels": [
+    [
+     "0.04",
+     249.8
+    ],
+    [
+     "0.06",
+     311.4
+    ],
+    [
+     "0.08",
+     358.4
+    ]
+   ],
+   "inliers": [
+    0,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 16,
+    "tick_band": [
+     0.979,
+     1.039
+    ],
+    "n_peaks": 112,
+    "tick_spacing": 1.25,
+    "n_labels": 3,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713143915.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 166.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 149.58,
+    "theta_max": 45.2
+   },
+   "labels": [
+    [
+     "0.04",
+     249.9
+    ],
+    [
+     "0.06",
+     307.6
+    ],
+    [
+     "0.08",
+     350.1
+    ],
+    [
+     "0",
+     151.4
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 31,
+    "tick_spacing": 13.589,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.784,
+    "ecc_deg": 4.04,
+    "ticks_per_label": 6,
+    "label_resid_ticks": 12.97
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713144130.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 22,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 206.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 124.46,
+    "theta_max": 56.48
+   },
+   "labels": [
+    [
+     "0.04",
+     260.3
+    ],
+    [
+     "0.06",
+     316.5
+    ],
+    [
+     "0.02",
+     208.1
+    ],
+    [
+     "0.08",
+     0.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 15,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 30,
+    "tick_spacing": 12.89,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 18,
+    "lattice_rms_deg": 0.491,
+    "ecc_deg": 3.74,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 11.96
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713144203.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 187.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 153.37,
+    "theta_max": 59.67
+   },
+   "labels": [
+    [
+     "0.04",
+     264.5
+    ],
+    [
+     "0.06",
+     329.3
+    ],
+    [
+     "0.02",
+     199.7
+    ],
+    [
+     "0.00",
+     14.6
+    ],
+    [
+     "0",
+     151.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 12,
+    "tick_band": [
+     1.054,
+     1.114
+    ],
+    "n_peaks": 109,
+    "tick_spacing": -0.01,
+    "n_labels": 5,
+    "n_inliers": 3,
+    "lattice_ticks": 15,
+    "lattice_rms_deg": 0.006,
+    "ecc_deg": 57.96
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713144204.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 201.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 148.33,
+    "theta_max": 53.23
+   },
+   "labels": [
+    [
+     "0.04",
+     259.8
+    ],
+    [
+     "0.06",
+     321.8
+    ],
+    [
+     "0.00",
+     8.5
+    ],
+    [
+     "0",
+     146.7
+    ],
+    [
+     "0.1",
+     52.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 11,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 79,
+    "tick_spacing": -0.016,
+    "n_labels": 5,
+    "n_inliers": 3,
+    "lattice_ticks": 13,
+    "lattice_rms_deg": 0.001,
+    "ecc_deg": 58.17
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713144207.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 158.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 152.3,
+    "theta_max": 47.65
+   },
+   "labels": [
+    [
+     "0.04",
+     254.1
+    ],
+    [
+     "0.06",
+     310.6
+    ],
+    [
+     "0.02",
+     202.9
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 15,
+    "tick_band": [
+     0.716,
+     0.776
+    ],
+    "n_peaks": 32,
+    "tick_spacing": 13.022,
+    "n_labels": 3,
+    "n_inliers": 3,
+    "lattice_ticks": 22,
+    "lattice_rms_deg": 1.179,
+    "ecc_deg": 2.33
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713144242.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 22,
+   "ok": false,
+   "reason": "bad_sweep",
+   "ms": 162.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 156.12,
+    "theta_max": 55.65
+   },
+   "labels": [
+    [
+     "0.04",
+     251.0
+    ],
+    [
+     "0.06",
+     312.4
+    ],
+    [
+     "0.02",
+     201.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 42,
+    "tick_spacing": 13.068,
+    "n_labels": 3,
+    "n_inliers": 3,
+    "lattice_ticks": 26,
+    "lattice_rms_deg": 0.484,
+    "ecc_deg": 2.94,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.47
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713144245.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 22,
+   "ok": true,
+   "reason": null,
+   "ms": 186.1,
+   "confidence": 0.316,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 147.94,
+    "v_max": 0.1,
+    "theta_max": 50.77,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 123.92,
+    "theta_max": 53.72
+   },
+   "labels": [
+    [
+     "0.04",
+     252.1
+    ],
+    [
+     "0.06",
+     313.7
+    ],
+    [
+     "0.02",
+     201.1
+    ],
+    [
+     "0.08",
+     357.3
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 17,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 31,
+    "tick_spacing": 13.007,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 19,
+    "lattice_rms_deg": 0.758,
+    "ecc_deg": 1.82,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.16
+   },
+   "err": 1.0,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_roi_image_0_20240713144326.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": true,
+   "reason": null,
+   "ms": 186.7,
+   "confidence": 0.443,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 137.69,
+    "v_max": 0.12,
+    "theta_max": 94.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 144.82,
+    "theta_max": 44.84
+   },
+   "labels": [
+    [
+     "0.04",
+     244.9
+    ],
+    [
+     "0.06",
+     306.5
+    ],
+    [
+     "0.020",
+     192.7
+    ],
+    [
+     "0.08",
+     350.9
+    ],
+    [
+     "0.1",
+     43.2
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 30,
+    "tick_spacing": 13.303,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 23,
+    "lattice_rms_deg": 0.714,
+    "ecc_deg": 0.79,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.11
+   },
+   "err": 0.027,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_roi_image_0_20240713144406.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 26,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 157.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 136.31,
+    "theta_max": 61.51
+   },
+   "labels": [
+    [
+     "0.06",
+     334.3
+    ],
+    [
+     "0",
+     175.6
+    ],
+    [
+     "0.08",
+     19.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 18,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 29,
+    "tick_spacing": 13.515,
+    "n_labels": 3,
+    "n_inliers": 3,
+    "lattice_ticks": 23,
+    "lattice_rms_deg": 1.11,
+    "ecc_deg": 2.11
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713144424.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 23,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 159.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 155.63,
+    "theta_max": 54.77
+   },
+   "labels": [
+    [
+     "0.04",
+     255.9
+    ],
+    [
+     "0.06",
+     317.2
+    ],
+    [
+     "0.08",
+     2.0
+    ],
+    [
+     "0.1",
+     52.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 18,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 40,
+    "tick_spacing": 13.244,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.93,
+    "ecc_deg": 0.91
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240713144546.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 177.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 150.52,
+    "theta_max": 45.98
+   },
+   "labels": [
+    [
+     "0.04",
+     245.4
+    ],
+    [
+     "0.06",
+     305.8
+    ],
+    [
+     "0.02",
+     197.5
+    ],
+    [
+     "0.08",
+     350.6
+    ],
+    [
+     "0",
+     153.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 22,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 12.875,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 22,
+    "lattice_rms_deg": 0.364,
+    "ecc_deg": 2.45,
+    "ticks_per_label": 2,
+    "label_resid_ticks": 11.78
+   }
+  },
+  {
+   "file": "pressure_gauge_14.png",
+   "group": "MB:pressure_gauge_14",
+   "model": "M4",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 100,
+   "ok": false,
+   "reason": "no_labels",
+   "ms": 94.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 276.18,
+    "theta_max": 289.8
+   },
+   "labels": [],
+   "inliers": [],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 6,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 16,
+    "tick_spacing": 2.0
+   }
+  },
+  {
+   "file": "pressure_gauge_21.png",
+   "group": "MB:pressure_gauge_21",
+   "model": "M6",
+   "scale": [
+    0,
+    60
+   ],
+   "n_ticks": 61,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 176.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 60.0,
+    "direction": "cw",
+    "theta_min": 133.53,
+    "theta_max": 43.06
+   },
+   "labels": [
+    [
+     "30",
+     270.3
+    ],
+    [
+     "20",
+     226.3
+    ],
+    [
+     "40",
+     313.3
+    ],
+    [
+     "10",
+     178.0
+    ],
+    [
+     "60",
+     38.1
+    ],
+    [
+     "0",
+     136.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 46,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 52,
+    "tick_spacing": 4.423,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 52,
+    "lattice_rms_deg": 0.152,
+    "ecc_deg": 2.0
+   }
+  },
+  {
+   "file": "pressure_gauge_27.png",
+   "group": "MB:pressure_gauge_27",
+   "model": "M6",
+   "scale": [
+    0,
+    120
+   ],
+   "n_ticks": 60,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 150.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 120.0,
+    "direction": "cw",
+    "theta_min": 136.42,
+    "theta_max": 42.02
+   },
+   "labels": [
+    [
+     "60",
+     260.9
+    ],
+    [
+     "80",
+     306.8
+    ],
+    [
+     "40",
+     216.2
+    ],
+    [
+     "100",
+     354.5
+    ],
+    [
+     "20",
+     173.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 34,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 53,
+    "tick_spacing": 4.598,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 34,
+    "lattice_rms_deg": 0.145,
+    "ecc_deg": 2.15,
+    "ticks_per_label": 13,
+    "label_resid_ticks": 32.17
+   }
+  },
+  {
+   "file": "pressure_gauge_44.png",
+   "group": "MB:pressure_gauge_44",
+   "model": "M6",
+   "scale": [
+    0,
+    1.5
+   ],
+   "n_ticks": 31,
+   "ok": false,
+   "reason": "no_labels",
+   "ms": 96.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.5,
+    "direction": "cw",
+    "theta_min": 244.24,
+    "theta_max": 297.93
+   },
+   "labels": [],
+   "inliers": [],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 8,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 53,
+    "tick_spacing": 2.75
+   }
+  },
+  {
+   "file": "pressure_gauge_55.png",
+   "group": "MB:pressure_gauge_55",
+   "model": "M1",
+   "scale": [
+    0,
+    1
+   ],
+   "n_ticks": 51,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 165.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.0,
+    "direction": "cw",
+    "theta_min": 246.38,
+    "theta_max": 317.69
+   },
+   "labels": [
+    [
+     "0.4",
+     269.4
+    ],
+    [
+     "0.6",
+     285.5
+    ],
+    [
+     "1.8",
+     302.1
+    ]
+   ],
+   "inliers": [
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 12,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 89,
+    "tick_spacing": 1.25,
+    "n_labels": 3,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "pressure_gauge_57.png",
+   "group": "MB:pressure_gauge_57",
+   "model": "M1",
+   "scale": [
+    0,
+    0.6
+   ],
+   "n_ticks": 61,
+   "ok": false,
+   "reason": "narrow_label_span",
+   "ms": 190.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.6,
+    "direction": "cw",
+    "theta_min": 105.73,
+    "theta_max": 82.72
+   },
+   "labels": [
+    [
+     "0.3",
+     95.3
+    ],
+    [
+     "0.2",
+     107.5
+    ],
+    [
+     "0.4",
+     81.8
+    ],
+    [
+     "0.1",
+     109.9
+    ],
+    [
+     "0.5",
+     78.9
+    ],
+    [
+     "0.6",
+     85.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 7,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 81,
+    "tick_spacing": 1.5,
+    "n_labels": 6,
+    "n_inliers": 5
+   }
+  },
+  {
+   "file": "voc_new_028.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 491.4,
+   "confidence": 0.876,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 126.26,
+    "v_max": 10.0,
+    "theta_max": 38.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 131.74,
+    "theta_max": 38.28
+   },
+   "labels": [
+    [
+     "6",
+     293.1
+    ],
+    [
+     "4",
+     231.9
+    ],
+    [
+     "8",
+     344.5
+    ],
+    [
+     "2",
+     180.0
+    ],
+    [
+     "10",
+     36.7
+    ],
+    [
+     "0",
+     137.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 66,
+    "tick_spacing": 5.46,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.198,
+    "ecc_deg": 0.64,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.67
+   },
+   "err": 0.0201,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_046.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 154.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 142.14,
+    "theta_max": 49.76
+   },
+   "labels": [
+    [
+     "08",
+     280.0
+    ],
+    [
+     "12",
+     347.2
+    ],
+    [
+     "0",
+     140.9
+    ],
+    [
+     "16",
+     47.5
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 25,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 27,
+    "tick_spacing": 8.419,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 25,
+    "lattice_rms_deg": 0.143,
+    "ecc_deg": 2.21,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 6.72
+   }
+  },
+  {
+   "file": "voc_new_050.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 136.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 131.08,
+    "theta_max": 40.36
+   },
+   "labels": [
+    [
+     "0.8",
+     264.3
+    ],
+    [
+     "04",
+     196.3
+    ],
+    [
+     "16",
+     39.4
+    ]
+   ],
+   "inliers": [
+    0,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 16,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 31,
+    "tick_spacing": 9.0,
+    "n_labels": 3,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_new_066.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 164.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 144.82,
+    "theta_max": 53.04
+   },
+   "labels": [
+    [
+     "0.8",
+     279.0
+    ],
+    [
+     "0.4",
+     206.4
+    ],
+    [
+     "1.2",
+     347.4
+    ],
+    [
+     "0",
+     144.1
+    ],
+    [
+     "16",
+     51.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.694,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.241,
+    "ecc_deg": 2.56,
+    "ticks_per_label": 5,
+    "label_resid_ticks": 20.36
+   }
+  },
+  {
+   "file": "voc_new_071.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": true,
+   "reason": null,
+   "ms": 168.6,
+   "confidence": 0.52,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 134.54,
+    "v_max": 1.6,
+    "theta_max": 53.0,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 139.39,
+    "theta_max": 52.99
+   },
+   "labels": [
+    [
+     "0.8",
+     279.3
+    ],
+    [
+     "0.4",
+     202.6
+    ],
+    [
+     "1.2",
+     350.0
+    ],
+    [
+     "1.6",
+     51.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.7,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.212,
+    "ecc_deg": 2.33,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 0.46
+   },
+   "err": 0.0174,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_076.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 160.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 132.59,
+    "theta_max": 40.19
+   },
+   "labels": [
+    [
+     "08",
+     266.8
+    ],
+    [
+     "12",
+     336.5
+    ],
+    [
+     "04",
+     196.1
+    ],
+    [
+     "16",
+     38.3
+    ]
+   ],
+   "inliers": [
+    0,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 26,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 31,
+    "tick_spacing": 8.25,
+    "n_labels": 4,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_new_078.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 49,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 574.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 128.38,
+    "theta_max": 36.88
+   },
+   "labels": [
+    [
+     "6",
+     292.6
+    ],
+    [
+     "4",
+     225.4
+    ],
+    [
+     "8",
+     344.4
+    ],
+    [
+     "2",
+     172.7
+    ],
+    [
+     "10",
+     36.2
+    ],
+    [
+     "0",
+     132.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 36,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 58,
+    "tick_spacing": 5.646,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 36,
+    "lattice_rms_deg": 0.2,
+    "ecc_deg": 3.01,
+    "ticks_per_label": 3,
+    "label_resid_ticks": 26.87
+   }
+  },
+  {
+   "file": "voc_new_079.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 179.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 130.94,
+    "theta_max": 38.67
+   },
+   "labels": [
+    [
+     "0.8",
+     264.7
+    ],
+    [
+     "1.2",
+     334.9
+    ],
+    [
+     "0.4",
+     189.7
+    ],
+    [
+     "16",
+     37.5
+    ],
+    [
+     "0",
+     130.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 34,
+    "tick_spacing": 8.502,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.104,
+    "ecc_deg": 2.09,
+    "ticks_per_label": 5,
+    "label_resid_ticks": 20.43
+   }
+  },
+  {
+   "file": "voc_new_093.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 434.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 144.52,
+    "theta_max": 47.02
+   },
+   "labels": [
+    [
+     "4",
+     243.4
+    ],
+    [
+     "6",
+     301.9
+    ],
+    [
+     "2",
+     193.6
+    ],
+    [
+     "0",
+     151.0
+    ],
+    [
+     "10",
+     44.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 27,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 59,
+    "tick_spacing": 5.417,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 27,
+    "lattice_rms_deg": 0.077,
+    "ecc_deg": 2.67,
+    "ticks_per_label": 9,
+    "label_resid_ticks": 32.47
+   }
+  },
+  {
+   "file": "voc_new_098.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 218.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 137.63,
+    "theta_max": 45.64
+   },
+   "labels": [
+    [
+     "0.8",
+     269.6
+    ],
+    [
+     "1.2",
+     337.8
+    ],
+    [
+     "0.4",
+     197.8
+    ],
+    [
+     "0",
+     137.2
+    ],
+    [
+     "1.6",
+     43.7
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.685,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.224,
+    "ecc_deg": 1.82
+   }
+  },
+  {
+   "file": "voc_new_115.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 188.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 134.5,
+    "theta_max": 46.14
+   },
+   "labels": [
+    [
+     "0.8",
+     266.5
+    ],
+    [
+     "1.2",
+     335.1
+    ],
+    [
+     "0.4",
+     196.4
+    ],
+    [
+     "0",
+     136.6
+    ],
+    [
+     "1.6",
+     44.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.716,
+     0.776
+    ],
+    "n_peaks": 34,
+    "tick_spacing": 8.522,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 20,
+    "lattice_rms_deg": 0.153,
+    "ecc_deg": 4.45,
+    "ticks_per_label": 5,
+    "label_resid_ticks": 15.98
+   }
+  },
+  {
+   "file": "voc_new_118.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 229.0,
+   "confidence": 0.908,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 137.45,
+    "v_max": 10.0,
+    "theta_max": 47.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 142.28,
+    "theta_max": 47.3
+   },
+   "labels": [
+    [
+     "4",
+     240.4
+    ],
+    [
+     "6",
+     300.8
+    ],
+    [
+     "2",
+     190.3
+    ],
+    [
+     "8",
+     352.3
+    ],
+    [
+     "0",
+     148.5
+    ],
+    [
+     "10",
+     45.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 59,
+    "tick_spacing": 5.422,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.147,
+    "ecc_deg": 1.33,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.72
+   },
+   "err": 0.0179,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_124.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 29,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 134.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 135.17,
+    "theta_max": 44.42
+   },
+   "labels": [
+    [
+     "08",
+     270.6
+    ],
+    [
+     "12",
+     339.6
+    ],
+    [
+     "0",
+     134.3
+    ]
+   ],
+   "inliers": [
+    0,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.716,
+     0.776
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.5,
+    "n_labels": 3,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_new_126.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 186.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 142.15,
+    "theta_max": 47.68
+   },
+   "labels": [
+    [
+     "0.8",
+     270.7
+    ],
+    [
+     "0.4",
+     201.4
+    ],
+    [
+     "1.2",
+     339.7
+    ],
+    [
+     "0",
+     142.3
+    ],
+    [
+     "1.6",
+     45.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 29,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 36,
+    "tick_spacing": 8.56,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 29,
+    "lattice_rms_deg": 0.128,
+    "ecc_deg": 1.6,
+    "ticks_per_label": 1,
+    "label_resid_ticks": 18.3
+   }
+  },
+  {
+   "file": "voc_new_129.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 212.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 142.25,
+    "theta_max": 52.54
+   },
+   "labels": [
+    [
+     "0.8",
+     277.4
+    ],
+    [
+     "0.4",
+     204.6
+    ],
+    [
+     "1.2",
+     347.0
+    ],
+    [
+     "0",
+     143.7
+    ],
+    [
+     "16",
+     51.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.645,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.141,
+    "ecc_deg": 1.29,
+    "ticks_per_label": 5,
+    "label_resid_ticks": 20.36
+   }
+  },
+  {
+   "file": "voc_new_157.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "no_labels",
+   "ms": 180.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 40.34,
+    "theta_max": 309.63
+   },
+   "labels": [],
+   "inliers": [],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 34,
+    "tick_spacing": 8.5
+   }
+  },
+  {
+   "file": "voc_new_171.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 457.0,
+   "confidence": 0.572,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 128.15,
+    "v_max": 10.0,
+    "theta_max": 39.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 133.11,
+    "theta_max": 39.54
+   },
+   "labels": [
+    [
+     "6",
+     291.6
+    ],
+    [
+     "4",
+     232.9
+    ],
+    [
+     "2",
+     183.1
+    ],
+    [
+     "10",
+     37.9
+    ],
+    [
+     "0",
+     139.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 62,
+    "tick_spacing": 5.547,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 52,
+    "lattice_rms_deg": 0.457,
+    "ecc_deg": 3.52,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.91
+   },
+   "err": 0.0183,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_174.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "ambiguous_fit",
+   "ms": 161.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 138.02,
+    "theta_max": 43.17
+   },
+   "labels": [
+    [
+     "08",
+     266.6
+    ],
+    [
+     "12",
+     335.7
+    ],
+    [
+     "04",
+     197.2
+    ],
+    [
+     "0",
+     138.3
+    ],
+    [
+     "16",
+     41.8
+    ]
+   ],
+   "inliers": [
+    1,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.716,
+     0.776
+    ],
+    "n_peaks": 34,
+    "tick_spacing": 8.5,
+    "n_labels": 5,
+    "n_inliers": 3
+   }
+  },
+  {
+   "file": "voc_new_180.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 31,
+   "ok": false,
+   "reason": "ambiguous_fit",
+   "ms": 159.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 145.79,
+    "theta_max": 52.34
+   },
+   "labels": [
+    [
+     "08",
+     277.9
+    ],
+    [
+     "0.4",
+     206.3
+    ],
+    [
+     "12",
+     345.9
+    ],
+    [
+     "0",
+     144.4
+    ],
+    [
+     "16",
+     50.3
+    ]
+   ],
+   "inliers": [
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 31,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 32,
+    "tick_spacing": 8.5,
+    "n_labels": 5,
+    "n_inliers": 3
+   }
+  },
+  {
+   "file": "voc_new_186.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 178.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 134.24,
+    "theta_max": 42.73
+   },
+   "labels": [
+    [
+     "0.8",
+     271.1
+    ],
+    [
+     "1.2",
+     337.2
+    ],
+    [
+     "0.4",
+     199.1
+    ],
+    [
+     "0",
+     136.0
+    ],
+    [
+     "1.6",
+     40.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 28,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 32,
+    "tick_spacing": 8.696,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 28,
+    "lattice_rms_deg": 0.182,
+    "ecc_deg": 3.6
+   }
+  },
+  {
+   "file": "voc_new_209.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 578.8,
+   "confidence": 0.936,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 131.07,
+    "v_max": 10.0,
+    "theta_max": 40.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 136.02,
+    "theta_max": 40.73
+   },
+   "labels": [
+    [
+     "6",
+     296.9
+    ],
+    [
+     "4",
+     236.5
+    ],
+    [
+     "8",
+     347.3
+    ],
+    [
+     "2",
+     185.4
+    ],
+    [
+     "0",
+     141.8
+    ],
+    [
+     "10",
+     38.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 64,
+    "tick_spacing": 5.416,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.103,
+    "ecc_deg": 0.84,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.67
+   },
+   "err": 0.0183,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_214.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": false,
+   "reason": "no_labels",
+   "ms": 162.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 234.99,
+    "theta_max": 146.97
+   },
+   "labels": [],
+   "inliers": [],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.716,
+     0.776
+    ],
+    "n_peaks": 26,
+    "tick_spacing": 9.0
+   }
+  },
+  {
+   "file": "voc_new_216.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": true,
+   "reason": null,
+   "ms": 167.5,
+   "confidence": 0.537,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 145.1,
+    "v_max": 1.6,
+    "theta_max": 58.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 151.08,
+    "theta_max": 58.71
+   },
+   "labels": [
+    [
+     "08",
+     277.8
+    ],
+    [
+     "0.4",
+     208.2
+    ],
+    [
+     "1.2",
+     349.7
+    ],
+    [
+     "0",
+     151.7
+    ],
+    [
+     "16",
+     58.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 31,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 32,
+    "tick_spacing": 8.561,
+    "n_labels": 5,
+    "n_inliers": 3,
+    "lattice_ticks": 31,
+    "lattice_rms_deg": 0.169,
+    "ecc_deg": 1.95,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 0.41
+   },
+   "err": 0.0219,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_235.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 165.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 142.61,
+    "theta_max": 53.78
+   },
+   "labels": [
+    [
+     "0.8",
+     276.7
+    ],
+    [
+     "0.4",
+     205.1
+    ],
+    [
+     "12",
+     346.9
+    ],
+    [
+     "16",
+     52.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.5,
+    "n_labels": 4,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_new_242.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "few_labels",
+   "ms": 173.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 64.52,
+    "theta_max": 327.21
+   },
+   "labels": [
+    [
+     "2",
+     260.4
+    ]
+   ],
+   "inliers": [],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 25,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 25,
+    "tick_spacing": 8.25
+   }
+  },
+  {
+   "file": "voc_new_264.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 597.1,
+   "confidence": 0.724,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 137.74,
+    "v_max": 10.0,
+    "theta_max": 49.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 143.41,
+    "theta_max": 49.68
+   },
+   "labels": [
+    [
+     "4",
+     243.4
+    ],
+    [
+     "6",
+     304.2
+    ],
+    [
+     "2",
+     191.9
+    ],
+    [
+     "0",
+     149.0
+    ],
+    [
+     "10",
+     47.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 58,
+    "tick_spacing": 5.479,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.152,
+    "ecc_deg": 1.39,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.73
+   },
+   "err": 0.0208,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_267.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 548.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 133.93,
+    "theta_max": 40.33
+   },
+   "labels": [
+    [
+     "6",
+     290.9
+    ],
+    [
+     "4",
+     229.2
+    ],
+    [
+     "8",
+     345.0
+    ],
+    [
+     "2",
+     179.8
+    ],
+    [
+     "10",
+     38.9
+    ],
+    [
+     "0",
+     139.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 36,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 68,
+    "tick_spacing": 5.468,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 48,
+    "lattice_rms_deg": 0.292,
+    "ecc_deg": 2.25,
+    "ticks_per_label": 3,
+    "label_resid_ticks": 26.81
+   }
+  },
+  {
+   "file": "voc_new_294.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 205.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 124.51,
+    "theta_max": 31.26
+   },
+   "labels": [
+    [
+     "0.8",
+     257.5
+    ],
+    [
+     "12",
+     326.4
+    ],
+    [
+     "0.4",
+     185.8
+    ],
+    [
+     "1.6",
+     29.6
+    ],
+    [
+     "0",
+     123.7
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.597,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.259,
+    "ecc_deg": 1.39,
+    "ticks_per_label": 1,
+    "label_resid_ticks": 18.27
+   }
+  },
+  {
+   "file": "voc_new_305.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "ambiguous_fit",
+   "ms": 188.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 139.11,
+    "theta_max": 46.02
+   },
+   "labels": [
+    [
+     "08",
+     271.9
+    ],
+    [
+     "0.4",
+     199.1
+    ],
+    [
+     "12",
+     341.2
+    ],
+    [
+     "0",
+     138.3
+    ],
+    [
+     "16",
+     44.4
+    ]
+   ],
+   "inliers": [
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.5,
+    "n_labels": 5,
+    "n_inliers": 3
+   }
+  },
+  {
+   "file": "voc_new_308.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": true,
+   "reason": null,
+   "ms": 161.0,
+   "confidence": 0.465,
+   "calibration": {
+    "v_min": 0.4,
+    "theta_min": 196.25,
+    "v_max": 1.2,
+    "theta_max": 5.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 138.88,
+    "theta_max": 60.37
+   },
+   "labels": [
+    [
+     "0.8",
+     280.3
+    ],
+    [
+     "0.4",
+     198.3
+    ],
+    [
+     "1.2",
+     2.5
+    ],
+    [
+     "16",
+     60.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 25,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 42,
+    "tick_spacing": 9.261,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 25,
+    "lattice_rms_deg": 0.361,
+    "ecc_deg": 1.96,
+    "ticks_per_label": 9,
+    "label_resid_ticks": 0.34
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_315.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": false,
+   "reason": "ambiguous_fit",
+   "ms": 181.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 147.18,
+    "theta_max": 61.83
+   },
+   "labels": [
+    [
+     "0.8",
+     266.2
+    ],
+    [
+     "0.4",
+     201.5
+    ],
+    [
+     "1.2",
+     344.2
+    ],
+    [
+     "0",
+     149.5
+    ],
+    [
+     "1.6",
+     63.0
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 15,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 28,
+    "tick_spacing": 7.88,
+    "n_labels": 5,
+    "n_inliers": 3
+   }
+  },
+  {
+   "file": "voc_new_321.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 47,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 533.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 141.93,
+    "theta_max": 45.54
+   },
+   "labels": [
+    [
+     "4",
+     248.7
+    ],
+    [
+     "6",
+     304.7
+    ],
+    [
+     "2",
+     195.4
+    ],
+    [
+     "8",
+     352.9
+    ],
+    [
+     "0",
+     148.0
+    ],
+    [
+     "10",
+     42.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 28,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 39,
+    "tick_spacing": 5.466,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 36,
+    "lattice_rms_deg": 0.227,
+    "ecc_deg": 4.43,
+    "ticks_per_label": 5,
+    "label_resid_ticks": 34.3
+   }
+  },
+  {
+   "file": "voc_new_324.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": true,
+   "reason": null,
+   "ms": 306.0,
+   "confidence": 0.553,
+   "calibration": {
+    "v_min": 0.4,
+    "theta_min": 202.0,
+    "v_max": 1.2,
+    "theta_max": 334.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 138.45,
+    "theta_max": 46.1
+   },
+   "labels": [
+    [
+     "0.8",
+     268.8
+    ],
+    [
+     "12",
+     335.6
+    ],
+    [
+     "0.4",
+     199.3
+    ],
+    [
+     "1.6",
+     44.0
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 29,
+    "tick_spacing": 8.564,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 21,
+    "lattice_rms_deg": 0.125,
+    "ecc_deg": 2.71,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 0.33
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_342.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 246.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 134.19,
+    "theta_max": 41.89
+   },
+   "labels": [
+    [
+     "0.8",
+     265.3
+    ],
+    [
+     "1.2",
+     336.8
+    ],
+    [
+     "0.4",
+     192.3
+    ],
+    [
+     "1.6",
+     40.6
+    ],
+    [
+     "0",
+     133.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 36,
+    "tick_spacing": 8.512,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.114,
+    "ecc_deg": 1.24,
+    "ticks_per_label": 1,
+    "label_resid_ticks": 18.39
+   }
+  },
+  {
+   "file": "voc_new_350.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 213.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 130.16,
+    "theta_max": 37.1
+   },
+   "labels": [
+    [
+     "0.8",
+     260.7
+    ],
+    [
+     "12",
+     330.3
+    ],
+    [
+     "0.4",
+     187.3
+    ],
+    [
+     "1.6",
+     36.0
+    ],
+    [
+     "0",
+     129.3
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.535,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.335,
+    "ecc_deg": 0.53,
+    "ticks_per_label": 1,
+    "label_resid_ticks": 18.44
+   }
+  },
+  {
+   "file": "voc_new_352.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 184.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 132.28,
+    "theta_max": 43.92
+   },
+   "labels": [
+    [
+     "0.8",
+     262.9
+    ],
+    [
+     "1.2",
+     337.8
+    ],
+    [
+     "0.4",
+     189.7
+    ],
+    [
+     "1.6",
+     43.7
+    ],
+    [
+     "0",
+     131.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 42,
+    "tick_spacing": 8.637,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 33,
+    "lattice_rms_deg": 0.314,
+    "ecc_deg": 1.91,
+    "ticks_per_label": 3,
+    "label_resid_ticks": 16.05
+   }
+  },
+  {
+   "file": "voc_new_364.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 49,
+   "ok": true,
+   "reason": null,
+   "ms": 545.2,
+   "confidence": 0.864,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 122.11,
+    "v_max": 10.0,
+    "theta_max": 36.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 127.69,
+    "theta_max": 36.79
+   },
+   "labels": [
+    [
+     "6",
+     294.4
+    ],
+    [
+     "4",
+     231.2
+    ],
+    [
+     "8",
+     345.4
+    ],
+    [
+     "2",
+     176.9
+    ],
+    [
+     "10",
+     35.6
+    ],
+    [
+     "0",
+     132.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 59,
+    "tick_spacing": 5.486,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 51,
+    "lattice_rms_deg": 0.218,
+    "ecc_deg": 1.75,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.81
+   },
+   "err": 0.0203,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_372.jpg",
+   "group": "M6",
+   "model": "M6",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 234.2,
+   "confidence": 0.559,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 144.0,
+    "v_max": 8.0,
+    "theta_max": 347.62,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 138.25,
+    "theta_max": 42.75
+   },
+   "labels": [
+    [
+     "4",
+     235.8
+    ],
+    [
+     "6",
+     296.7
+    ],
+    [
+     "-2",
+     185.5
+    ],
+    [
+     "0",
+     144.2
+    ],
+    [
+     "10",
+     40.9
+    ]
+   ],
+   "inliers": [
+    1,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 61,
+    "tick_spacing": 5.398,
+    "n_labels": 5,
+    "n_inliers": 3,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.109,
+    "ecc_deg": 0.9,
+    "ticks_per_label": 19,
+    "label_resid_ticks": 0.18
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_374.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 142.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 137.32,
+    "theta_max": 44.81
+   },
+   "labels": [
+    [
+     "08",
+     271.5
+    ],
+    [
+     "04",
+     197.8
+    ],
+    [
+     "0",
+     136.5
+    ],
+    [
+     "16",
+     43.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.618,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.291,
+    "ecc_deg": 1.68,
+    "ticks_per_label": 13,
+    "label_resid_ticks": 21.33
+   }
+  },
+  {
+   "file": "voc_new_382.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 243.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 137.04,
+    "theta_max": 47.38
+   },
+   "labels": [
+    [
+     "0.8",
+     270.4
+    ],
+    [
+     "0.4",
+     196.5
+    ],
+    [
+     "1.2",
+     342.8
+    ],
+    [
+     "0",
+     135.7
+    ],
+    [
+     "1.6",
+     46.7
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.716,
+     0.776
+    ],
+    "n_peaks": 41,
+    "tick_spacing": 8.661,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 33,
+    "lattice_rms_deg": 0.295,
+    "ecc_deg": 0.72
+   }
+  },
+  {
+   "file": "voc_new_390.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 610.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 142.8,
+    "theta_max": 46.03
+   },
+   "labels": [
+    [
+     "0.8",
+     268.6
+    ],
+    [
+     "0.4",
+     206.0
+    ],
+    [
+     "1.2",
+     328.3
+    ],
+    [
+     "16",
+     190.5
+    ],
+    [
+     "0",
+     147.4
+    ],
+    [
+     "1.6",
+     42.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 14,
+    "tick_band": [
+     0.979,
+     1.039
+    ],
+    "n_peaks": 31,
+    "tick_spacing": 10.819,
+    "n_labels": 6,
+    "n_inliers": 4,
+    "lattice_ticks": 14,
+    "lattice_rms_deg": 0.124,
+    "ecc_deg": 28.86,
+    "ticks_per_label": 6,
+    "label_resid_ticks": 11.08
+   }
+  },
+  {
+   "file": "voc_new_477.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": true,
+   "reason": null,
+   "ms": 168.6,
+   "confidence": 0.447,
+   "calibration": {
+    "v_min": 0.04,
+    "theta_min": 247.25,
+    "v_max": 0.14,
+    "theta_max": 151.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 145.02,
+    "theta_max": 40.5
+   },
+   "labels": [
+    [
+     "0.06",
+     303.0
+    ],
+    [
+     "0.04",
+     248.6
+    ],
+    [
+     "0.0263",
+     196.4
+    ],
+    [
+     "0.08",
+     342.4
+    ],
+    [
+     "0.1",
+     37.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 14,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 25,
+    "tick_spacing": 13.062,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 18,
+    "lattice_rms_deg": 0.706,
+    "ecc_deg": 4.7,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.54
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_489.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 20,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 176.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 143.07,
+    "theta_max": 50.52
+   },
+   "labels": [
+    [
+     "0.04",
+     274.7
+    ],
+    [
+     "0.06",
+     326.4
+    ],
+    [
+     "0.08",
+     3.1
+    ]
+   ],
+   "inliers": [
+    0,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 87,
+    "tick_spacing": 1.25,
+    "n_labels": 3,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105256.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 171.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 139.4,
+    "theta_max": 44.51
+   },
+   "labels": [
+    [
+     "0.04",
+     242.8
+    ],
+    [
+     "0.06",
+     301.8
+    ],
+    [
+     "0.02",
+     189.0
+    ],
+    [
+     "0.08",
+     349.6
+    ],
+    [
+     "0.1",
+     43.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 13,
+    "tick_band": [
+     0.96,
+     1.02
+    ],
+    "n_peaks": 119,
+    "tick_spacing": -0.029,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 17,
+    "lattice_rms_deg": 0.002,
+    "ecc_deg": 58.9
+   }
+  },
+  {
+   "file": "voc_roi_image_0_20240712105442.jpg",
+   "group": "M1",
+   "model": "M1",
+   "scale": [
+    0,
+    0.1
+   ],
+   "n_ticks": 21,
+   "ok": false,
+   "reason": "bad_sweep",
+   "ms": 192.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 0.1,
+    "direction": "cw",
+    "theta_min": 147.98,
+    "theta_max": 44.31
+   },
+   "labels": [
+    [
+     "0.04",
+     248.4
+    ],
+    [
+     "0.06",
+     306.2
+    ],
+    [
+     "0.02",
+     196.4
+    ],
+    [
+     "0.08",
+     348.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 40,
+    "tick_spacing": 13.124,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 26,
+    "lattice_rms_deg": 0.796,
+    "ecc_deg": 0.82,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 0.52
+   }
+  },
+  {
+   "file": "pressure_gauge_18.png",
+   "group": "MB:pressure_gauge_18",
+   "model": "M6",
+   "scale": [
+    0,
+    200
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "narrow_label_span",
+   "ms": 167.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 200.0,
+    "direction": "cw",
+    "theta_min": 160.75,
+    "theta_max": 127.16
+   },
+   "labels": [
+    [
+     "80",
+     174.6
+    ],
+    [
+     "100",
+     164.0
+    ],
+    [
+     "120",
+     145.4
+    ],
+    [
+     "140",
+     134.5
+    ],
+    [
+     "160",
+     127.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 10,
+    "tick_band": [
+     1.054,
+     1.114
+    ],
+    "n_peaks": 28,
+    "tick_spacing": 1.25,
+    "n_labels": 5,
+    "n_inliers": 5
+   }
+  },
+  {
+   "file": "pressure_gauge_88.png",
+   "group": "MB:pressure_gauge_88",
+   "model": "misc",
+   "scale": [
+    -5,
+    5
+   ],
+   "n_ticks": 51,
+   "ok": false,
+   "reason": "no_labels",
+   "ms": 97.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": -5.0,
+    "v_max": 5.0,
+    "direction": "cw",
+    "theta_min": 300.36,
+    "theta_max": 314.41
+   },
+   "labels": [],
+   "inliers": [],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 13,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 45,
+    "tick_spacing": 1.25
+   }
+  },
+  {
+   "file": "voc_new_134.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 193.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 48.48,
+    "theta_max": 312.57
+   },
+   "labels": [
+    [
+     "2",
+     245.2
+    ],
+    [
+     "16",
+     310.3
+    ],
+    [
+     "88",
+     177.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 34,
+    "tick_spacing": 8.25,
+    "n_labels": 3,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_new_338.jpg",
+   "group": "M4",
+   "model": "M4",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 406.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 133.15,
+    "theta_max": 44.88
+   },
+   "labels": [
+    [
+     "0.8",
+     260.5
+    ],
+    [
+     "12",
+     338.8
+    ],
+    [
+     "0.4",
+     188.1
+    ],
+    [
+     "16",
+     45.4
+    ],
+    [
+     "0",
+     132.4
+    ]
+   ],
+   "inliers": [
+    1,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 21,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 41,
+    "tick_spacing": 8.67,
+    "n_labels": 5,
+    "n_inliers": 3,
+    "lattice_ticks": 26,
+    "lattice_rms_deg": 0.628,
+    "ecc_deg": 3.71,
+    "ticks_per_label": 3,
+    "label_resid_ticks": 8.59
+   }
+  },
+  {
+   "file": "sphygmomanometer_5.png",
+   "group": "MB:sphygmomanometer_5",
+   "model": "M6",
+   "scale": [
+    20,
+    300
+   ],
+   "n_ticks": 138,
+   "ok": true,
+   "reason": null,
+   "ms": 285.0,
+   "confidence": 0.804,
+   "calibration": {
+    "v_min": 20.0,
+    "theta_min": 118.75,
+    "v_max": 160.0,
+    "theta_max": 280.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 20.0,
+    "v_max": 300.0,
+    "direction": "cw",
+    "theta_min": 118.64,
+    "theta_max": 73.45
+   },
+   "labels": [
+    [
+     "140",
+     258.1
+    ],
+    [
+     "160",
+     281.2
+    ],
+    [
+     "180",
+     303.4
+    ],
+    [
+     "120",
+     238.0
+    ],
+    [
+     "200",
+     323.8
+    ],
+    [
+     "100",
+     211.2
+    ],
+    [
+     "220",
+     343.9
+    ],
+    [
+     "80",
+     187.8
+    ],
+    [
+     "240",
+     6.8
+    ],
+    [
+     "60",
+     164.5
+    ],
+    [
+     "260",
+     28.5
+    ],
+    [
+     "40",
+     139.8
+    ],
+    [
+     "280",
+     50.6
+    ],
+    [
+     "20",
+     119.6
+    ],
+    [
+     "300",
+     71.9
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 73,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 132,
+    "tick_spacing": 2.214,
+    "n_labels": 15,
+    "n_inliers": 15,
+    "lattice_ticks": 74,
+    "lattice_rms_deg": 0.116,
+    "ecc_deg": 3.88,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.9
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "sphygmomanometer_11.png",
+   "group": "MB:sphygmomanometer_11",
+   "model": "M1",
+   "scale": [
+    20,
+    300
+   ],
+   "n_ticks": 29,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 155.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 20.0,
+    "v_max": 300.0,
+    "direction": "cw",
+    "theta_min": 134.71,
+    "theta_max": 91.12
+   },
+   "labels": [
+    [
+     "40160",
+     275.8
+    ],
+    [
+     "120",
+     237.8
+    ],
+    [
+     "100",
+     216.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 10,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 132,
+    "tick_spacing": 1.25,
+    "n_labels": 3,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "sphygmomanometer_15.png",
+   "group": "MB:sphygmomanometer_15",
+   "model": "M4",
+   "scale": [
+    0,
+    300
+   ],
+   "n_ticks": 145,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 503.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 300.0,
+    "direction": "cw",
+    "theta_min": 109.89,
+    "theta_max": 90.26
+   },
+   "labels": [
+    [
+     "140",
+     262.0
+    ],
+    [
+     "120",
+     238.8
+    ],
+    [
+     "180",
+     308.0
+    ],
+    [
+     "100",
+     216.3
+    ],
+    [
+     "200",
+     330.7
+    ],
+    [
+     "80",
+     193.9
+    ],
+    [
+     "220",
+     353.1
+    ],
+    [
+     "60",
+     172.0
+    ],
+    [
+     "240",
+     15.9
+    ],
+    [
+     "40",
+     148.8
+    ],
+    [
+     "260",
+     39.0
+    ],
+    [
+     "20",
+     125.9
+    ],
+    [
+     "280",
+     62.0
+    ],
+    [
+     "300",
+     85.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 72,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 112,
+    "tick_spacing": 2.331,
+    "n_labels": 14,
+    "n_inliers": 14,
+    "lattice_ticks": 72,
+    "lattice_rms_deg": 0.074,
+    "ecc_deg": 1.2,
+    "ticks_per_label": 6,
+    "label_resid_ticks": 61.73
+   }
+  },
+  {
+   "file": "sphygmomanometer_4.png",
+   "group": "MB:sphygmomanometer_4",
+   "model": "M6",
+   "scale": [
+    20,
+    300
+   ],
+   "n_ticks": 141,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 567.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 20.0,
+    "v_max": 300.0,
+    "direction": "cw",
+    "theta_min": 155.26,
+    "theta_max": 102.21
+   },
+   "labels": [
+    [
+     "140",
+     278.9
+    ],
+    [
+     "120",
+     259.3
+    ],
+    [
+     "160",
+     295.7
+    ],
+    [
+     "100",
+     239.2
+    ],
+    [
+     "180",
+     311.7
+    ],
+    [
+     "80",
+     218.1
+    ],
+    [
+     "200",
+     327.8
+    ],
+    [
+     "60",
+     199.0
+    ],
+    [
+     "40",
+     178.1
+    ],
+    [
+     "240",
+     6.9
+    ],
+    [
+     "20",
+     157.4
+    ],
+    [
+     "260",
+     33.4
+    ],
+    [
+     "280",
+     70.4
+    ],
+    [
+     "300",
+     106.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 46,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 82,
+    "tick_spacing": 1.879,
+    "n_labels": 14,
+    "n_inliers": 12,
+    "lattice_ticks": 51,
+    "lattice_rms_deg": 0.107,
+    "ecc_deg": 5.7,
+    "ticks_per_label": 3,
+    "label_resid_ticks": 147.39
+   }
+  },
+  {
+   "file": "tachometer_54.png",
+   "group": "MB:tachometer_54",
+   "model": "misc",
+   "scale": [
+    0,
+    7
+   ],
+   "n_ticks": 15,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 249.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 7.0,
+    "direction": "cw",
+    "theta_min": 86.93,
+    "theta_max": 301.42
+   },
+   "labels": [
+    [
+     "7",
+     299.6
+    ],
+    [
+     "4",
+     206.8
+    ],
+    [
+     "2",
+     146.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 19,
+    "tick_band": [
+     0.979,
+     1.039
+    ],
+    "n_peaks": 104,
+    "tick_spacing": 0.036,
+    "n_labels": 3,
+    "n_inliers": 3,
+    "lattice_ticks": 20,
+    "lattice_rms_deg": 0.012,
+    "ecc_deg": 55.85
+   }
+  },
+  {
+   "file": "tachometer_16.png",
+   "group": "MB:tachometer_16",
+   "model": "misc",
+   "scale": [
+    0,
+    8000
+   ],
+   "n_ticks": 27,
+   "ok": false,
+   "reason": "no_labels",
+   "ms": 74.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 8000.0,
+    "direction": "cw",
+    "theta_min": 245.41,
+    "theta_max": 294.03
+   },
+   "labels": [],
+   "inliers": [],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 16,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 27,
+    "tick_spacing": 4.19
+   }
+  },
+  {
+   "file": "tachometer_4.png",
+   "group": "MB:tachometer_4",
+   "model": "misc",
+   "scale": [
+    0,
+    8000
+   ],
+   "n_ticks": 17,
+   "ok": false,
+   "reason": "no_dial",
+   "ms": null
+  },
+  {
+   "file": "tachometer_64.png",
+   "group": "MB:tachometer_64",
+   "model": "M1",
+   "scale": [
+    0,
+    8000
+   ],
+   "n_ticks": 17,
+   "ok": true,
+   "reason": null,
+   "ms": 186.1,
+   "confidence": 0.763,
+   "calibration": {
+    "v_min": 2.0,
+    "theta_min": 210.0,
+    "v_max": 8.0,
+    "theta_max": 25.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 8000.0,
+    "direction": "cw",
+    "theta_min": 148.57,
+    "theta_max": 28.43
+   },
+   "labels": [
+    [
+     "4",
+     271.2
+    ],
+    [
+     "3",
+     239.1
+    ],
+    [
+     "5",
+     301.6
+    ],
+    [
+     "2",
+     210.4
+    ],
+    [
+     "6",
+     329.9
+    ],
+    [
+     "7",
+     357.2
+    ],
+    [
+     "8",
+     24.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 10,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 23,
+    "tick_spacing": 14.131,
+    "n_labels": 7,
+    "n_inliers": 7,
+    "lattice_ticks": 13,
+    "lattice_rms_deg": 0.379,
+    "ecc_deg": 4.06,
+    "ticks_per_label": 2,
+    "label_resid_ticks": 0.1
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "tachometer_67.png",
+   "group": "MB:tachometer_67",
+   "model": "misc",
+   "scale": [
+    0,
+    8000
+   ],
+   "n_ticks": 30,
+   "ok": false,
+   "reason": "few_labels",
+   "ms": 111.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 8000.0,
+    "direction": "cw",
+    "theta_min": 129.37,
+    "theta_max": 22.38
+   },
+   "labels": [
+    [
+     "1000",
+     164.1
+    ],
+    [
+     "0",
+     131.4
+    ]
+   ],
+   "inliers": [],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 8,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 61,
+    "tick_spacing": 1.25
+   }
+  },
+  {
+   "file": "voltmeter_13.png",
+   "group": "MB:voltmeter_13",
+   "model": "misc",
+   "scale": [
+    0,
+    150
+   ],
+   "n_ticks": 16,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 292.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 150.0,
+    "direction": "cw",
+    "theta_min": 149.17,
+    "theta_max": 32.09
+   },
+   "labels": [
+    [
+     "80",
+     279.7
+    ],
+    [
+     "100",
+     312.3
+    ],
+    [
+     "40",
+     212.7
+    ],
+    [
+     "120",
+     347.2
+    ],
+    [
+     "20",
+     179.4
+    ],
+    [
+     "0",
+     147.6
+    ],
+    [
+     "150",
+     38.1
+    ],
+    [
+     "1.5",
+     100.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 11,
+    "tick_band": [
+     1.054,
+     1.114
+    ],
+    "n_peaks": 87,
+    "tick_spacing": -0.018,
+    "n_labels": 8,
+    "n_inliers": 7,
+    "lattice_ticks": 11,
+    "lattice_rms_deg": 0.002,
+    "ecc_deg": 58.27
+   }
+  }
+ ]
+}

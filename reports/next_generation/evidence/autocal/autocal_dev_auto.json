@@ -1,0 +1,5649 @@
+{
+ "summary": {
+  "role": "dev",
+  "mode": "auto",
+  "images": 77,
+  "models": 7,
+  "coverage_pct": 68.83,
+  "accurate_of_accepted_pct": 64.15,
+  "gross_of_all_pct": 12.99,
+  "gross_of_accepted_pct": 18.87,
+  "limits_ok_of_accepted_pct": 81.13,
+  "median_ms": 379.1,
+  "p95_ms": 675.2,
+  "err_median_pct": 1.79,
+  "refusals": {
+   "bad_label_spacing": 7,
+   "no_labels": 2,
+   "labels_off_ticks": 9,
+   "few_consistent_labels": 2,
+   "irregular_ticks": 1,
+   "no_tick_lattice": 1,
+   "narrow_label_span": 2
+  },
+  "gates": {
+   "G1": false,
+   "G2": false,
+   "G3": true,
+   "G4": false,
+   "G5": true
+  },
+  "admitted": false
+ },
+ "by_group": {
+  "M2": {
+   "n": 48,
+   "accepted": 34,
+   "good": 24,
+   "gross": 7
+  },
+  "M5": {
+   "n": 22,
+   "accepted": 16,
+   "good": 8,
+   "gross": 2
+  },
+  "MB:pressure_gauge_72": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "M3": {
+   "n": 3,
+   "accepted": 3,
+   "good": 2,
+   "gross": 1
+  },
+  "MB:sphygmomanometer_28": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:sphygmomanometer_19": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  },
+  "MB:sphygmomanometer_9": {
+   "n": 1,
+   "accepted": 0,
+   "good": 0,
+   "gross": 0
+  }
+ },
+ "rows": [
+  {
+   "file": "voc_new_013.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 496.8,
+   "confidence": 0.876,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 139.98,
+    "v_max": 25.0,
+    "theta_max": 51.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 144.5,
+    "theta_max": 51.6
+   },
+   "labels": [
+    [
+     "10",
+     242.8
+    ],
+    [
+     "15",
+     304.6
+    ],
+    [
+     "5",
+     193.2
+    ],
+    [
+     "20",
+     357.2
+    ],
+    [
+     "0",
+     147.7
+    ],
+    [
+     "25",
+     46.9
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 37,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 54,
+    "tick_spacing": 5.462,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 49,
+    "lattice_rms_deg": 0.198,
+    "ecc_deg": 1.14,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.42
+   },
+   "err": 0.0166,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_089.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 339.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 133.12,
+    "theta_max": 37.57
+   },
+   "labels": [
+    [
+     "15",
+     293.7
+    ],
+    [
+     "10",
+     232.9
+    ],
+    [
+     "20",
+     344.7
+    ],
+    [
+     "5",
+     182.7
+    ],
+    [
+     "25",
+     32.9
+    ],
+    [
+     "0",
+     136.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 49,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 54,
+    "tick_spacing": 5.384,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 49,
+    "lattice_rms_deg": 0.122,
+    "ecc_deg": 0.69
+   }
+  },
+  {
+   "file": "voc_new_205.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": true,
+   "reason": null,
+   "ms": 474.0,
+   "confidence": 0.593,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 139.92,
+    "v_max": 1.6,
+    "theta_max": 51.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 145.07,
+    "theta_max": 51.24
+   },
+   "labels": [
+    [
+     "0.8",
+     275.5
+    ],
+    [
+     "0.4",
+     202.6
+    ],
+    [
+     "1.2",
+     350.1
+    ],
+    [
+     "0",
+     148.7
+    ],
+    [
+     "1.6",
+     48.6
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 33,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 41,
+    "tick_spacing": 8.275,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 34,
+    "lattice_rms_deg": 0.415,
+    "ecc_deg": 4.94,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 1.12
+   },
+   "err": 0.019,
+   "limits_ok": true
+  },
+  {
+   "file": "pressure_gauge_72.png",
+   "group": "MB:pressure_gauge_72",
+   "model": "M5",
+   "scale": [
+    0,
+    5000
+   ],
+   "n_ticks": 49,
+   "ok": false,
+   "reason": "no_labels",
+   "ms": 84.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 5000.0,
+    "direction": "cw",
+    "theta_min": 153.7,
+    "theta_max": 146.21
+   },
+   "labels": [],
+   "inliers": [],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 8,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 50,
+    "tick_spacing": 1.25
+   }
+  },
+  {
+   "file": "voc_new_151.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 439.3,
+   "confidence": 0.53,
+   "calibration": {
+    "v_min": 5.0,
+    "theta_min": 203.51,
+    "v_max": 25.0,
+    "theta_max": 40.54,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 134.74,
+    "theta_max": 45.21
+   },
+   "labels": [
+    [
+     "10",
+     237.3
+    ],
+    [
+     "15",
+     300.3
+    ],
+    [
+     "20",
+     353.7
+    ],
+    [
+     "25",
+     41.0
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 34,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 55,
+    "tick_spacing": 5.456,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 35,
+    "lattice_rms_deg": 0.186,
+    "ecc_deg": 0.73,
+    "ticks_per_label": 9,
+    "label_resid_ticks": 0.46
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_253.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "no_labels",
+   "ms": 216.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 239.03,
+    "theta_max": 134.52
+   },
+   "labels": [],
+   "inliers": [],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 29,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 30,
+    "tick_spacing": 8.12
+   }
+  },
+  {
+   "file": "voc_new_373.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": true,
+   "reason": null,
+   "ms": 147.2,
+   "confidence": 0.904,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 130.1,
+    "v_max": 1.6,
+    "theta_max": 35.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 137.13,
+    "theta_max": 35.07
+   },
+   "labels": [
+    [
+     "0.8",
+     267.7
+    ],
+    [
+     "1.2",
+     331.2
+    ],
+    [
+     "0.4",
+     200.6
+    ],
+    [
+     "1.6",
+     30.3
+    ],
+    [
+     "0",
+     142.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 28,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 30,
+    "tick_spacing": 8.418,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 28,
+    "lattice_rms_deg": 0.153,
+    "ecc_deg": 3.82,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 1.34
+   },
+   "err": 0.0265,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_roi_image_0_20240717140320.jpg",
+   "group": "M3",
+   "model": "M3",
+   "scale": [
+    0,
+    1
+   ],
+   "n_ticks": 46,
+   "ok": true,
+   "reason": null,
+   "ms": 293.8,
+   "confidence": 0.493,
+   "calibration": {
+    "v_min": 0.2,
+    "theta_min": 188.5,
+    "v_max": 1.0,
+    "theta_max": 49.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.0,
+    "direction": "cw",
+    "theta_min": 142.08,
+    "theta_max": 49.76
+   },
+   "labels": [
+    [
+     "0.4",
+     241.3
+    ],
+    [
+     "0.6",
+     301.2
+    ],
+    [
+     "0.8",
+     354.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 42,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 64,
+    "tick_spacing": 5.619,
+    "n_labels": 3,
+    "n_inliers": 3,
+    "lattice_ticks": 42,
+    "lattice_rms_deg": 0.285,
+    "ecc_deg": 1.61,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.5
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_001.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 524.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 147.34,
+    "theta_max": 54.78
+   },
+   "labels": [
+    [
+     "10",
+     242.0
+    ],
+    [
+     "15",
+     303.8
+    ],
+    [
+     "5",
+     195.0
+    ],
+    [
+     "20",
+     359.2
+    ],
+    [
+     "0",
+     151.2
+    ],
+    [
+     "25",
+     50.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 35,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 50,
+    "tick_spacing": 5.235,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 35,
+    "lattice_rms_deg": 0.125,
+    "ecc_deg": 5.35,
+    "ticks_per_label": 4,
+    "label_resid_ticks": 29.03
+   }
+  },
+  {
+   "file": "voc_new_009.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 291.6,
+   "confidence": 0.884,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 145.94,
+    "v_max": 25.0,
+    "theta_max": 55.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 150.27,
+    "theta_max": 55.57
+   },
+   "labels": [
+    [
+     "10",
+     249.4
+    ],
+    [
+     "15",
+     310.8
+    ],
+    [
+     "5",
+     199.7
+    ],
+    [
+     "20",
+     2.3
+    ],
+    [
+     "0",
+     153.1
+    ],
+    [
+     "25",
+     50.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 50,
+    "tick_spacing": 5.423,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.186,
+    "ecc_deg": 0.86,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.31
+   },
+   "err": 0.0161,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_019.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 544.3,
+   "confidence": 0.881,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 132.44,
+    "v_max": 25.0,
+    "theta_max": 42.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 136.58,
+    "theta_max": 42.59
+   },
+   "labels": [
+    [
+     "10",
+     235.5
+    ],
+    [
+     "15",
+     298.1
+    ],
+    [
+     "20",
+     350.3
+    ],
+    [
+     "5",
+     185.5
+    ],
+    [
+     "25",
+     38.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 50,
+    "tick_spacing": 5.39,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.191,
+    "ecc_deg": 0.66,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.96
+   },
+   "err": 0.0153,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_029.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 271.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 141.76,
+    "theta_max": 46.06
+   },
+   "labels": [
+    [
+     "10",
+     239.7
+    ],
+    [
+     "15",
+     300.3
+    ],
+    [
+     "5",
+     190.0
+    ],
+    [
+     "20",
+     350.9
+    ],
+    [
+     "0",
+     145.1
+    ],
+    [
+     "25",
+     40.6
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 49,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 50,
+    "tick_spacing": 5.407,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 49,
+    "lattice_rms_deg": 0.251,
+    "ecc_deg": 1.18
+   }
+  },
+  {
+   "file": "voc_new_034.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 634.0,
+   "confidence": 0.858,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 145.93,
+    "v_max": 25.0,
+    "theta_max": 59.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 151.58,
+    "theta_max": 59.79
+   },
+   "labels": [
+    [
+     "10",
+     253.5
+    ],
+    [
+     "15",
+     315.1
+    ],
+    [
+     "5",
+     201.4
+    ],
+    [
+     "20",
+     6.4
+    ],
+    [
+     "25",
+     54.7
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 54,
+    "tick_spacing": 5.508,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.228,
+    "ecc_deg": 1.85,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.93
+   },
+   "err": 0.0206,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_045.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": true,
+   "reason": null,
+   "ms": 360.3,
+   "confidence": 0.546,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 136.22,
+    "v_max": 1.2,
+    "theta_max": 347.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 142.47,
+    "theta_max": 48.23
+   },
+   "labels": [
+    [
+     "0.8",
+     283.8
+    ],
+    [
+     "0.4",
+     207.1
+    ],
+    [
+     "1.2",
+     350.2
+    ],
+    [
+     "1.6",
+     44.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 19,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.32,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 21,
+    "lattice_rms_deg": 0.145,
+    "ecc_deg": 6.45,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 0.38
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_059.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 675.2,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 144.69,
+    "theta_max": 50.2
+   },
+   "labels": [
+    [
+     "10",
+     242.1
+    ],
+    [
+     "15",
+     303.4
+    ],
+    [
+     "5",
+     194.1
+    ],
+    [
+     "20",
+     356.0
+    ],
+    [
+     "0",
+     148.0
+    ],
+    [
+     "25",
+     45.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 38,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 53,
+    "tick_spacing": 5.304,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 38,
+    "lattice_rms_deg": 0.102,
+    "ecc_deg": 1.97,
+    "ticks_per_label": 6,
+    "label_resid_ticks": 34.96
+   }
+  },
+  {
+   "file": "voc_new_063.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 49,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 302.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 52.61,
+    "theta_max": 321.6
+   },
+   "labels": [
+    [
+     "25",
+     318.2
+    ],
+    [
+     "15",
+     215.4
+    ],
+    [
+     "10",
+     148.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 46,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 51,
+    "tick_spacing": 5.5,
+    "n_labels": 3,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_new_074.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 47,
+   "ok": true,
+   "reason": null,
+   "ms": 449.9,
+   "confidence": 0.663,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 125.03,
+    "v_max": 25.0,
+    "theta_max": 41.0,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 129.93,
+    "theta_max": 41.31
+   },
+   "labels": [
+    [
+     "15",
+     296.9
+    ],
+    [
+     "10",
+     233.7
+    ],
+    [
+     "20",
+     349.9
+    ],
+    [
+     "5",
+     180.2
+    ],
+    [
+     "25",
+     36.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 48,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 52,
+    "tick_spacing": 5.546,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 49,
+    "lattice_rms_deg": 0.275,
+    "ecc_deg": 1.52,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.84
+   },
+   "err": 0.0177,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_087.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 386.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 141.66,
+    "theta_max": 45.64
+   },
+   "labels": [
+    [
+     "0.8",
+     277.1
+    ],
+    [
+     "0.4",
+     206.8
+    ],
+    [
+     "1.2",
+     342.1
+    ],
+    [
+     "0",
+     146.0
+    ],
+    [
+     "1.6",
+     41.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 23,
+    "tick_spacing": 8.548,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 21,
+    "lattice_rms_deg": 0.156,
+    "ecc_deg": 3.79,
+    "ticks_per_label": 5,
+    "label_resid_ticks": 16.8
+   }
+  },
+  {
+   "file": "voc_new_090.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 49,
+   "ok": true,
+   "reason": null,
+   "ms": 546.8,
+   "confidence": 0.549,
+   "calibration": {
+    "v_min": 15.0,
+    "theta_min": 307.5,
+    "v_max": 25.0,
+    "theta_max": 42.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 138.26,
+    "theta_max": 48.03
+   },
+   "labels": [
+    [
+     "10",
+     244.5
+    ],
+    [
+     "15",
+     306.5
+    ],
+    [
+     "20",
+     354.9
+    ],
+    [
+     "25",
+     42.9
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 24,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 28,
+    "tick_spacing": 5.375,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.137,
+    "ecc_deg": 4.34,
+    "ticks_per_label": 9,
+    "label_resid_ticks": 0.24
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_092.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": true,
+   "reason": null,
+   "ms": 733.8,
+   "confidence": 0.936,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 137.62,
+    "v_max": 1.6,
+    "theta_max": 47.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 142.12,
+    "theta_max": 47.2
+   },
+   "labels": [
+    [
+     "0.8",
+     273.3
+    ],
+    [
+     "0.4",
+     204.0
+    ],
+    [
+     "1.2",
+     341.9
+    ],
+    [
+     "0",
+     148.2
+    ],
+    [
+     "1.6",
+     43.7
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 40,
+    "tick_spacing": 8.411,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.103,
+    "ecc_deg": 0.29,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 1.26
+   },
+   "err": 0.0167,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_097.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 372.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 144.75,
+    "theta_max": 51.56
+   },
+   "labels": [
+    [
+     "10",
+     245.4
+    ],
+    [
+     "15",
+     307.2
+    ],
+    [
+     "5",
+     195.0
+    ],
+    [
+     "20",
+     358.4
+    ],
+    [
+     "0",
+     148.5
+    ],
+    [
+     "25",
+     46.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 49,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 54,
+    "tick_spacing": 5.422,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 49,
+    "lattice_rms_deg": 0.099,
+    "ecc_deg": 0.72
+   }
+  },
+  {
+   "file": "voc_new_107.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 483.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 150.55,
+    "theta_max": 55.1
+   },
+   "labels": [
+    [
+     "10",
+     251.1
+    ],
+    [
+     "15",
+     311.5
+    ],
+    [
+     "5",
+     201.4
+    ],
+    [
+     "20",
+     2.2
+    ],
+    [
+     "0",
+     154.1
+    ],
+    [
+     "25",
+     49.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 49,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 51,
+    "tick_spacing": 5.405,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 49,
+    "lattice_rms_deg": 0.104,
+    "ecc_deg": 1.25
+   }
+  },
+  {
+   "file": "voc_new_127.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 49,
+   "ok": true,
+   "reason": null,
+   "ms": 525.9,
+   "confidence": 0.704,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 129.79,
+    "v_max": 25.0,
+    "theta_max": 42.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 140.23,
+    "theta_max": 48.31
+   },
+   "labels": [
+    [
+     "10",
+     241.8
+    ],
+    [
+     "15",
+     305.4
+    ],
+    [
+     "5",
+     189.7
+    ],
+    [
+     "20",
+     355.7
+    ],
+    [
+     "25",
+     43.2
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 49,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 51,
+    "tick_spacing": 5.453,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 49,
+    "lattice_rms_deg": 0.192,
+    "ecc_deg": 1.32,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.21
+   },
+   "err": 0.0383,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_136.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 379.1,
+   "confidence": 0.818,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 133.39,
+    "v_max": 25.0,
+    "theta_max": 43.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 137.33,
+    "theta_max": 43.61
+   },
+   "labels": [
+    [
+     "10",
+     234.6
+    ],
+    [
+     "15",
+     295.4
+    ],
+    [
+     "20",
+     349.4
+    ],
+    [
+     "5",
+     186.3
+    ],
+    [
+     "25",
+     39.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 51,
+    "tick_spacing": 5.46,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.291,
+    "ecc_deg": 2.14,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.0
+   },
+   "err": 0.0146,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_139.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": true,
+   "reason": null,
+   "ms": 444.0,
+   "confidence": 0.469,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 128.13,
+    "v_max": 1.6,
+    "theta_max": 43.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 135.67,
+    "theta_max": 43.41
+   },
+   "labels": [
+    [
+     "0.8",
+     270.7
+    ],
+    [
+     "12",
+     339.5
+    ],
+    [
+     "0.4",
+     196.2
+    ],
+    [
+     "1.6",
+     40.3
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 30,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 37,
+    "tick_spacing": 8.561,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 31,
+    "lattice_rms_deg": 0.348,
+    "ecc_deg": 2.23,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 0.34
+   },
+   "err": 0.0273,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_146.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 315.4,
+   "confidence": 0.889,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 129.35,
+    "v_max": 25.0,
+    "theta_max": 40.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 134.22,
+    "theta_max": 40.42
+   },
+   "labels": [
+    [
+     "15",
+     294.3
+    ],
+    [
+     "10",
+     233.8
+    ],
+    [
+     "20",
+     346.3
+    ],
+    [
+     "5",
+     184.2
+    ],
+    [
+     "25",
+     35.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 50,
+    "tick_spacing": 5.488,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.178,
+    "ecc_deg": 2.13,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.94
+   },
+   "err": 0.018,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_150.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 349.1,
+   "confidence": 0.899,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 142.35,
+    "v_max": 25.0,
+    "theta_max": 48.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 147.11,
+    "theta_max": 48.47
+   },
+   "labels": [
+    [
+     "10",
+     246.8
+    ],
+    [
+     "15",
+     306.0
+    ],
+    [
+     "5",
+     197.5
+    ],
+    [
+     "20",
+     354.9
+    ],
+    [
+     "0",
+     150.5
+    ],
+    [
+     "25",
+     43.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 48,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 52,
+    "tick_spacing": 5.379,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.161,
+    "ecc_deg": 2.39,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.46
+   },
+   "err": 0.0179,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_153.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": true,
+   "reason": null,
+   "ms": 396.2,
+   "confidence": 0.715,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 146.37,
+    "v_max": 1.6,
+    "theta_max": 45.18,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 153.16,
+    "theta_max": 46.2
+   },
+   "labels": [
+    [
+     "0.8",
+     275.4
+    ],
+    [
+     "0.4",
+     213.0
+    ],
+    [
+     "1.2",
+     339.2
+    ],
+    [
+     "1.6",
+     40.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 25,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 30,
+    "tick_spacing": 8.196,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 29,
+    "lattice_rms_deg": 0.17,
+    "ecc_deg": 2.27,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 0.55
+   },
+   "err": 0.0262,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_170.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 598.1,
+   "confidence": 0.723,
+   "calibration": {
+    "v_min": 10.0,
+    "theta_min": 244.5,
+    "v_max": 25.0,
+    "theta_max": 46.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 140.83,
+    "theta_max": 46.6
+   },
+   "labels": [
+    [
+     "10",
+     240.0
+    ],
+    [
+     "15",
+     300.8
+    ],
+    [
+     "20",
+     352.8
+    ],
+    [
+     "25",
+     41.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 26,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 47,
+    "tick_spacing": 5.364,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 27,
+    "lattice_rms_deg": 0.155,
+    "ecc_deg": 0.9,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.89
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_175.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 48,
+   "ok": true,
+   "reason": null,
+   "ms": 415.8,
+   "confidence": 0.902,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 143.28,
+    "v_max": 25.0,
+    "theta_max": 55.0,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 147.51,
+    "theta_max": 55.17
+   },
+   "labels": [
+    [
+     "10",
+     247.6
+    ],
+    [
+     "15",
+     309.6
+    ],
+    [
+     "5",
+     198.2
+    ],
+    [
+     "20",
+     1.4
+    ],
+    [
+     "0",
+     150.7
+    ],
+    [
+     "25",
+     50.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 50,
+    "tick_spacing": 5.453,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.157,
+    "ecc_deg": 0.69,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.34
+   },
+   "err": 0.0156,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_176.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 652.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 156.63,
+    "theta_max": 61.36
+   },
+   "labels": [
+    [
+     "10",
+     252.8
+    ],
+    [
+     "15",
+     314.1
+    ],
+    [
+     "5",
+     204.4
+    ],
+    [
+     "20",
+     6.8
+    ],
+    [
+     "0",
+     159.9
+    ],
+    [
+     "25",
+     56.3
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 47,
+    "tick_band": [
+     0.885,
+     0.945
+    ],
+    "n_peaks": 48,
+    "tick_spacing": 5.381,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 47,
+    "lattice_rms_deg": 0.087,
+    "ecc_deg": 1.31
+   }
+  },
+  {
+   "file": "voc_new_189.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": true,
+   "reason": null,
+   "ms": 605.2,
+   "confidence": 0.774,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 141.25,
+    "v_max": 1.6,
+    "theta_max": 45.0,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 144.11,
+    "theta_max": 44.97
+   },
+   "labels": [
+    [
+     "0.8",
+     277.5
+    ],
+    [
+     "0.4",
+     208.3
+    ],
+    [
+     "1.2",
+     344.3
+    ],
+    [
+     "0",
+     150.3
+    ],
+    [
+     "1.6",
+     40.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 31,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 35,
+    "tick_spacing": 8.1,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 31,
+    "lattice_rms_deg": 0.361,
+    "ecc_deg": 3.45,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 1.12
+   },
+   "err": 0.0108,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_194.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": true,
+   "reason": null,
+   "ms": 680.0,
+   "confidence": 0.432,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 130.36,
+    "v_max": 1.6,
+    "theta_max": 37.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 135.75,
+    "theta_max": 37.33
+   },
+   "labels": [
+    [
+     "0.8",
+     268.0
+    ],
+    [
+     "1.2",
+     336.8
+    ],
+    [
+     "0.4",
+     194.0
+    ],
+    [
+     "16",
+     34.7
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 27,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 34,
+    "tick_spacing": 8.054,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 28,
+    "lattice_rms_deg": 0.447,
+    "ecc_deg": 5.96,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 0.22
+   },
+   "err": 0.0202,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_196.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": true,
+   "reason": null,
+   "ms": 464.0,
+   "confidence": 0.585,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 140.62,
+    "v_max": 1.6,
+    "theta_max": 51.0,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 145.96,
+    "theta_max": 51.31
+   },
+   "labels": [
+    [
+     "0.8",
+     274.5
+    ],
+    [
+     "0.4",
+     208.0
+    ],
+    [
+     "1.2",
+     346.5
+    ],
+    [
+     "0",
+     150.5
+    ],
+    [
+     "1.6",
+     47.9
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 40,
+    "tick_spacing": 8.546,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 33,
+    "lattice_rms_deg": 0.664,
+    "ecc_deg": 1.37,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 1.15
+   },
+   "err": 0.0197,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_204.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 460.7,
+   "confidence": 0.554,
+   "calibration": {
+    "v_min": 15.0,
+    "theta_min": 299.5,
+    "v_max": 25.0,
+    "theta_max": 36.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 136.85,
+    "theta_max": 41.64
+   },
+   "labels": [
+    [
+     "10",
+     236.6
+    ],
+    [
+     "15",
+     297.3
+    ],
+    [
+     "20",
+     348.3
+    ],
+    [
+     "25",
+     37.0
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 23,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 54,
+    "tick_spacing": 5.386,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 23,
+    "lattice_rms_deg": 0.122,
+    "ecc_deg": 1.05,
+    "ticks_per_label": 9,
+    "label_resid_ticks": 0.45
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_217.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 261.3,
+   "confidence": 0.701,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 142.7,
+    "v_max": 15.0,
+    "theta_max": 297.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 148.35,
+    "theta_max": 51.39
+   },
+   "labels": [
+    [
+     "10",
+     242.8
+    ],
+    [
+     "15",
+     299.6
+    ],
+    [
+     "5",
+     197.6
+    ],
+    [
+     "20",
+     353.6
+    ],
+    [
+     "25",
+     46.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 31,
+    "tick_band": [
+     0.941,
+     1.001
+    ],
+    "n_peaks": 32,
+    "tick_spacing": 5.866,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 31,
+    "lattice_rms_deg": 0.199,
+    "ecc_deg": 11.57,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 2.57
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_219.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 553.2,
+   "confidence": 0.887,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 127.86,
+    "v_max": 25.0,
+    "theta_max": 40.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 132.73,
+    "theta_max": 40.71
+   },
+   "labels": [
+    [
+     "15",
+     293.2
+    ],
+    [
+     "10",
+     230.1
+    ],
+    [
+     "20",
+     347.1
+    ],
+    [
+     "5",
+     180.8
+    ],
+    [
+     "25",
+     36.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 53,
+    "tick_spacing": 5.466,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.181,
+    "ecc_deg": 0.93,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.03
+   },
+   "err": 0.0179,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_222.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 378.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 136.65,
+    "theta_max": 37.7
+   },
+   "labels": [
+    [
+     "0.8",
+     266.3
+    ],
+    [
+     "1.2",
+     332.3
+    ],
+    [
+     "0.4",
+     198.7
+    ],
+    [
+     "1.6",
+     33.6
+    ],
+    [
+     "0",
+     141.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 29,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.467,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 29,
+    "lattice_rms_deg": 0.217,
+    "ecc_deg": 2.12,
+    "ticks_per_label": 1,
+    "label_resid_ticks": 18.05
+   }
+  },
+  {
+   "file": "voc_new_234.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": true,
+   "reason": null,
+   "ms": 370.7,
+   "confidence": 0.714,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 142.87,
+    "v_max": 1.6,
+    "theta_max": 52.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 149.46,
+    "theta_max": 52.79
+   },
+   "labels": [
+    [
+     "08",
+     278.1
+    ],
+    [
+     "0.4",
+     209.0
+    ],
+    [
+     "1.2",
+     348.3
+    ],
+    [
+     "1.6",
+     49.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 37,
+    "tick_spacing": 8.411,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.172,
+    "ecc_deg": 0.45,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 0.43
+   },
+   "err": 0.0244,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_238.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 345.6,
+   "confidence": 0.891,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 142.38,
+    "v_max": 25.0,
+    "theta_max": 52.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 146.74,
+    "theta_max": 52.41
+   },
+   "labels": [
+    [
+     "10",
+     246.9
+    ],
+    [
+     "15",
+     308.8
+    ],
+    [
+     "5",
+     196.7
+    ],
+    [
+     "20",
+     359.8
+    ],
+    [
+     "25",
+     47.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.847,
+     0.907
+    ],
+    "n_peaks": 50,
+    "tick_spacing": 5.416,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.175,
+    "ecc_deg": 0.75,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.97
+   },
+   "err": 0.0161,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_252.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 48,
+   "ok": true,
+   "reason": null,
+   "ms": 341.0,
+   "confidence": 0.629,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 132.25,
+    "v_max": 25.0,
+    "theta_max": 38.14,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 135.66,
+    "theta_max": 39.27
+   },
+   "labels": [
+    [
+     "10",
+     238.1
+    ],
+    [
+     "15",
+     301.7
+    ],
+    [
+     "20",
+     349.9
+    ],
+    [
+     "5",
+     185.8
+    ],
+    [
+     "25",
+     34.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 35,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 41,
+    "tick_spacing": 5.224,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 40,
+    "lattice_rms_deg": 0.343,
+    "ecc_deg": 4.48,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.84
+   },
+   "err": 0.0128,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_255.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 297.0,
+   "confidence": 0.858,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 143.76,
+    "v_max": 25.0,
+    "theta_max": 51.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 148.06,
+    "theta_max": 51.32
+   },
+   "labels": [
+    [
+     "10",
+     247.8
+    ],
+    [
+     "15",
+     306.7
+    ],
+    [
+     "5",
+     198.8
+    ],
+    [
+     "20",
+     357.3
+    ],
+    [
+     "25",
+     45.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.866,
+     0.926
+    ],
+    "n_peaks": 51,
+    "tick_spacing": 5.436,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.227,
+    "ecc_deg": 2.59,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.15
+   },
+   "err": 0.0161,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_259.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 303.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 153.41,
+    "theta_max": 51.75
+   },
+   "labels": [
+    [
+     "0.8",
+     282.7
+    ],
+    [
+     "0.4",
+     216.0
+    ],
+    [
+     "1.2",
+     350.5
+    ],
+    [
+     "0",
+     158.1
+    ],
+    [
+     "1.6",
+     47.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 29,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 29,
+    "tick_spacing": 8.023,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 29,
+    "lattice_rms_deg": 0.225,
+    "ecc_deg": 2.79,
+    "ticks_per_label": 1,
+    "label_resid_ticks": 18.83
+   }
+  },
+  {
+   "file": "voc_new_261.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 348.1,
+   "confidence": 0.706,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 124.6,
+    "v_max": 25.0,
+    "theta_max": 34.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 129.39,
+    "theta_max": 34.78
+   },
+   "labels": [
+    [
+     "15",
+     288.0
+    ],
+    [
+     "10",
+     226.0
+    ],
+    [
+     "20",
+     340.9
+    ],
+    [
+     "5",
+     177.3
+    ],
+    [
+     "25",
+     30.1
+    ],
+    [
+     "0",
+     132.9
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 53,
+    "tick_spacing": 5.404,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.188,
+    "ecc_deg": 0.79,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.54
+   },
+   "err": 0.0177,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_265.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 243.4,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 147.2,
+    "theta_max": 49.96
+   },
+   "labels": [
+    [
+     "10",
+     241.5
+    ],
+    [
+     "15",
+     302.8
+    ],
+    [
+     "5",
+     196.2
+    ],
+    [
+     "20",
+     356.9
+    ],
+    [
+     "25",
+     45.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 36,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 50,
+    "tick_spacing": 4.926,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 36,
+    "lattice_rms_deg": 0.158,
+    "ecc_deg": 7.99,
+    "ticks_per_label": 5,
+    "label_resid_ticks": 30.9
+   }
+  },
+  {
+   "file": "voc_new_266.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "few_consistent_labels",
+   "ms": 259.7,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 176.03,
+    "theta_max": 142.24
+   },
+   "labels": [
+    [
+     "15",
+     233.3
+    ],
+    [
+     "20",
+     212.8
+    ],
+    [
+     "25",
+     158.0
+    ]
+   ],
+   "inliers": [
+    0,
+    2
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 7,
+    "tick_band": [
+     0.829,
+     0.889
+    ],
+    "n_peaks": 27,
+    "tick_spacing": 1.5,
+    "n_labels": 3,
+    "n_inliers": 2
+   }
+  },
+  {
+   "file": "voc_new_278.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 412.9,
+   "confidence": 0.914,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 141.88,
+    "v_max": 25.0,
+    "theta_max": 53.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 146.26,
+    "theta_max": 54.04
+   },
+   "labels": [
+    [
+     "10",
+     244.8
+    ],
+    [
+     "15",
+     308.0
+    ],
+    [
+     "5",
+     194.9
+    ],
+    [
+     "20",
+     0.9
+    ],
+    [
+     "0",
+     149.4
+    ],
+    [
+     "25",
+     49.6
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.941,
+     1.001
+    ],
+    "n_peaks": 51,
+    "tick_spacing": 5.443,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.138,
+    "ecc_deg": 0.32,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.38
+   },
+   "err": 0.0161,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_279.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": true,
+   "reason": null,
+   "ms": 585.8,
+   "confidence": 0.74,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 131.41,
+    "v_max": 1.6,
+    "theta_max": 43.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 136.21,
+    "theta_max": 43.12
+   },
+   "labels": [
+    [
+     "0.8",
+     267.5
+    ],
+    [
+     "1.2",
+     337.2
+    ],
+    [
+     "0.4",
+     197.3
+    ],
+    [
+     "0",
+     142.0
+    ],
+    [
+     "1.6",
+     40.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 40,
+    "tick_spacing": 8.483,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.12,
+    "ecc_deg": 0.33,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 1.26
+   },
+   "err": 0.0177,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_280.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 396.9,
+   "confidence": 0.887,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 134.21,
+    "v_max": 25.0,
+    "theta_max": 45.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 139.12,
+    "theta_max": 45.68
+   },
+   "labels": [
+    [
+     "10",
+     236.0
+    ],
+    [
+     "15",
+     298.0
+    ],
+    [
+     "5",
+     186.8
+    ],
+    [
+     "20",
+     351.3
+    ],
+    [
+     "25",
+     41.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 54,
+    "tick_spacing": 5.438,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.18,
+    "ecc_deg": 0.98,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.01
+   },
+   "err": 0.0181,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_284.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 466.4,
+   "confidence": 0.886,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 147.07,
+    "v_max": 25.0,
+    "theta_max": 56.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 151.91,
+    "theta_max": 56.07
+   },
+   "labels": [
+    [
+     "10",
+     250.7
+    ],
+    [
+     "15",
+     312.7
+    ],
+    [
+     "5",
+     200.6
+    ],
+    [
+     "20",
+     3.2
+    ],
+    [
+     "25",
+     51.0
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 52,
+    "tick_spacing": 5.369,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.182,
+    "ecc_deg": 0.63,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.93
+   },
+   "err": 0.018,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_285.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": true,
+   "reason": null,
+   "ms": 723.2,
+   "confidence": 0.792,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 139.33,
+    "v_max": 1.6,
+    "theta_max": 50.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 143.96,
+    "theta_max": 50.33
+   },
+   "labels": [
+    [
+     "0.8",
+     277.2
+    ],
+    [
+     "0.4",
+     207.7
+    ],
+    [
+     "1.2",
+     345.7
+    ],
+    [
+     "0",
+     150.4
+    ],
+    [
+     "1.6",
+     46.8
+    ],
+    [
+     "23048",
+     83.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 43,
+    "tick_spacing": 8.506,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 34,
+    "lattice_rms_deg": 0.332,
+    "ecc_deg": 1.23,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 1.27
+   },
+   "err": 0.0171,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_293.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 484.9,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 140.32,
+    "theta_max": 46.89
+   },
+   "labels": [
+    [
+     "10",
+     238.8
+    ],
+    [
+     "15",
+     299.5
+    ],
+    [
+     "20",
+     352.5
+    ],
+    [
+     "25",
+     41.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 27,
+    "tick_band": [
+     0.754,
+     0.814
+    ],
+    "n_peaks": 61,
+    "tick_spacing": 5.351,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 27,
+    "lattice_rms_deg": 0.118,
+    "ecc_deg": 1.58,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 29.53
+   }
+  },
+  {
+   "file": "voc_new_296.jpg",
+   "group": "M3",
+   "model": "M3",
+   "scale": [
+    0,
+    10
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 295.4,
+   "confidence": 0.744,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 137.12,
+    "v_max": 10.0,
+    "theta_max": 44.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 10.0,
+    "direction": "cw",
+    "theta_min": 142.23,
+    "theta_max": 44.48
+   },
+   "labels": [
+    [
+     "4",
+     241.6
+    ],
+    [
+     "6",
+     300.7
+    ],
+    [
+     "2",
+     191.7
+    ],
+    [
+     "0",
+     148.5
+    ],
+    [
+     "10",
+     41.7
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.735,
+     0.795
+    ],
+    "n_peaks": 60,
+    "tick_spacing": 5.397,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.113,
+    "ecc_deg": 1.67,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.62
+   },
+   "err": 0.0191,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_297.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": true,
+   "reason": null,
+   "ms": 208.8,
+   "confidence": 0.916,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 135.81,
+    "v_max": 1.6,
+    "theta_max": 42.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 140.09,
+    "theta_max": 42.48
+   },
+   "labels": [
+    [
+     "0.8",
+     273.6
+    ],
+    [
+     "0.4",
+     205.1
+    ],
+    [
+     "1.2",
+     338.8
+    ],
+    [
+     "0",
+     147.0
+    ],
+    [
+     "1.6",
+     38.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 29,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 33,
+    "tick_spacing": 8.374,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 29,
+    "lattice_rms_deg": 0.135,
+    "ecc_deg": 2.24,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 1.29
+   },
+   "err": 0.016,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_313.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 297.4,
+   "confidence": 0.722,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 138.45,
+    "v_max": 25.0,
+    "theta_max": 50.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 143.27,
+    "theta_max": 50.32
+   },
+   "labels": [
+    [
+     "10",
+     244.5
+    ],
+    [
+     "15",
+     306.4
+    ],
+    [
+     "5",
+     193.0
+    ],
+    [
+     "20",
+     357.6
+    ],
+    [
+     "25",
+     45.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 52,
+    "tick_spacing": 5.46,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.156,
+    "ecc_deg": 1.34,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.87
+   },
+   "err": 0.0177,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_314.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 631.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 136.9,
+    "theta_max": 57.26
+   },
+   "labels": [
+    [
+     "10",
+     230.9
+    ],
+    [
+     "15",
+     299.2
+    ],
+    [
+     "5",
+     179.7
+    ],
+    [
+     "20",
+     2.2
+    ],
+    [
+     "25",
+     54.6
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 31,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 47,
+    "tick_spacing": 5.738,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 31,
+    "lattice_rms_deg": 0.374,
+    "ecc_deg": 4.33,
+    "ticks_per_label": 6,
+    "label_resid_ticks": 22.53
+   }
+  },
+  {
+   "file": "voc_new_316.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": true,
+   "reason": null,
+   "ms": 622.8,
+   "confidence": 0.341,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 129.79,
+    "v_max": 1.6,
+    "theta_max": 42.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 138.68,
+    "theta_max": 41.89
+   },
+   "labels": [
+    [
+     "0.8",
+     267.0
+    ],
+    [
+     "12",
+     333.5
+    ],
+    [
+     "0.4",
+     196.6
+    ],
+    [
+     "1.6",
+     38.7
+    ],
+    [
+     "0",
+     142.3
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 38,
+    "tick_spacing": 8.56,
+    "n_labels": 5,
+    "n_inliers": 3,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.692,
+    "ecc_deg": 1.71,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 0.31
+   },
+   "err": 0.0326,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_329.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 325.1,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 150.5,
+    "theta_max": 55.32
+   },
+   "labels": [
+    [
+     "10",
+     254.0
+    ],
+    [
+     "15",
+     315.7
+    ],
+    [
+     "5",
+     202.0
+    ],
+    [
+     "20",
+     4.2
+    ],
+    [
+     "0",
+     153.1
+    ],
+    [
+     "25",
+     50.2
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 47,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 48,
+    "tick_spacing": 5.378,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 47,
+    "lattice_rms_deg": 0.15,
+    "ecc_deg": 2.72
+   }
+  },
+  {
+   "file": "voc_new_332.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 33,
+   "ok": true,
+   "reason": null,
+   "ms": 467.7,
+   "confidence": 0.783,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 135.87,
+    "v_max": 1.6,
+    "theta_max": 41.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 138.94,
+    "theta_max": 41.42
+   },
+   "labels": [
+    [
+     "0.8",
+     270.5
+    ],
+    [
+     "0.4",
+     202.5
+    ],
+    [
+     "1.2",
+     338.6
+    ],
+    [
+     "0",
+     145.4
+    ],
+    [
+     "1.6",
+     37.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 40,
+    "tick_spacing": 8.259,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.347,
+    "ecc_deg": 1.32,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 1.15
+   },
+   "err": 0.0116,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_335.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": false,
+   "reason": "bad_label_spacing",
+   "ms": 300.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 150.4,
+    "theta_max": 55.27
+   },
+   "labels": [
+    [
+     "10",
+     250.1
+    ],
+    [
+     "15",
+     311.0
+    ],
+    [
+     "5",
+     200.3
+    ],
+    [
+     "20",
+     2.3
+    ],
+    [
+     "0",
+     153.8
+    ],
+    [
+     "25",
+     50.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 49,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 50,
+    "tick_spacing": 5.39,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 49,
+    "lattice_rms_deg": 0.075,
+    "ecc_deg": 0.68
+   }
+  },
+  {
+   "file": "voc_new_339.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 748.6,
+   "confidence": 0.558,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 140.55,
+    "v_max": 25.0,
+    "theta_max": 58.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 147.68,
+    "theta_max": 58.31
+   },
+   "labels": [
+    [
+     "10",
+     248.3
+    ],
+    [
+     "15",
+     311.3
+    ],
+    [
+     "5",
+     195.0
+    ],
+    [
+     "20",
+     3.0
+    ],
+    [
+     "25",
+     54.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 49,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 53,
+    "tick_spacing": 5.575,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 49,
+    "lattice_rms_deg": 0.707,
+    "ecc_deg": 1.53,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.87
+   },
+   "err": 0.0257,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_340.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 240.2,
+   "confidence": 0.871,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 134.94,
+    "v_max": 25.0,
+    "theta_max": 45.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 139.62,
+    "theta_max": 45.67
+   },
+   "labels": [
+    [
+     "10",
+     241.5
+    ],
+    [
+     "15",
+     303.5
+    ],
+    [
+     "5",
+     189.8
+    ],
+    [
+     "20",
+     353.4
+    ],
+    [
+     "0",
+     142.5
+    ],
+    [
+     "25",
+     40.6
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 52,
+    "tick_spacing": 5.413,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.206,
+    "ecc_deg": 1.8,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.36
+   },
+   "err": 0.0173,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_358.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 43,
+   "ok": true,
+   "reason": null,
+   "ms": 572.5,
+   "confidence": 0.932,
+   "calibration": {
+    "v_min": 5.0,
+    "theta_min": 191.5,
+    "v_max": 25.0,
+    "theta_max": 41.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 140.66,
+    "theta_max": 41.5
+   },
+   "labels": [
+    [
+     "10",
+     240.1
+    ],
+    [
+     "15",
+     298.4
+    ],
+    [
+     "5",
+     191.8
+    ],
+    [
+     "20",
+     347.5
+    ],
+    [
+     "25",
+     35.7
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 42,
+    "tick_band": [
+     0.904,
+     0.964
+    ],
+    "n_peaks": 47,
+    "tick_spacing": 5.401,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 42,
+    "lattice_rms_deg": 0.109,
+    "ecc_deg": 3.14,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.05
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_368.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 364.1,
+   "confidence": 0.521,
+   "calibration": {
+    "v_min": 10.0,
+    "theta_min": 259.5,
+    "v_max": 25.0,
+    "theta_max": 46.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 137.87,
+    "theta_max": 50.66
+   },
+   "labels": [
+    [
+     "10",
+     243.4
+    ],
+    [
+     "15",
+     306.6
+    ],
+    [
+     "20",
+     0.5
+    ],
+    [
+     "25",
+     46.8
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 20,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 60,
+    "tick_spacing": 5.229,
+    "n_labels": 4,
+    "n_inliers": 3,
+    "lattice_ticks": 25,
+    "lattice_rms_deg": 0.21,
+    "ecc_deg": 3.24,
+    "ticks_per_label": 9,
+    "label_resid_ticks": 0.45
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "voc_new_371.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 308.1,
+   "confidence": 0.946,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 143.88,
+    "v_max": 25.0,
+    "theta_max": 53.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 148.3,
+    "theta_max": 53.32
+   },
+   "labels": [
+    [
+     "10",
+     248.4
+    ],
+    [
+     "15",
+     308.4
+    ],
+    [
+     "5",
+     198.3
+    ],
+    [
+     "20",
+     359.6
+    ],
+    [
+     "0",
+     151.7
+    ],
+    [
+     "25",
+     48.4
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 52,
+    "tick_spacing": 5.422,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.087,
+    "ecc_deg": 1.2,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.41
+   },
+   "err": 0.0164,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_381.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "irregular_ticks",
+   "ms": 212.6,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 151.25,
+    "theta_max": 55.46
+   },
+   "labels": [
+    [
+     "0.8",
+     279.8
+    ],
+    [
+     "0.4",
+     209.2
+    ],
+    [
+     "1.2",
+     345.0
+    ],
+    [
+     "0",
+     155.8
+    ],
+    [
+     "1.6",
+     51.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 29,
+    "tick_band": [
+     0.697,
+     0.757
+    ],
+    "n_peaks": 47,
+    "tick_spacing": 8.182,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 32,
+    "lattice_rms_deg": 0.981,
+    "ecc_deg": 2.65
+   }
+  },
+  {
+   "file": "voc_new_388.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": false,
+   "reason": "no_tick_lattice",
+   "ms": 270.3,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 132.5,
+    "theta_max": 43.26
+   },
+   "labels": [
+    [
+     "0.8",
+     260.6
+    ],
+    [
+     "1.2",
+     335.9
+    ],
+    [
+     "0.4",
+     189.9
+    ],
+    [
+     "1.6",
+     41.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 32,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 40,
+    "tick_spacing": 8.5,
+    "n_labels": 4,
+    "n_inliers": 4
+   }
+  },
+  {
+   "file": "voc_new_405.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 323.6,
+   "confidence": 0.851,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 142.9,
+    "v_max": 25.0,
+    "theta_max": 52.0,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 146.96,
+    "theta_max": 52.1
+   },
+   "labels": [
+    [
+     "10",
+     247.4
+    ],
+    [
+     "15",
+     307.7
+    ],
+    [
+     "5",
+     197.9
+    ],
+    [
+     "20",
+     358.4
+    ],
+    [
+     "25",
+     46.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 51,
+    "tick_spacing": 5.455,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.238,
+    "ecc_deg": 2.13,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.05
+   },
+   "err": 0.0151,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_412.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 511.3,
+   "confidence": 0.904,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 142.42,
+    "v_max": 25.0,
+    "theta_max": 53.0,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 147.32,
+    "theta_max": 53.3
+   },
+   "labels": [
+    [
+     "10",
+     244.0
+    ],
+    [
+     "15",
+     304.7
+    ],
+    [
+     "5",
+     195.5
+    ],
+    [
+     "20",
+     357.6
+    ],
+    [
+     "25",
+     48.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 50,
+    "tick_spacing": 5.447,
+    "n_labels": 5,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.153,
+    "ecc_deg": 1.69,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.98
+   },
+   "err": 0.0181,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_414.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 497.2,
+   "confidence": 0.731,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 138.49,
+    "v_max": 25.0,
+    "theta_max": 49.0,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 143.21,
+    "theta_max": 48.75
+   },
+   "labels": [
+    [
+     "10",
+     244.0
+    ],
+    [
+     "15",
+     306.0
+    ],
+    [
+     "5",
+     193.0
+    ],
+    [
+     "20",
+     356.4
+    ],
+    [
+     "25",
+     43.8
+    ]
+   ],
+   "inliers": [
+    0,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 51,
+    "tick_spacing": 5.421,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.139,
+    "ecc_deg": 1.12,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.99
+   },
+   "err": 0.0174,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_roi_image_0_20240717134513.jpg",
+   "group": "M3",
+   "model": "M3",
+   "scale": [
+    0,
+    1
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 529.7,
+   "confidence": 0.703,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 138.78,
+    "v_max": 1.0,
+    "theta_max": 47.75,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.0,
+    "direction": "cw",
+    "theta_min": 143.32,
+    "theta_max": 47.9
+   },
+   "labels": [
+    [
+     "0.4",
+     243.4
+    ],
+    [
+     "0.6",
+     300.6
+    ],
+    [
+     "0.2",
+     192.7
+    ],
+    [
+     "0.8",
+     353.3
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 66,
+    "tick_spacing": 5.4,
+    "n_labels": 4,
+    "n_inliers": 4,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.194,
+    "ecc_deg": 0.88,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 0.39
+   },
+   "err": 0.0169,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_148.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 313.0,
+   "confidence": 0.929,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 150.62,
+    "v_max": 25.0,
+    "theta_max": 61.5,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 154.99,
+    "theta_max": 61.76
+   },
+   "labels": [
+    [
+     "10",
+     252.9
+    ],
+    [
+     "15",
+     314.6
+    ],
+    [
+     "5",
+     203.7
+    ],
+    [
+     "20",
+     7.1
+    ],
+    [
+     "0",
+     158.4
+    ],
+    [
+     "25",
+     57.1
+    ]
+   ],
+   "inliers": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.81,
+     0.87
+    ],
+    "n_peaks": 51,
+    "tick_spacing": 5.432,
+    "n_labels": 6,
+    "n_inliers": 5,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.114,
+    "ecc_deg": 0.82,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.43
+   },
+   "err": 0.0161,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_237.jpg",
+   "group": "M2",
+   "model": "M2",
+   "scale": [
+    0,
+    25
+   ],
+   "n_ticks": 50,
+   "ok": true,
+   "reason": null,
+   "ms": 357.2,
+   "confidence": 0.886,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 144.35,
+    "v_max": 25.0,
+    "theta_max": 55.25,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 25.0,
+    "direction": "cw",
+    "theta_min": 149.08,
+    "theta_max": 55.48
+   },
+   "labels": [
+    [
+     "10",
+     249.4
+    ],
+    [
+     "15",
+     311.6
+    ],
+    [
+     "5",
+     198.5
+    ],
+    [
+     "20",
+     3.0
+    ],
+    [
+     "0",
+     151.3
+    ],
+    [
+     "25",
+     50.5
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 50,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 53,
+    "tick_spacing": 5.436,
+    "n_labels": 6,
+    "n_inliers": 6,
+    "lattice_ticks": 50,
+    "lattice_rms_deg": 0.182,
+    "ecc_deg": 0.75,
+    "ticks_per_label": 10,
+    "label_resid_ticks": 1.26
+   },
+   "err": 0.0175,
+   "limits_ok": true
+  },
+  {
+   "file": "voc_new_337.jpg",
+   "group": "M5",
+   "model": "M5",
+   "scale": [
+    0,
+    1.6
+   ],
+   "n_ticks": 32,
+   "ok": true,
+   "reason": null,
+   "ms": 304.9,
+   "confidence": 0.493,
+   "calibration": {
+    "v_min": 0.0,
+    "theta_min": 143.5,
+    "v_max": 1.2,
+    "theta_max": 336.28,
+    "direction": "cw"
+   },
+   "reference": {
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "direction": "cw",
+    "theta_min": 142.01,
+    "theta_max": 40.87
+   },
+   "labels": [
+    [
+     "0.8",
+     270.0
+    ],
+    [
+     "1.2",
+     330.9
+    ],
+    [
+     "0.4",
+     199.2
+    ],
+    [
+     "1.6",
+     35.4
+    ],
+    [
+     "0",
+     146.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 22,
+    "tick_band": [
+     0.791,
+     0.851
+    ],
+    "n_peaks": 30,
+    "tick_spacing": 7.048,
+    "n_labels": 5,
+    "n_inliers": 4,
+    "lattice_ticks": 24,
+    "lattice_rms_deg": 0.285,
+    "ecc_deg": 12.22,
+    "ticks_per_label": 8,
+    "label_resid_ticks": 1.71
+   },
+   "err": 1.0,
+   "limits_ok": false
+  },
+  {
+   "file": "sphygmomanometer_28.png",
+   "group": "MB:sphygmomanometer_28",
+   "model": "M5",
+   "scale": [
+    20,
+    300
+   ],
+   "n_ticks": 141,
+   "ok": false,
+   "reason": "narrow_label_span",
+   "ms": 251.0,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 20.0,
+    "v_max": 300.0,
+    "direction": "cw",
+    "theta_min": 287.17,
+    "theta_max": 304.68
+   },
+   "labels": [
+    [
+     "100",
+     270.0
+    ],
+    [
+     "80",
+     269.5
+    ],
+    [
+     "260",
+     300.8
+    ],
+    [
+     "60",
+     271.8
+    ],
+    [
+     "280",
+     302.1
+    ],
+    [
+     "40",
+     277.4
+    ],
+    [
+     "20",
+     287.1
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 13,
+    "tick_band": [
+     0.922,
+     0.982
+    ],
+    "n_peaks": 63,
+    "tick_spacing": 1.5,
+    "n_labels": 7,
+    "n_inliers": 5
+   }
+  },
+  {
+   "file": "sphygmomanometer_19.png",
+   "group": "MB:sphygmomanometer_19",
+   "model": "M5",
+   "scale": [
+    20,
+    300
+   ],
+   "n_ticks": 140,
+   "ok": false,
+   "reason": "labels_off_ticks",
+   "ms": 582.8,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 20.0,
+    "v_max": 300.0,
+    "direction": "cw",
+    "theta_min": 84.42,
+    "theta_max": 41.62
+   },
+   "labels": [
+    [
+     "180",
+     261.7
+    ],
+    [
+     "200",
+     287.2
+    ],
+    [
+     "160",
+     238.7
+    ],
+    [
+     "220",
+     309.0
+    ],
+    [
+     "140",
+     215.7
+    ],
+    [
+     "240",
+     332.1
+    ],
+    [
+     "260",
+     357.6
+    ],
+    [
+     "100",
+     170.7
+    ],
+    [
+     "280",
+     18.9
+    ],
+    [
+     "80",
+     148.4
+    ],
+    [
+     "300",
+     40.7
+    ],
+    [
+     "60",
+     127.6
+    ],
+    [
+     "40",
+     106.3
+    ],
+    [
+     "20",
+     85.8
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13
+   ],
+   "debug": {
+    "polarity": "dark",
+    "tick_chain": 62,
+    "tick_band": [
+     0.772,
+     0.832
+    ],
+    "n_peaks": 86,
+    "tick_spacing": 2.3,
+    "n_labels": 14,
+    "n_inliers": 14,
+    "lattice_ticks": 62,
+    "lattice_rms_deg": 0.127,
+    "ecc_deg": 3.75,
+    "ticks_per_label": 6,
+    "label_resid_ticks": 123.03
+   }
+  },
+  {
+   "file": "sphygmomanometer_9.png",
+   "group": "MB:sphygmomanometer_9",
+   "model": "M5",
+   "scale": [
+    20,
+    300
+   ],
+   "n_ticks": 140,
+   "ok": false,
+   "reason": "narrow_label_span",
+   "ms": 202.5,
+   "confidence": 0.0,
+   "calibration": null,
+   "reference": {
+    "v_min": 20.0,
+    "v_max": 300.0,
+    "direction": "cw",
+    "theta_min": 64.63,
+    "theta_max": 50.5
+   },
+   "labels": [
+    [
+     "140",
+     49.8
+    ],
+    [
+     "120",
+     63.3
+    ],
+    [
+     "100",
+     68.9
+    ]
+   ],
+   "inliers": [
+    0,
+    1,
+    2
+   ],
+   "debug": {
+    "polarity": "light",
+    "tick_chain": 25,
+    "tick_band": [
+     0.96,
+     1.02
+    ],
+    "n_peaks": 82,
+    "tick_spacing": 2.62,
+    "n_labels": 3,
+    "n_inliers": 3
+   }
+  }
+ ]
+}
