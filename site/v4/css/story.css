@@ -1,0 +1,207 @@
+/*
+ * GaugeVision AI v4 — «Один прибор — весь цикл»: закреплённая сцена, колонка этапов и SVG-холст.
+ * Положение прибора-героя на каждом этапе задаёт [data-scene] (transform с переходом), слои этапов
+ * проявляются по [data-on]. Все движения — transform и opacity.
+ */
+
+.gv-story { position: relative; height: calc(var(--n) * 68vh + 100vh); }
+.gv-story[data-static] { height: auto; }
+
+.gv-story__sticky {
+  position: sticky;
+  top: calc(var(--header-h) + var(--telemetry-h));
+  height: calc(100vh - var(--header-h) - var(--telemetry-h));
+  height: calc(100svh - var(--header-h) - var(--telemetry-h));
+  display: flex;
+  align-items: center;
+}
+
+.gv-story[data-static] .gv-story__sticky { position: relative; height: auto; padding-block: var(--section-pad); }
+
+.gv-story__grid {
+  display: grid;
+  grid-template-columns: minmax(18rem, 0.82fr) minmax(0, 1.5fr);
+  gap: clamp(1.5rem, 1rem + 3vw, 4rem);
+  align-items: center;
+  height: 100%;
+  padding-block: var(--space-5);
+}
+
+.gv-story__col { position: relative; display: grid; gap: var(--space-5); align-content: center; max-height: 100%; padding-left: 1.25rem; }
+.gv-story__progress { position: absolute; left: 0; top: 0; bottom: 0; width: 1px; background: var(--border-hairline); }
+.gv-story__progress-fill { position: absolute; inset: 0; background: var(--accent); transform: scaleY(0); transform-origin: top center; }
+
+.gv-story__list { display: grid; gap: 0.125rem; margin: 0; padding: 0; list-style: none; }
+.gv-story__btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 2.25rem;
+  padding: 0.25rem 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.gv-story__btn:hover { color: var(--text-primary); }
+.gv-story__num { font-variant-numeric: tabular-nums; }
+.gv-story__item[data-done] .gv-story__btn { color: var(--text-muted); }
+.gv-story__item[data-active] .gv-story__btn { color: var(--accent); }
+
+.gv-story__body { overflow: hidden; max-height: 0; opacity: 0; transition: max-height var(--dur-slow) var(--ease-out), opacity var(--dur-med) var(--ease-out); }
+.gv-story__item[data-active] .gv-story__body { max-height: 22rem; opacity: 1; padding: 0.25rem 0 var(--space-4); }
+
+.gv-story__title { margin: var(--space-2) 0; font-size: var(--fs-xl); line-height: 1.15; letter-spacing: var(--tracking-head); }
+.gv-story__text { color: var(--text-muted); font-size: var(--fs-m); }
+.gv-story__proof { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.25rem; margin-top: var(--space-3); font-family: var(--font-mono); font-size: var(--fs-xs); color: var(--text-primary); }
+.gv-story__proof-mark { width: 0.5rem; height: 0.5rem; border-radius: 50%; background: var(--status-ok); margin-right: 0.25rem; align-self: center; }
+
+.gv-story__stage { position: relative; height: 100%; display: grid; align-items: center; min-height: 0; }
+.gv-story__badge { position: absolute; right: 0; bottom: 0; font-family: var(--font-mono); font-size: var(--fs-2xs); color: var(--text-faint); }
+
+/* ---------- SVG ---------- */
+
+.gv-st { width: 100%; height: auto; max-height: 100%; overflow: visible; --sp: 0; }
+.gv-st text { font-family: var(--font-mono); }
+
+.gv-st__layer { opacity: 0; transition: opacity var(--dur-slow) var(--ease-out); pointer-events: none; }
+.gv-st__layer[data-on] { opacity: 1; transition-delay: 120ms; }
+
+/* Прибор-герой: место на каждом этапе */
+.gv-st__hero { transition: transform 900ms var(--ease-in-out), opacity var(--dur-slow) var(--ease-out); transform: translate(600px, 380px) scale(1); }
+.gv-st[data-scene="2"] .gv-st__hero { transform: translate(455px, 225px) scale(0.365); }
+.gv-st[data-scene="3"] .gv-st__hero,
+.gv-st[data-scene="4"] .gv-st__hero { transform: translate(130px, 174px) scale(0.108); }
+.gv-st[data-scene="5"] .gv-st__hero { transform: translate(130px, 300px) scale(0.3); }
+.gv-st[data-scene="6"] .gv-st__hero,
+.gv-st[data-scene="7"] .gv-st__hero { transform: translate(130px, 300px) scale(0.3); opacity: 0; }
+
+/* Прибор */
+.gv-g__rim { fill: var(--dial-rim); }
+.gv-g__rim-in { fill: none; stroke: var(--dial-rim-light); stroke-width: 1.5; opacity: 0.55; }
+.gv-g__face { fill: var(--dial-face); }
+.gv-g__ticks { stroke: var(--dial-ink); fill: none; }
+.gv-g__num { fill: var(--dial-ink); font-family: var(--font-mono); font-weight: 700; text-anchor: middle; dominant-baseline: central; }
+.gv-g__unit { fill: #4A525C; font-family: var(--font-mono); text-anchor: middle; }
+.gv-g__label { fill: #6B737D; font-family: var(--font-mono); text-anchor: middle; letter-spacing: 0.08em; }
+.gv-g__zone { fill: none; }
+.gv-g__zone--warn { stroke: #D9A03A; }
+.gv-g__zone--alert { stroke: #D2493B; }
+.gv-g__needle path { fill: #1E2228; }
+.gv-g__needle { transition: transform 700ms var(--ease-snap); }
+.gv-g__hub { fill: #1E2228; stroke: #8C949E; stroke-width: 1; }
+.gv-g__glass { fill: rgba(255, 255, 255, 0.04); stroke: rgba(255, 255, 255, 0.22); stroke-width: 1; }
+
+/* Физический мир */
+.gv-st__pipe-body { fill: #1A2029; stroke: #2A323D; }
+.gv-st__pipe-stem { fill: #2A323D; }
+.gv-st__pipe-plate { fill: #121820; stroke: #2E3742; }
+.gv-st__plate-text { fill: var(--text-muted); font-size: 16px; text-anchor: middle; }
+.gv-st__plate-text--s { font-size: 12px; fill: var(--text-faint); }
+
+/* CV */
+.gv-st__cv-box { fill: none; stroke: var(--accent); stroke-width: 4; }
+.gv-st__cv-ell { fill: none; stroke: var(--accent-strong); stroke-width: 2; stroke-dasharray: 12 8; }
+.gv-st__cv-needle { stroke: var(--status-warn); stroke-width: 5; stroke-linecap: round; }
+.gv-st__cv-arc { fill: none; stroke: var(--status-warn); stroke-width: 2; stroke-dasharray: 3 4; }
+.gv-st__cv-scan { fill: var(--accent); opacity: 0.85; }
+.gv-st__cv[data-on] .gv-st__cv-scan { animation: gv-st-scan 2.6s var(--ease-in-out) infinite; }
+@keyframes gv-st-scan { 0% { transform: translateY(0); opacity: 0; } 10% { opacity: 0.9; } 90% { opacity: 0.9; } 100% { transform: translateY(520px); opacity: 0; } }
+.gv-st__cv-read rect, .gv-st__hs rect, .gv-st__event rect { fill: rgba(5, 7, 11, 0.86); stroke: var(--accent-line); }
+.gv-st__k { fill: var(--text-muted); font-size: 15px; }
+.gv-st__k--dim { fill: var(--text-faint); font-size: 13px; }
+.gv-st__k--accent { fill: var(--accent); }
+.gv-st__big { fill: var(--accent); font-size: 52px; font-weight: 700; }
+.gv-st__big--warn { fill: var(--status-warn); }
+.gv-st__v { fill: var(--text-primary); font-size: 22px; font-weight: 700; }
+.gv-st__ok { fill: var(--status-ok); font-size: 14px; }
+
+/* Теги щита */
+.gv-st__tag rect { fill: rgba(5, 7, 11, 0.85); stroke: var(--accent-line); }
+.gv-st__tag text { fill: var(--accent); font-size: 14px; font-weight: 700; }
+.gv-st__tag--hero rect { fill: var(--accent); }
+.gv-st__tag--hero text { fill: var(--accent-contrast); }
+.gv-st__panel .gv-g { opacity: 0.94; }
+
+/* Телеметрия */
+.gv-st__row-line { stroke: var(--border-strong); stroke-dasharray: 2 5; }
+.gv-st__spark { fill: none; stroke: var(--accent); stroke-width: 2; opacity: 0.8; }
+.gv-st__row--hero .gv-st__spark { stroke: var(--status-warn); stroke-width: 2.5; opacity: 1; }
+.gv-st__row-code { fill: var(--text-muted); font-size: 15px; text-anchor: end; }
+.gv-st__row--hero .gv-st__row-code { fill: var(--status-warn); font-weight: 700; }
+.gv-st__row-val { fill: var(--text-primary); font-size: 18px; font-weight: 700; }
+.gv-st__row-dot { fill: var(--status-ok); }
+.gv-st__row-dot--warn { fill: var(--status-warn); }
+.gv-st__row-st { fill: var(--text-faint); font-size: 13px; }
+.gv-st__packet { fill: var(--accent); }
+.gv-st__tele[data-on] .gv-st__packet { animation: gv-st-packet 1.8s linear infinite; animation-delay: var(--d); }
+@keyframes gv-st-packet { from { transform: translateX(0); opacity: 1; } to { transform: translateX(135px); opacity: 0; } }
+.gv-st[data-scene="4"] .gv-st__tele .gv-st__spark,
+.gv-st[data-scene="4"] .gv-st__tele .gv-st__row-val,
+.gv-st[data-scene="4"] .gv-st__tele .gv-st__row-st,
+.gv-st[data-scene="4"] .gv-st__tele .gv-st__row-dot { opacity: 0.25; transition: opacity var(--dur-slow); }
+
+/* SCADA */
+.gv-st__scada-win { fill: #0D131B; stroke: var(--border-strong); }
+.gv-st__scada-tag { fill: #121A24; stroke: var(--border-hairline); }
+.gv-st__scada-tag--warn { fill: rgba(233, 180, 76, 0.12); stroke: var(--status-warn); }
+.gv-st__scada .gv-st__k { font-size: 13px; }
+.gv-st__scada .gv-st__v { font-size: 18px; }
+/* У элементов с SVG-атрибутом transform анимируется только opacity: CSS transform перезаписал бы translate() */
+.gv-st__scada[data-on] g g { animation: gv-st-in 600ms var(--ease-out) both; }
+@keyframes gv-st-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Аналитика */
+.gv-st__event rect { stroke: var(--status-warn); }
+.gv-st__event circle { fill: var(--status-warn); }
+
+/* Решение */
+.gv-st__tile rect { fill: #0E141C; stroke: var(--border-hairline); transition: stroke var(--dur-slow), fill var(--dur-slow); }
+.gv-st__tile--on rect { fill: rgba(79, 216, 232, 0.08); stroke: var(--accent); }
+.gv-st__decision[data-on] .gv-st__tile { animation: gv-st-in 600ms var(--ease-out) both; animation-delay: calc(var(--i) * 70ms); }
+.gv-st__budget-track { fill: #121A24; }
+.gv-st__budget-fill { fill: var(--accent); transform-box: fill-box; transform-origin: left center; }
+.gv-st__decision[data-on] .gv-st__budget-fill { animation: gv-st-grow 1200ms var(--ease-out) 400ms both; }
+@keyframes gv-st-grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Документ */
+.gv-st__doc-page { fill: #EDEFEA; }
+.gv-st__doc-h { fill: #11161C; font-size: 19px; font-weight: 700; font-family: var(--font-sans); }
+.gv-st__doc-m { fill: #4A525C; font-size: 14px; font-family: var(--font-sans); }
+.gv-st__doc-s { fill: #0B6F7A; font-size: 16px; font-weight: 700; font-family: var(--font-sans); }
+.gv-st__doc-t { fill: #2A3038; font-size: 14px; font-family: var(--font-sans); }
+.gv-st__document[data-on] .gv-st__doc text { animation: gv-st-type 500ms var(--ease-out) both; animation-delay: calc(200ms + var(--i) * 90ms); }
+@keyframes gv-st-type { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.gv-st__doc-chart .gv-fc__grid { stroke: #D3D7D0; }
+.gv-st__doc-chart .gv-fc__axis { fill: #6B737D; }
+.gv-st__doc-chart .gv-fc__obs { stroke: #11161C; }
+.gv-st__doc-chart .gv-fc__obs-dot { fill: #11161C; }
+
+/* Мини-приборы телеметрии */
+.gv-st__mini .gv-g__ticks { stroke-width: 1; }
+
+@media (max-width: 1000px) {
+  .gv-story { height: calc(var(--n) * 80vh + 100vh); }
+  .gv-story__grid { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); align-items: start; gap: var(--space-3); padding-block: var(--space-3); }
+  .gv-story__col { order: 2; gap: var(--space-2); padding-left: 0.875rem; align-content: start; }
+  .gv-story__stage { order: 1; height: auto; }
+  .gv-st { max-height: 42vh; }
+  .gv-head--pinned .gv-head__lede { display: none; }
+  .gv-head--pinned .gv-head__title { font-size: var(--fs-xl); }
+  .gv-story__list .gv-story__item:not([data-active]) { display: none; }
+  .gv-story__btn { min-height: 1.75rem; }
+  .gv-story__title { font-size: var(--fs-l); }
+  .gv-story__text { font-size: var(--fs-s); }
+  .gv-story__badge { position: static; margin-top: var(--space-1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gv-st__hero, .gv-g__needle, .gv-st__layer { transition: none; }
+  .gv-st__cv[data-on] .gv-st__cv-scan, .gv-st__tele[data-on] .gv-st__packet { animation: none; }
+}

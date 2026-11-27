@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ru" data-font="manrope" data-ambient="blueprint" style="--ui-scale: 1">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GaugeVision AI 3.0 — промышленность будущего на оборудовании настоящего</title>
+  <meta name="description" content="GaugeVision AI 3.0 превращает стрелочные приборы в цифровые данные: несколько приборов на одной камере, отказоустойчивая телеметрия, интеграция со SCADA, прогноз до уставок и план модернизации под бюджет. Локально, без облака.">
+  <meta name="theme-color" content="#070A0F">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/manrope-cyrillic-800.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/img/poster.jpg" as="image">
+
+  <!-- Порядок стилей: шрифты → токены → база → движение → компоненты → страница → секции → демонстрация → Tweaks -->
+  <link rel="stylesheet" href="css/fonts.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/motion.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/page.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/story.css">
+  <link rel="stylesheet" href="css/sections.css">
+  <link rel="stylesheet" href="css/showcase.css">
+  <link rel="stylesheet" href="css/tweaks.css">
+
+  <script>
+    /* Настройки Tweaks — до первой отрисовки, без скачка вёрстки. Полная логика — js/tweaks.js.
+       Кнопку Tweaks видит только автор: адрес с ?tweaks включает её на этом устройстве, ?tweaks=off — выключает. */
+    (function () {
+      var d = document.documentElement;
+      var q = location.search;
+      var on = /[?&]tweaks(=on|=1)?(&|$)/.test(q);
+      var off = /[?&]tweaks=off(&|$)/.test(q);
+      try {
+        if (on) localStorage.setItem('gv4.tweaks.on', '1');
+        if (off) localStorage.removeItem('gv4.tweaks.on');
+        if (localStorage.getItem('gv4.tweaks.on') === '1') d.setAttribute('data-tweaks', 'on');
+        var t = JSON.parse(localStorage.getItem('gv4.tweaks') || '{}');
+        if (['auto', 'onest', 'manrope', 'plex'].indexOf(t.font) >= 0) d.setAttribute('data-font', t.font);
+        if ([0.9, 1, 1.1, 1.25].indexOf(t.scale) >= 0) d.style.setProperty('--ui-scale', String(t.scale));
+        if (['warm', 'blueprint', 'dial', 'obsidian'].indexOf(t.ambient) >= 0) d.setAttribute('data-ambient', t.ambient);
+      } catch (e) {
+        if (on) d.setAttribute('data-tweaks', 'on');
+      }
+      if (/[?&]showcase=(1|on|true)(&|$)/.test(q)) d.setAttribute('data-showcase-boot', '');
+    })();
+  </script>
+</head>
+<body>
+  <a class="gv-skip" href="#gv-main">К содержанию</a>
+
+  <div id="gv-root"></div>
+
+  <noscript>
+    <div class="gv-noscript">
+      <p class="gv-noscript__meta">GaugeVision AI 3.0, стабильная версия v3.0.0</p>
+      <h1 class="gv-noscript__title">Промышленность будущего. На оборудовании настоящего.</h1>
+      <p>Камера превращает стрелочные приборы в цифровые данные, а GaugeVision — в мониторинг, прогноз и план модернизации. Без врезки в процесс и без облака.</p>
+      <a class="gv-button" href="https://github.com/EGRNEGR/GaugeVisionAI/tree/v3.0.0">Код и отчёты на GitHub</a>
+    </div>
+  </noscript>
+
+  <aside id="gv-tweaks" aria-label="Настройки внешнего вида"></aside>
+
+  <!-- Порядок скриптов: content → util → motion → kit → draw, ядро оптимизатора → компоненты → tweaks → showcase → page (последним) -->
+  <script src="js/content.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/motion.js"></script>
+  <script src="js/components/kit.js"></script>
+  <script src="js/components/draw.js"></script>
+  <script src="js/optimizer-core.js"></script>
+  <script src="js/components/hero.js"></script>
+  <script src="js/components/problem.js"></script>
+  <script src="js/components/story.js"></script>
+  <script src="js/components/multigauge.js"></script>
+  <script src="js/components/resilience.js"></script>
+  <script src="js/components/scada.js"></script>
+  <script src="js/components/diagnostics.js"></script>
+  <script src="js/components/forecast.js"></script>
+  <script src="js/components/optimizer.js"></script>
+  <script src="js/components/document.js"></script>
+  <script src="js/components/evolution.js"></script>
+  <script src="js/components/economics.js"></script>
+  <script src="js/components/evidence.js"></script>
+  <script src="js/components/readiness.js"></script>
+  <script src="js/tweaks.js"></script>
+  <script src="js/showcase.js"></script>
+  <script src="js/page.js"></script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+/*
+ * GaugeVision AI v4 — токены. Эволюция «Циферблата» v2: тот же модульный каркас, графит вместо
+ * обсидиана с оранжевым, холодный сигнальный циан вместо тёплого акцента.
+ * Порядок слоёв: :root → html[data-font] (шрифт из Tweaks) → html[data-ambient] (фон из Tweaks, page.css).
+ * Таблица значений, контраст и правила движения — reports/website_redesign/DESIGN_SYSTEM.md.
+ */
+
+:root {
+  color-scheme: dark;
+
+  /* Графит с синим подтоном: фон, поверхности, приподнятые панели. Чистого #000 нет. */
+  --bg-canvas: #070A0F;
+  --bg-deep: #05070B;
+  --bg-surface: #0C1118;
+  --bg-elevated: #111823;
+  --bg-inset: #0A0E14;
+  --border-hairline: rgba(214, 228, 240, 0.08);
+  --border-strong: rgba(214, 228, 240, 0.18);
+  --text-primary: #E8EEF4;
+  --text-muted: #A3AFBD;
+  --text-faint: #8693A2;
+
+  /* Сигнальный циан — цвет цифровой разметки, данных и действий. Один акцент на всю страницу. */
+  --accent: #4FD8E8;
+  --accent-strong: #8BEAF4;
+  --accent-contrast: #021418;
+  --accent-soft: rgba(79, 216, 232, 0.12);
+  --accent-line: rgba(79, 216, 232, 0.45);
+
+  /* Состояния оборудования: цвет объясняет статус, а не украшает */
+  --status-ok: #5ED39B;
+  --status-warn: #E9B44C;
+  --status-alert: #F26B5E;
+  --status-stale: #7C8796;
+  --status-ok-soft: rgba(94, 211, 155, 0.14);
+  --status-warn-soft: rgba(233, 180, 76, 0.14);
+  --status-alert-soft: rgba(242, 107, 94, 0.14);
+
+  /* Прибор: металл ободка и бумага шкалы физического мира */
+  --dial-face: #ECE8DF;
+  --dial-ink: #1B1F24;
+  --dial-rim: #3A414B;
+  --dial-rim-light: #9AA3AE;
+
+  /* Свет: блик 1px по верхнему ребру панели и направленные пятна низкой непрозрачности */
+  --edge-light: rgba(255, 255, 255, 0.14);
+  --glow-cool: rgba(79, 216, 232, 0.07);
+  --glow-deep: rgba(70, 110, 170, 0.08);
+  --surface-card: linear-gradient(90deg, transparent, var(--edge-light) 50%, transparent) top / 100% 1px no-repeat, var(--bg-surface);
+
+  --bg-ambient:
+    radial-gradient(110% 70% at 88% 112%, rgba(79, 216, 232, 0.05), transparent 70%),
+    radial-gradient(70% 55% at 0% 0%, rgba(70, 110, 170, 0.08), transparent 70%),
+    linear-gradient(172deg, #070A0F 0%, #080C12 50%, #060A10 100%);
+  --glow-cursor: rgba(120, 220, 235, 0.11);
+  --glow-cursor-edge: rgba(79, 216, 232, 0.035);
+
+  /* Шрифты: заголовки и текст — Manrope (по умолчанию) / Onest / IBM Plex из Tweaks; цифры, метки, HUD — JetBrains Mono */
+  --font-sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-sans);
+  --weight-display: 800;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --font-chrome: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  --ui-scale: 1;
+  --chrome-u: calc(1rem / var(--ui-scale));
+
+  /* Типографика: редакционная шкала с крупным дисплейным уровнем */
+  --fs-2xs: 0.75rem;
+  --fs-xs: 0.8125rem;
+  --fs-s: 0.9375rem;
+  --fs-m: 1.0625rem;
+  --fs-l: 1.25rem;
+  --fs-xl: clamp(1.375rem, 1.1rem + 0.9vw, 1.75rem);
+  --fs-2xl: clamp(1.875rem, 1.2rem + 2.2vw, 3rem);
+  --fs-3xl: clamp(2.25rem, 1.2rem + 3.8vw, 4.5rem);
+  --fs-display: clamp(2.6rem, 1rem + 6vw, 7rem);
+  --fs-mega: clamp(3.5rem, 1rem + 9vw, 10rem);
+  --lh-tight: 1.02;
+  --lh-snug: 1.2;
+  --lh-body: 1.55;
+  --tracking-display: -0.035em;
+  --tracking-head: -0.015em;
+  --tracking-caps: 0.1em;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 5rem;
+  --space-9: 8rem;
+  --section-pad: clamp(4.5rem, 1.5rem + 7vw, 9rem);
+
+  --container: 92rem;
+  --gutter: clamp(1rem, 0.4rem + 2.6vw, 3.25rem);
+  --measure: 62ch;
+  --header-h: 4rem;
+  --telemetry-h: 1.75rem;
+
+  --radius-s: 0.25rem;
+  --radius-m: 0.5rem;
+  --radius-l: 0.875rem;
+
+  /* Движение: transform и opacity; длительности — от щелчка до сцены */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.1, 1.05);
+  --dur-fast: 160ms;
+  --dur-med: 320ms;
+  --dur-slow: 600ms;
+  --dur-xslow: 1000ms;
+  --dur-crawl: 1400ms;
+
+  --tap: calc(2.75 * var(--chrome-u));
+  --focus-ring: 0 0 0 0.125rem var(--bg-canvas), 0 0 0 0.25rem var(--accent);
+}
+
+html[data-font="onest"],
+html[data-font="auto"] {
+  --font-sans: 'Onest', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --weight-display: 700;
+}
+
+html[data-font="plex"] {
+  --font-sans: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --weight-display: 700;
+}
