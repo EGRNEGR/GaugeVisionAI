@@ -1,0 +1,127 @@
+{
+  "total_checks": 11,
+  "passed_checks": 11,
+  "all_passed": true,
+  "checks": [
+    {
+      "id": "SEC-01",
+      "category": "Auth/RBAC",
+      "title": "Блокировка неаутентифицированного доступа к новым API (HTTP 401)",
+      "passed": true,
+      "severity": "high",
+      "detail": "{\"GET /api/predictive/overview\": 401, \"GET /api/passports\": 401, \"GET /api/optimizer/plans\": 401, \"POST /api/optimizer/solve\": 401, \"PATCH /api/passports/sim-02\": 401}"
+    },
+    {
+      "id": "SEC-02",
+      "category": "HTTP Hardening",
+      "title": "Защитные заголовки CSP / X-Frame-Options / nosniff / отсутствие CORS *",
+      "passed": true,
+      "severity": "info",
+      "detail": "XFO=DENY, XCTO=nosniff"
+    },
+    {
+      "id": "SEC-03",
+      "category": "Auth/RBAC",
+      "title": "Разграничение прав operator / engineer / admin на аналитике и оптимизаторе",
+      "passed": true,
+      "severity": "high",
+      "detail": "op_read=200, op_solve=403, op_save=403, op_pass=403, eng_solve=200, eng_audit=403, adm_audit=200"
+    },
+    {
+      "id": "SEC-04",
+      "category": "Auth/RBAC",
+      "title": "Защита входа от перебора паролей (lockout HTTP 429)",
+      "passed": true,
+      "severity": "medium",
+      "detail": "codes=[401, 401, 401, 401, 401, 429]"
+    },
+    {
+      "id": "SEC-05",
+      "category": "Input Validation / DoS",
+      "title": "Отклонение некорректных/ресурсоёмких запросов к оптимизатору (HTTP 422, ноль HTTP 500)",
+      "passed": true,
+      "severity": "high",
+      "detail": "{\"neg_budget\": 422, \"huge_budget\": 422, \"excess_time_limit\": 422, \"huge_mandatory_list\": 422, \"huge_dependencies\": 422, \"neg_min_per_group\": 422, \"bad_eco_comm_rate\": 422, \"bad_eco_risk_mult\": 422, \"bad_objective\": 422}"
+    },
+    {
+      "id": "SEC-06",
+      "category": "DOCX / Input Validation",
+      "title": "Защита паспортов и генератора DOCX от XML-инъекций и управляющих байтов",
+      "passed": true,
+      "severity": "medium",
+      "detail": "bad_date=422, bad_capex=422, docx_valid_xml=True"
+    },
+    {
+      "id": "SEC-07",
+      "category": "IDOR / Injection",
+      "title": "Параметризация SQLite, проверка inst_id и неизменяемость сохранённых планов",
+      "passed": true,
+      "severity": "medium",
+      "detail": "sqli=404, ctrl_id=422, del_plan=405"
+    },
+    {
+      "id": "SEC-08",
+      "category": "RTSP / SSRF / Path Traversal",
+      "title": "Шифрование RTSP credentials в SQLite (Fernet), маскирование в API, блокировка SSRF и Path Traversal",
+      "passed": true,
+      "severity": "high",
+      "detail": "ssrf=422, trav=422, masked=True, enc_at_rest=True"
+    },
+    {
+      "id": "SEC-09",
+      "category": "Audit Logging",
+      "title": "Фиксация действий оптимизатора, паспортов и отказов RBAC в audit_log",
+      "passed": true,
+      "severity": "medium",
+      "detail": "recorded_actions=['CREATE_CAMERA', 'FORBIDDEN GET /api/auth/audit', 'FORBIDDEN PATCH /api/passports/sim-02', 'FORBIDDEN POST /api/optimizer/plans', 'FORBIDDEN POST /api/optimizer/solve', 'GENERATE_SPEC', 'LOGIN_FAILED', 'LOGIN_LOCKED', 'LOGIN_OK', 'OPTIMIZER_SOLVE', 'PASSPORT_UPDATE']"
+    },
+    {
+      "id": "SEC-10",
+      "category": "SCADA / Modbus",
+      "title": "Режим только на чтение Modbus TCP (FC 0x06 -> 0x01), Unit ID (0x0B) и границы карты (0x02)",
+      "passed": true,
+      "severity": "high",
+      "detail": "write=(0x86,0x1), unit99=(0x83,0xb), oor=(0x83,0x2)"
+    },
+    {
+      "id": "SEC-11",
+      "category": "Air-Gapped Deployment",
+      "title": "Отсутствие внешних CDN-ресурсов (script/link/img) в статических файлах HMI",
+      "passed": true,
+      "severity": "medium",
+      "detail": "external_cdn_assets=[], informational_anchor_links=0"
+    }
+  ],
+  "shared_observations_for_integration": [
+    {
+      "id": "OBS-SHARED-01",
+      "severity": "medium",
+      "component": "app/config.py (HOST = '0.0.0.0')",
+      "finding": "По умолчанию HTTP/HTTPS сервер слушает все сетевые интерфейсы (0.0.0.0:8443). Для промышленного АСУ ТП рекомендуется явная привязка GAUGEVISION_HOST к выделенному VLAN-интерфейсу."
+    },
+    {
+      "id": "OBS-SHARED-02",
+      "severity": "medium",
+      "component": "app/config.py (MQTT_TLS = False)",
+      "finding": "MQTT TLS отключён по умолчанию (GAUGEVISION_MQTT_TLS=0). При передаче телеметрии и учётных данных вне loopback необходимо принудительно включать TLS и проверку сертификата брокера."
+    },
+    {
+      "id": "OBS-SHARED-03",
+      "severity": "low",
+      "component": "app/scada_gateway.py (Modbus TCP plaintext / no IP ACL)",
+      "finding": "Протокол Modbus TCP по стандарту не содержит аутентификации и шифрования. По умолчанию шлюз безопасно привязан к 127.0.0.1:15020; при выносе на LAN обязательна сетевая сегментация (firewall/VLAN allowlist на IP SCADA-сервера)."
+    },
+    {
+      "id": "OBS-SHARED-04",
+      "severity": "low",
+      "component": "app/spec_generator.py (_try_llm_enrichment)",
+      "finding": "Опциональный режим llm_enhanced отправляет POST на GAUGEVISION_LLM_BASE_URL (задаётся администратором через env) без дополнительной SSRF-фильтрации URL; в air-gapped контуре переменная пуста и используется deterministic-режим."
+    },
+    {
+      "id": "OBS-SHARED-05",
+      "severity": "low",
+      "component": "app/config.py (SIMULATOR_URL, candidate_lan_ips 8.8.8.8 probe)",
+      "finding": "SIMULATOR_URL указывает на внешний URL в качестве справочной ссылки UI (бэкендом не запрашивается); candidate_lan_ips использует UDP connect('8.8.8.8', 80) без отправки пакетов для определения локального маршрута (при отсутствии шлюза безопасно падает на частные сети / 127.0.0.1)."
+    }
+  ]
+}

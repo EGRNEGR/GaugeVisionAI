@@ -1,0 +1,569 @@
+{
+ "synthetic_source": true,
+ "video": "panel_e2e.mp4",
+ "legend": {
+  "file": "C:\\Users\\Egoru\\.claude\\jobs\\a4312617\\tmp\\e2e\\videos\\panel_e2e.mp4",
+  "frames": 4800,
+  "fps": 2.0,
+  "rate": 0.0,
+  "synthetic": true,
+  "drift": {
+   "index": 1,
+   "start": 1.1779653719480352,
+   "to_frac": 0.93,
+   "minutes": 20.0
+  },
+  "gauges": [
+   {
+    "index": 0,
+    "code": "PI-101",
+    "v_min": 0.0,
+    "v_max": 16.0,
+    "unit": "МПа",
+    "calibration": {
+     "v_min": 0.0,
+     "theta_min": 135.0,
+     "v_max": 16.0,
+     "theta_max": 45.0,
+     "direction": "cw"
+    },
+    "cx": 0.1261057306323988,
+    "cy": 0.24349775832740397,
+    "r": 0.16508633099954356,
+    "value_last": 9.163904
+   },
+   {
+    "index": 1,
+    "code": "PI-102",
+    "v_min": 0.0,
+    "v_max": 1.6,
+    "unit": "МПа",
+    "calibration": {
+     "v_min": 0.0,
+     "theta_min": 135.0,
+     "v_max": 1.6,
+     "theta_max": 45.0,
+     "direction": "cw"
+    },
+    "cx": 0.3641382214809953,
+    "cy": 0.2256583995777437,
+    "r": 0.14440602822534823,
+    "value_last": 1.488
+   },
+   {
+    "index": 2,
+    "code": "PI-103",
+    "v_min": 0.0,
+    "v_max": 100.0,
+    "unit": "кПа",
+    "calibration": {
+     "v_min": 0.0,
+     "theta_min": 135.0,
+     "v_max": 100.0,
+     "theta_max": 45.0,
+     "direction": "cw"
+    },
+    "cx": 0.6183582740261674,
+    "cy": 0.27478224177552313,
+    "r": 0.16394556368028404,
+    "value_last": 47.918446
+   },
+   {
+    "index": 3,
+    "code": "PI-104",
+    "v_min": 0.0,
+    "v_max": 150.0,
+    "unit": "°C",
+    "calibration": {
+     "v_min": 0.0,
+     "theta_min": 135.0,
+     "v_max": 150.0,
+     "theta_max": 45.0,
+     "direction": "cw"
+    },
+    "cx": 0.8744088302174834,
+    "cy": 0.2569534070272081,
+    "r": 0.13316650037647704,
+    "value_last": 38.314725
+   },
+   {
+    "index": 4,
+    "code": "PI-105",
+    "v_min": 0.0,
+    "v_max": 2.5,
+    "unit": "МПа",
+    "calibration": {
+     "v_min": 0.0,
+     "theta_min": 135.0,
+     "v_max": 2.5,
+     "theta_max": 45.0,
+     "direction": "cw"
+    },
+    "cx": 0.1342011326785824,
+    "cy": 0.751159060519165,
+    "r": 0.14391854266923437,
+    "value_last": 1.672191
+   },
+   {
+    "index": 5,
+    "code": "PI-106",
+    "v_min": 0.0,
+    "v_max": 250.0,
+    "unit": "кПа",
+    "calibration": {
+     "v_min": 0.0,
+     "theta_min": 135.0,
+     "v_max": 250.0,
+     "theta_max": 45.0,
+     "direction": "cw"
+    },
+    "cx": 0.36410078595567497,
+    "cy": 0.7629115123143408,
+    "r": 0.14196916575806617,
+    "value_last": 140.942427
+   },
+   {
+    "index": 6,
+    "code": "PI-107",
+    "v_min": 0.0,
+    "v_max": 300.0,
+    "unit": "°C",
+    "calibration": {
+     "v_min": 0.0,
+     "theta_min": 135.0,
+     "v_max": 300.0,
+     "theta_max": 45.0,
+     "direction": "cw"
+    },
+    "cx": 0.6132752937867438,
+    "cy": 0.7682763618489473,
+    "r": 0.16171016927027312,
+    "value_last": 144.277309
+   },
+   {
+    "index": 7,
+    "code": "PI-108",
+    "v_min": 0.0,
+    "v_max": 6.0,
+    "unit": "МПа",
+    "calibration": {
+     "v_min": 0.0,
+     "theta_min": 135.0,
+     "v_max": 6.0,
+     "theta_max": 45.0,
+     "direction": "cw"
+    },
+    "cx": 0.884470320006387,
+    "cy": 0.7607064741805601,
+    "r": 0.13944050182760162,
+    "value_last": 4.768614
+   }
+  ]
+ },
+ "started": 1795784221.4884298,
+ "duration_s": 310.9,
+ "steps": [
+  {
+   "step": 1,
+   "title": "Запуск сервера и авторизация ролей",
+   "passed": true,
+   "details": {
+    "boot_s": 21.1,
+    "login": {
+     "admin": 200,
+     "engineer": 200,
+     "operator": 200
+    },
+    "anonymous": 401
+   },
+   "t": 1795784242.9456656
+  },
+  {
+   "step": 2,
+   "title": "Подключение видеоисточника",
+   "passed": true,
+   "details": {
+    "source_id": "d24ec443-86b6-4cfa-8900-ada478b850d3",
+    "http": 201
+   },
+   "t": 1795784243.4773188
+  },
+  {
+   "step": 3,
+   "title": "Обнаружение аналоговых приборов на кадре",
+   "passed": true,
+   "details": {
+    "found": 8,
+    "expected": 8,
+    "detect": {
+     "yolo": true,
+     "yolo_boxes": 8,
+     "tiled": true,
+     "tiled_boxes": 8,
+     "from_yolo": 8,
+     "from_ellipse": 0,
+     "detect_ms": 6982.3
+    }
+   },
+   "t": 1795784250.4697855
+  },
+  {
+   "step": 4,
+   "title": "Регистрация и независимая ручная калибровка",
+   "passed": true,
+   "details": {
+    "registered": 8,
+    "slots": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7
+    ],
+    "calibration_rev": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1
+    ]
+   },
+   "t": 1795784250.623584
+  },
+  {
+   "step": 5,
+   "title": "Показания CV-конвейера (синтетический щит, известная истина)",
+   "passed": true,
+   "details": {
+    "err_pct_of_span": {
+     "PI-107": 0.12,
+     "PI-108": 0.17,
+     "PI-101": 0.2,
+     "PI-103": 0.11,
+     "PI-105": 0.34,
+     "PI-106": 0.23,
+     "PI-104": 0.4
+    }
+   },
+   "t": 1795784253.690006
+  },
+  {
+   "step": 6,
+   "title": "Сохранение истории в SQLite по приборам",
+   "passed": true,
+   "details": {
+    "rows_per_instrument": {
+     "PI-107": 11,
+     "PI-108": 8,
+     "PI-101": 8,
+     "PI-103": 8,
+     "PI-105": 8,
+     "PI-102": 9,
+     "PI-106": 9,
+     "PI-104": 9
+    }
+   },
+   "t": 1795784265.770964
+  },
+  {
+   "step": 7,
+   "title": "Телеметрия для HMI: история и тренд прибора",
+   "passed": true,
+   "details": {
+    "history_points": 11,
+    "trend_http": 200
+   },
+   "t": 1795784265.7920227
+  },
+  {
+   "step": 8,
+   "title": "Технологическое предупреждение по уставке H",
+   "passed": true,
+   "details": {
+    "event": 13,
+    "needs_ack": true
+   },
+   "t": 1795784265.8173525
+  },
+  {
+   "step": 9,
+   "title": "Прогноз времени достижения аварийной уставки",
+   "passed": true,
+   "details": {
+    "eta_alert_min": 11.11,
+    "true_eta_min": 12.1,
+    "trend": "rising_drift",
+    "waited_s": 140,
+    "model": {
+     "method": "weighted_ols",
+     "slope_per_min": 0.01707,
+     "r2_weighted": 0.9956,
+     "residual_rho1": 0.0,
+     "damping_tau_min": null,
+     "n_eff": 5.81
+    },
+    "true_slope_per_min": 0.0155,
+    "eta_ratio": 0.92
+   },
+   "t": 1795784406.302357
+  },
+  {
+   "step": 10,
+   "title": "Прогнозный интервал (PI80/PI95, ДИ ETA)",
+   "passed": true,
+   "details": {
+    "forecast_at_horizon": {
+     "h_min": 60.0,
+     "yhat": 2.2428,
+     "se": 0.0354,
+     "lo80": 2.1878,
+     "hi80": 2.2977,
+     "lo95": 2.1418,
+     "hi95": 2.3437
+    },
+    "eta_alert_ci": [
+     10.03,
+     12.42
+    ]
+   },
+   "t": 1795784406.302357
+  },
+  {
+   "step": 11,
+   "title": "Передача показаний и событий по MQTT и Modbus",
+   "passed": true,
+   "details": {
+    "mqtt_messages": 367,
+    "mqtt_telemetry_instruments": 8,
+    "mqtt_alarm": 7,
+    "prediction_events": [
+     "imminent"
+    ],
+    "prediction_mqtt": 1,
+    "modbus_values": {
+     "PI-107": 143.616,
+     "PI-108": 4.777,
+     "PI-101": 9.136,
+     "PI-103": 47.746,
+     "PI-105": 1.666,
+     "PI-102": 1.222,
+     "PI-106": 140.725,
+     "PI-104": 38.435
+    },
+    "modbus_status": {
+     "PI-107": 1,
+     "PI-108": 0,
+     "PI-101": 0,
+     "PI-103": 0,
+     "PI-105": 0,
+     "PI-102": 1,
+     "PI-106": 0,
+     "PI-104": 0
+    },
+    "modbus_pred_eta": 11.2
+   },
+   "t": 1795784427.3986864
+  },
+  {
+   "step": 12,
+   "title": "Отображение данных в Ignition 8.3.10 (Tag Historian)",
+   "passed": true,
+   "details": {
+    "instruments": {
+     "PI-107": {
+      "slot": 0,
+      "tag": "P01_K1_R01",
+      "points": 93,
+      "last": 143.727,
+      "modbus": 143.616,
+      "status_last": 1
+     },
+     "PI-108": {
+      "slot": 1,
+      "tag": "P02_K1_T01",
+      "points": 85,
+      "last": 4.773,
+      "modbus": 4.777,
+      "status_last": 0
+     },
+     "PI-101": {
+      "slot": 2,
+      "tag": "P03_K1_U01",
+      "points": 88,
+      "last": 9.12,
+      "modbus": 9.136,
+      "status_last": 0
+     },
+     "PI-103": {
+      "slot": 3,
+      "tag": "P04_K1_TN1",
+      "points": 90,
+      "last": 47.853,
+      "modbus": 47.746,
+      "status_last": 0
+     },
+     "PI-105": {
+      "slot": 4,
+      "tag": "P05_K2_R01",
+      "points": 59,
+      "last": 1.665,
+      "modbus": 1.666,
+      "status_last": 0
+     },
+     "PI-102": {
+      "slot": 5,
+      "tag": "P06_K2_F01",
+      "points": 79,
+      "last": 1.225,
+      "modbus": 1.222,
+      "status_last": 1
+     },
+     "PI-106": {
+      "slot": 6,
+      "tag": "P07_TA1_R01",
+      "points": 91,
+      "last": 140.631,
+      "modbus": 140.725,
+      "status_last": 0
+     },
+     "PI-104": {
+      "slot": 7,
+      "tag": "P08_TA1_T01",
+      "points": 91,
+      "last": 38.513,
+      "modbus": 38.435,
+      "status_last": 0
+     }
+    },
+    "heartbeat_points": 102,
+    "free_slot_isnodata": 1
+   },
+   "t": 1795784442.5606413
+  },
+  {
+   "step": 13,
+   "title": "Имитация отказа связи (брокер MQTT остановлен)",
+   "passed": true,
+   "details": {
+    "pending": 52,
+    "hr904_queue": 9,
+    "hr905_outage": 1,
+    "hr905_detect_s": 3.1,
+    "outage_s": 23
+   },
+   "t": 1795784465.6751003
+  },
+  {
+   "step": 14,
+   "title": "Store-and-Forward и автоматическое восстановление",
+   "passed": true,
+   "details": {
+    "drain_s": 8.1,
+    "received_after": 85,
+    "seq_range": [
+     1,
+     472
+    ],
+    "seq_gaps": 0,
+    "evicted": 0,
+    "hr905_after": 0
+   },
+   "t": 1795784484.949433
+  },
+  {
+   "step": 15,
+   "title": "Формирование оптимального плана модернизации",
+   "passed": true,
+   "details": {
+    "status": "optimal",
+    "gap": 0.0,
+    "selected": 4,
+    "elapsed_s": 0.0,
+    "frontier_points": 9
+   },
+   "t": 1795784485.171259
+  },
+  {
+   "step": 16,
+   "title": "Обязательные мероприятия и ограничение бюджета",
+   "passed": true,
+   "details": {
+    "mandatory_included": true,
+    "total_capex_rub": 383040,
+    "budget_rub": 450000
+   },
+   "t": 1795784485.171259
+  },
+  {
+   "step": 17,
+   "title": "Генерация инженерного ТЗ в DOCX и Markdown",
+   "passed": true,
+   "details": {
+    "md_bytes": 15597,
+    "docx_bytes": 169449,
+    "doc_number": "ТЗ-КИП-20261127-01"
+   },
+   "t": 1795784485.4639041
+  },
+  {
+   "step": 18,
+   "title": "Содержание ТЗ соответствует телеметрии и выбранному плану",
+   "passed": true,
+   "details": {
+    "plan_codes_in_md": {
+     "PI-102": true,
+     "КМ-01": true,
+     "PI-106": true,
+     "PI-104": true
+    },
+    "plan_codes_in_docx": {
+     "PI-102": true,
+     "КМ-01": true,
+     "PI-106": true,
+     "PI-104": true
+    },
+    "db_samples_in_doc": 1182,
+    "db_rows": 1182,
+    "optimization_applied": true
+   },
+   "t": 1795784485.552079
+  },
+  {
+   "step": 19,
+   "title": "Перезапуск системы и сохранность данных",
+   "passed": true,
+   "details": {
+    "before": {
+     "instruments": 8,
+     "plans": 1,
+     "events": 21
+    },
+    "after": {
+     "instruments": 8,
+     "plans": 1,
+     "events": 23
+    },
+    "readings": [
+     1182,
+     1182
+    ],
+    "boot_s": 20.2,
+    "ignition_link": {
+     "link_lost_after_stop_s": 0.1,
+     "link_back_after_stop_s": 17.7,
+     "server_ready_after_stop_s": 30.2,
+     "points": 11
+    }
+   },
+   "t": 1795784532.2987072
+  }
+ ],
+ "passed": 19,
+ "total": 19
+}

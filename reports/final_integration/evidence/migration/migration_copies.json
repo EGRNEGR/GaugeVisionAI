@@ -1,0 +1,112 @@
+[
+ {
+  "source": "gaugevision.db",
+  "source_dir": "data",
+  "tables_before": 8,
+  "tables_after": 13,
+  "rows_before": {
+   "audit_log": 0,
+   "auto_spec_triggers": 0,
+   "cameras": 0,
+   "demo_runs": 0,
+   "events": 0,
+   "readings": 0,
+   "sessions": 0,
+   "users": 3
+  },
+  "rows_after": {
+   "audit_log": 0,
+   "auto_spec_triggers": 0,
+   "cameras": 0,
+   "demo_runs": 0,
+   "events": 0,
+   "instrument_passports": 0,
+   "instrument_readings": 0,
+   "instruments": 0,
+   "modernization_plans": 0,
+   "predictive_snapshots": 0,
+   "readings": 0,
+   "sessions": 0,
+   "users": 3
+  },
+  "lost_rows": {},
+  "readings_without_instrument_id": 0,
+  "valid_readings": 0,
+  "cameras": 0,
+  "primary_instruments": 0,
+  "series_points": 0,
+  "passed": true
+ },
+ {
+  "source": "gaugevision_demo.db",
+  "source_dir": "data",
+  "tables_before": 3,
+  "tables_after": 13,
+  "rows_before": {
+   "cameras": 1,
+   "demo_runs": 1,
+   "readings": 579
+  },
+  "rows_after": {
+   "audit_log": 0,
+   "auto_spec_triggers": 0,
+   "cameras": 1,
+   "demo_runs": 1,
+   "events": 0,
+   "instrument_passports": 0,
+   "instrument_readings": 0,
+   "instruments": 1,
+   "modernization_plans": 0,
+   "predictive_snapshots": 0,
+   "readings": 579,
+   "sessions": 0,
+   "users": 0
+  },
+  "lost_rows": {},
+  "readings_without_instrument_id": 0,
+  "valid_readings": 579,
+  "cameras": 1,
+  "primary_instruments": 1,
+  "series_points": 579,
+  "passed": true
+ },
+ {
+  "source": "gv_demo.db",
+  "source_dir": "gv_scada_lab",
+  "tables_before": 9,
+  "tables_after": 13,
+  "rows_before": {
+   "audit_log": 9,
+   "auto_spec_triggers": 9,
+   "cameras": 1,
+   "demo_runs": 4,
+   "events": 82,
+   "instrument_readings": 22875,
+   "readings": 0,
+   "sessions": 5,
+   "users": 3
+  },
+  "rows_after": {
+   "audit_log": 9,
+   "auto_spec_triggers": 9,
+   "cameras": 1,
+   "demo_runs": 4,
+   "events": 82,
+   "instrument_passports": 0,
+   "instrument_readings": 22875,
+   "instruments": 1,
+   "modernization_plans": 0,
+   "predictive_snapshots": 0,
+   "readings": 0,
+   "sessions": 5,
+   "users": 3
+  },
+  "lost_rows": {},
+  "readings_without_instrument_id": 0,
+  "valid_readings": 0,
+  "cameras": 1,
+  "primary_instruments": 1,
+  "series_points": 0,
+  "passed": true
+ }
+]

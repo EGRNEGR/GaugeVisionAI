@@ -1,0 +1,589 @@
+{
+ "sizes": {
+  "1920x1080": {
+   "views": {
+    "monitor": {
+     "head": {
+      "head_ops": [
+       1349,
+       1920
+      ],
+      "fullscreen": [
+       1890,
+       1914
+      ],
+      "head_right": [
+       0,
+       1920
+      ]
+     },
+     "scrollW": 1920,
+     "innerW": 1920,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "architecture": {
+     "head": {
+      "head_ops": [
+       1349,
+       1920
+      ],
+      "fullscreen": [
+       1890,
+       1914
+      ],
+      "head_right": [
+       0,
+       1920
+      ]
+     },
+     "scrollW": 1920,
+     "innerW": 1920,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "dispatch": {
+     "head": {
+      "head_ops": [
+       1349,
+       1920
+      ],
+      "fullscreen": [
+       1890,
+       1914
+      ],
+      "head_right": [
+       0,
+       1920
+      ]
+     },
+     "scrollW": 1920,
+     "innerW": 1920,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "events": {
+     "head": {
+      "head_ops": [
+       1349,
+       1920
+      ],
+      "fullscreen": [
+       1890,
+       1914
+      ],
+      "head_right": [
+       0,
+       1920
+      ]
+     },
+     "scrollW": 1920,
+     "innerW": 1920,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "history": {
+     "head": {
+      "head_ops": [
+       1349,
+       1920
+      ],
+      "fullscreen": [
+       1890,
+       1914
+      ],
+      "head_right": [
+       0,
+       1920
+      ]
+     },
+     "scrollW": 1920,
+     "innerW": 1920,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "cameras": {
+     "head": {
+      "head_ops": [
+       1349,
+       1920
+      ],
+      "fullscreen": [
+       1890,
+       1914
+      ],
+      "head_right": [
+       0,
+       1920
+      ]
+     },
+     "scrollW": 1920,
+     "innerW": 1920,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "panel": {
+     "head": {
+      "head_ops": [
+       1349,
+       1920
+      ],
+      "fullscreen": [
+       1890,
+       1914
+      ],
+      "head_right": [
+       0,
+       1920
+      ]
+     },
+     "scrollW": 1920,
+     "innerW": 1920,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "calibration": {
+     "head": {
+      "head_ops": [
+       1349,
+       1920
+      ],
+      "fullscreen": [
+       1890,
+       1914
+      ],
+      "head_right": [
+       0,
+       1920
+      ]
+     },
+     "scrollW": 1920,
+     "innerW": 1920,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    }
+   },
+   "actions": {
+    "predictive_rows": 41,
+    "opt_selected": "9 из 10",
+    "opt_rows": 10,
+    "pareto_painted": true,
+    "plans_before": 0,
+    "plans_after": 1,
+    "docx_bytes": 134449,
+    "md_bytes": 38982,
+    "panel_rows": 5,
+    "panel_frame": true
+   },
+   "errors": [],
+   "failed_requests": [],
+   "external_requests": []
+  },
+  "1440x900": {
+   "views": {
+    "monitor": {
+     "head": {
+      "head_ops": [
+       947,
+       1440
+      ],
+      "fullscreen": [
+       1411,
+       1435
+      ],
+      "head_right": [
+       0,
+       1440
+      ]
+     },
+     "scrollW": 1440,
+     "innerW": 1440,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "architecture": {
+     "head": {
+      "head_ops": [
+       947,
+       1440
+      ],
+      "fullscreen": [
+       1411,
+       1435
+      ],
+      "head_right": [
+       0,
+       1440
+      ]
+     },
+     "scrollW": 1440,
+     "innerW": 1440,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "dispatch": {
+     "head": {
+      "head_ops": [
+       947,
+       1440
+      ],
+      "fullscreen": [
+       1411,
+       1435
+      ],
+      "head_right": [
+       0,
+       1440
+      ]
+     },
+     "scrollW": 1440,
+     "innerW": 1440,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "events": {
+     "head": {
+      "head_ops": [
+       947,
+       1440
+      ],
+      "fullscreen": [
+       1411,
+       1435
+      ],
+      "head_right": [
+       0,
+       1440
+      ]
+     },
+     "scrollW": 1440,
+     "innerW": 1440,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "history": {
+     "head": {
+      "head_ops": [
+       947,
+       1440
+      ],
+      "fullscreen": [
+       1411,
+       1435
+      ],
+      "head_right": [
+       0,
+       1440
+      ]
+     },
+     "scrollW": 1440,
+     "innerW": 1440,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "cameras": {
+     "head": {
+      "head_ops": [
+       947,
+       1440
+      ],
+      "fullscreen": [
+       1411,
+       1435
+      ],
+      "head_right": [
+       0,
+       1440
+      ]
+     },
+     "scrollW": 1440,
+     "innerW": 1440,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "panel": {
+     "head": {
+      "head_ops": [
+       947,
+       1440
+      ],
+      "fullscreen": [
+       1411,
+       1435
+      ],
+      "head_right": [
+       0,
+       1440
+      ]
+     },
+     "scrollW": 1440,
+     "innerW": 1440,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "calibration": {
+     "head": {
+      "head_ops": [
+       947,
+       1440
+      ],
+      "fullscreen": [
+       1411,
+       1435
+      ],
+      "head_right": [
+       0,
+       1440
+      ]
+     },
+     "scrollW": 1440,
+     "innerW": 1440,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    }
+   },
+   "actions": {
+    "predictive_rows": 41,
+    "opt_selected": "9 из 9",
+    "opt_rows": 9,
+    "pareto_painted": true,
+    "plans_before": 1,
+    "plans_after": 2,
+    "docx_bytes": 134314,
+    "md_bytes": 37548,
+    "panel_rows": 5,
+    "panel_frame": true
+   },
+   "errors": [],
+   "failed_requests": [],
+   "external_requests": []
+  },
+  "1280x720": {
+   "views": {
+    "monitor": {
+     "head": {
+      "head_ops": [
+       904,
+       1281
+      ],
+      "fullscreen": [
+       0,
+       0
+      ],
+      "head_right": [
+       0,
+       1280
+      ]
+     },
+     "scrollW": 1280,
+     "innerW": 1280,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "architecture": {
+     "head": {
+      "head_ops": [
+       904,
+       1281
+      ],
+      "fullscreen": [
+       0,
+       0
+      ],
+      "head_right": [
+       0,
+       1280
+      ]
+     },
+     "scrollW": 1280,
+     "innerW": 1280,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "dispatch": {
+     "head": {
+      "head_ops": [
+       904,
+       1281
+      ],
+      "fullscreen": [
+       0,
+       0
+      ],
+      "head_right": [
+       0,
+       1280
+      ]
+     },
+     "scrollW": 1280,
+     "innerW": 1280,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "events": {
+     "head": {
+      "head_ops": [
+       904,
+       1281
+      ],
+      "fullscreen": [
+       0,
+       0
+      ],
+      "head_right": [
+       0,
+       1280
+      ]
+     },
+     "scrollW": 1280,
+     "innerW": 1280,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "history": {
+     "head": {
+      "head_ops": [
+       904,
+       1281
+      ],
+      "fullscreen": [
+       0,
+       0
+      ],
+      "head_right": [
+       0,
+       1280
+      ]
+     },
+     "scrollW": 1280,
+     "innerW": 1280,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "cameras": {
+     "head": {
+      "head_ops": [
+       904,
+       1281
+      ],
+      "fullscreen": [
+       0,
+       0
+      ],
+      "head_right": [
+       0,
+       1280
+      ]
+     },
+     "scrollW": 1280,
+     "innerW": 1280,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "panel": {
+     "head": {
+      "head_ops": [
+       904,
+       1281
+      ],
+      "fullscreen": [
+       0,
+       0
+      ],
+      "head_right": [
+       0,
+       1280
+      ]
+     },
+     "scrollW": 1280,
+     "innerW": 1280,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    },
+    "calibration": {
+     "head": {
+      "head_ops": [
+       904,
+       1281
+      ],
+      "fullscreen": [
+       0,
+       0
+      ],
+      "head_right": [
+       0,
+       1280
+      ]
+     },
+     "scrollW": 1280,
+     "innerW": 1280,
+     "hOverflow": false,
+     "overflowing": [],
+     "nOver": 0,
+     "stubs": []
+    }
+   },
+   "actions": {
+    "predictive_rows": 41,
+    "opt_selected": "5 из 9",
+    "opt_rows": 9,
+    "pareto_painted": true,
+    "plans_before": 2,
+    "plans_after": 3,
+    "docx_bytes": 134349,
+    "md_bytes": 37371,
+    "panel_rows": 5,
+    "panel_frame": true
+   },
+   "errors": [],
+   "failed_requests": [],
+   "external_requests": []
+  }
+ }
+}

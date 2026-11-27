@@ -1,0 +1,20 @@
+{
+  "files_scanned": 91,
+  "targets": [
+    "app",
+    "static",
+    "run.py",
+    "scripts",
+    "tests",
+    "reports/remediation/tests",
+    "reports/final_integration/evidence"
+  ],
+  "findings": {
+    "todo_fixme": [],
+    "not_implemented": [],
+    "absolute_windows_path": [],
+    "absolute_user_path": [],
+    "middle_dot_in_ui": []
+  },
+  "clean": true
+}
