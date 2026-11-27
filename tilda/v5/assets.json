@@ -1,0 +1,26 @@
+{
+  "note": {
+    "images": "CDN Tilda (переиспользованы проверенные по md5 адреса из tilda/assets.json и tilda/v4/images.json)",
+    "video": "jsDelivr по коммиту ветки redesign/website-v5 после push",
+    "fonts": "jsDelivr по тому же коммиту ветки redesign/website-v5"
+  },
+  "commit": "c12b2a9",
+  "cdn": "https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@c12b2a9/site/v5/assets/",
+  "img": {
+    "favicon.svg": "https://static.tildacdn.com/tila6163-3130-4138-a363-623436323738/favicon.svg",
+    "shift-before.jpg": "https://static.tildacdn.com/tila3262-6464-4261-b833-306634363339/shift-before.jpg",
+    "shift-after.jpg": "https://static.tildacdn.com/tila6461-3464-4163-b633-396133623335/shift-after.jpg",
+    "hmi-dispatch.jpg": "https://static.tildacdn.com/tila3533-6532-4865-b964-376231613964/hmi-dispatch.jpg",
+    "hmi-panel.jpg": "https://static.tildacdn.com/tila3439-3865-4237-b266-663538666332/hmi-panel.jpg",
+    "hmi-spec.jpg": "https://static.tildacdn.com/tila6332-3238-4639-a661-336430396537/hmi-spec.jpg",
+    "mg-01.jpg": "https://static.tildacdn.com/tila6663-3337-4230-b661-343263353938/mg-01.jpg",
+    "mg-02.jpg": "https://static.tildacdn.com/tila6663-6664-4738-a538-353764343331/mg-02.jpg",
+    "mg-04.jpg": "https://static.tildacdn.com/tila6139-6432-4964-a566-386563626239/mg-04.jpg",
+    "mg-08.jpg": "https://static.tildacdn.com/tila6134-3236-4634-b861-363936343266/mg-08.jpg",
+    "mg-16.jpg": "https://static.tildacdn.com/tila6336-3461-4666-b538-346437623738/mg-16.jpg",
+    "scada-perspective.jpg": "https://static.tildacdn.com/tila6337-6638-4332-b730-313734613533/scada-perspective.jpg",
+    "v1-dashboard.jpg": "https://static.tildacdn.com/tila6638-3335-4238-b561-663036346535/v1-dashboard.jpg",
+    "v2-monitor.jpg": "https://static.tildacdn.com/tila3739-6435-4335-a432-653735383230/v2-monitor.jpg",
+    "v3-monitor.jpg": "https://static.tildacdn.com/tila3133-3165-4463-a133-336235323462/v3-monitor.jpg"
+  }
+}

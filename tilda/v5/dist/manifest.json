@@ -1,0 +1,98 @@
+{
+  "head": {
+    "file": "head.html",
+    "bytes": 6530,
+    "md5": "1430cbb6e17bdb822b502e0edbd1fbea"
+  },
+  "blocks": [
+    {
+      "file": "blocks/01.html",
+      "bytes": 30726,
+      "md5": "8d616d19b47526a7645784ff7d519a8a",
+      "items": [
+        "css#1"
+      ]
+    },
+    {
+      "file": "blocks/02.html",
+      "bytes": 30800,
+      "md5": "3e29a0065517729fd10ea130a53528fd",
+      "items": [
+        "css#2"
+      ]
+    },
+    {
+      "file": "blocks/03.html",
+      "bytes": 11291,
+      "md5": "d375d8acc608b3950349f617c93079c5",
+      "items": [
+        "css#3"
+      ]
+    },
+    {
+      "file": "blocks/04.html",
+      "bytes": 27534,
+      "md5": "c6f225e6c5969d337ac7c744ad16d834",
+      "items": [
+        "content:src,panel,forecast,catalog,fleet,meta,sections,calibration,reading,hero,compare,multigauge,resilience,scada,diagnostics"
+      ]
+    },
+    {
+      "file": "blocks/05.html",
+      "bytes": 25313,
+      "md5": "e13ebe002df3de3e0b6f68f383758eeb",
+      "items": [
+        "content:forecastSection,optimizerSection,documentSection,evidence,evolution,readiness,contact,showcase,labels",
+        "content:typo",
+        "js/util.js"
+      ]
+    },
+    {
+      "file": "blocks/06.html",
+      "bytes": 26140,
+      "md5": "0732c9bbb20d6f8f5e8b036116aae364",
+      "items": [
+        "js/motion.js",
+        "js/optimizer-core.js",
+        "js/components/kit.js",
+        "js/components/draw.js"
+      ]
+    },
+    {
+      "file": "blocks/07.html",
+      "bytes": 32816,
+      "md5": "ee855018736c63965dc9e894c4245749",
+      "items": [
+        "js/components/journal.js",
+        "js/components/shift.js",
+        "js/components/multigauge.js",
+        "js/components/resilience.js",
+        "js/components/scada.js"
+      ]
+    },
+    {
+      "file": "blocks/08.html",
+      "bytes": 33131,
+      "md5": "fbe17c00f6a76a19e4c06bbc521994a5",
+      "items": [
+        "js/components/forecast.js",
+        "js/components/optimizer.js",
+        "js/components/metrics.js",
+        "js/components/evolution.js",
+        "js/components/limits.js",
+        "js/components/contact.js",
+        "js/showcase.js",
+        "js/tweaks.js"
+      ]
+    },
+    {
+      "file": "blocks/09.html",
+      "bytes": 5271,
+      "md5": "675087432f80c3ee8455cb79f587a582",
+      "items": [
+        "markup",
+        "js/page.js"
+      ]
+    }
+  ]
+}

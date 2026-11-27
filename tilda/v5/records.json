@@ -1,0 +1,53 @@
+{
+  "projectid": 7124340,
+  "pageid": 424686809,
+  "alias": "gaugevision-3",
+  "head_md5": "1430cbb6e17bdb822b502e0edbd1fbea",
+  "records": [
+    {
+      "recordid": 6306427101,
+      "md5": "8d616d19b47526a7645784ff7d519a8a",
+      "settings": true
+    },
+    {
+      "recordid": 6306429901,
+      "md5": "3e29a0065517729fd10ea130a53528fd",
+      "settings": true
+    },
+    {
+      "recordid": 6306430001,
+      "md5": "d375d8acc608b3950349f617c93079c5",
+      "settings": true
+    },
+    {
+      "recordid": 6306430101,
+      "md5": "c6f225e6c5969d337ac7c744ad16d834",
+      "settings": true
+    },
+    {
+      "recordid": 6306430201,
+      "md5": "e13ebe002df3de3e0b6f68f383758eeb",
+      "settings": true
+    },
+    {
+      "recordid": 6306430601,
+      "md5": "0732c9bbb20d6f8f5e8b036116aae364",
+      "settings": true
+    },
+    {
+      "recordid": 6306430701,
+      "md5": "ee855018736c63965dc9e894c4245749",
+      "settings": true
+    },
+    {
+      "recordid": 6306430801,
+      "md5": "fbe17c00f6a76a19e4c06bbc521994a5",
+      "settings": true
+    },
+    {
+      "recordid": 6307265201,
+      "md5": "675087432f80c3ee8455cb79f587a582",
+      "settings": true
+    }
+  ]
+}

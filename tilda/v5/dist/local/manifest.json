@@ -1,0 +1,91 @@
+{
+  "head": {
+    "file": "head.html",
+    "bytes": 5789,
+    "md5": "d349cae5cfc2a6ad9d51cba4d4db3c82"
+  },
+  "blocks": [
+    {
+      "file": "blocks/01.html",
+      "bytes": 30726,
+      "md5": "8d616d19b47526a7645784ff7d519a8a",
+      "items": [
+        "css#1"
+      ]
+    },
+    {
+      "file": "blocks/02.html",
+      "bytes": 30800,
+      "md5": "3e29a0065517729fd10ea130a53528fd",
+      "items": [
+        "css#2"
+      ]
+    },
+    {
+      "file": "blocks/03.html",
+      "bytes": 11291,
+      "md5": "d375d8acc608b3950349f617c93079c5",
+      "items": [
+        "css#3"
+      ]
+    },
+    {
+      "file": "blocks/04.html",
+      "bytes": 26970,
+      "md5": "d6ae5b5c5d36b72474cc66433b89780c",
+      "items": [
+        "content:src,panel,forecast,catalog,fleet,meta,sections,calibration,reading,hero,compare,multigauge,resilience,scada,diagnostics"
+      ]
+    },
+    {
+      "file": "blocks/05.html",
+      "bytes": 33707,
+      "md5": "3d096f9741699ebd1b41f57b7babd1c9",
+      "items": [
+        "content:forecastSection,optimizerSection,documentSection,evidence,evolution,readiness,contact,showcase,labels",
+        "content:typo",
+        "js/util.js",
+        "js/motion.js"
+      ]
+    },
+    {
+      "file": "blocks/06.html",
+      "bytes": 26247,
+      "md5": "6ae4f6aa347465523ac462cc04021f2d",
+      "items": [
+        "js/optimizer-core.js",
+        "js/components/kit.js",
+        "js/components/draw.js",
+        "js/components/journal.js"
+      ]
+    },
+    {
+      "file": "blocks/07.html",
+      "bytes": 28844,
+      "md5": "43e86eb2b42ddb53b763962cae8d4613",
+      "items": [
+        "js/components/shift.js",
+        "js/components/multigauge.js",
+        "js/components/resilience.js",
+        "js/components/scada.js",
+        "js/components/forecast.js"
+      ]
+    },
+    {
+      "file": "blocks/08.html",
+      "bytes": 33518,
+      "md5": "91a1fb358a8ad83ad577234a8cf52aad",
+      "items": [
+        "markup",
+        "js/components/optimizer.js",
+        "js/components/metrics.js",
+        "js/components/evolution.js",
+        "js/components/limits.js",
+        "js/components/contact.js",
+        "js/showcase.js",
+        "js/tweaks.js",
+        "js/page.js"
+      ]
+    }
+  ]
+}
