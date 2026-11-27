@@ -1,7 +1,8 @@
 # Общий контракт данных GaugeVision AI Next Generation
 
-Версия **1.1**, 2026-11-27, ветка `next-gen/platform` (1.0 — первая фиксация; 1.1 — сверка с
-реализацией Neon в ветках `next-gen/scada-ignition` d131d55 и `next-gen/analytics-optimizer` 6a1828d).
+Версия **1.2**, 2026-11-27, ветка `next-gen/platform` (1.0 — первая фиксация; 1.1 — сверка с
+реализацией Neon в ветках `next-gen/scada-ignition` d131d55 и `next-gen/analytics-optimizer` 6a1828d;
+1.2 — поле `track` и значения `dial_source` приведены к реализованному трекеру Multi-Gauge).
 Участники: основной агент (ветка `next-gen/platform`: CV, Multi-Gauge Vision, Auto Calibration,
 интеграция HMI/API/SQLite) и агент Neon (отдельная ветка: Ignition SCADA и REQ-API-07,
 Predictive Analytics, Modernization Optimizer).
@@ -88,11 +89,11 @@ Predictive Analytics, Modernization Optimizer).
 | `out_of_scale` | bool | да | стрелка вне рабочей дуги калибровки |
 | `awaiting_post_cal` | bool | да | после смены калибровки ещё нет достоверного отсчёта |
 | `last_valid_value`, `last_valid_level`, `last_valid_ts` | — | да | последний достоверный отсчёт |
-| `dial_found`, `dial_source` | bool, str | да | локализация: `yolo`, `ellipse`, `yolo+ellipse`, `manual`, `frame`, `track` |
+| `dial_found`, `dial_source` | bool, str | да | локализация: `yolo`, `ellipse`, `yolo+ellipse`, `manual`, `frame`, `track`; Multi-Gauge (v1.2): `local` (поиск OpenCV у якоря), `predicted` (позиция по якорю и сдвигу камеры), `track/<источник ROI>` |
 | `method` | str \| null | да | метод стрелки: `moment/…`, `hough/…` |
 | `process_ms` | float | да | время конвейера на кадр, мс |
 | `calibration_rev` | int | да | ревизия калибровки прибора (§ 4.1), с которой получен отсчёт |
-| `track` | object \| null | нет | Multi-Gauge: `{"iou": float, "center_shift": float, "state": "locked"\|"reacquired"\|"lost"}` |
+| `track` | object \| null | нет | Multi-Gauge (v1.2): `{"state", "misses": int, "center_shift": float\|null, "radius_ratio": float\|null}`; `state` — `init`, `locked`, `reacquired`, `coasting`, `predicted`, `ambiguous`, `lost`, `manual`; годный отсчёт возможен в `locked`, `reacquired`, `coasting`, `predicted`, `manual`; `center_shift` — доли радиуса якоря |
 | `sparkline` | float[] | нет | последние ≤ 24 достоверных значения (для HMI) |
 | `measurement_state`, `connection_state`, `quality`, … | — | нет | производные состояния `demo.compute_live_states` |
 
@@ -327,3 +328,4 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_instruments_primary ON instruments (source
 |---|---|---|
 | 1.0 | 2026-11-27 | первая фиксация |
 | 1.1 | 2026-11-27 | сверка с реализацией Neon: `gauge_slot`, карта Modbus v2 и общий индекс слота для всех блоков, фактические таблицы аналитики, сигнатура `get_instrument_series` Neon, телеметрия по приборам только для многоприборных источников |
+| 1.2 | 2026-11-27 | `track` в InstrumentReading — фактический состав трекера: убрано не вычисляемое `iou`, добавлены `misses` и `radius_ratio`, перечислены все состояния; новые значения `dial_source` (`local`, `predicted`, `track/…`). Причина — в v1.0 поле описано до реализации трекера; Neon поле `track` не читает (проверено по веткам d131d55 и 6a1828d), поэтому расхождение исправлено без нарушения совместимости |
