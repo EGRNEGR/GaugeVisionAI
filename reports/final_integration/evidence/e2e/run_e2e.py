@@ -234,7 +234,10 @@ def main() -> int:
         # 3. обнаружение приборов
         def detect() -> Any:
             d = eng.post(f"/api/sources/{sid}/instruments/detect")
-            return d.json() if d.status_code == 200 and len(d.json()["candidates"]) >= 8 else None
+            if d.status_code != 200:
+                return None
+            j = d.json()
+            return j if len(j["candidates"]) >= 8 and any(c.get("is_primary_dial") for c in j["candidates"]) else None
         det = wait_for(detect, 90, 2.0) or {"candidates": [], "frame": {"w": 1280, "h": 720}}
         cands = det["candidates"]
         step(3, "Обнаружение аналоговых приборов на кадре", len(cands) == 8, found=len(cands), expected=8,

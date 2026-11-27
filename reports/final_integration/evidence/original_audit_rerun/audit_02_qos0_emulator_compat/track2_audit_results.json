@@ -1,0 +1,500 @@
+{
+  "timestamp": "2026-11-27T18:02:28",
+  "signal_quality_11_scenarios": {
+    "1_clean_moving": {
+      "health_status": "ONLINE",
+      "quality_score": 100.0,
+      "mean_luma": 105.8,
+      "sharpness": 2261.0,
+      "glare_pct": 0.0,
+      "frame_diff": 1.44,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "partial_occlusion": false,
+      "frame_drop_pct": 0.0,
+      "packet_loss_pct": null,
+      "packet_loss_available": false,
+      "degradation_reasons": [],
+      "injected_fault": null,
+      "updated_at": "2026-11-27T15:02:28.845+00:00"
+    },
+    "2a_static_needle_zero_noise_fp_check": {
+      "health_status": "DEGRADED",
+      "quality_score": 58.0,
+      "mean_luma": 106.0,
+      "sharpness": 2335.9,
+      "glare_pct": 0.0,
+      "frame_diff": 0.0,
+      "frozen": true,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "partial_occlusion": false,
+      "frame_drop_pct": 0.0,
+      "packet_loss_pct": null,
+      "packet_loss_available": false,
+      "degradation_reasons": [
+        "Заморозка кадра (поток отдаёт идентичные кадры)"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-27T15:02:28.853+00:00"
+    },
+    "2b_static_needle_sensor_noise": {
+      "health_status": "ONLINE",
+      "quality_score": 100.0,
+      "mean_luma": 105.9,
+      "sharpness": 2331.4,
+      "glare_pct": 0.0,
+      "frame_diff": 0.26,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "partial_occlusion": false,
+      "frame_drop_pct": 0.0,
+      "packet_loss_pct": null,
+      "packet_loss_available": false,
+      "degradation_reasons": [],
+      "injected_fault": null,
+      "updated_at": "2026-11-27T15:02:28.998+00:00"
+    },
+    "3_true_freeze_12_frames": {
+      "health_status": "DEGRADED",
+      "quality_score": 58.0,
+      "mean_luma": 105.8,
+      "sharpness": 2331.1,
+      "glare_pct": 0.0,
+      "frame_diff": 0.0,
+      "frozen": true,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "partial_occlusion": false,
+      "frame_drop_pct": 0.0,
+      "packet_loss_pct": null,
+      "packet_loss_available": false,
+      "degradation_reasons": [
+        "Заморозка кадра (поток отдаёт идентичные кадры)"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-27T15:02:29.013+00:00"
+    },
+    "4_low_light_real_pixels": {
+      "health_status": "DEGRADED",
+      "quality_score": 68.0,
+      "mean_luma": 14.1,
+      "sharpness": 48.4,
+      "glare_pct": 0.0,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": true,
+      "glare": false,
+      "steam_occlusion": false,
+      "partial_occlusion": false,
+      "frame_drop_pct": 0.0,
+      "packet_loss_pct": null,
+      "packet_loss_available": false,
+      "degradation_reasons": [
+        "Критически низкая освещённость (14/255)"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-27T15:02:29.024+00:00"
+    },
+    "5_partial_occlusion_50pct": {
+      "health_status": "DEGRADED",
+      "quality_score": 60.0,
+      "mean_luma": 55.2,
+      "sharpness": 1783.1,
+      "glare_pct": 0.0,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "partial_occlusion": true,
+      "frame_drop_pct": 0.0,
+      "packet_loss_pct": null,
+      "packet_loss_available": false,
+      "degradation_reasons": [
+        "Частичное перекрытие объектива (затемнение сектора кадра)"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-27T15:02:29.031+00:00"
+    },
+    "6_full_occlusion_black": {
+      "health_status": "DEGRADED",
+      "quality_score": 68.0,
+      "mean_luma": 4.0,
+      "sharpness": 0.0,
+      "glare_pct": 0.0,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": true,
+      "glare": false,
+      "steam_occlusion": false,
+      "partial_occlusion": false,
+      "frame_drop_pct": 0.0,
+      "packet_loss_pct": null,
+      "packet_loss_available": false,
+      "degradation_reasons": [
+        "Критически низкая освещённость (4/255)"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-27T15:02:29.031+00:00"
+    },
+    "7_fog_condensation_real_pixels": {
+      "health_status": "DEGRADED",
+      "quality_score": 62.0,
+      "mean_luma": 163.8,
+      "sharpness": 3.5,
+      "glare_pct": 0.0,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": true,
+      "partial_occlusion": false,
+      "frame_drop_pct": 0.0,
+      "packet_loss_pct": null,
+      "packet_loss_available": false,
+      "degradation_reasons": [
+        "Перекрытие объектива паром / задымлением"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-27T15:02:29.041+00:00"
+    },
+    "8_steam_smoke_real_pixels": {
+      "health_status": "DEGRADED",
+      "quality_score": 62.0,
+      "mean_luma": 182.7,
+      "sharpness": 1.1,
+      "glare_pct": 0.0,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": true,
+      "partial_occlusion": false,
+      "frame_drop_pct": 0.0,
+      "packet_loss_pct": null,
+      "packet_loss_available": false,
+      "degradation_reasons": [
+        "Перекрытие объектива паром / задымлением"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-27T15:02:29.051+00:00"
+    },
+    "9_glare_real_pixels": {
+      "health_status": "DEGRADED",
+      "quality_score": 62.0,
+      "mean_luma": 114.1,
+      "sharpness": 20.7,
+      "glare_pct": 23.7,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": true,
+      "partial_occlusion": false,
+      "frame_drop_pct": 0.0,
+      "packet_loss_pct": null,
+      "packet_loss_available": false,
+      "degradation_reasons": [
+        "Перекрытие объектива паром / задымлением"
+      ],
+      "injected_fault": null,
+      "updated_at": "2026-11-27T15:02:29.060+00:00"
+    },
+    "10_recovery_after_steam": {
+      "health_status": "ONLINE",
+      "quality_score": 100.0,
+      "mean_luma": 105.8,
+      "sharpness": 2353.3,
+      "glare_pct": 0.0,
+      "frame_diff": 83.04,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "partial_occlusion": false,
+      "frame_drop_pct": 0.0,
+      "packet_loss_pct": null,
+      "packet_loss_available": false,
+      "degradation_reasons": [],
+      "injected_fault": null,
+      "updated_at": "2026-11-27T15:02:29.067+00:00"
+    },
+    "11_natural_dimming_45pct": {
+      "health_status": "ONLINE",
+      "quality_score": 100.0,
+      "mean_luma": 46.8,
+      "sharpness": 471.9,
+      "glare_pct": 0.0,
+      "frame_diff": 8.0,
+      "frozen": false,
+      "low_light": false,
+      "glare": false,
+      "steam_occlusion": false,
+      "partial_occlusion": false,
+      "frame_drop_pct": 0.0,
+      "packet_loss_pct": null,
+      "packet_loss_available": false,
+      "degradation_reasons": [],
+      "injected_fault": null,
+      "updated_at": "2026-11-27T15:02:29.076+00:00"
+    }
+  },
+  "adaptive_fps": {
+    "idle_calls": 3,
+    "idle_actual_fps": 0.99,
+    "burst_triggered": true,
+    "switch_latency_ms": 0.026,
+    "burst_calls": 9,
+    "burst_actual_fps": 5.82,
+    "returned_to_idle_after_hold": true,
+    "actual_compute_reduction_pct": 83.0,
+    "transient_035s_spike_missed_at_1fps": true,
+    "note_aliasing": "At 1.0 FPS eco_idle, _process_loop sleeps 1.0s without lightweight frame-diff/motion wake-up; any transient < 1.0s between samples is missed."
+  },
+  "ring_buffer": {
+    "single_incident_pre_tags": [
+      "PRE_03",
+      "PRE_04",
+      "PRE_05",
+      "PRE_06",
+      "PRE_07"
+    ],
+    "single_incident_post_tags": [
+      "POST_08",
+      "POST_09",
+      "POST_10"
+    ],
+    "pre_strictly_before_trigger": true,
+    "post_strictly_after_trigger": true,
+    "concurrent_incidents_archived": 2,
+    "concurrent_incident_1_lost": false,
+    "persisted_to_disk": false,
+    "stats_after": {
+      "pre_buffered": 5,
+      "pre_capacity": 5,
+      "post_target": 3,
+      "capturing_post": false,
+      "active_captures": 0,
+      "archived_clips": 1,
+      "persisted_to_disk": false,
+      "persisted_clips": 0,
+      "buffer_kb": 0.1
+    }
+  },
+  "multistream_load_and_isolation": {
+    "scaling": {
+      "1_channels": {
+        "elapsed_s": 4.03,
+        "total_inferences": 1,
+        "aggregate_fps": 0.25,
+        "per_channel_fps": {
+          "ch-0": 0.25
+        },
+        "latency_p50_ms": 3835.3,
+        "latency_p95_ms": 3835.3,
+        "latency_p99_ms": 3835.3,
+        "event_loop_lag_p95_ms": 27.32,
+        "event_loop_lag_max_ms": 53.08,
+        "errors": 0,
+        "isolation_other_channels_continue_after_stop": null
+      },
+      "2_channels": {
+        "elapsed_s": 3.63,
+        "total_inferences": 42,
+        "aggregate_fps": 11.58,
+        "per_channel_fps": {
+          "ch-0": 5.79,
+          "ch-1": 5.79
+        },
+        "latency_p50_ms": 75.5,
+        "latency_p95_ms": 124.5,
+        "latency_p99_ms": 154.2,
+        "event_loop_lag_p95_ms": 17.25,
+        "event_loop_lag_max_ms": 27.26,
+        "errors": 0,
+        "isolation_other_channels_continue_after_stop": null
+      },
+      "4_channels": {
+        "elapsed_s": 3.61,
+        "total_inferences": 80,
+        "aggregate_fps": 22.17,
+        "per_channel_fps": {
+          "ch-0": 5.82,
+          "ch-1": 5.54,
+          "ch-2": 5.27,
+          "ch-3": 5.54
+        },
+        "latency_p50_ms": 71.1,
+        "latency_p95_ms": 120.8,
+        "latency_p99_ms": 149.8,
+        "event_loop_lag_p95_ms": 21.93,
+        "event_loop_lag_max_ms": 27.15,
+        "errors": 0,
+        "isolation_other_channels_continue_after_stop": false
+      },
+      "8_channels": {
+        "elapsed_s": 3.74,
+        "total_inferences": 94,
+        "aggregate_fps": 25.11,
+        "per_channel_fps": {
+          "ch-0": 3.21,
+          "ch-1": 3.21,
+          "ch-2": 2.94,
+          "ch-3": 3.21,
+          "ch-4": 3.21,
+          "ch-5": 3.21,
+          "ch-6": 2.94,
+          "ch-7": 3.21
+        },
+        "latency_p50_ms": 70.9,
+        "latency_p95_ms": 117.3,
+        "latency_p99_ms": 133.3,
+        "event_loop_lag_p95_ms": 17.13,
+        "event_loop_lag_max_ms": 27.0,
+        "errors": 0,
+        "isolation_other_channels_continue_after_stop": null
+      }
+    },
+    "dead_rtsp_test": {
+      "duration_s": 3.28,
+      "fail_count": 3,
+      "status_before_stop": "reconnecting",
+      "last_error": "источник заблокирован политикой безопасности: Loopback-адреса (127.0.0.0/8, ::1) запрещены для сетевых потоков (установите GAUGEVISION_ALLOW_LOOPBACK_STREAMS=1 для локального стенда)",
+      "event_loop_max_lag_ms": 11.3,
+      "status_transitions": [
+        [
+          286369.66,
+          "reconnecting"
+        ],
+        [
+          286372.92,
+          "offline"
+        ]
+      ]
+    }
+  },
+  "store_and_forward_A_to_G": {
+    "actual_sqlite_journal_mode": "wal",
+    "scenario_A_normal": {
+      "produced": 10,
+      "delivered_calls": 10,
+      "unique_uuids": 10,
+      "pending": 0,
+      "in_order": true
+    },
+    "scenario_B_outage": {
+      "produced": 15,
+      "delivered_during_outage": 0,
+      "pending": 15,
+      "sync_state": "BUFFERING"
+    },
+    "scenario_C_recovery": {
+      "flushed": 15,
+      "batches": 1,
+      "recovery_ms": 5.53,
+      "pending_after": 0,
+      "strict_chronological_seq": true,
+      "alarm_has_frame_flag": true,
+      "alarm_frame_blob_actually_delivered": true
+    },
+    "scenario_D_restart_during_outage": {
+      "pending_before_restart": 15,
+      "pending_after_restart": 15,
+      "zero_loss_across_restart": true
+    },
+    "scenario_E_reoutage_midsync": {
+      "produced": 50,
+      "flushed_before_second_outage": 40,
+      "pending_after_interruption": 10,
+      "flushed_after_recovery": 10,
+      "pending_final": 0,
+      "total_accounted_for": true
+    },
+    "scenario_F_lost_ack": {
+      "deliver_attempts_received": 2,
+      "unique_event_uuids": 1,
+      "duplicate_deliveries": 1,
+      "delivery_guarantee": "at-least-once (no receiver-side idempotency / dedup)"
+    },
+    "scenario_G_prolonged_outage_cap": {
+      "configured_sf_max_queue_rows": 30,
+      "enqueued_during_outage": 60,
+      "pending_rows_in_sqlite": 30,
+      "pending_queue_unbounded_on_outage": false
+    },
+    "concurrency_enqueue_vs_flush_race": {
+      "delivered_count": 38,
+      "duplicate_seq_ids": 0,
+      "out_of_order": false
+    }
+  },
+  "scada_mqtt_and_modbus": {
+    "mqtt_live_broker": {
+      "connected": true,
+      "messages_sent_wire": 2,
+      "sample_topics": [
+        "interrao/tec22/ktc/gaugevision/k1-p01/telemetry",
+        "interrao/tec22/ktc/gaugevision/k1-p01/alarm"
+      ],
+      "qos_supported": 0,
+      "auth_supported": false,
+      "pingreq_implemented": false
+    },
+    "mqtt_broker_down_fault_injection": {
+      "enqueue_status_while_broker_down": "pending",
+      "pending_in_sf_queue": 1,
+      "DEFECT_silent_drop_when_broker_down": false
+    },
+    "modbus_tcp_wire": {
+      "i1_decoded_float32": 13.75,
+      "i1_status_code": 0,
+      "i1_health_x10": 945,
+      "i2_stale_float32": NaN,
+      "i2_stale_status_code": 3,
+      "fc04_system_regs": [
+        2,
+        0,
+        0,
+        1,
+        7,
+        1
+      ],
+      "illegal_fc_exception": [
+        134,
+        1
+      ],
+      "illegal_addr_exception": [
+        3,
+        20,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "wrong_unit_id_99_accepted_without_check": false
+    }
+  }
+}

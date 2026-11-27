@@ -1,0 +1,73 @@
+[
+  {
+    "run": "audit_01_cv_regression",
+    "script": "audit_01_cv_regression.py",
+    "env_overrides": {},
+    "exit_code": 0,
+    "seconds": 8.3,
+    "outputs": [
+      "cv_regression_results.json"
+    ]
+  },
+  {
+    "run": "audit_02_qos1_default",
+    "script": "audit_02_track2_streams_sf_scada.py",
+    "env_overrides": {},
+    "exit_code": 0,
+    "seconds": 37.7,
+    "outputs": [
+      "track2_audit_results.json"
+    ]
+  },
+  {
+    "run": "audit_02_qos0_emulator_compat",
+    "script": "audit_02_track2_streams_sf_scada.py",
+    "env_overrides": {
+      "GAUGEVISION_MQTT_QOS": "0"
+    },
+    "exit_code": 0,
+    "seconds": 32.5,
+    "outputs": [
+      "track2_audit_results.json"
+    ]
+  },
+  {
+    "run": "audit_03_security_rbac_on",
+    "script": "audit_03_track1_dispatch_specs_security.py",
+    "env_overrides": {},
+    "exit_code": 0,
+    "seconds": 8.6,
+    "outputs": [
+      "audit_sample_overload_gas_ex.docx",
+      "audit_sample_overload_gas_ex.md",
+      "track1_security_audit_results.json"
+    ]
+  },
+  {
+    "run": "audit_04_hmi_auth_off_compat",
+    "script": "audit_04_hmi_browser_airgap_e2e.py",
+    "env_overrides": {
+      "GAUGEVISION_AUTH_REQUIRED": "0"
+    },
+    "exit_code": 0,
+    "seconds": 39.5,
+    "outputs": [
+      "browser_driver_report.json",
+      "e2e_downloaded_spec.docx",
+      "e2e_downloaded_spec.md",
+      "e2e_server.log",
+      "hmi_e2e_audit_results.json",
+      "screenshots"
+    ]
+  },
+  {
+    "run": "audit_05_soak_edge_cases",
+    "script": "audit_05_soak_and_edge_cases.py",
+    "env_overrides": {},
+    "exit_code": 0,
+    "seconds": 27.3,
+    "outputs": [
+      "perf_soak_fault_results.json"
+    ]
+  }
+]

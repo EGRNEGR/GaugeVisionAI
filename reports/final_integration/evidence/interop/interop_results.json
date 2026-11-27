@@ -1,0 +1,281 @@
+{
+  "started_utc": "2026-11-27T15:14:10Z",
+  "checks": {
+    "rtsp_url_masked_in_response": true,
+    "rtsp_connect_s": 4.03,
+    "rtsp_first_valid_reading_s": 0.5,
+    "rtsp_cv": {
+      "samples": 80,
+      "within_0_35_MPa_of_reference": 80,
+      "share_within": 1.0,
+      "mae_vs_nearest_reference": 0.0282,
+      "p50_process_ms": 65.8,
+      "stream_fps_median": 10.0,
+      "saw_6_0": true,
+      "saw_11_5": true
+    },
+    "rtsp_readings_in_sqlite": 35,
+    "rtsp_publisher_down_detected_s": 0.53,
+    "rtsp_outage_channel_diagnostics": [
+      {
+        "frame_drop_pct": 1.0,
+        "health": "OFFLINE",
+        "reasons": []
+      },
+      {
+        "frame_drop_pct": 1.0,
+        "health": "OFFLINE",
+        "reasons": []
+      },
+      {
+        "frame_drop_pct": 1.0,
+        "health": "OFFLINE",
+        "reasons": []
+      },
+      {
+        "frame_drop_pct": 1.0,
+        "health": "OFFLINE",
+        "reasons": []
+      },
+      {
+        "frame_drop_pct": 1.0,
+        "health": "OFFLINE",
+        "reasons": []
+      },
+      {
+        "frame_drop_pct": 1.0,
+        "health": "OFFLINE",
+        "reasons": []
+      },
+      {
+        "frame_drop_pct": 1.0,
+        "health": "OFFLINE",
+        "reasons": []
+      },
+      {
+        "frame_drop_pct": 1.0,
+        "health": "OFFLINE",
+        "reasons": []
+      }
+    ],
+    "rtsp_publisher_recovered_s": 10.07,
+    "rtsp_server_down_detected_s": 0.01,
+    "rtsp_server_recovered_s": 14.11,
+    "rtsp_inference_resumed_s": 0.0,
+    "rtsp_stream_after_recovery": {
+      "status": "online",
+      "fps": 1.1,
+      "fail_count": 0,
+      "last_error": null
+    },
+    "other_channels_online_during_test": [
+      [
+        "edge-bench-k1t01",
+        "online"
+      ],
+      [
+        "edge-bench-ta2t02",
+        "online"
+      ]
+    ],
+    "phone_first_valid_s": 1.51,
+    "mqtt_connected_s": 0.0,
+    "mqtt_before_outage": {
+      "mode": "BROKER_LIVE",
+      "broker_sent": 73,
+      "puback_received": 73,
+      "publish_failures": 0
+    },
+    "mqtt_during_outage": {
+      "pending_series": [
+        {
+          "t": 0.0,
+          "pending": 0,
+          "pending_alarms": 0,
+          "sync_state": "CONNECTED",
+          "link_down": false
+        },
+        {
+          "t": 3.0,
+          "pending": 3,
+          "pending_alarms": 3,
+          "sync_state": "SYNCING",
+          "link_down": false
+        },
+        {
+          "t": 6.0,
+          "pending": 5,
+          "pending_alarms": 5,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        },
+        {
+          "t": 9.0,
+          "pending": 6,
+          "pending_alarms": 6,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        },
+        {
+          "t": 12.0,
+          "pending": 8,
+          "pending_alarms": 8,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        },
+        {
+          "t": 15.0,
+          "pending": 9,
+          "pending_alarms": 9,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        },
+        {
+          "t": 18.1,
+          "pending": 10,
+          "pending_alarms": 10,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        },
+        {
+          "t": 21.1,
+          "pending": 12,
+          "pending_alarms": 12,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        },
+        {
+          "t": 24.1,
+          "pending": 13,
+          "pending_alarms": 13,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        },
+        {
+          "t": 27.1,
+          "pending": 15,
+          "pending_alarms": 15,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        },
+        {
+          "t": 30.1,
+          "pending": 16,
+          "pending_alarms": 16,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        },
+        {
+          "t": 33.1,
+          "pending": 18,
+          "pending_alarms": 18,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        },
+        {
+          "t": 36.1,
+          "pending": 19,
+          "pending_alarms": 19,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        },
+        {
+          "t": 39.1,
+          "pending": 21,
+          "pending_alarms": 21,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        },
+        {
+          "t": 42.1,
+          "pending": 22,
+          "pending_alarms": 22,
+          "sync_state": "BUFFERING",
+          "link_down": true
+        }
+      ],
+      "mode": "BROKER_RETRY",
+      "publish_failures": 5
+    },
+    "mqtt_outage_detection": {
+      "detected_after_s": 6.0,
+      "buffering_held_until_recovery": true,
+      "mqtt_ack_timeout_s": 2.0
+    },
+    "mqtt_recovery": {
+      "peak_pending": 22,
+      "drain_s": 9.05,
+      "reconnect_s": 0.0
+    },
+    "mqtt_sync_state_after_recovery": "CONNECTED",
+    "mqtt_delivery_reconciliation": {
+      "sf_rows_total": 109,
+      "sf_rows_sent": 109,
+      "sf_rows_pending": 0,
+      "sf_rows_pending_older_10s": 0,
+      "subscriber_messages": 112,
+      "subscriber_before_outage": 73,
+      "sent_but_not_received": 0,
+      "duplicate_deliveries": 0,
+      "alarm_rows": 15,
+      "alarm_rows_with_frame": 3,
+      "frames_received": 3,
+      "frames_sha256_ok": true
+    },
+    "modbus_pymodbus": {
+      "instruments_compared": 30,
+      "matched_api_values": 30,
+      "stale_encoded_as_nan": true,
+      "system_block": [
+        37,
+        2,
+        3,
+        1,
+        0,
+        0
+      ],
+      "foreign_unit_99": {
+        "error": true,
+        "exception_code": 11
+      },
+      "out_of_range_address": {
+        "error": false,
+        "exception_code": null
+      }
+    },
+    "rtsp_password_leaks": {
+      "api": 0,
+      "server_log": 0
+    }
+  },
+  "rtsp_enabled": true,
+  "server_start_s": 5.2,
+  "server_exit_code": 3,
+  "server_graceful_shutdown_logged": true,
+  "token_leaks_in_server_log": 0,
+  "phone_client": {
+    "sent": 221,
+    "acks": 221,
+    "errors": []
+  },
+  "finished_utc": "2026-11-27T15:17:34Z",
+  "verdict": {
+    "rtsp_online": true,
+    "rtsp_cv_accuracy": true,
+    "rtsp_auto_recovery": true,
+    "rtsp_inference_resumed": true,
+    "rtsp_outage_degradation_reported": true,
+    "rtsp_password_masked": true,
+    "no_tokens_in_server_log": true,
+    "mqtt_buffered_during_outage": true,
+    "mqtt_drained_after_recovery": true,
+    "mqtt_outage_reported_as_buffering": true,
+    "mqtt_state_connected_after_drain": true,
+    "mqtt_no_loss": true,
+    "mqtt_frames_intact": true,
+    "modbus_values_match": true,
+    "modbus_foreign_unit_rejected": true,
+    "server_graceful_exit": true
+  },
+  "passed": true
+}

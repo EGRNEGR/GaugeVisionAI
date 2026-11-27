@@ -1,0 +1,19 @@
+C:\C1\GaugeVS\.venv\Lib\site-packages\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+  from starlette.testclient import TestClient as TestClient  # noqa
+[PASS] migration_from_real_old_code {"GaugeVision-1.0 console (dd25bde)": {"tables": 3, "readings": 120, "events": null, "slots": {"legacy-cam-1": 1, "legacy-cam-a": 2, "legacy-cam-z": 0}, "passports": null, "plans": null}, "GaugeVision-2.0 (94e646e)": {"tables": 10, "readings": 120, "events": 7, "slots": {"legacy-cam-1": 1, "legacy-cam-a": 2, "legacy-cam-z": 0}, "passports": null, "plans": null}, "next-gen/platform (90dcadf)": {"ta
+[OBS-SHARED-01] веб-сервер слушает все интерфейсы; задайте GAUGEVISION_HOST — адрес технологического VLAN (смартфон-камера должна быть в той же сети)
+[PASS] network_policy {"llm_rejected": ["file:///etc/passwd", "http://169.254.169.254/latest", "https://8.8.8.8/v1", "https://user:pw@127.0.0.1/v1"]}
+[PASS] cv_forecast_input {"eta_ratio_median": 1.04, "eta_ratio_range": [1.021, 1.051], "false_imminent_stable": 0, "bin_s": 30.0}
+Creating new Ultralytics Settings v0.0.8 file  
+View Ultralytics Settings with 'yolo settings' or at 'C:\Users\Egoru\AppData\Local\Temp\gv_final_int__wxz6_47\yolo_cfg\Ultralytics\settings.json'
+Update Settings with 'yolo settings key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/usage/settings.
+[PASS] multigauge_calibration_isolation {"target_rev": 1, "rows_old_rev": 3, "rows_new_rev": 3, "series_len": 3}
+[PASS] modbus_slots_lifecycle {"slots": [0, 1, 2], "deleted_slot": 2, "reused_slot": 2, "max_registers": 5208}
+[PASS] stream_loss_and_recovery {"stale_after_s": 7.4, "recovered_after_s": 0.0}
+[PASS] prediction_events_lifecycle {"state_machine_events": ["imminent", "cleared", "imminent", "withdrawn", "imminent", "realized"], "eta_alert_min": 27.1, "sf_rows": 1, "journal_events": 1}
+[PASS] monitoring_vs_optimizer {"timeout_status": "time_limit", "timeout_wall_s": 0.06, "predictive_500_ms": 778.3, "solve_500_ms": 1775.6, "solve_status": "time_limit", "elapsed_s": 1.766, "frontier_complete": true, "loop_lag_p95_ms": 36.6, "loop_lag_max_ms": 394.7}
+[PASS] spec_matches_saved_plan {"plan_id": 1, "selected": 3, "md_bytes": 13415, "docx_bytes": 67394}
+[PASS] new_api_security {"unauth": {"GET sources": 401, "POST detect": 401, "POST instrument": 401, "PATCH instrument": 401, "DELETE instrument": 401, "GET predictive": 401, "POST solve": 401}, "operator": {"GET sources": 200, "POST detect": 403, "PATCH instrument": 403, "DELETE instrument": 403}, "malformed": {"NaN calibration": 422, "degenerate scale": 422, "huge name": 422, "unknown source": 404, "engineer delete": 40
+[PASS] autocal_cannot_apply {"routes_checked": 78, "revs": [2, 3, 4], "audit_rows": 4}
+[PASS] restart_persistence instruments=3 readings=49
+FINAL INTEGRATION: 12/12 PASSED

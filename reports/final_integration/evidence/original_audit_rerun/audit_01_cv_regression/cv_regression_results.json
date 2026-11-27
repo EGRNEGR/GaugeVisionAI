@@ -1,0 +1,387 @@
+{
+  "timestamp": "2026-11-27T18:01:42",
+  "device_policy": "cpu_only (hardware safety)",
+  "weights_path": "C:\\Hakatons\\GaugeVisionAIDesign DashBoard\\.claude\\worktrees\\integration\\models\\gauge_yolov8.pt",
+  "weights_exists": true,
+  "yolo_load_ms": 3813.9,
+  "yolo_available": true,
+  "yolo_device": "CPU",
+  "vision_git_diff_vs_baseline": "app/vision.py | 437 ++++++++++++++++++++++++++++++++++++++++++++++++++--------\n 1 file changed, 376 insertions(+), 61 deletions(-)",
+  "cw_sweep_0_16_mpa": {
+    "n_total": 17,
+    "n_valid": 17,
+    "n_missed": 0,
+    "mae_mpa": 0.0126,
+    "rmse_mpa": 0.0146,
+    "mae_pct_fs": 0.079,
+    "max_err_mpa": 0.0275,
+    "avg_ms": 96.6,
+    "p95_ms": 126.4,
+    "samples": [
+      {
+        "true": 0.0,
+        "pred": 0.0131,
+        "abs_err": 0.0131,
+        "angle": 135.22,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "alert",
+        "process_ms": 126.4
+      },
+      {
+        "true": 1.0,
+        "pred": 1.0138,
+        "abs_err": 0.0138,
+        "angle": 152.11,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "yolo+ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "alert",
+        "process_ms": 83.9
+      },
+      {
+        "true": 2.0,
+        "pred": 2.0275,
+        "abs_err": 0.0275,
+        "angle": 169.21,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "yolo+ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "warning",
+        "process_ms": 87.9
+      },
+      {
+        "true": 3.0,
+        "pred": 3.004,
+        "abs_err": 0.004,
+        "angle": 185.69,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "warning",
+        "process_ms": 86.1
+      },
+      {
+        "true": 4.0,
+        "pred": 4.0174,
+        "abs_err": 0.0174,
+        "angle": 202.79,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "normal",
+        "process_ms": 95.7
+      },
+      {
+        "true": 5.5,
+        "pred": 5.4905,
+        "abs_err": 0.0095,
+        "angle": 227.65,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "normal",
+        "process_ms": 82.8
+      },
+      {
+        "true": 7.0,
+        "pred": 6.9892,
+        "abs_err": 0.0108,
+        "angle": 252.94,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "normal",
+        "process_ms": 88.2
+      },
+      {
+        "true": 8.0,
+        "pred": 7.9901,
+        "abs_err": 0.0099,
+        "angle": 269.83,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "normal",
+        "process_ms": 102.4
+      },
+      {
+        "true": 9.5,
+        "pred": 9.482,
+        "abs_err": 0.018,
+        "angle": 295.01,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "yolo+ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "normal",
+        "process_ms": 100.4
+      },
+      {
+        "true": 11.0,
+        "pred": 10.9739,
+        "abs_err": 0.0261,
+        "angle": 320.19,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "yolo+ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "normal",
+        "process_ms": 88.3
+      },
+      {
+        "true": 12.5,
+        "pred": 12.4837,
+        "abs_err": 0.0163,
+        "angle": 345.66,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "yolo+ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "normal",
+        "process_ms": 83.5
+      },
+      {
+        "true": 13.0,
+        "pred": 12.9882,
+        "abs_err": 0.0118,
+        "angle": 354.18,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "normal",
+        "process_ms": 104.0
+      },
+      {
+        "true": 14.0,
+        "pred": 13.9807,
+        "abs_err": 0.0193,
+        "angle": 10.92,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "normal",
+        "process_ms": 89.3
+      },
+      {
+        "true": 14.7,
+        "pred": 14.6976,
+        "abs_err": 0.0024,
+        "angle": 23.02,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "warning",
+        "process_ms": 101.5
+      },
+      {
+        "true": 15.2,
+        "pred": 15.2083,
+        "abs_err": 0.0083,
+        "angle": 31.64,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "alert",
+        "process_ms": 94.0
+      },
+      {
+        "true": 15.7,
+        "pred": 15.7055,
+        "abs_err": 0.0055,
+        "angle": 40.03,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "alert",
+        "process_ms": 135.5
+      },
+      {
+        "true": 16.0,
+        "pred": 15.9998,
+        "abs_err": 0.0002,
+        "angle": 45.0,
+        "valid": true,
+        "conf": 1.0,
+        "dial_source": "ellipse",
+        "method": "hough+moment/blackhat",
+        "level": "alert",
+        "process_ms": 92.6
+      }
+    ]
+  },
+  "ccw_scale": {
+    "n_valid": 5,
+    "mae_pct": 0.084,
+    "samples": [
+      {
+        "true": 10.0,
+        "pred": 9.94967257953473,
+        "err": 0.05032742046527083,
+        "valid": true,
+        "conf": 1.0
+      },
+      {
+        "true": 35.0,
+        "pred": 35.11257751726294,
+        "err": 0.11257751726294174,
+        "valid": true,
+        "conf": 1.0
+      },
+      {
+        "true": 50.0,
+        "pred": 50.06188536849072,
+        "err": 0.061885368490720793,
+        "valid": true,
+        "conf": 1.0
+      },
+      {
+        "true": 75.0,
+        "pred": 74.89123239395856,
+        "err": 0.10876760604143954,
+        "valid": true,
+        "conf": 1.0
+      },
+      {
+        "true": 92.0,
+        "pred": 91.91578273390765,
+        "err": 0.08421726609235236,
+        "valid": true,
+        "conf": 1.0
+      }
+    ]
+  },
+  "negative_range": {
+    "n_valid": 5,
+    "mae_kpa": 0.093,
+    "samples": [
+      {
+        "true": -95.0,
+        "pred": -94.9579118718161,
+        "err": 0.04208812818390584,
+        "valid": true,
+        "level": "warning"
+      },
+      {
+        "true": -75.0,
+        "pred": -74.89123239395857,
+        "err": 0.10876760604142532,
+        "valid": true,
+        "level": "normal"
+      },
+      {
+        "true": -50.0,
+        "pred": -50.061885368490714,
+        "err": 0.06188536849071369,
+        "valid": true,
+        "level": "normal"
+      },
+      {
+        "true": -25.0,
+        "pred": -25.200666763344543,
+        "err": 0.20066676334454314,
+        "valid": true,
+        "level": "normal"
+      },
+      {
+        "true": -5.0,
+        "pred": -4.948271401037317,
+        "err": 0.05172859896268278,
+        "valid": true,
+        "level": "alert"
+      }
+    ]
+  },
+  "edge_cases": {
+    "blank_frame": {
+      "valid": false,
+      "dial_found": false,
+      "value": null,
+      "conf": 0.0
+    },
+    "dead_zone_90deg": {
+      "value": null,
+      "rejected_as_none": true
+    },
+    "perspective_tilt_072": {
+      "true": 12.0,
+      "pred": 11.738911528846677,
+      "abs_err": 0.261,
+      "valid": true,
+      "dial_source": "yolo+ellipse",
+      "conf": 1.0
+    },
+    "glare": {
+      "true": 12.0,
+      "pred": null,
+      "abs_err": null,
+      "valid": false,
+      "dial_source": "frame",
+      "conf": 0.168
+    },
+    "partial_occlusion_44pct": {
+      "true": 12.0,
+      "pred": null,
+      "abs_err": null,
+      "valid": false,
+      "dial_source": "opencv",
+      "conf": 0.0
+    },
+    "two_gauges_in_single_frame": {
+      "note": "GaugePipeline returns a single GaugeReading (largest bbox/ellipse); multi-gauge-per-frame is NOT supported.",
+      "pred": 3.989599965302272,
+      "valid": true,
+      "dial_source": "yolo+ellipse",
+      "roi_center": [
+        575.9908447265625,
+        299.9990234375
+      ]
+    },
+    "ema_step_response": [
+      {
+        "true": 8.0,
+        "raw": 7.990098341041485,
+        "ema": 7.99
+      },
+      {
+        "true": 8.0,
+        "raw": 7.990098341041485,
+        "ema": 7.99
+      },
+      {
+        "true": 14.0,
+        "raw": 13.980714555036728,
+        "ema": 9.488
+      },
+      {
+        "true": 14.0,
+        "raw": 13.980714555036728,
+        "ema": 10.611
+      },
+      {
+        "true": 14.0,
+        "raw": 13.980714555036728,
+        "ema": 11.453
+      },
+      {
+        "true": 14.0,
+        "raw": 13.980714555036728,
+        "ema": 12.085
+      }
+    ]
+  }
+}

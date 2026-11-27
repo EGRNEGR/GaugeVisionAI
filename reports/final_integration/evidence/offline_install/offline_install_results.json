@@ -1,0 +1,116 @@
+{
+  "started_utc": "2026-11-27T15:09:35Z",
+  "checks": {
+    "wheelhouse": {
+      "files": 61,
+      "size_mb": 307.2
+    },
+    "pip_install": {
+      "rc": 0,
+      "seconds": 108.5
+    },
+    "pip_check_rc": 0,
+    "lock_vs_installed": {
+      "lock_entries": 61,
+      "missing": [],
+      "extra": []
+    },
+    "imports": {
+      "rc": 0,
+      "versions": "2.14.1+cpu 8.4.183 5.0.0 False",
+      "stderr_tail": ""
+    },
+    "yolo_weights": {
+      "exists": true,
+      "bytes": 6503658,
+      "sha256": "0bcc644b40023ec281464c9a1d5d0431718708d9caa4fc2ed677d1b470ea9e68"
+    },
+    "static": {
+      "index_refs": 5,
+      "js_module_imports": 18,
+      "missing": [],
+      "external_resource_urls": [],
+      "external_navigation_links": []
+    },
+    "server_start_s": 6.1,
+    "meta": {
+      "yolo": true,
+      "yolo_device": "CPU",
+      "demo": true
+    },
+    "cv_bench_streams": [
+      {
+        "id": "edge-bench-k1t01",
+        "status": "online",
+        "value": 568.3072,
+        "inference_ms": 75.0,
+        "frames": 158
+      },
+      {
+        "id": "edge-bench-ta2t02",
+        "status": "online",
+        "value": 95.8776,
+        "inference_ms": 98.7,
+        "frames": 158
+      }
+    ],
+    "hmi": {
+      "index": 200,
+      "assets_ok": 5,
+      "assets_total": 5,
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src"
+    },
+    "analytics": {
+      "instruments": 36,
+      "avg_health": 88.0
+    },
+    "docx": {
+      "status": 200,
+      "valid": true,
+      "bytes": 132690,
+      "media": 4
+    },
+    "modbus_system_block": [
+      36,
+      2,
+      3,
+      2,
+      0,
+      0
+    ],
+    "server_exit_code": 3,
+    "yolo_loaded_logged": true,
+    "graceful_shutdown_logged": true,
+    "log_errors": 0,
+    "sqlite": {
+      "journal_mode": "wal",
+      "instrument_readings": 170,
+      "events": 9,
+      "users": 3
+    },
+    "runtime_network_audit": {
+      "events_total": 0,
+      "local_hostname_lookup": 0,
+      "udp_route_probe_no_packets": [],
+      "external_attempts": []
+    }
+  },
+  "verdict": {
+    "offline_install_ok": true,
+    "installed_matches_lock": true,
+    "imports_ok": true,
+    "weights_present": true,
+    "static_complete_no_external": true,
+    "yolo_cpu_loaded": true,
+    "cv_inference_running": true,
+    "hmi_served": true,
+    "sqlite_written": true,
+    "analytics_36": true,
+    "docx_generated": true,
+    "modbus_serves": true,
+    "no_external_network_attempts": true,
+    "no_server_errors": true
+  },
+  "passed": true,
+  "finished_utc": "2026-11-27T15:12:12Z"
+}
