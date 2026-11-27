@@ -17,8 +17,23 @@
 
 ---
 
+## Версия 3.0
+
+Ветка `next-gen/integration` объединяет платформенную ветку (`next-gen/platform`: щит из нескольких приборов в одном кадре, реестр приборов, постоянные слоты Modbus) и аналитическую (`next-gen/analytics-validation`: прогноз ETA до уставок с интервалами, оптимизатор плана модернизации, стыковка с Ignition 8.3). Что вошло:
+
+- **Щит:** один видеоисточник — несколько приборов (в сквозном испытании — 8 в одном кадре), у каждого свой `instrument_id`, `gauge_slot`, калибровка с ревизией (`calibration_rev`) и постоянный `modbus_slot` 0…199.
+- **Прогноз:** тренд, PI80 / PI95, ETA до уставок H / HH; переходы прогноза — события `prediction` в журнале, по MQTT и в прогнозном блоке Modbus (слоты 61…199 — продолжение блока с адреса 4096).
+- **Оптимизатор модернизации:** 0-1 ILP по бюджету, кривая Парето, сохранённые планы, раздел плана в ТЗ (.docx / .md).
+- **Интеграция с АСУ ТП:** Modbus TCP (только чтение), MQTT 3.1.1 через Store-and-Forward, проект тегов и мнемосхема для Ignition 8.3 (`integrations/ignition/`).
+- **Сетевая политика развёртывания:** строгий режим `GAUGEVISION_STRICT_NETWORK`, белый список клиентов Modbus, TLS для MQTT, запрет внешних LLM.
+
+Автокалибровка по фото (`app/autocal.py`) не прошла валидацию и **выключена**: к API и пульту не подключена.
+
+**Статус:** инженерный прототип. Это не сертифицированное средство измерений и не система противоаварийной защиты. Готовность по уровням, результаты испытаний и ограничения — в [`reports/final_integration/`](reports/final_integration/): [итоговое заключение](reports/final_integration/FINAL_ACCEPTANCE_REPORT.md), [ограничения](reports/final_integration/KNOWN_LIMITATIONS.md), [примечания к выпуску](reports/final_integration/RELEASE_NOTES.md).
+
 ## Содержание
 
+- [Версия 3.0](#версия-30)
 - [Проблема](#проблема)
 - [Возможности](#возможности)
 - [Как это работает](#как-это-работает)
@@ -151,7 +166,26 @@ py -3.12 -m venv .venv
 | `--host` | адрес привязки, по умолчанию `0.0.0.0` |
 | `--port` | порт HTTPS, по умолчанию `8443` |
 | `--lan-ip 192.168.1.10` | задать LAN IP вручную, если автоопределение выбрало не тот интерфейс |
+| `--demo` / `--no-demo` | демонстрационный профиль (36 стендовых приборов, отдельная БД `data/gaugevision_demo.db`, стендовые пароли) или рабочий |
+| `--db` | путь к базе SQLite (переопределяет `GAUGEVISION_DB`) |
+| `--device` | `auto`, `cpu` или `cuda:0` |
 | `--log-level` | `debug`, `info`, `warning` или `error` |
+
+Вход обязателен (роли `operator`, `engineer`, `admin`). В рабочем профиле стендовые пароли не принимаются: при первом запуске сервис генерирует случайные пароли и один раз записывает их в `initial_credentials.txt` рядом с базой — перенесите их в защищённое хранилище и удалите файл.
+
+Интеграция с АСУ ТП включается переменными окружения:
+
+```powershell
+$env:GAUGEVISION_MODBUS_ENABLED = "1"          # Modbus TCP, только чтение, порт 15020
+$env:GAUGEVISION_MODBUS_HOST = "0.0.0.0"       # по умолчанию 127.0.0.1 (SCADA на том же узле)
+$env:GAUGEVISION_MODBUS_ALLOWED_CLIENTS = "10.0.5.20"   # IP или CIDR через запятую; без списка привязка вне 127.0.0.1 запрещена
+$env:GAUGEVISION_MQTT_ENABLED = "1"
+$env:GAUGEVISION_MQTT_HOST = "10.0.5.30"
+$env:GAUGEVISION_MQTT_TLS = "1"; $env:GAUGEVISION_MQTT_CA_FILE = "C:\gv\ca.pem"
+.\.venv\Scripts\python run.py --no-demo
+```
+
+Карта регистров — [`docs/MODBUS_REGISTER_MAP.md`](docs/MODBUS_REGISTER_MAP.md), настройка Ignition — `integrations/ignition/`, автономная установка без интернета — [`docs/OFFLINE_DEPLOYMENT.md`](docs/OFFLINE_DEPLOYMENT.md), сценарий показа — [`docs/DEMO_DEFENSE_GUIDE.md`](docs/DEMO_DEFENSE_GUIDE.md).
 
 > **Сертификат.** На каждом новом устройстве предупреждение браузера нужно принять один раз. В Chrome: «Дополнительно» → «Перейти на сайт», в Safari: «Подробнее» → «посетить веб-сайт». Без HTTPS браузер не даст доступ к камере смартфона.
 >
@@ -225,6 +259,15 @@ py -3.12 -m venv .venv
 | `GAUGEVISION_HOST` | `0.0.0.0` | адрес привязки |
 | `GAUGEVISION_PORT` | `8443` | порт HTTPS |
 | `GAUGEVISION_LAN_IP` | автоопределение | LAN IP для ссылок и QR-кода |
+| `GAUGEVISION_DEMO` | `0` | демонстрационный профиль (то же, что `--demo`) |
+| `GAUGEVISION_STRICT_NETWORK` | `0` | строгая сетевая политика: запрет запуска на всех интерфейсах и небезопасных настроек шлюзов |
+| `GAUGEVISION_MODBUS_ENABLED`, `_HOST`, `_PORT`, `_UNIT_ID` | `0`, `127.0.0.1`, `15020`, `1` | сервер Modbus TCP |
+| `GAUGEVISION_MODBUS_ALLOWED_CLIENTS` | пусто | разрешённые клиенты Modbus (IP / CIDR через запятую) |
+| `GAUGEVISION_MQTT_ENABLED`, `_HOST`, `_PORT`, `_TOPIC_PREFIX` | `0`, `127.0.0.1`, `1883`, `interrao/tec22/ktc/gaugevision` | публикация MQTT через Store-and-Forward |
+| `GAUGEVISION_MQTT_TLS`, `_CA_FILE`, `_ALLOW_PLAINTEXT` | `0`, пусто, `0` | TLS к брокеру; без TLS разрешён только брокер на loopback или явное `ALLOW_PLAINTEXT=1` |
+| `GAUGEVISION_PREDICTIVE_CV_BIN_S` | `30` | ширина корзины усреднения ряда CV для прогноза, с |
+| `GAUGEVISION_LLM_BASE_URL`, `_MODEL` | пусто, `qwen2.5:7b-instruct` | локальная LLM для формулировок ТЗ (OpenAI-совместимый API); публичные адреса запрещены без `GAUGEVISION_LLM_ALLOW_PUBLIC=1` |
+| `GAUGEVISION_AUTOCAL` | `0` | зарезервирован для исследовательской автокалибровки; модуль не подключён к API и пульту ни при каком значении |
 
 Основные параметры конвейера находятся в `app/config.py`:
 
@@ -266,6 +309,20 @@ py -3.12 -m venv .venv
 | POST | `/api/phone/session` | токен и QR-код (SVG) для смартфона |
 | GET | `/api/discover` | поиск камер: ONVIF и скан подсети |
 | POST | `/api/alarms/ack` | квитирование аварий на всех пультах |
+| POST | `/api/auth/login`, `/api/auth/logout` | вход и выход (сессия в cookie `gv_session`) |
+| GET, POST | `/api/sources/{source_id}/instruments` | приборы щита на источнике, регистрация |
+| POST | `/api/sources/{source_id}/instruments/detect` | поиск приборов в кадре щита |
+| GET, PATCH, DELETE | `/api/instruments`, `/api/instruments/{id}` | реестр приборов: код позиции, шкала (`calibration_rev`), уставки, удаление с освобождением слота Modbus |
+| GET | `/api/instruments/{id}/history`, `/trend`, `/export.csv` | история прибора щита |
+| GET | `/api/predictive/overview`, `/api/predictive/instrument/{id}` | прогноз: тренд, PI80 / PI95, ETA до уставок |
+| POST | `/api/optimizer/solve` | план модернизации (0-1 ILP, кривая Парето, `time_limit_s`) |
+| GET, POST | `/api/optimizer/plans` | сохранённые планы |
+| POST | `/api/specs/preview`, `/api/specs/generate` | ТЗ и дефектная ведомость (.md, .docx), в том числе по плану модернизации |
+| GET | `/api/scada/status`, `/api/scada/modbus/registers` | состояние шлюзов, снимок карты регистров |
+| GET | `/api/architecture/store-forward` | очередь Store-and-Forward |
+| GET | `/api/events/stream` | поток событий SSE |
+
+Полный перечень — в OpenAPI.
 
 WebSocket:
 
@@ -287,17 +344,32 @@ timestamp_iso8601;value_МПа;raw_angle_deg;status_level
 
 ```
 GaugeVisionAI/
-├── run.py              # точка входа: сертификат, LAN IP, запуск Uvicorn
-├── requirements.txt
+├── run.py              # точка входа: сертификат, LAN IP, профиль, запуск Uvicorn
+├── requirements.txt    # requirements.lock — зафиксированные версии для автономной установки
 ├── app/
-│   ├── config.py       # константы, типы приборов и единицы
-│   ├── main.py         # FastAPI: REST, WebSocket, оркестрация камер
-│   ├── vision.py       # CV-конвейер: локализация, нормализация, стрелка, EMA
-│   ├── streamer.py     # захват RTSP / MJPEG / USB с переподключением
+│   ├── config.py       # константы, типы приборов, переменные окружения
+│   ├── main.py         # FastAPI: REST, WebSocket, SSE, цикл синхронизации
+│   ├── vision.py       # CV-конвейер одного прибора: локализация, нормализация, стрелка, EMA
+│   ├── multigauge.py, multigauge_service.py  # щит: детекция, сопровождение, реестр приборов
+│   ├── contracts.py    # идентичность прибора (instrument_id, source_id, gauge_slot)
+│   ├── streamer.py, stream_manager.py  # захват RTSP / MJPEG / USB / видеофайл с переподключением
 │   ├── discovery.py    # ONVIF WS-Discovery и скан подсети
-│   ├── db.py           # aiosqlite, история, тренды, экспорт CSV
-│   ├── events.py       # журнал событий пульта со стоп-кадрами (в памяти)
+│   ├── db.py           # aiosqlite: схема и миграции, история, реестр, планы
+│   ├── events.py       # журнал событий пульта со стоп-кадрами
+│   ├── scada_gateway.py  # Modbus TCP (только чтение) и MQTT 3.1.1
+│   ├── store_forward.py  # очередь Store-and-Forward (SQLite WAL)
+│   ├── net_policy.py   # сетевая политика развёртывания
+│   ├── dispatch_analyzer.py  # Health Score, причины деградации
+│   ├── predictive_analytics.py, prediction_events.py  # прогноз и его события
+│   ├── ilp_solver.py, modernization_optimizer.py  # план модернизации
+│   ├── spec_generator.py, docx_builder.py  # ТЗ и дефектная ведомость (.md, .docx)
+│   ├── auth.py, security.py  # роли, сессии, ограничения целей потоков
+│   ├── demo.py, panel_sim.py  # демонстрационный профиль и стендовые приборы
+│   ├── autocal.py      # исследовательская автокалибровка — выключена, не подключена
 │   └── cert_gen.py     # самоподписанный X.509 с SAN
+├── integrations/ignition/  # теги и проект Perspective для Ignition 8.3
+├── tests/              # автоматические наборы (запуск: python tests/<набор>.py)
+├── reports/            # отчёты приёмок; итог версии 3.0 — reports/final_integration/
 ├── static/
 │   ├── index.html      # пульт оператора
 │   ├── capture.html    # клиент захвата для смартфона
@@ -323,7 +395,7 @@ GaugeVisionAI/
 | Загрязнение стекла | падение достоверности | порог уверенности 0,25, удержание последнего значения; автоалерт в плане | частично |
 | Обрыв сети или камеры | потеря телеметрии | переподключение 1-15 с, статусы связи, сохранение достоверного значения | реализовано |
 
-В полевых условиях пока не проверены нелинейные шкалы, многострелочные приборы и длительная работа на станции. Испытания проводились на стенде и синтетических сценах.
+В полевых условиях пока не проверены нелинейные шкалы, многострелочные приборы и длительная работа на станции. Испытания проводились на стенде и синтетических сценах. Точность на реальных фотографиях промышленных приборов подтверждена лишь частично (`reports/industrial_validation/CV_VALIDATION_REPORT.md`): на снимках цеха ошибки выше стендовых. Полный перечень ограничений версии 3.0 — [`reports/final_integration/KNOWN_LIMITATIONS.md`](reports/final_integration/KNOWN_LIMITATIONS.md).
 
 ## Масштабирование
 
@@ -345,7 +417,8 @@ GaugeVisionAI/
 ## Roadmap
 
 - [x] **01 MVP.** 6 классов приборов, YOLOv8n на CUDA, смартфон по QR-коду, уставки, сирена и экспорт в CSV.
-- [ ] **02 Связь со SCADA.** Modbus TCP и OPC UA, полевой пилот на станции, полная гомография, нелинейные шкалы и многоточечная калибровка.
+- [x] **02 Связь со SCADA (стенд).** Modbus TCP, MQTT через Store-and-Forward, проверка на Ignition 8.3.10 (пробная лицензия, один узел); щит из нескольких приборов в кадре, прогноз ETA, оптимизатор модернизации — версия 3.0.
+- [ ] **02а Полевой пилот.** Пилот на станции, OPC UA, полная гомография, нелинейные шкалы и многоточечная калибровка, валидированная автокалибровка.
 - [ ] **03 Масштаб цеха.** PTZ-камеры с пресетами обхода (одна камера на десятки приборов), нательные регистраторы обходчиков.
 
 ## Презентация

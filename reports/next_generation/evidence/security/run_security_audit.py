@@ -228,7 +228,7 @@ def run_security_audit() -> dict[str, Any]:
             mb = ModbusTcpGateway()
             fc_w, ex_w = _probe_modbus_pdu(mb, 1, struct.pack(">BHH", 6, 0, 123))      # FC 0x06 Write Single -> 0x86, 0x01
             fc_u, ex_u = _probe_modbus_pdu(mb, 99, struct.pack(">BHH", 3, 0, 2))       # Wrong Unit ID -> 0x83, 0x0B
-            fc_r, ex_r = _probe_modbus_pdu(mb, 1, struct.pack(">BHH", 3, 4095, 2))     # Out of range -> 0x83, 0x02
+            fc_r, ex_r = _probe_modbus_pdu(mb, 1, struct.pack(">BHH", 3, mb.MAX_REGISTERS - 1, 2))  # через границу карты -> 0x83, 0x02
             rec("SEC-10", "SCADA / Modbus", "Режим только на чтение Modbus TCP (FC 0x06 -> 0x01), Unit ID (0x0B) и границы карты (0x02)",
                 (fc_w == 0x86 and ex_w == 0x01) and (fc_u == 0x83 and ex_u == 0x0B) and (fc_r == 0x83 and ex_r == 0x02),
                 f"write=({hex(fc_w)},{hex(ex_w)}), unit99=({hex(fc_u)},{hex(ex_u)}), oor=({hex(fc_r)},{hex(ex_r)})",

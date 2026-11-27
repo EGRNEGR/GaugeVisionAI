@@ -165,6 +165,10 @@ cal = json.dumps({"v_min": 0, "theta_min": 135, "v_max": 16, "theta_max": 45, "d
 ins("cameras", {"id": "legacy-cam-1", "name": "МН-1 legacy", "type": "phone_ws", "gauge_type": "pressure",
                 "unit": "МПа", "calibration": cal, "thresholds": "{}", "status": "online",
                 "created_at": "2026-11-01T00:00:00.000+00:00"})
+# ещё два источника: порядок создания не совпадает с порядком id — по нему версия 2.0 нумеровала приборы в Modbus
+for cid, ts in (("legacy-cam-a", "2026-11-02T00:00:00.000+00:00"), ("legacy-cam-z", "2026-10-30T00:00:00.000+00:00")):
+    ins("cameras", {"id": cid, "name": cid, "type": "phone_ws", "gauge_type": "pressure", "unit": "МПа",
+                    "calibration": cal, "thresholds": "{}", "status": "offline", "created_at": ts})
 for i in range(120):
     ins("readings", {"camera_id": "legacy-cam-1", "timestamp": f"2026-11-01T00:{i // 60:02d}:{i % 60:02d}.000+00:00",
                      "value": 5.0 + i * 0.01, "raw_angle": 100.0, "status_level": "normal"})
@@ -239,12 +243,15 @@ def t_migration() -> dict[str, Any]:
             assert after[t] == want, (label, t, n, after[t])
         assert con.execute("SELECT ROUND(SUM(value), 6) FROM readings").fetchone()[0] == sum_before, label
         assert con.execute("SELECT COUNT(*) FROM readings WHERE instrument_id IS NULL").fetchone()[0] == 0, label
-        # основной прибор старой камеры создан, слот Modbus 0, ревизия 0 — история читается целиком
+        # основной прибор каждой старой камеры создан, ревизия 0 — история читается целиком
         assert len(res["instruments"]) == 1 and res["instruments"][0]["is_primary"], (label, res["instruments"])
+        # постоянные слоты Modbus назначены в порядке создания источников — как нумеровала приборы версия 2.0
+        slots = dict(con.execute("SELECT id, modbus_slot FROM instruments WHERE is_primary = 1").fetchall())
+        assert slots == {"legacy-cam-z": 0, "legacy-cam-1": 1, "legacy-cam-a": 2}, (label, slots)
         assert res["series"] == 120, (label, res["series"])
         for t in info["extra"]:
             assert after[t] == before[t] == 1, (label, t)
-        summary[label] = {"tables": len(before), "readings": after["readings"], "events": after.get("events"),
+        summary[label] = {"tables": len(before), "readings": after["readings"], "events": after.get("events"), "slots": slots,
                           "passports": after.get("instrument_passports"), "plans": after.get("modernization_plans")}
     return summary
 
@@ -290,6 +297,10 @@ def _setup_panel(client: TestClient) -> None:
                 "roi": c["anchor"], "calibration": g.calibration})
             assert r.status_code == 201, r.text
             own[r.json()["id"]] = g
+    # код позиции основного прибора задаётся в реестре и виден на пульте (DEF-INT-14)
+    assert client.patch(f"/api/instruments/{sid}", json={"code": own[sid].code}).status_code == 200
+    prim = next(x for x in client.get("/api/instruments").json() if x["id"] == sid)
+    assert prim["code"] == own[sid].code, prim["code"]
     STATE.update(sid=sid, feeder=feeder, own=own, scene=scene)
 
 
@@ -519,6 +530,48 @@ def t_prediction(client: TestClient) -> dict[str, Any]:
     assert [e["text"] for e in gone] == ["withdrawn"]
     return {"state_machine_events": [x["text"] for x in seq], "eta_alert_min": x["eta_alert_min"],
             "sf_rows": len(rows), "journal_events": len(api_evs)}
+
+
+@case("cv_forecast_input")
+def t_cv_forecast() -> dict[str, Any]:
+    """Ряд CV (EMA α = 0,25 при 2 кадрах/с, запись раз в 1 с) после усреднения по корзинам
+    PREDICTIVE_CV_BIN_S: ETA линейного дрейфа близок к истинному, стабильный сигнал — без ложного прогноза."""
+    import random
+    import statistics
+
+    from app.main import _bin_series
+    from app.predictive_analytics import PredictiveAnalyzer
+    pa, now, span, hh = PredictiveAnalyzer(), time.time(), 1.6, 1.408
+    inst = {"id": "cv", "code": "CV", "name": "cv", "unit": "МПа", "gauge_type": "pressure",
+            "calibration": {"v_min": 0, "v_max": span}, "source_kind": "camera_cv",
+            "thresholds": {"h_warn": 1.2, "hh_alert": hh, "lower_enabled": False}}
+
+    def cv_series(slope: float, seed: int, minutes: float = 9.5) -> list[tuple[float, float]]:
+        rnd, e, pts, n = random.Random(seed), None, [], int(minutes * 120)
+        for k in range(n):
+            v = 1.0 + slope * (k / 2) / 60 + rnd.gauss(0, 0.002 * span)
+            e = v if e is None else 0.25 * v + 0.75 * e
+            if k % 2 == 0:
+                pts.append((now - n / 2 + k / 2, e))
+        return pts
+    ratios, false_imm = [], 0
+    for seed in range(6):
+        p = cv_series(0.03, seed)
+        inst["reading"] = {"value": p[-1][1], "valid": True, "level": "normal"}
+        r = pa.analyze_series(inst, _bin_series(p, config.PREDICTIVE_CV_BIN_S), window_min=60, horizon_min=60,
+                              now_unix=now)
+        ratios.append(r["eta_alert_min"] / ((hh - p[-1][1]) / 0.03))
+        q = cv_series(0.0, seed)
+        inst["reading"] = {"value": q[-1][1], "valid": True, "level": "normal"}
+        rs = pa.analyze_series(inst, _bin_series(q, config.PREDICTIVE_CV_BIN_S), window_min=60, horizon_min=60,
+                               now_unix=now)
+        e = rs.get("eta_alert_min")
+        false_imm += int((e is not None and 0 < e <= 30) or (rs.get("breach_prob_alert_horizon") or 0) >= 0.7)
+    med = statistics.median(ratios)
+    assert 0.7 <= med <= 1.4, ratios
+    assert false_imm == 0, false_imm
+    return {"eta_ratio_median": round(med, 3), "eta_ratio_range": [round(min(ratios), 3), round(max(ratios), 3)],
+            "false_imminent_stable": false_imm, "bin_s": config.PREDICTIVE_CV_BIN_S}
 
 
 async def _publish(ov: dict[str, Any]) -> list[dict[str, Any]]:
@@ -766,6 +819,7 @@ def t_autocal(client: TestClient) -> dict[str, Any]:
 def main() -> int:
     t_migration()
     t_net_policy()
+    t_cv_forecast()
     with TestClient(app) as client:
         _login(client, "admin")
         service_loop(client)
