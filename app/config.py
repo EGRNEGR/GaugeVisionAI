@@ -365,6 +365,10 @@ DISPATCH_JUMP_NOISE_PCT: float = _env_float("GAUGEVISION_DISPATCH_JUMP_NOISE_PCT
 # для включения исправного по остальным признакам прибора в ТЗ на модернизацию
 SPEC_REGULAR_TRIPS_MIN: int = _env_int("GAUGEVISION_SPEC_REGULAR_TRIPS_MIN", 3)
 AUTO_SPEC_COOLDOWN_SECONDS: float = _env_float("GAUGEVISION_AUTO_SPEC_COOLDOWN", 3600.0)
+# Ряд CV-прибора для прогноза усредняется по корзинам этой ширины, с. Отсчёты CV сглажены EMA (постоянная
+# времени ~2 с) и пишутся раз в 1 с: без усреднения остатки тренда автокоррелированы (rho1 0,55–0,95), и модель
+# уходит в режим затухания, завышая ETA в 2–3 раза на устойчивом дрейфе. Корзины 30 с ≫ постоянной EMA.
+PREDICTIVE_CV_BIN_S: float = _env_float("GAUGEVISION_PREDICTIVE_CV_BIN_S", 30.0)
 LLM_BASE_URL: str = os.environ.get("GAUGEVISION_LLM_BASE_URL", "").strip()
 LLM_API_KEY: str = os.environ.get("GAUGEVISION_LLM_API_KEY", "").strip()
 LLM_MODEL: str = os.environ.get("GAUGEVISION_LLM_MODEL", "qwen2.5:7b-instruct").strip()

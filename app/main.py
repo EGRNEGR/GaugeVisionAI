@@ -29,6 +29,7 @@ REST (основное):
 from __future__ import annotations
 
 import asyncio
+import collections
 import contextlib
 import datetime as _dt
 import io
@@ -492,6 +493,16 @@ def _round(v: float | None, nd: int = 4) -> float | None:
     return None if v is None else round(float(v), nd)
 
 
+def _bin_series(pts: list[tuple[float, float]], width_s: float) -> list[tuple[float, float]]:
+    """Средние по корзинам времени ширины width_s (время — среднее отсчётов корзины), по возрастанию."""
+    bins: dict[int, list[tuple[float, float]]] = {}
+    for t, v in pts:
+        bins.setdefault(int(t // width_s), []).append((t, v))
+    out = [(sum(p[0] for p in g) / len(g), sum(p[1] for p in g) / len(g)) for g in bins.values()]
+    out.sort()
+    return out
+
+
 class GaugeService(MultiGaugeServiceMixin):
     def __init__(self) -> None:
         self.hub = DashboardHub()
@@ -503,6 +514,8 @@ class GaugeService(MultiGaugeServiceMixin):
         self.predictive = PredictiveAnalyzer()
         self._last_predictive_overview: dict[str, Any] | None = None
         self.prediction_events = PredictionEventTracker()
+        # задержка event loop за последние 5 мин (таймер 250 мс): диагностика оперативного контура
+        self.loop_lag_ms: collections.deque[float] = collections.deque(maxlen=1200)
         self._predictive_cache: dict[tuple[float, float, int], tuple[float, dict[str, Any]]] = {}
         self._predictive_cache_ttl_s: float = 5.0
         self._sse_clients: set[asyncio.Queue[str]] = set()
@@ -635,6 +648,7 @@ class GaugeService(MultiGaugeServiceMixin):
         self._bg.append(asyncio.create_task(self._architecture_sync_loop(), name="arch-sync"))
         self._bg.append(asyncio.create_task(self._db_writer(), name="db-writer"))
         self._bg.append(asyncio.create_task(self._housekeeping(), name="housekeeping"))
+        self._bg.append(asyncio.create_task(self._loop_lag_monitor(), name="loop-lag"))
         logger.info("Загружено камер: %d (деморежим: %s, Edge-узел: %s)",
                     len(self.cameras), config.is_demo_mode(), config.EDGE_NODE_ID)
 
@@ -989,8 +1003,17 @@ class GaugeService(MultiGaugeServiceMixin):
                                 pts.append((t_r, v_r))
                         except (TypeError, ValueError, KeyError):
                             continue
+            if ident.source_kind != "simulated" and config.PREDICTIVE_CV_BIN_S > 0:
+                pts = _bin_series(pts, config.PREDICTIVE_CV_BIN_S)
             out[iid] = pts
         return out
+
+    @staticmethod
+    def predictive_inputs(insts: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Прибор без свежих кадров источника — недостоверный текущий отсчёт: прогноз отзывается, а не
+        продолжается от застывшего значения."""
+        return [i if demo.reading_is_live(i) or not i.get("reading") else
+                {**i, "reading": {**i["reading"], "valid": False}} for i in insts]
 
     async def compute_predictive_overview(
         self,
@@ -1010,8 +1033,7 @@ class GaugeService(MultiGaugeServiceMixin):
             if cached is not None and (now_m - cached[0]) <= self._predictive_cache_ttl_s:
                 return cached[1]
         now = time.time()
-        insts = [i if demo.reading_is_live(i) or not i.get("reading") else
-                 {**i, "reading": {**i["reading"], "valid": False}} for i in insts]
+        insts = self.predictive_inputs(insts)
         series_map = await self.collect_predictive_series(insts, window_min=window_min, now_unix=now)
         loop = asyncio.get_running_loop()
         ov = await loop.run_in_executor(
@@ -1128,7 +1150,8 @@ class GaugeService(MultiGaugeServiceMixin):
                     health_by_id=health_by_id,
                     predictive_by_id=pred_by_id,
                     sf_pending=sf_pending,
-                    outage_active=self.store_forward.outage_active,
+                    # HR 905: и имитация обрыва, и реальный отказ доставки брокеру
+                    outage_active=self.store_forward.outage_active or self.store_forward.delivery_failing,
                 )
                 if tick_n % 3 == 1:
                     await self._process_auto_spec_triggers(disp, events)
@@ -1539,6 +1562,19 @@ class GaugeService(MultiGaugeServiceMixin):
             await asyncio.sleep(1.0)
             await self._flush_db()
 
+    async def _loop_lag_monitor(self) -> None:
+        while True:
+            t = time.perf_counter()
+            await asyncio.sleep(0.25)
+            self.loop_lag_ms.append(max(0.0, (time.perf_counter() - t - 0.25) * 1000.0))
+
+    def loop_lag_summary(self) -> dict[str, float | int | None]:
+        vals = sorted(self.loop_lag_ms)
+        if not vals:
+            return {"n": 0, "p50": None, "p95": None, "p99": None, "max": None}
+        q = lambda f: round(vals[min(len(vals) - 1, int(f * (len(vals) - 1)))], 1)  # noqa: E731
+        return {"n": len(vals), "p50": q(0.5), "p95": q(0.95), "p99": q(0.99), "max": round(vals[-1], 1)}
+
     async def _housekeeping(self) -> None:
         """Раз в час: актуализация LAN IP, раз в сутки — очистка старой истории."""
         last_prune = 0.0
@@ -1578,12 +1614,20 @@ class GaugeService(MultiGaugeServiceMixin):
     def public_cameras(self) -> list[dict[str, Any]]:
         return [self.public_camera(c) for c in self.cameras.values()]
 
+    def _unified_source(self, cam: dict[str, Any], grid_pos: int) -> dict[str, Any]:
+        """Основной прибор источника на пульте; код позиции из реестра приборов, если задан инженером."""
+        out = demo.unify_camera(self.public_camera(cam), grid_pos=grid_pos, is_primary_demo=False)
+        code = (self.instruments.get(cam["id"]) or {}).get("code")
+        if code:
+            out["code"] = code
+        return out
+
     def public_instruments(self) -> list[dict[str, Any]]:
         """Единый список приборов пульта (в демопрофиле: 36 позиций — 1 живая + 35 симуляция)."""
         if not config.is_demo_mode():
             out: list[dict[str, Any]] = []
             for c in self.cameras.values():
-                out.append(demo.unify_camera(self.public_camera(c), grid_pos=len(out) + 1, is_primary_demo=False))
+                out.append(self._unified_source(c, grid_pos=len(out) + 1))
                 # дополнительные приборы источника — сразу за его основным прибором (Multi-Gauge)
                 for inst in self.secondary_instruments(c["id"]):
                     out.append(self.public_instrument(inst, grid_pos=len(out) + 1))
@@ -1601,7 +1645,7 @@ class GaugeService(MultiGaugeServiceMixin):
         for cid, cam in self.cameras.items():
             if cid == config.DEMO_LIVE_CAM_ID:
                 continue
-            out.append(demo.unify_camera(self.public_camera(cam), grid_pos=extra_pos, is_primary_demo=False))
+            out.append(self._unified_source(cam, grid_pos=extra_pos))
             extra_pos += 1
             for inst in self.secondary_instruments(cid):
                 out.append(self.public_instrument(inst, grid_pos=extra_pos))
@@ -2081,7 +2125,7 @@ async def api_health() -> dict[str, Any]:
     for cam_id in service.cameras:
         st = service.streams.status_of(cam_id)
         counts[st] = counts.get(st, 0) + 1
-    return {"ok": True, "cameras": len(service.cameras), "status": counts}
+    return {"ok": True, "cameras": len(service.cameras), "status": counts, "loop_lag_ms": service.loop_lag_summary()}
 
 
 @app.get("/api/cert.pem", include_in_schema=False)
@@ -3220,6 +3264,7 @@ async def api_predictive_instrument(
     target = next((x for x in instruments if resolve_instrument_identity(x).instrument_id == inst_id), None)
     if target is None:
         raise HTTPException(404, "Прибор не найден")
+    target = service.predictive_inputs([target])[0]
     now = time.time()
     series_map = await service.collect_predictive_series([target], window_min=window_min, now_unix=now)
     pts = series_map.get(inst_id, [])

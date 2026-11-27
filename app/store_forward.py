@@ -217,6 +217,11 @@ class StoreAndForwardBuffer:
     def outage_active(self) -> bool:
         return self._outage_active
 
+    @property
+    def delivery_failing(self) -> bool:
+        """Реальный обрыв канала доставки (брокер не подтверждает): записи копятся в буфере."""
+        return self._deliver_cb is not None and self._consecutive_delivery_fails > 0
+
     def _disk_free_mb(self) -> float:
         try:
             usage = shutil.disk_usage(str(self.db_path.parent))

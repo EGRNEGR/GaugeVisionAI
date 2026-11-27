@@ -1089,6 +1089,11 @@ table.disc .port { display: inline-block; padding: 0 .25rem; margin-right: .25re
 @media (max-width: 1980px) {
   .plant-banner { display: none; }
   .counters { margin-left: auto; }
+  /* вкладка «Щит» добавила ширины шапке: на 1920 кнопка полноэкранного режима выходила за край */
+  .nav-tab { padding: 0 .36rem; }
+  .head-ops { gap: .22rem; padding: 0 .36rem; }
+  .counter { padding: 0 .3rem; }
+  .link { padding: .2rem .28rem; }
 }
 
 @media (max-width: 1700px) {
