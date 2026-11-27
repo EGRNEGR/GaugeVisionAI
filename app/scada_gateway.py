@@ -166,6 +166,9 @@ class ModbusTcpGateway:
     SYSTEM_BASE = 900
     EXTENDED_BASE = 2000
     EXTENDED_STRIDE = 8
+    PREDICTIVE_BASE = 3600
+    PREDICTIVE_STRIDE = 8
+    PREDICTIVE_MAX_INSTRUMENTS = 61  # 3600..4087 (4095 остаётся свободным, MAX_REGISTERS=4096 сохраняется)
     MAX_REGISTERS = 4096
     REGISTER_MAP_VERSION = 2
 
@@ -181,10 +184,12 @@ class ModbusTcpGateway:
         self._heartbeat: int = 0
         self._last_sync_unix: int = 0
         self._sync_frozen: bool = False
-        # Инициализируем самоописывающие константы карты v2 сразу при создании шлюза
+        # Инициализируем самоописывающие константы карты v2 + прогнозного блока сразу при создании шлюза
         self._regs[self.SYSTEM_BASE + 9] = self.REGISTER_MAP_VERSION
         self._regs[self.SYSTEM_BASE + 10] = self.EXTENDED_BASE
         self._regs[self.SYSTEM_BASE + 11] = self.EXTENDED_STRIDE
+        self._regs[self.SYSTEM_BASE + 14] = self.PREDICTIVE_BASE
+        self._regs[self.SYSTEM_BASE + 15] = self.PREDICTIVE_STRIDE
 
     @property
     def heartbeat(self) -> int:
@@ -207,6 +212,7 @@ class ModbusTcpGateway:
         instruments: list[dict[str, Any]],
         *,
         health_by_id: dict[str, float] | None = None,
+        predictive_by_id: dict[str, dict[str, Any]] | None = None,
         sf_pending: int = 0,
         outage_active: bool = False,
         advance_heartbeat: bool = True,
@@ -217,8 +223,10 @@ class ModbusTcpGateway:
         now_s = float(time.time() if now_unix is None else now_unix)
         now_u32 = max(0, min(0xFFFFFFFF, int(now_s)))
         hmap = health_by_id or {}
+        pmap = predictive_by_id or {}
         rows: list[dict[str, Any]] = []
         crit_cnt = warn_cnt = stale_cnt = 0
+        pred_anom_cnt = pred_imminent_cnt = 0
 
         for idx, inst in enumerate(instruments[:200]):
             base = idx * 4
@@ -359,6 +367,32 @@ class ModbusTcpGateway:
             self._regs[ext + 6] = lv_lo
             self._regs[ext + 7] = 0
 
+            # Прогнозный блок прибора (3600 + idx*8, обратно совместимо в рамках 0..4095)
+            pinfo = pmap.get(inst["id"]) or {}
+            eta_alert = pinfo.get("eta_alert_min")
+            eta_warn = pinfo.get("eta_warning_min")
+            prob_alert = float(pinfo.get("breach_prob_alert_horizon") or 0.0)
+            anom_score = float(pinfo.get("anomaly_score") or 0.0)
+            trend_code = int((pinfo.get("trend_meta") or {}).get("code_num", 6))
+            pred_conf = float(pinfo.get("forecast_confidence") or 0.0)
+            if anom_score >= 45.0:
+                pred_anom_cnt += 1
+            if prob_alert >= 0.5 or (eta_alert is not None and float(eta_alert) <= 60.0):
+                pred_imminent_cnt += 1
+
+            p_base = self.PREDICTIVE_BASE + idx * self.PREDICTIVE_STRIDE
+            if idx < self.PREDICTIVE_MAX_INSTRUMENTS:
+                ea_hi, ea_lo = _pack_f32_words(None if eta_alert is None else float(eta_alert))
+                ew_hi, ew_lo = _pack_f32_words(None if eta_warn is None else float(eta_warn))
+                self._regs[p_base + 0] = ea_hi
+                self._regs[p_base + 1] = ea_lo
+                self._regs[p_base + 2] = ew_hi
+                self._regs[p_base + 3] = ew_lo
+                self._regs[p_base + 4] = max(0, min(1000, int(round(prob_alert * 1000.0))))
+                self._regs[p_base + 5] = max(0, min(1000, int(round(anom_score * 10.0))))
+                self._regs[p_base + 6] = max(0, min(15, trend_code))
+                self._regs[p_base + 7] = max(0, min(1000, int(round(pred_conf * 1000.0))))
+
             rows.append({
                 "instrument_id": inst["id"],
                 "code": inst.get("code") or inst["id"],
@@ -368,6 +402,7 @@ class ModbusTcpGateway:
                 "hr_status": 40001 + base + 2,
                 "hr_health": 40001 + base + 3,
                 "hr_ext_base": 40001 + ext,
+                "hr_pred_base": (40001 + p_base) if idx < self.PREDICTIVE_MAX_INSTRUMENTS else None,
                 "value": round(val, 4) if (valid and val is not None) else None,
                 "ieee754_nan": not valid,
                 "raw_hi": hi,
@@ -380,6 +415,11 @@ class ModbusTcpGateway:
                 "state_flags": flags,
                 "last_valid_unix": last_valid_unix_u32,
                 "last_valid_value": round(last_valid_v, 4) if last_valid_v is not None else None,
+                "eta_alert_min": eta_alert,
+                "eta_warning_min": eta_warn,
+                "breach_prob_alert": round(prob_alert, 4),
+                "anomaly_score": round(anom_score, 1),
+                "trend_code": trend_code,
             })
 
         if advance_heartbeat:
@@ -402,6 +442,10 @@ class ModbusTcpGateway:
         self._regs[self.SYSTEM_BASE + 9] = self.REGISTER_MAP_VERSION
         self._regs[self.SYSTEM_BASE + 10] = self.EXTENDED_BASE
         self._regs[self.SYSTEM_BASE + 11] = self.EXTENDED_STRIDE
+        self._regs[self.SYSTEM_BASE + 12] = min(65535, pred_anom_cnt)
+        self._regs[self.SYSTEM_BASE + 13] = min(65535, pred_imminent_cnt)
+        self._regs[self.SYSTEM_BASE + 14] = self.PREDICTIVE_BASE
+        self._regs[self.SYSTEM_BASE + 15] = self.PREDICTIVE_STRIDE
         self._meta_rows = rows
 
     async def start(self) -> None:
@@ -506,6 +550,10 @@ class ModbusTcpGateway:
                 "HR40910_register_map_version": self._regs[self.SYSTEM_BASE + 9],
                 "HR40911_extended_base": self._regs[self.SYSTEM_BASE + 10],
                 "HR40912_extended_stride": self._regs[self.SYSTEM_BASE + 11],
+                "HR40913_predictive_anomalies": self._regs[self.SYSTEM_BASE + 12],
+                "HR40914_predictive_imminent_alerts": self._regs[self.SYSTEM_BASE + 13],
+                "HR40915_predictive_base": self._regs[self.SYSTEM_BASE + 14],
+                "HR40916_predictive_stride": self._regs[self.SYSTEM_BASE + 15],
             },
             "instruments": self._meta_rows[:limit],
         }

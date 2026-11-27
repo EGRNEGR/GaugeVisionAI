@@ -306,6 +306,9 @@ async def generate_spec_bundle(
     mode: str = "deterministic",
     history_stats: dict[str, dict[str, Any]] | None = None,
     economics_config: dict[str, Any] | None = None,
+    predictive_overview: dict[str, Any] | None = None,
+    optimization_result: dict[str, Any] | None = None,
+    selected_instrument_ids: list[str] | None = None,
     strict_scope: bool = False,
     now_utc: _dt.datetime | None = None,
 ) -> dict[str, Any]:
@@ -425,13 +428,25 @@ async def generate_spec_bundle(
     # Позиции, требующие модернизации датчика (исключаем чисто оптические проблемы камеры!).
     # Единичное срабатывание уставки — событие техпроцесса, а не основание для замены прибора:
     # в ТЗ попадают только диагностические основания или регулярные перегрузки за период.
+    pred_by_id: dict[str, dict[str, Any]] = {}
+    for p in (predictive_overview or {}).get("instruments") or []:
+        pred_by_id[str(p.get("instrument_id") or p.get("id"))] = p
+    for x in enriched_scoped:
+        if x["id"] in pred_by_id:
+            x["predictive"] = pred_by_id[x["id"]]
+
     regular_trips_min = max(1, int(config.SPEC_REGULAR_TRIPS_MIN))
-    modernize_candidates = [
-        x for x in defective
-        if x.get("root_cause") in ("process_anomaly", "instrument_degradation")
-        or x.get("modernization_needed")
-        or int(x.get("period_trips", 0)) >= regular_trips_min
-    ]
+    if selected_instrument_ids is not None:
+        sel_set = {str(s) for s in selected_instrument_ids}
+        modernize_candidates = [x for x in enriched_scoped if x["id"] in sel_set]
+        modernize_candidates.sort(key=lambda x: (float(x.get("health_score", 100.0)), x.get("code", "")))
+    else:
+        modernize_candidates = [
+            x for x in defective
+            if x.get("root_cause") in ("process_anomaly", "instrument_degradation")
+            or x.get("modernization_needed")
+            or int(x.get("period_trips", 0)) >= regular_trips_min
+        ]
 
     # Конфигурируемые экономические параметры (DEF-04)
     comm_rate = float(eco_cfg.get("commissioning_rate", config.ECO_COMMISSIONING_RATE))
@@ -686,6 +701,62 @@ async def generate_spec_bundle(
         f"| **Простой срок окупаемости модернизации** | {pb_md} | CAPEX / чистый годовой эффект |",
     ]
 
+    if predictive_overview and any(x.get("predictive") for x in enriched_scoped):
+        pred_rows_md = [
+            "",
+            "### 5.1. Прогнозная оценка рисков достижения уставок (Predictive Analytics)",
+            "",
+            "| Код | Класс тренда | Наклон (ед/мин) | ETA предупр. | ETA аварии | Вер-ть пробоя | Аномальность |",
+            "|---|---|---:|---:|---:|---:|---:|",
+        ]
+        shown_pred = 0
+        for x in enriched_scoped:
+            pr = x.get("predictive")
+            if not pr or pr.get("status") != "ok":
+                continue
+            if (
+                pr.get("breach_prob_alert_horizon", 0) < 0.15
+                and pr.get("anomaly_score", 0) < 25.0
+                and pr.get("eta_alert_min") is None
+                and x not in defective
+            ):
+                continue
+            m = pr.get("model") or {}
+            ew = f"{_fmt_num(pr.get('eta_warning_min'), 1)} мин" if pr.get("eta_warning_min") is not None else "—"
+            ea = f"{_fmt_num(pr.get('eta_alert_min'), 1)} мин" if pr.get("eta_alert_min") is not None else "—"
+            pred_rows_md.append(
+                f"| `{x['code']}` | {(pr.get('trend_meta') or {}).get('label', pr.get('trend_class', '—'))} | "
+                f"{_fmt_num(m.get('slope_per_min'), 4)} | {ew} | {ea} | "
+                f"{_fmt_num((pr.get('breach_prob_alert_horizon') or 0) * 100.0, 1)}% | "
+                f"{_fmt_num(pr.get('anomaly_score'), 1)} |"
+            )
+            shown_pred += 1
+        if shown_pred > 0:
+            md_lines += pred_rows_md
+
+    if optimization_result and optimization_result.get("status") in ("optimal", "time_limit"):
+        osumm = optimization_result.get("summary") or {}
+        ogreedy = optimization_result.get("greedy_comparison") or {}
+        md_lines += [
+            "",
+            "### 5.2. Математическая оптимизация бюджета модернизации (0-1 ILP)",
+            "",
+            f"- **Целевая функция:** {optimization_result.get('objective_label', optimization_result.get('objective'))}",
+            f"- **Лимит бюджета:** {int(optimization_result.get('budget_rub') or 0) / 1000:.1f} тыс. ₽ "
+            f"(использовано {int(osumm.get('total_capex_rub') or 0) / 1000:.1f} тыс. ₽, "
+            f"остаток {int(osumm.get('remaining_budget_rub') or 0) / 1000:.1f} тыс. ₽)",
+            f"- **Оптимальный портфель:** {osumm.get('selected_count', 0)} из {osumm.get('candidates_total', 0)} "
+            f"кандидатов (покрытие технологического риска: {_fmt_num(osumm.get('risk_coverage_pct'), 1)}%, "
+            f"статус решателя: `{(optimization_result.get('solver') or {}).get('status', 'optimal')}`, "
+            f"gap = {_fmt_num((optimization_result.get('solver') or {}).get('optimality_gap', 0.0), 4)})",
+        ]
+        if ogreedy:
+            md_lines.append(
+                f"- **Сравнение с жадным отбором:** выигрыш ILP по целевой функции "
+                f"+{_fmt_num(ogreedy.get('ilp_gain_objective'), 2)} (+{_fmt_num(ogreedy.get('ilp_gain_pct'), 1)}%), "
+                f"по чистому годовому эффекту {(ogreedy.get('ilp_gain_net_effect_rub') or 0) / 1000:+.1f} тыс. ₽/год."
+            )
+
     markdown_text = "\n".join(md_lines)
     return {
         "doc_number": doc_number,
@@ -726,6 +797,7 @@ async def generate_spec_bundle(
             "payback_years": payback_years,
             "demo_pricing": is_demo_pricing,
         },
+        "optimization_result": optimization_result,
         "markdown": markdown_text,
         "snapshot_lookup": snapshot_lookup,
     }
@@ -893,6 +965,19 @@ def render_spec_docx(bundle: dict[str, Any]) -> bytes:
         ["Простой срок окупаемости", pb_str, "CAPEX / чистый годовой эффект"],
     ]
     doc.add_table(eco_rows, col_widths_dxa=[3300, 2100, 3800], font_half_pt=17)
+
+    opt = bundle.get("optimization_result")
+    if opt and opt.get("status") in ("optimal", "time_limit"):
+        osumm = opt.get("summary") or {}
+        doc.add_heading("5.1. Оптимизация бюджета модернизации (0-1 ILP)", level=2)
+        opt_rows = [
+            ["Параметр оптимизации", "Значение"],
+            ["Целевая функция", str(opt.get("objective_label") or opt.get("objective"))],
+            ["Бюджет / использовано CAPEX", f"{int(opt.get('budget_rub') or 0)/1000:.1f} тыс. ₽ / {int(osumm.get('total_capex_rub') or 0)/1000:.1f} тыс. ₽ ({_fmt_num(osumm.get('budget_utilization_pct'), 1)}%)"],
+            ["Выбрано позиций / покрытие риска", f"{osumm.get('selected_count', 0)} из {osumm.get('candidates_total', 0)} / {_fmt_num(osumm.get('risk_coverage_pct'), 1)}%"],
+            ["Статус решателя / gap", f"{(opt.get('solver') or {}).get('status', 'optimal')} / {_fmt_num((opt.get('solver') or {}).get('optimality_gap', 0.0), 4)}"],
+        ]
+        doc.add_table(opt_rows, col_widths_dxa=[3600, 5600], font_half_pt=16)
 
     doc.add_paragraph(
         f"Проект документа сформирован автоматически платформой GaugeVision AI ({bundle['date_str']}) в автономном промышленном контуре. "

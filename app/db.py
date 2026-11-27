@@ -179,6 +179,69 @@ CREATE TABLE IF NOT EXISTS audit_log (
 );
 
 CREATE INDEX IF NOT EXISTS idx_audit_ts ON audit_log (ts);
+
+-- Инженерные паспорта приборов (согласовано с multi-gauge: instrument_id + camera_id + gauge_slot)
+CREATE TABLE IF NOT EXISTS instrument_passports (
+    instrument_id             TEXT PRIMARY KEY,
+    camera_id                 TEXT,
+    gauge_slot                INTEGER,
+    code                      TEXT NOT NULL,
+    name                      TEXT NOT NULL DEFAULT '',
+    group_name                TEXT NOT NULL DEFAULT '',
+    gauge_type                TEXT NOT NULL DEFAULT 'pressure',
+    unit                      TEXT NOT NULL DEFAULT '',
+    criticality_class         INTEGER NOT NULL DEFAULT 2 CHECK (criticality_class IN (1, 2, 3)),
+    criticality_weight        REAL NOT NULL DEFAULT 1.15,
+    hazardous_zone            INTEGER NOT NULL DEFAULT 0,
+    mandatory_regulation      INTEGER NOT NULL DEFAULT 0,
+    install_year              INTEGER,
+    verification_due_date     TEXT,
+    custom_capex_rub          INTEGER,
+    custom_downtime_risk_rub_yr INTEGER,
+    notes                     TEXT NOT NULL DEFAULT '',
+    updated_at                TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_passports_cam ON instrument_passports (camera_id, gauge_slot);
+
+-- История прогнозной аналитики (Predictive Analytics snapshots)
+CREATE TABLE IF NOT EXISTS predictive_snapshots (
+    id                INTEGER PRIMARY KEY AUTOINCREMENT,
+    instrument_id     TEXT NOT NULL,
+    camera_id         TEXT,
+    gauge_slot        INTEGER,
+    computed_at       TEXT NOT NULL,
+    status            TEXT NOT NULL,
+    trend_class       TEXT NOT NULL,
+    slope_per_min     REAL,
+    eta_warning_min   REAL,
+    eta_alert_min     REAL,
+    breach_prob_alert REAL NOT NULL DEFAULT 0.0,
+    anomaly_score     REAL NOT NULL DEFAULT 0.0,
+    confidence        REAL NOT NULL DEFAULT 0.0,
+    payload_json      TEXT NOT NULL DEFAULT '{}'
+);
+
+CREATE INDEX IF NOT EXISTS idx_pred_inst_ts ON predictive_snapshots (instrument_id, computed_at);
+
+-- Сохранённые планы оптимизации бюджета модернизации (0-1 ILP)
+CREATE TABLE IF NOT EXISTS modernization_plans (
+    id                        INTEGER PRIMARY KEY AUTOINCREMENT,
+    name                      TEXT NOT NULL,
+    created_at                TEXT NOT NULL,
+    created_by                TEXT NOT NULL DEFAULT 'system',
+    budget_rub                INTEGER NOT NULL,
+    objective                 TEXT NOT NULL,
+    status                    TEXT NOT NULL,
+    selected_count            INTEGER NOT NULL DEFAULT 0,
+    total_capex_rub           INTEGER NOT NULL DEFAULT 0,
+    total_net_annual_effect_rub INTEGER NOT NULL DEFAULT 0,
+    total_risk_reduction      REAL NOT NULL DEFAULT 0.0,
+    selected_ids_json         TEXT NOT NULL DEFAULT '[]',
+    result_json               TEXT NOT NULL DEFAULT '{}'
+);
+
+CREATE INDEX IF NOT EXISTS idx_mod_plans_created ON modernization_plans (created_at);
 """
 
 DEFAULT_THRESHOLDS: dict[str, float | None] = {
@@ -247,6 +310,9 @@ async def init_db() -> None:
             await conn.execute("ALTER TABLE readings ADD COLUMN unit TEXT")
         if "run_id" not in cols:
             await conn.execute("ALTER TABLE readings ADD COLUMN run_id TEXT")
+        if "instrument_id" not in cols:
+            await conn.execute("ALTER TABLE readings ADD COLUMN instrument_id TEXT")
+        await conn.execute("CREATE INDEX IF NOT EXISTS idx_readings_inst_ts ON readings (instrument_id, timestamp)")
         # после перезапуска сервера ни один поток ещё не подключён
         await conn.execute("UPDATE cameras SET status = 'offline'")
         await conn.commit()
@@ -1138,3 +1204,326 @@ async def list_audit_log(limit: int = 100) -> list[dict[str, Any]]:
         cur = await conn.execute("SELECT * FROM audit_log ORDER BY id DESC LIMIT ?", (int(limit),))
         rows = await cur.fetchall()
     return [dict(r) for r in rows]
+
+
+# ---------------------------------------------------------------------------
+# Унифицированная выгрузка временных рядов (multi-gauge ready) для Predictive Analytics
+# ---------------------------------------------------------------------------
+async def get_instrument_series(
+    instrument_ids: list[str] | None = None,
+    *,
+    since_iso: str,
+    until_iso: str | None = None,
+    max_per_instrument: int = 360,
+) -> dict[str, list[tuple[float, float]]]:
+    """
+    Возвращает хронологические временные ряды `(unix_ts, value)` по `instrument_id`
+    из объединённого архива `readings` (по `COALESCE(instrument_id, camera_id)`) и
+    `instrument_readings` за окно `[since_iso, until_iso]`.
+    """
+    clauses = ["timestamp >= ?", "value IS NOT NULL"]
+    params: list[Any] = [since_iso]
+    if until_iso:
+        clauses.append("timestamp <= ?")
+        params.append(until_iso)
+
+    id_clause_r = ""
+    id_clause_ir = ""
+    id_params: list[Any] = []
+    if instrument_ids:
+        ph = ",".join("?" for _ in instrument_ids)
+        id_clause_r = f" AND COALESCE(instrument_id, camera_id) IN ({ph})"
+        id_clause_ir = f" AND instrument_id IN ({ph})"
+        id_params = list(instrument_ids)
+
+    where_sql = " AND ".join(clauses)
+    sql = f"""
+        SELECT iid, ts, val FROM (
+            SELECT COALESCE(instrument_id, camera_id) AS iid, timestamp AS ts, value AS val, id AS rid
+            FROM readings WHERE {where_sql}{id_clause_r}
+            UNION ALL
+            SELECT instrument_id AS iid, timestamp AS ts, value AS val, id AS rid
+            FROM instrument_readings WHERE {where_sql}{id_clause_ir}
+        )
+        ORDER BY iid ASC, ts ASC, rid ASC
+    """
+    all_params = params + id_params + params + id_params
+    async with _lock:
+        conn = await _get_conn()
+        cur = await conn.execute(sql, all_params)
+        rows = await cur.fetchall()
+
+    raw_map: dict[str, list[tuple[float, float]]] = {}
+    for r in rows:
+        val = _clean_float(r["val"])
+        if val is None:
+            continue
+        ts_str = str(r["ts"] or "").strip()
+        if not ts_str:
+            continue
+        try:
+            dt = _dt.datetime.fromisoformat(ts_str.replace("Z", "+00:00"))
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=_dt.timezone.utc)
+            raw_map.setdefault(str(r["iid"]), []).append((dt.timestamp(), val))
+        except ValueError:
+            continue
+
+    # Равномерное прореживание только при превышении max_per_instrument с сохранением краёв
+    lim = max(16, int(max_per_instrument))
+    out: dict[str, list[tuple[float, float]]] = {}
+    for iid, pts in raw_map.items():
+        if len(pts) <= lim:
+            out[iid] = pts
+        else:
+            step = (len(pts) - 1) / float(lim - 1)
+            out[iid] = [pts[int(round(i * step))] for i in range(lim)]
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Инженерные паспорта приборов (`instrument_passports`)
+# ---------------------------------------------------------------------------
+def _row_to_passport(row: aiosqlite.Row) -> dict[str, Any]:
+    d = dict(row)
+    d["hazardous_zone"] = bool(d.get("hazardous_zone"))
+    d["mandatory_regulation"] = bool(d.get("mandatory_regulation"))
+    return d
+
+
+async def list_passports() -> dict[str, dict[str, Any]]:
+    async with _lock:
+        conn = await _get_conn()
+        cur = await conn.execute("SELECT * FROM instrument_passports ORDER BY code ASC")
+        rows = await cur.fetchall()
+    return {str(r["instrument_id"]): _row_to_passport(r) for r in rows}
+
+
+async def get_passport(instrument_id: str) -> dict[str, Any] | None:
+    async with _lock:
+        conn = await _get_conn()
+        cur = await conn.execute("SELECT * FROM instrument_passports WHERE instrument_id = ?", (instrument_id,))
+        row = await cur.fetchone()
+    return _row_to_passport(row) if row else None
+
+
+async def upsert_passport(passport: dict[str, Any]) -> dict[str, Any]:
+    now = utcnow_iso()
+    iid = str(passport["instrument_id"])
+    async with _lock:
+        conn = await _get_conn()
+        await conn.execute(
+            """INSERT INTO instrument_passports (
+                   instrument_id, camera_id, gauge_slot, code, name, group_name, gauge_type, unit,
+                   criticality_class, criticality_weight, hazardous_zone, mandatory_regulation,
+                   install_year, verification_due_date, custom_capex_rub, custom_downtime_risk_rub_yr,
+                   notes, updated_at
+               ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+               ON CONFLICT(instrument_id) DO UPDATE SET
+                   camera_id = excluded.camera_id,
+                   gauge_slot = excluded.gauge_slot,
+                   code = excluded.code,
+                   name = excluded.name,
+                   group_name = excluded.group_name,
+                   gauge_type = excluded.gauge_type,
+                   unit = excluded.unit,
+                   criticality_class = excluded.criticality_class,
+                   criticality_weight = excluded.criticality_weight,
+                   hazardous_zone = excluded.hazardous_zone,
+                   mandatory_regulation = excluded.mandatory_regulation,
+                   install_year = excluded.install_year,
+                   verification_due_date = excluded.verification_due_date,
+                   custom_capex_rub = excluded.custom_capex_rub,
+                   custom_downtime_risk_rub_yr = excluded.custom_downtime_risk_rub_yr,
+                   notes = excluded.notes,
+                   updated_at = excluded.updated_at""",
+            (
+                iid,
+                passport.get("camera_id"),
+                passport.get("gauge_slot"),
+                str(passport.get("code") or iid),
+                str(passport.get("name") or ""),
+                str(passport.get("group_name") or ""),
+                str(passport.get("gauge_type") or "pressure"),
+                str(passport.get("unit") or ""),
+                int(passport.get("criticality_class") or 2),
+                float(passport.get("criticality_weight") or 1.15),
+                1 if passport.get("hazardous_zone") else 0,
+                1 if passport.get("mandatory_regulation") else 0,
+                passport.get("install_year"),
+                passport.get("verification_due_date"),
+                passport.get("custom_capex_rub"),
+                passport.get("custom_downtime_risk_rub_yr"),
+                str(passport.get("notes") or ""),
+                now,
+            ),
+        )
+        await conn.commit()
+    return (await get_passport(iid)) or passport
+
+
+# ---------------------------------------------------------------------------
+# Снапшоты прогнозной аналитики (`predictive_snapshots`)
+# ---------------------------------------------------------------------------
+async def save_predictive_snapshots(items: list[dict[str, Any]], *, max_keep_per_inst: int = 120) -> int:
+    rows: list[tuple[Any, ...]] = []
+    for it in items:
+        iid = str(it.get("instrument_id") or "")
+        if not iid:
+            continue
+        model = it.get("model") or {}
+        compact = {
+            "trend_class": it.get("trend_class"),
+            "forecast_at_horizon": it.get("forecast_at_horizon"),
+            "uncertainty_pct": it.get("uncertainty_pct"),
+            "nearest_threshold": it.get("nearest_threshold"),
+            "eta_warning_ci": it.get("eta_warning_ci"),
+            "eta_alert_ci": it.get("eta_alert_ci"),
+            "anomalies_count": len(it.get("anomalies") or []),
+        }
+        rows.append((
+            iid,
+            it.get("camera_id"),
+            it.get("gauge_slot"),
+            str(it.get("computed_at") or utcnow_iso()),
+            str(it.get("status") or "ok"),
+            str(it.get("trend_class") or "insufficient_data"),
+            _clean_float(model.get("slope_per_min")),
+            _clean_float(it.get("eta_warning_min")),
+            _clean_float(it.get("eta_alert_min")),
+            float(_clean_float(it.get("breach_prob_alert_horizon")) or 0.0),
+            float(_clean_float(it.get("anomaly_score")) or 0.0),
+            float(_clean_float(it.get("forecast_confidence")) or 0.0),
+            json.dumps(compact, ensure_ascii=False),
+        ))
+    if not rows:
+        return 0
+    async with _lock:
+        conn = await _get_conn()
+        await conn.executemany(
+            """INSERT INTO predictive_snapshots (
+                   instrument_id, camera_id, gauge_slot, computed_at, status, trend_class,
+                   slope_per_min, eta_warning_min, eta_alert_min, breach_prob_alert,
+                   anomaly_score, confidence, payload_json
+               ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            rows,
+        )
+        # Ограничение роста таблицы: храним последние max_keep_per_inst * 64 записей
+        await conn.execute(
+            """DELETE FROM predictive_snapshots
+               WHERE id NOT IN (
+                   SELECT id FROM predictive_snapshots ORDER BY id DESC LIMIT ?
+               )""",
+            (max(500, int(max_keep_per_inst) * 64),),
+        )
+        await conn.commit()
+    return len(rows)
+
+
+async def list_predictive_snapshots(instrument_id: str, limit: int = 30) -> list[dict[str, Any]]:
+    async with _lock:
+        conn = await _get_conn()
+        cur = await conn.execute(
+            """SELECT * FROM predictive_snapshots
+               WHERE instrument_id = ?
+               ORDER BY computed_at DESC, id DESC
+               LIMIT ?""",
+            (instrument_id, int(limit)),
+        )
+        rows = await cur.fetchall()
+    out: list[dict[str, Any]] = []
+    for r in reversed(rows):
+        d = dict(r)
+        try:
+            d["payload"] = json.loads(d.pop("payload_json", "{}") or "{}")
+        except json.JSONDecodeError:
+            d["payload"] = {}
+        out.append(d)
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Сохранённые планы оптимизации модернизации (`modernization_plans`)
+# ---------------------------------------------------------------------------
+def _row_to_plan(row: aiosqlite.Row) -> dict[str, Any]:
+    d = dict(row)
+    try:
+        d["selected_ids"] = json.loads(d.pop("selected_ids_json", "[]") or "[]")
+    except json.JSONDecodeError:
+        d["selected_ids"] = []
+    try:
+        d["result"] = json.loads(d.pop("result_json", "{}") or "{}")
+    except json.JSONDecodeError:
+        d["result"] = {}
+    return d
+
+
+async def save_modernization_plan(
+    *,
+    name: str,
+    created_by: str,
+    result: dict[str, Any],
+) -> dict[str, Any]:
+    now = utcnow_iso()
+    summ = result.get("summary") or {}
+    sel_ids = [str(x["instrument_id"]) for x in (result.get("selected") or [])]
+    async with _lock:
+        conn = await _get_conn()
+        cur = await conn.execute(
+            """INSERT INTO modernization_plans (
+                   name, created_at, created_by, budget_rub, objective, status,
+                   selected_count, total_capex_rub, total_net_annual_effect_rub,
+                   total_risk_reduction, selected_ids_json, result_json
+               ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)""",
+            (
+                name.strip() or f"План модернизации ({now[:10]})",
+                now,
+                created_by,
+                int(result.get("budget_rub") or 0),
+                str(result.get("objective") or "weighted_utility"),
+                str(result.get("status") or "optimal"),
+                len(sel_ids),
+                int(summ.get("total_capex_rub") or 0),
+                int(summ.get("total_net_annual_effect_rub") or 0),
+                float(summ.get("total_risk_reduction") or 0.0),
+                json.dumps(sel_ids, ensure_ascii=False),
+                json.dumps(result, ensure_ascii=False),
+            ),
+        )
+        pid = int(cur.lastrowid or 0)
+        await conn.commit()
+        cur2 = await conn.execute("SELECT * FROM modernization_plans WHERE id = ?", (pid,))
+        row = await cur2.fetchone()
+    return _row_to_plan(row)  # type: ignore[arg-type]
+
+
+async def list_modernization_plans(limit: int = 30) -> list[dict[str, Any]]:
+    async with _lock:
+        conn = await _get_conn()
+        cur = await conn.execute(
+            """SELECT id, name, created_at, created_by, budget_rub, objective, status,
+                      selected_count, total_capex_rub, total_net_annual_effect_rub,
+                      total_risk_reduction, selected_ids_json
+               FROM modernization_plans
+               ORDER BY id DESC LIMIT ?""",
+            (int(limit),),
+        )
+        rows = await cur.fetchall()
+    out: list[dict[str, Any]] = []
+    for r in rows:
+        d = dict(r)
+        try:
+            d["selected_ids"] = json.loads(d.pop("selected_ids_json", "[]") or "[]")
+        except json.JSONDecodeError:
+            d["selected_ids"] = []
+        out.append(d)
+    return out
+
+
+async def get_modernization_plan(plan_id: int) -> dict[str, Any] | None:
+    async with _lock:
+        conn = await _get_conn()
+        cur = await conn.execute("SELECT * FROM modernization_plans WHERE id = ?", (int(plan_id),))
+        row = await cur.fetchone()
+    return _row_to_plan(row) if row else None
+
