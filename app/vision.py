@@ -485,12 +485,20 @@ def assess_dial_suitability(dial_bgr: np.ndarray) -> tuple[bool, str | None, flo
     return True, None, round(score, 1)
 
 
+def _inside_ellipse(roi: DialROI, px: float, py: float) -> bool:
+    """Точка кадра внутри эллипса ROI (нормализованный радиус ≤ 1)."""
+    q = roi.matrix @ np.array([px, py, 1.0])
+    half = config.DIAL_SIZE / 2.0
+    return math.hypot(q[0] - half, q[1] - half) <= half
+
+
 def detect_dial(frame_bgr: np.ndarray) -> DialROI | None:
     """
     Двухступенчатая детекция: YOLO локализует прибор, контурный эллипс OpenCV
     уточняет геометрию (рамка YOLO бывает смещена/обрезана, эллипс — точнее).
 
     • эллипс OpenCV с центром внутри рамки YOLO -> эллипс (источник «yolo+ellipse»);
+    • рамка YOLO — фрагмент крупного эллипса (её центр внутри эллипса) -> эллипс;
     • иначе — эллипс, уточнённый внутри рамки, либо вписанный в рамку эллипс;
     • YOLO недоступна / прибор не найден -> чистый OpenCV fallback.
     """
@@ -507,6 +515,15 @@ def detect_dial(frame_bgr: np.ndarray) -> DialROI | None:
                 and 0.25 * max(w, h) <= major <= 1.6 * max(w, h)):
             cv_roi.source = "yolo+ellipse"
             cv_roi.score = max(cv_roi.score, 0.97)
+            return cv_roi
+        # Крупный план: циферблат занимает почти весь кадр, и YOLO (обучена на сценах с прибором
+        # целиком) выделяет лишь часть лицевой панели — например, нижнюю половину с надписями.
+        # Если центр рамки лежит внутри найденного эллипса, а рамка заметно меньше его, рамка —
+        # фрагмент того же прибора, и эллипс точнее.
+        if (_inside_ellipse(cv_roi, x + w / 2.0, y + h / 2.0)
+                and w * h < 0.8 * math.pi * cv_roi.axes[0] * cv_roi.axes[1]):
+            cv_roi.source = "ellipse"
+            cv_roi.score = max(cv_roi.score, 0.9)
             return cv_roi
     return _roi_from_yolo_bbox(frame_bgr, bbox)
 
@@ -552,13 +569,15 @@ def needle_masks(dial_bgr: np.ndarray) -> dict[str, np.ndarray]:
     }
 
 
-def _needle_angle_moment(mask: np.ndarray) -> NeedleResult:
+def _needle_angle_moment(mask: np.ndarray, allowed: np.ndarray | None = None) -> NeedleResult:
     """
     Поиск направления максимального радиального момента инерции.
 
     Для каждого угла-кандидата суммируем пиксели маски вдоль луча с весом ~ r
     (дальние точки стрелки дают больший момент, а равномерно распределённые
     по дуге риски шкалы образуют лишь фон гистограммы).
+    allowed — булев массив 360 градусов: направления, куда стрелка может указывать
+    при заданной калибровке (рабочая дуга шкалы с запасом); остальные пики не рассматриваются.
     """
     size = mask.shape[0]
     center = size / 2.0
@@ -583,14 +602,18 @@ def _needle_angle_moment(mask: np.ndarray) -> NeedleResult:
     kernel = np.ones(9) / 9.0
     padded = np.concatenate([bins[-4:], bins, bins[:4]])
     smooth = np.convolve(padded, kernel, mode="valid")
+    if allowed is not None:
+        smooth = np.where(allowed, smooth, 0.0)
 
     best = int(np.argmax(smooth))
     peak = float(smooth[best])
     if peak <= 0:
         return NeedleResult(None, None, 0.0, "none")
-    # подавляем окрестность пика ±25° и смотрим второй максимум
+    # подавляем окрестность пика ±25° и противоположный сектор ±25° (хвост-противовес той же
+    # стрелки, а не конкурирующий объект) и смотрим второй максимум
     diff_bins = np.abs((np.arange(360) - best + 180) % 360 - 180)
-    second = float(smooth[diff_bins > 25].max()) if (diff_bins > 25).any() else 0.0
+    rivals = (diff_bins > 25) & (diff_bins < 155)
+    second = float(smooth[rivals].max()) if rivals.any() else 0.0
     # «радиальная протяжённость» пика: стрелка — длинный луч от центра
     in_peak = np.abs((theta - best + 180) % 360 - 180) < 6
     radial_extent = float((rv[in_peak].max() - rv[in_peak].min()) / (size * 0.30)) if in_peak.any() else 0.0
@@ -616,7 +639,7 @@ def _needle_angle_moment(mask: np.ndarray) -> NeedleResult:
     return NeedleResult(refined, tip, confidence, "moment")
 
 
-def _needle_angle_hough(mask: np.ndarray) -> NeedleResult:
+def _needle_angle_hough(mask: np.ndarray, allowed: np.ndarray | None = None) -> NeedleResult:
     """Трассировка осевой линии стрелки вероятностным преобразованием Хафа."""
     size = mask.shape[0]
     center = size / 2.0
@@ -643,6 +666,10 @@ def _needle_angle_hough(mask: np.ndarray) -> NeedleResult:
         if min(d1, d2) > size * 0.22:
             continue
         score = length * (1.0 - d_line / (size * 0.06) * 0.5)
+        if allowed is not None:
+            ex, ey = (x1, y1) if d1 >= d2 else (x2, y2)
+            if not allowed[int(math.degrees(math.atan2(ey - center, ex - center)) % 360.0) % 360]:
+                continue
         if score > best_score:
             best_score = score
             best_line = (x1, y1, x2, y2, d1, d2)
@@ -662,19 +689,101 @@ def _ang_diff(a: float, b: float) -> float:
     return abs((a - b + 180.0) % 360.0 - 180.0)
 
 
-def estimate_needle(dial_bgr: np.ndarray) -> NeedleResult:
+def needle_search_arc(calib: dict[str, Any], margin: float = 0.08) -> np.ndarray | None:
+    """
+    Допустимые направления стрелки по калибровке: рабочая дуга θmin → θmax (с учётом
+    направления) плюс запас margin от размаха с каждой стороны — тот же допуск, что у
+    angle_to_value (max_overshoot). Без калибровки — None (поиск по всему кругу).
+    """
+    parts = _calib_parts(calib or {})
+    if parts is None:
+        return None
+    _, th_min, _, th_max, direction = parts
+    span = (th_max - th_min) % 360.0 if direction == "cw" else (th_min - th_max) % 360.0
+    if span < 1.0:
+        return None
+    deg = np.arange(360, dtype=np.float64) + 0.5
+    delta = (deg - th_min) % 360.0 if direction == "cw" else (th_min - deg) % 360.0
+    over = span * margin
+    allowed = (delta <= span + over) | (delta >= 360.0 - over)
+    return allowed if allowed.any() and not allowed.all() else None
+
+
+HOUGH_ALONE_MIN = 0.70     # уверенность отрезка Хафа, достаточная без согласия момента
+FACE_LIGHT_LEVEL = 140.0   # медиана яркости кольца циферблата: светлое поле
+FACE_DARK_LEVEL = 90.0     # тёмное поле
+SCALE_GAP_MAX = 0.10       # доля рабочей дуги: самый длинный участок без рисок (перекрытие предметом)
+SCALE_COVERAGE_MIN = 0.30  # доля 5°-секторов рабочей дуги с текстурой рисок
+SCALE_COHERENCE_MIN = 0.55 # радиальная когерентность рисок (см. scale_arc_evidence)
+
+
+def scale_arc_evidence(dial_bgr: np.ndarray, allowed: np.ndarray) -> tuple[float, float, float]:
+    """
+    Видна ли шкала вдоль рабочей дуги. Полоса 0,55–0,98 радиуса нормализованного циферблата
+    разворачивается в полярные координаты; тангенциальный градиент (поперёк радиальных рисок)
+    усредняется по 5°-секторам дуги θmin → θmax.
+    Возвращает (gap, coverage, coherence): gap — самый длинный подряд участок «гладких» секторов
+    (средний градиент < 1 уровня яркости) в долях дуги; coverage — доля секторов с градиентом > 2;
+    coherence — радиальная когерентность рисок: наибольшая корреляция угловых профилей градиента
+    двух соседних подполос кольца (риски шкалы радиальны и совпадают по углу на разных радиусах,
+    а надписи, цифровые индикаторы и прямые края линеек — нет).
+    """
+    size = config.DIAL_SIZE
+    gray = cv2.cvtColor(dial_bgr, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    polar = cv2.warpPolar(gray, (size // 2, 720), (size / 2.0, size / 2.0), size / 2.0,
+                          cv2.WARP_POLAR_LINEAR)                      # строки — угол с шагом 0,5°
+    band = polar[:, int(0.55 * size / 2):int(0.98 * size / 2)]
+    profile = np.abs(np.diff(band, axis=0, append=band[:1])).mean(axis=1)
+    idx = np.where(np.repeat(allowed, 2))[0]
+    # дуга может проходить через 0°: начинаем обход с первого индекса после разрыва
+    if len(idx) and idx[0] == 0 and idx[-1] == 719:
+        brk = np.where(np.diff(idx) > 1)[0]
+        if len(brk):
+            idx = np.concatenate([idx[brk[0] + 1:], idx[:brk[0] + 1]])
+    sectors = np.array([profile[idx[i:i + 10]].mean() for i in range(0, len(idx) - 9, 10)])
+    if not len(sectors):
+        return 1.0, 0.0, 0.0
+    run = best = 0
+    for flat in sectors < 1.0:
+        run = run + 1 if flat else 0
+        best = max(best, run)
+    coherence = 0.0
+    step = 0.03 * size / 2.0
+    for r0 in np.arange(0.55, 0.95, 0.03) * size / 2.0:
+        prof = []
+        for lo in (r0, r0 + step):
+            sub = polar[:, int(lo):int(lo + step)]
+            g = np.abs(np.diff(sub, axis=0, append=sub[:1])).mean(axis=1)[idx].astype(np.float32)
+            prof.append(g - cv2.GaussianBlur(g.reshape(-1, 1), (1, 21), 0).ravel())
+        if prof[0].std() > 0.3 and prof[1].std() > 0.3:
+            coherence = max(coherence, float(np.corrcoef(prof[0], prof[1])[0, 1]))
+    return best / len(sectors), float(np.mean(sectors > 2.0)), coherence
+
+
+def estimate_needle(dial_bgr: np.ndarray, allowed: np.ndarray | None = None) -> NeedleResult:
     """
     Комбинированная оценка направления стрелки на нормализованном циферблате.
 
     Для каждой маски (Black-Hat / Top-Hat / насыщенность) считаем радиальный
     момент; выбираем маску с наибольшей уверенностью. Затем HoughLinesP
     уточняет угол, если согласуется с моментом (расхождение ≤ 12°).
+    allowed (needle_search_arc) ограничивает поиск рабочей дугой шкалы: блик, надпись или
+    стойка в «мёртвой зоне» под осью не перехватывают выбор у настоящей стрелки.
     """
     best_moment: NeedleResult | None = None
     best_mask: np.ndarray | None = None
     best_mode = "none"
-    for mode, mask in needle_masks(dial_bgr).items():
-        res = _needle_angle_moment(mask)
+    masks = needle_masks(dial_bgr)
+    # полярность циферблата: на светлом поле стрелка тёмная (Top-Hat ловит просветы между
+    # надписями), на тёмном — светлая; маска насыщенности (цветные стрелки) остаётся всегда
+    face = cv2.cvtColor(dial_bgr, cv2.COLOR_BGR2GRAY)[_ANNULUS]
+    face_level = float(np.median(face))
+    if face_level >= FACE_LIGHT_LEVEL:
+        masks.pop("tophat", None)
+    elif face_level <= FACE_DARK_LEVEL:
+        masks.pop("blackhat", None)
+    for mode, mask in masks.items():
+        res = _needle_angle_moment(mask, allowed)
         if res.angle_deg is None:
             continue
         if best_moment is None or res.confidence > best_moment.confidence:
@@ -683,7 +792,16 @@ def estimate_needle(dial_bgr: np.ndarray) -> NeedleResult:
     if best_moment is None or best_mask is None:
         return NeedleResult(None, None, 0.0, "none")
 
-    hough = _needle_angle_hough(best_mask)
+    hough = _needle_angle_hough(best_mask, allowed)
+    if hough.angle_deg is None or _ang_diff(hough.angle_deg, best_moment.angle_deg) > 12:
+        # Момент «засорён» цифрами и надписями внутри шкалы. Длинный прямой отрезок через ось —
+        # почти всегда сама стрелка: ищем его во всех масках и принимаем, если он уверенный.
+        lines = [(_needle_angle_hough(m, allowed), mode) for mode, m in masks.items()]
+        lines = [(h, mode) for h, mode in lines if h.angle_deg is not None]
+        if lines:
+            line, mode = max(lines, key=lambda hm: hm[0].confidence)
+            if line.confidence >= HOUGH_ALONE_MIN:
+                return NeedleResult(line.angle_deg, line.tip, 0.8 * line.confidence, f"hough/{mode}")
     if hough.angle_deg is not None and _ang_diff(hough.angle_deg, best_moment.angle_deg) <= 12:
         # согласованные оценки — взвешенное круговое среднее
         w_h = max(hough.confidence, 1e-3)
@@ -1109,7 +1227,17 @@ class GaugePipeline:
             roi = self._locate(frame, calibration)
             dial = normalize_dial(frame, roi)
             suitable, invalid_reason, dial_quality = assess_dial_suitability(dial)
-            needle = estimate_needle(dial) if suitable else NeedleResult(None, None, 0.0, "rejected")
+            arc = needle_search_arc(calibration)
+            work_arc = needle_search_arc(calibration, margin=0.0)   # сама рабочая дуга, без запаса
+            reading_scale = None
+            if suitable and work_arc is not None:
+                # шкала должна быть видна вдоль рабочей дуги (защита от перекрытия и «не того» прибора)
+                gap, coverage, coherence = scale_arc_evidence(dial, work_arc)
+                reading_scale = {"gap": round(gap, 3), "coverage": round(coverage, 3), "coherence": round(coherence, 3)}
+                if gap >= SCALE_GAP_MAX or coverage < SCALE_COVERAGE_MIN or coherence < SCALE_COHERENCE_MIN:
+                    suitable, invalid_reason = False, "scale_not_visible"
+            needle = (estimate_needle(dial, arc) if suitable
+                      else NeedleResult(None, None, 0.0, "rejected"))
 
             reading = GaugeReading(dial_found=roi.source != "frame", dial_source=roi.source)
             reading.needle_confidence = round(float(needle.confidence), 3)
@@ -1119,6 +1247,7 @@ class GaugePipeline:
                 "dial_suitable": suitable,
                 "dial_quality": dial_quality,
                 "invalid_reason": invalid_reason,
+                "scale_evidence": reading_scale,
             }
 
             # Дополнительная защита от ложных показаний при низкой уверенности без согласования Hough (DEF-15)

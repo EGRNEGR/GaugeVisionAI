@@ -1,0 +1,59 @@
+{
+ "label": "baseline",
+ "sets": {},
+ "unusable_dev": {
+  "blur": {
+   "n": 60,
+   "correct_refusal_rate": 1.0,
+   "refusal_reasons": {
+    "low_confidence": 41,
+    "unreadable_dial": 19
+   }
+  },
+  "dark": {
+   "n": 60,
+   "correct_refusal_rate": 1.0,
+   "refusal_reasons": {
+    "unreadable_dial": 60
+   }
+  },
+  "non_dial_digital": {
+   "n": 12,
+   "correct_refusal_rate": 0.5833333333333334,
+   "refusal_reasons": {
+    "low_confidence_unconfirmed": 7
+   }
+  },
+  "non_dial_linear": {
+   "n": 48,
+   "correct_refusal_rate": 0.625,
+   "refusal_reasons": {
+    "low_confidence_unconfirmed": 24,
+    "partial_occlusion": 2,
+    "out_of_scale": 2,
+    "low_confidence": 1,
+    "unreadable_dial": 1
+   }
+  },
+  "occluded": {
+   "n": 60,
+   "correct_refusal_rate": 0.7333333333333333,
+   "refusal_reasons": {
+    "low_confidence_unconfirmed": 42,
+    "out_of_scale": 2
+   }
+  },
+  "overexposed": {
+   "n": 60,
+   "correct_refusal_rate": 1.0,
+   "refusal_reasons": {
+    "unreadable_dial": 60
+   }
+  },
+  "overall": {
+   "n": 300,
+   "correct_refusal_rate": 0.87,
+   "target": ">= 0.95"
+  }
+ }
+}

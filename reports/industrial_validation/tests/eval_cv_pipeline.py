@@ -129,6 +129,7 @@ def evaluate_item(rec: dict[str, Any], frame: np.ndarray, config, vision, degrad
     out["needle_method"] = dbg.get("needle_method")
     out["invalid_reason"] = None if reading.valid else (dbg.get("invalid_reason") or "invalid")
     out["dial_quality"] = dbg.get("dial_quality")
+    out["scale_evidence"] = dbg.get("scale_evidence")
     if out.get("gt_needle_theta") is not None and reading.angle is not None:
         out["angle_err"] = round(vision._ang_diff(float(reading.angle), out["gt_needle_theta"]), 2)
     kind, gt = gt_value(rec)
@@ -187,7 +188,10 @@ def degrade_frame(frame: np.ndarray, rec: dict[str, Any], kind: str, rng: random
     return np.clip(out, 0, 255).astype(np.uint8)
 
 
-def build_unusable(manifest: dict[str, Any], mb_dir: Path, n_per_kind: int, seed: int = 0) -> list[tuple[dict, str]]:
+def build_unusable(manifest: dict[str, Any], mb_dir: Path, n_per_kind: int, seed: int = 0,
+                   role: str = "primary") -> list[tuple[dict, str]]:
+    """Непригодные кадры. role="primary" — итоговый набор (состав зафиксирован, seed 0);
+    role="dev" — набор для доработки: деградации снимков dev и нециферблатные снимки, не попавшие в итоговый."""
     rng = random.Random(seed)
     prim = [r for r in manifest["items"] if r.get("primary")]
     jobs: list[tuple[dict, str]] = []
@@ -197,7 +201,16 @@ def build_unusable(manifest: dict[str, Any], mb_dir: Path, n_per_kind: int, seed
     # реальные снимки неподходящих приборов: цифровые индикаторы и линейные шкалы MeasureBench
     mb = [json.loads(l) for l in (mb_dir / "manifest.jsonl").read_text(encoding="utf-8").splitlines()]
     other = [r for r in mb if r["design"] in ("digital", "linear")]
-    for r in rng.sample(other, min(n_per_kind, len(other))):
+    picked = rng.sample(other, min(n_per_kind, len(other)))
+    if role == "dev":
+        rng_dev = random.Random(seed + 1)
+        dev = [r for r in manifest["items"] if r["role"] == "dev" and not r.get("excluded")]
+        jobs = [(rec, kind) for kind in ("dark", "overexposed", "occluded", "blur")
+                for rec in rng_dev.sample(dev, min(n_per_kind, len(dev)))]
+        used = {r["file"] for r in picked}
+        rest = [r for r in other if r["file"] not in used]
+        picked = rng_dev.sample(rest, min(n_per_kind, len(rest)))
+    for r in picked:
         rec = {"dataset": "MeasureBench", "file": r["file"], "model": "non_dial", "client": r["image_type"],
                "gt_type": "unusable", "center": [r["width"] / 2.0, r["height"] / 2.0],
                "first_tick": [r["width"] * 0.3, r["height"] * 0.75], "last_tick": [r["width"] * 0.7, r["height"] * 0.75],
@@ -225,8 +238,9 @@ def main() -> int:
     out_dir.mkdir(parents=True, exist_ok=True)
     meterfl, mb = Path(args.meterfl), Path(args.measurebench)
     if args.unusable:
-        jobs = build_unusable(manifest, mb, args.n_per_kind)
-        name = f"{args.label}_unusable"
+        role = "dev" if args.subset == "dev" else "primary"
+        jobs = build_unusable(manifest, mb, args.n_per_kind, role=role)
+        name = f"{args.label}_unusable" + ("_dev" if role == "dev" else "")
     else:
         items = [r for r in manifest["items"] if not r.get("excluded")]
         if args.subset == "primary":

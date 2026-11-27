@@ -167,8 +167,10 @@ def main() -> int:
                 tags[t.split(":")[0]].append(r)
         s["by_tag"] = {k: stats(v) for k, v in sorted(tags.items())}
         summary["sets"][sub] = s
-    pu = runs / f"{args.label}_unusable.jsonl"
-    if pu.is_file():
+    for suffix in ("", "_dev"):
+        pu = runs / f"{args.label}_unusable{suffix}.jsonl"
+        if not pu.is_file():
+            continue
         rows = load(pu)
         by = defaultdict(list)
         for r in rows:
@@ -179,7 +181,7 @@ def main() -> int:
         tot = [r for r in rows if "error" not in r]
         un["overall"] = {"n": len(tot), "correct_refusal_rate": len([r for r in tot if not r.get("valid")]) / len(tot),
                          "target": ">= 0.95"}
-        summary["unusable"] = un
+        summary["unusable" + suffix] = un
     out = Path(args.out) if args.out else runs / f"{args.label}_summary.json"
     out.write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8")
     for sub, s in summary["sets"].items():
@@ -188,8 +190,9 @@ def main() -> int:
               f"mean={o['mean_err_norm'] and round(o['mean_err_norm'] * 100, 2)}% med={o['median_err_norm'] and round(o['median_err_norm'] * 100, 2)}% "
               f"p95={o['p95_err_norm'] and round(o['p95_err_norm'] * 100, 2)}% gross(valid)={o['gross_rate_valid'] and round(o['gross_rate_valid'] * 100, 1)}% "
               f"reasons={o['refusal_reasons']} causes={o['gross_causes']}")
-    if "unusable" in summary:
-        print("[unusable]", {k: round(v["correct_refusal_rate"], 3) for k, v in summary["unusable"].items()})
+    for key in ("unusable", "unusable_dev"):
+        if key in summary:
+            print(f"[{key}]", {k: round(v["correct_refusal_rate"], 3) for k, v in summary[key].items()})
     return 0
 
 
