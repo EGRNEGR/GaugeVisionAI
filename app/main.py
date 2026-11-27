@@ -68,6 +68,7 @@ from .spec_generator import (
     llm_status,
     render_spec_docx,
 )
+from .multigauge_service import MultiGaugeServiceMixin
 from .store_forward import StoreAndForwardBuffer
 from .stream_manager import EdgeStreamManager, FrameBroker, apply_signal_fault, encode_jpeg
 
@@ -188,6 +189,46 @@ class CameraUpdate(BaseModel):
     source_url: str | None = Field(None, max_length=2000)
     calibration: CalibrationModel | None = None
     thresholds: ThresholdsModel | None = None
+
+
+class AnchorModel(BaseModel):
+    """Якорная ROI прибора в долях кадра источника (SHARED_DATA_CONTRACT § 4.4)."""
+    mode: Literal["auto", "manual"] = "auto"
+    cx: float = Field(..., ge=0.0, le=1.0)
+    cy: float = Field(..., ge=0.0, le=1.0)
+    r: float = Field(..., gt=0.005, le=1.0)
+    axes: list[float] | None = Field(None, min_length=2, max_length=2)
+    angle: float | None = None
+
+    @field_validator("axes")
+    @classmethod
+    def _axes_positive(cls, v: list[float] | None) -> list[float] | None:
+        if v is not None and not all(math.isfinite(a) and 0.0 < a <= 1.0 for a in v):
+            raise ValueError("полуоси — доли меньшей стороны кадра в (0; 1]")
+        return v
+
+
+class InstrumentCreate(BaseModel):
+    name: str = Field(..., min_length=1, max_length=200)
+    code: str | None = Field(None, max_length=40)
+    tag: str | None = Field(None, max_length=80)
+    gauge_type: GaugeType = "pressure"
+    unit: str | None = None
+    roi: AnchorModel
+    calibration: CalibrationModel | None = None
+    thresholds: ThresholdsModel | None = None
+
+
+class InstrumentUpdate(BaseModel):
+    name: str | None = Field(None, min_length=1, max_length=200)
+    code: str | None = Field(None, max_length=40)
+    tag: str | None = Field(None, max_length=80)
+    gauge_type: GaugeType | None = None
+    unit: str | None = None
+    roi: AnchorModel | None = None
+    calibration: CalibrationModel | None = None
+    thresholds: ThresholdsModel | None = None
+    enabled: bool | None = None
 
 
 class PhoneSessionRequest(BaseModel):
@@ -347,7 +388,7 @@ def _round(v: float | None, nd: int = 4) -> float | None:
     return None if v is None else round(float(v), nd)
 
 
-class GaugeService:
+class GaugeService(MultiGaugeServiceMixin):
     def __init__(self) -> None:
         self.hub = DashboardHub()
         self.broker = FrameBroker()
@@ -376,6 +417,7 @@ class GaugeService:
         self._sim_prev_levels: dict[str, str] = {}
         self._live_spark: dict[str, list[float]] = {}
         self.active_run: dict[str, Any] | None = None
+        self._mg_reset()
 
     def _broadcast_sse(self, event_name: str, payload: dict[str, Any]) -> None:
         if not self._sse_clients:
@@ -397,6 +439,14 @@ class GaugeService:
 
     def emit(self, kind: str, **fields: Any) -> dict[str, Any]:
         """Запись в журнал событий (RAM + SQLite) и рассылка всем пультам + буфер Store-and-Forward."""
+        cam_id = fields.get("cam_id")
+        if cam_id and kind != "link":
+            # cam_id событий прибора = instrument_id (контракт § 1.2); источник — по реестру приборов
+            fields.setdefault("instrument_id", cam_id)
+            inst = self.instruments.get(cam_id)
+            fields.setdefault("source_id", inst["source_id"] if inst else cam_id)
+        elif cam_id:
+            fields.setdefault("source_id", cam_id)
         ev = self.events.add(kind, **fields)
         snap = self.events.snapshot(ev["id"]) if ev.get("has_frame") else None
         self.hub.broadcast({"type": "event", "event": ev})
@@ -450,6 +500,8 @@ class GaugeService:
             await self._ensure_demo_camera()
         # загрузка и прогрев YOLO (torch/CUDA) — вне event-loop, до старта конвейеров
         await asyncio.get_running_loop().run_in_executor(self.executor, vision.yolo_available)
+        self._mg_reset()
+        await self._mg_load()
         for cam in await db.list_cameras():
             self.cameras[cam["id"]] = cam
             self._start_camera(cam)
@@ -1028,21 +1080,32 @@ class GaugeService:
                     last_no = frame_no
                     eff_frame = apply_signal_fault(frame, fault) if fault in ("steam", "low_light", "glare", "partial_occlusion") else frame
                     qrep = qa.analyze(eff_frame, stream_online=True, injected_fault=fault)
-                    reading, jpeg, snap = await loop.run_in_executor(
-                        self.executor, self._run_pipeline, pipeline, eff_frame, cam)
-                    if jpeg:
-                        self.broker.publish_overlay(cam_id, jpeg)
-                        ring.push(jpeg)
-                    cal = cam.get("calibration") or {}
-                    span = abs(float(cal.get("v_max", 10.0)) - float(cal.get("v_min", 0.0))) or 1.0
-                    adaptive.update(
-                        value=reading.ema_value if reading.valid else None,
-                        span=span,
-                        level=reading.status_level if reading.valid else None,
-                        degraded=(qrep.health_status == "DEGRADED"),
-                        process_ms=reading.process_ms,
-                    )
-                    self._on_reading(cam_id, cam, reading, snap)
+                    if self.is_multi(cam_id):
+                        # несколько приборов в кадре: один проход детектора на весь источник
+                        views = self.multi_views(cam_id)
+                        res, jpeg, snaps = await loop.run_in_executor(
+                            self.executor, self._run_multi, self.mg_processor(cam_id), eff_frame, views)
+                        if jpeg:
+                            self.broker.publish_overlay(cam_id, jpeg)
+                            ring.push(jpeg)
+                        self._mg_after_frame(cam_id, views, res, snaps, adaptive,
+                                             degraded=(qrep.health_status == "DEGRADED"))
+                    else:
+                        reading, jpeg, snap = await loop.run_in_executor(
+                            self.executor, self._run_pipeline, pipeline, eff_frame, cam)
+                        if jpeg:
+                            self.broker.publish_overlay(cam_id, jpeg)
+                            ring.push(jpeg)
+                        cal = cam.get("calibration") or {}
+                        span = abs(float(cal.get("v_max", 10.0)) - float(cal.get("v_min", 0.0))) or 1.0
+                        adaptive.update(
+                            value=reading.ema_value if reading.valid else None,
+                            span=span,
+                            level=reading.status_level if reading.valid else None,
+                            degraded=(qrep.health_status == "DEGRADED"),
+                            process_ms=reading.process_ms,
+                        )
+                        self._on_reading(cam_id, cam, reading, snap)
             except asyncio.CancelledError:
                 raise
             except Exception as exc:
@@ -1050,10 +1113,14 @@ class GaugeService:
             await self._sleep_with_motion_wakeup(cam_id, adaptive, last_no, max(0.05, adaptive.interval - (time.monotonic() - t0)))
 
     def _on_reading(self, cam_id: str, cam: dict[str, Any], r: vision.GaugeReading,
-                    snap: bytes | None = None) -> None:
+                    snap: bytes | None = None, source_id: str | None = None) -> None:
+        """Отсчёт прибора cam_id (= instrument_id; для однокамерного источника — id камеры)."""
         ts = db.utcnow_iso()
         prev = self.last.get(cam_id) or {}
-        stream_info = self.streams.info(cam_id)
+        source_id = source_id or cam_id
+        stream_info = self.streams.info(source_id)
+        inst_row = self.instruments.get(cam_id) or {}
+        cal_rev = int(inst_row.get("calibration_rev") or 0)
         out_of_scale = bool(r.debug.get("out_of_scale"))
 
         last_valid_ts = ts if r.valid else prev.get("last_valid_ts")
@@ -1065,6 +1132,13 @@ class GaugeService:
         shown_level = r.status_level if r.valid else (None if awaiting_post_cal else last_valid_level)
 
         state: dict[str, Any] = {
+            "schema": "gv.reading/1",
+            "instrument_id": cam_id,
+            "source_id": source_id,
+            "unit": cam.get("unit"),
+            "invalid_reason": None if r.valid else r.debug.get("invalid_reason"),
+            "calibration_rev": cal_rev,
+            "track": r.debug.get("track"),
             "ts": ts,
             "last_frame_ts": stream_info.get("last_frame_utc") or ts,
             "value": shown_val,
@@ -1102,13 +1176,15 @@ class GaugeService:
             if r.status_level != prev_valid_level:
                 sp = crossed_setpoint(state["value"], cam["thresholds"])
                 if r.status_level in ("warning", "alert"):
-                    self.streams.ring_buffer(cam_id).trigger(
+                    self.streams.ring_buffer(source_id).trigger(
                         f"Превышение уставки {sp or r.status_level}", r.status_level, state["value"]
                     )
                 self.emit(
                     "alarm",
                     cam_id=cam_id,
                     cam_name=cam["name"],
+                    instrument_id=cam_id,
+                    source_id=source_id,
                     level=r.status_level,
                     prev_level=prev_valid_level,
                     value=state["value"],
@@ -1132,13 +1208,15 @@ class GaugeService:
                 active_run_id = self.active_run["id"]
                 self.active_run["readings_count"] = int(self.active_run.get("readings_count") or 0) + 1
             self._db_buffer.append((
-                cam_id,
+                source_id,
                 ts,
                 float(r.ema_value),
                 None if r.angle is None else float(r.angle),
                 r.status_level,
                 cam["unit"],
                 active_run_id,
+                cam_id,
+                cal_rev,
             ))
 
     # -- фоновые задачи -------------------------------------------------------
@@ -1189,7 +1267,9 @@ class GaugeService:
         }
         is_demo_primary = config.is_demo_mode() and cam_id == config.DEMO_LIVE_CAM_ID
         pos = 1 if is_demo_primary else (list(self.cameras.keys()).index(cam_id) + 1 if cam_id in self.cameras else 1)
-        return demo.unify_camera(raw_cam, grid_pos=pos, is_primary_demo=is_demo_primary)
+        out = demo.unify_camera(raw_cam, grid_pos=pos, is_primary_demo=is_demo_primary)
+        out.update(self.instrument_fields(cam_id))
+        return out
 
     def public_cameras(self) -> list[dict[str, Any]]:
         return [self.public_camera(c) for c in self.cameras.values()]
@@ -1197,21 +1277,31 @@ class GaugeService:
     def public_instruments(self) -> list[dict[str, Any]]:
         """Единый список приборов пульта (в демопрофиле: 36 позиций — 1 живая + 35 симуляция)."""
         if not config.is_demo_mode():
-            return [
-                demo.unify_camera(self.public_camera(c), grid_pos=i + 1, is_primary_demo=False)
-                for i, c in enumerate(self.cameras.values())
-            ]
-        out: list[dict[str, Any]] = []
+            out: list[dict[str, Any]] = []
+            for c in self.cameras.values():
+                out.append(demo.unify_camera(self.public_camera(c), grid_pos=len(out) + 1, is_primary_demo=False))
+                # дополнительные приборы источника — сразу за его основным прибором (Multi-Gauge)
+                for inst in self.secondary_instruments(c["id"]):
+                    out.append(self.public_instrument(inst, grid_pos=len(out) + 1))
+            return out
+        out = []
         primary = self.cameras.get(config.DEMO_LIVE_CAM_ID)
         if primary:
             out.append(self.public_camera(primary))
         out.extend(self.sim_adapter.all_instruments())
         extra_pos = len(out) + 1
+        if primary:
+            for inst in self.secondary_instruments(primary["id"]):
+                out.append(self.public_instrument(inst, grid_pos=extra_pos))
+                extra_pos += 1
         for cid, cam in self.cameras.items():
             if cid == config.DEMO_LIVE_CAM_ID:
                 continue
             out.append(demo.unify_camera(self.public_camera(cam), grid_pos=extra_pos, is_primary_demo=False))
             extra_pos += 1
+            for inst in self.secondary_instruments(cid):
+                out.append(self.public_instrument(inst, grid_pos=extra_pos))
+                extra_pos += 1
         return out
 
     async def demo_state(self) -> dict[str, Any]:
@@ -1285,6 +1375,7 @@ class GaugeService:
             thresholds=data.thresholds.model_dump() if data.thresholds else None,
         )
         self.cameras[cam["id"]] = cam
+        await self._mg_reload_source(cam["id"])
         self._start_camera(cam)
         out = self.public_camera(cam)
         self.hub.broadcast({"type": "camera_added", "camera": out})
@@ -1337,6 +1428,10 @@ class GaugeService:
         if updated is None:
             raise HTTPException(404, "Прибор не найден")
         self.cameras[cam_id] = updated
+        await self._mg_reload_source(cam_id)
+        mp = self.mg.get(cam_id)
+        if mp is not None and cam_id in mp.pipelines and (reset_roi or scale_changed or unit_changed):
+            mp.pipelines[cam_id].reset()
         if restart:
             await self._stop_camera(cam_id)
             self.last.pop(cam_id, None)
@@ -1411,6 +1506,7 @@ class GaugeService:
         self.cameras.pop(cam_id, None)
         self.pipelines.pop(cam_id, None)
         self.last.pop(cam_id, None)
+        self._mg_forget_source(cam_id)
         self._last_db_write.pop(cam_id, None)
         self._db_buffer = [r for r in self._db_buffer if r[0] != cam_id]
         await db.delete_camera(cam_id)
@@ -1713,9 +1809,8 @@ async def api_instrument_history(
         if not config.is_demo_mode():
             raise HTTPException(404, "Симулируемый прибор доступен только в демопрофиле")
         return service.sim_adapter.history_rows(inst_id, limit=limit)
-    cam = _get_cam(inst_id)
+    pub = _instrument_public(inst_id)
     await service._flush_db()
-    pub = service.public_camera(cam)
     rows = await db.get_history(inst_id, limit)
     return [
         {
@@ -1724,9 +1819,10 @@ async def api_instrument_history(
             "instrument_id": pub.get("code") or inst_id,
             "source_kind": pub.get("source_kind", "phone_cv"),
             "value": r["value"],
-            "unit": r.get("unit") or cam["unit"],
+            "unit": r.get("unit") or pub["unit"],
             "raw_angle_deg": r["raw_angle"],
             "status_level": r["status_level"],
+            "calibration_rev": r.get("calibration_rev"),
         }
         for r in rows
         if r["value"] is not None
@@ -1749,7 +1845,13 @@ async def api_instrument_export_csv(
                 f"{r['timestamp_iso8601']};{r['instrument_id']};simulated;{r['value']:.4f};{r['unit']};;{r['status_level']}"
             )
         return _csv_response("\n".join(lines) + "\n", f"{spec['code']}_{spec['short_name']}", f"sim_{inst_id}")
-    return await api_export_csv(inst_id, format="demo")
+    if inst_id in service.cameras:
+        return await api_export_csv(inst_id, format="demo")
+    pub = _instrument_public(inst_id)
+    await service._flush_db()
+    csv_text = await db.export_csv(inst_id, demo_format=True, instrument_id=pub.get("code") or inst_id,
+                                   source_kind=pub.get("source_kind", "camera_cv"), unit_override=pub["unit"])
+    return _csv_response(csv_text, f"{pub.get('code', 'gauge')}_{pub['name']}", f"gauge_{inst_id[:8]}")
 
 
 @app.get("/api/instruments/{inst_id}/trend")
@@ -1768,12 +1870,141 @@ async def api_instrument_trend(
         if not config.is_demo_mode():
             raise HTTPException(404, "Симулируемый прибор доступен только в демопрофиле")
         return service.sim_adapter.trend(inst_id, since, step, until)
-    _get_cam(inst_id)
+    _instrument_public(inst_id)
     await service._flush_db()
     end_ref = until or _dt.datetime.now(_dt.timezone.utc)
     span = max(1.0, (end_ref - since).total_seconds())
     step = max(step, config.DB_WRITE_INTERVAL, span / config.TREND_BUCKETS_MAX)
     return await db.get_trend(inst_id, since, step, until)
+
+
+def _instrument_public(inst_id: str) -> dict[str, Any]:
+    """Прибор пульта по instrument_id: основной (камера) или дополнительный (Multi-Gauge)."""
+    if inst_id in service.cameras:
+        return service.public_camera(service.cameras[inst_id])
+    inst = service.instruments.get(inst_id)
+    if inst is None:
+        raise HTTPException(404, "Прибор не найден")
+    return service.public_instrument(inst, grid_pos=0)
+
+
+def _instrument_payload(data: InstrumentCreate | InstrumentUpdate, base_calibration: dict[str, Any],
+                        base_gauge_type: str, base_unit: str | None,
+                        current_thresholds: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Проверенные поля прибора: единица по типу, геометрия шкалы, порядок уставок."""
+    patch = data.model_dump(exclude_unset=True, exclude={"calibration", "thresholds", "roi"})
+    gauge_type = patch.get("gauge_type") or base_gauge_type
+    if "unit" in patch or "gauge_type" in patch or isinstance(data, InstrumentCreate):
+        unit = patch.get("unit")
+        if unit is None and base_unit in config.GAUGE_TYPES[gauge_type]["units"]:
+            unit = base_unit
+        patch["unit"] = _validate_unit(gauge_type, unit)
+    eff_cal = base_calibration
+    if data.calibration is not None:
+        data.calibration.check_geometry()
+        eff_cal = data.calibration.model_dump(exclude={"roi"})
+        patch["calibration"] = eff_cal
+    if data.thresholds is not None:
+        data.thresholds.check_order(eff_cal.get("v_min"), eff_cal.get("v_max"))
+        thr = data.thresholds.model_dump()
+        if thr.get("lower_enabled") is False:
+            thr["ll_alert"] = thr["l_warn"] = None
+        patch["thresholds"] = thr
+    elif data.calibration is not None and current_thresholds:
+        # новая шкала должна вмещать уже сохранённые уставки
+        ThresholdsModel(**current_thresholds).check_order(eff_cal.get("v_min"), eff_cal.get("v_max"))
+    if data.roi is not None:
+        patch["roi"] = data.roi.model_dump(exclude_none=True)
+    for k in ("name", "code", "tag"):
+        if isinstance(patch.get(k), str):
+            patch[k] = patch[k].strip() or None
+    return patch
+
+
+@app.get("/api/sources/{source_id}/instruments")
+async def api_source_instruments(
+    source_id: str,
+    _user: dict[str, Any] = Depends(auth.require_role("operator")),
+) -> dict[str, Any]:
+    _get_cam(source_id)
+    return {"source_id": source_id, "multi_gauge": service.is_multi(source_id),
+            "instruments": service.public_source_instruments(source_id)}
+
+
+@app.post("/api/sources/{source_id}/instruments/detect")
+async def api_source_detect(
+    source_id: str,
+    _user: dict[str, Any] = Depends(auth.require_role("engineer")),
+) -> dict[str, Any]:
+    return await service.mg_detect(source_id)
+
+
+@app.post("/api/sources/{source_id}/instruments", status_code=201)
+async def api_add_instrument(
+    source_id: str,
+    data: InstrumentCreate,
+    request: Request,
+    user: dict[str, Any] = Depends(auth.require_role("engineer")),
+) -> dict[str, Any]:
+    _get_cam(source_id)
+    payload = _instrument_payload(data, dict(db.DEFAULT_CALIBRATION), data.gauge_type, data.unit)
+    if payload.get("name") is None:
+        raise HTTPException(422, "Укажите наименование прибора")
+    payload.setdefault("gauge_type", data.gauge_type)
+    res = await service.mg_add_instrument(source_id, payload)
+    await db.log_audit(username=user["username"], role=user["role"], action="CREATE_INSTRUMENT",
+                       target=res["id"], status_code=201, ip=request.client.host if request.client else None)
+    return res
+
+
+@app.patch("/api/instruments/{inst_id}")
+async def api_update_instrument(
+    inst_id: str,
+    data: InstrumentUpdate,
+    request: Request,
+    user: dict[str, Any] = Depends(auth.require_role("engineer")),
+) -> dict[str, Any]:
+    inst = service.instruments.get(inst_id)
+    if inst is None:
+        raise HTTPException(404, "Прибор не найден")
+    if inst["is_primary"]:
+        cam = _get_cam(inst_id)
+        if data.enabled is False:
+            raise HTTPException(409, "Основной прибор источника нельзя отключить")
+        cam_fields = data.model_dump(exclude_unset=True, include={"name", "gauge_type", "unit"})
+        if data.calibration is not None:
+            # ручная ROI камеры сохраняется: шкала основного прибора меняется прежним путём
+            cal = data.calibration.model_dump(exclude={"roi"})
+            cam_fields["calibration"] = CalibrationModel(**{**cal, "roi": cam["calibration"].get("roi")})
+        if data.thresholds is not None:
+            cam_fields["thresholds"] = data.thresholds
+        if cam_fields:
+            await service.update_camera(inst_id, CameraUpdate(**cam_fields))
+        rest = data.model_dump(exclude_unset=True, include={"code", "tag"})
+        if data.roi is not None:
+            rest["roi"] = data.roi.model_dump(exclude_none=True)
+        if rest:
+            await service.mg_update_instrument(inst_id, rest)
+        res = _instrument_public(inst_id)
+    else:
+        patch = _instrument_payload(data, inst["calibration"], inst["gauge_type"], inst["unit"],
+                                    current_thresholds=inst["thresholds"])
+        res = await service.mg_update_instrument(inst_id, patch) if patch else _instrument_public(inst_id)
+    await db.log_audit(username=user["username"], role=user["role"], action="UPDATE_INSTRUMENT",
+                       target=inst_id, status_code=200, ip=request.client.host if request.client else None)
+    return res
+
+
+@app.delete("/api/instruments/{inst_id}", status_code=204)
+async def api_delete_instrument(
+    inst_id: str,
+    request: Request,
+    user: dict[str, Any] = Depends(auth.require_role("admin")),
+) -> Response:
+    await service.mg_delete_instrument(inst_id)
+    await db.log_audit(username=user["username"], role=user["role"], action="DELETE_INSTRUMENT",
+                       target=inst_id, status_code=204, ip=request.client.host if request.client else None)
+    return Response(status_code=204)
 
 
 @app.post("/api/cameras", status_code=201)

@@ -1,6 +1,7 @@
 # Общий контракт данных GaugeVision AI Next Generation
 
-Версия **1.0**, зафиксирована 2026-11-27 в ветке `next-gen/platform`.
+Версия **1.1**, 2026-11-27, ветка `next-gen/platform` (1.0 — первая фиксация; 1.1 — сверка с
+реализацией Neon в ветках `next-gen/scada-ignition` d131d55 и `next-gen/analytics-optimizer` 6a1828d).
 Участники: основной агент (ветка `next-gen/platform`: CV, Multi-Gauge Vision, Auto Calibration,
 интеграция HMI/API/SQLite) и агент Neon (отдельная ветка: Ignition SCADA и REQ-API-07,
 Predictive Analytics, Modernization Optimizer).
@@ -45,6 +46,11 @@ Predictive Analytics, Modernization Optimizer).
   циферблат → `instrument_id`» выполняет трекер Multi-Gauge по сохранённой якорной ROI прибора
   (`instruments.roi`, § 4.1). Если сопоставить не удалось, отсчёт помечается `track_lost`
   и не приписывается чужому прибору.
+- `gauge_slot` — номер циферблата в кадре источника: основной прибор 0, дополнительные 1, 2, … (наименьший
+  свободный номер на источнике, хранится в `instruments.gauge_slot`). Совпадает с полем
+  `InstrumentIdentity.gauge_slot` модуля `app/contracts.py` Neon; `camera_id` записи прибора = `source_id`.
+  Формат `<camera_id>#g<slot>` из `resolve_instrument_identity` не используется: в записях приборов
+  всегда есть явные `camera_id` и `gauge_slot`, которые эта функция берёт в первую очередь.
 - Человекочитаемые обозначения: `code` (позиция пульта, например `КМ-03`, `PI-101`) и `tag`
   (технологический тег КИПиА, необязательный). Оба можно менять; ключом служит только `instrument_id`.
 
@@ -138,7 +144,7 @@ created_at, severity, …payload`.
 | `instrument_id` | `alarm` | событие § 3.1 |
 | `source_id` | `health` | событие `link` |
 | `ktc-telemetry` / `DEMO_LIVE_CAM_ID` | `telemetry` | сводка станции (как сейчас) |
-| `instrument_id` | `telemetry` | **новое (v1.0)**: `{"schema": "gv.telemetry/1", "instrument_id", "source_id", "code", "ts", "value", "unit", "level", "valid", "confidence", "calibration_rev"}` — не чаще `DB_WRITE_INTERVAL` на прибор и только при `valid = true` |
+| `instrument_id` | `telemetry` | **новое (v1.0)**: `{"schema": "gv.telemetry/1", "instrument_id", "source_id", "code", "ts", "value", "unit", "level", "valid", "confidence", "calibration_rev"}` — только для приборов многоприборных источников (однокамерная конфигурация не меняет поток MQTT), не чаще `MG_TELEMETRY_INTERVAL` = 5 с на прибор и только при `valid = true` (v1.1) |
 
 ## 4. Хранение (SQLite, `app/db.py`)
 
@@ -163,6 +169,7 @@ CREATE TABLE IF NOT EXISTS instruments (
     calibration_meta TEXT NOT NULL DEFAULT '{}',      -- источник, уверенность, кто подтвердил (§ 4.4)
     thresholds       TEXT NOT NULL DEFAULT '{}',      -- JSON, ThresholdsModel
     modbus_slot      INTEGER UNIQUE,                  -- § 5.3
+    gauge_slot       INTEGER NOT NULL DEFAULT 0,      -- § 1.1, уникален в пределах source_id (v1.1)
     enabled          INTEGER NOT NULL DEFAULT 1,
     created_at       TEXT NOT NULL,
     updated_at       TEXT NOT NULL
@@ -180,7 +187,10 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_instruments_primary ON instruments (source
 
 `readings` получает столбец `instrument_id TEXT` (NULL в старых строках) и индекс
 `(instrument_id, timestamp)`. Ключ прибора строки — `COALESCE(instrument_id, camera_id)`;
-`camera_id` всегда = `source_id`. Новые строки пишутся с заполненным `instrument_id`.
+`camera_id` всегда = `source_id`. Новые строки пишутся с заполненным `instrument_id`, старые при миграции
+получают `instrument_id = camera_id`, поэтому чтение Neon по `COALESCE(instrument_id, camera_id)` и чтение
+основного агента по `instrument_id` дают одинаковые ряды. Обе ветки добавляют один и тот же столбец
+`readings.instrument_id` с проверкой `PRAGMA table_info` — при объединении миграции совместимы.
 Добавляется столбец `calibration_rev INTEGER` — ревизия калибровки, с которой получен отсчёт,
 чтобы аналитика не смешивала ряды до и после перекалибровки.
 
@@ -210,9 +220,9 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_instruments_primary ON instruments (source
 
 ### 4.5. Таблицы Neon
 
-Предиктивная аналитика и оптимизатор модернизации создают свои таблицы с префиксами `pa_` и `mo_`.
-Ссылка на прибор — столбец `instrument_id TEXT` **без** внешнего ключа (приборы `sim-NN` не лежат в
-`instruments`). Основной агент эти таблицы не меняет; Neon не меняет таблицы § 4.1–4.3.
+Фактически реализованы (v1.1): `instrument_passports`, `predictive_snapshots`, `modernization_plans`.
+Ссылка на прибор — `instrument_id TEXT` с `camera_id` и `gauge_slot`, **без** внешнего ключа (приборы
+`sim-NN` не лежат в `instruments`). Основной агент эти таблицы не меняет; Neon не меняет таблицы § 4.1–4.3.
 
 ## 5. Интерфейсы доступа
 
@@ -245,17 +255,30 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_instruments_primary ON instruments (source
 
 ### 5.3. Modbus TCP (карта регистров владеет Neon, слоты — основной агент)
 
-Блок прибора: `base = modbus_slot × 4` (HR 40001 + base): float32 big-endian в двух регистрах (NaN
-0x7FC00000 при недостоверном), статус `0 OK / 1 WARNING / 2 CRITICAL / 3 STALE`, health × 10.
-Системный блок 900–905 без изменений. Слоты 0–199.
+Карта v2 Neon (`docs/MODBUS_REGISTER_MAP.md` его ветки, `MAX_REGISTERS = 4096`). Все блоки прибора
+адресуются одним и тем же индексом `idx`, и этим индексом является `modbus_slot`:
+
+| Блок | Адреса | Формула | Слоты |
+|---|---|---|---|
+| базовый (v1) | 0–799 | `idx × 4` | 0–199 |
+| системный | 900–915 | — | — |
+| расширенный (v2) | 2000–3599 | `2000 + idx × 8` | 0–199 |
+| прогнозный (Predictive) | 3600–4087 | `3600 + idx × 8` | **только 0–60** |
+
+Прибор со слотом > 60 публикует базовый и расширенный блоки, прогнозного блока у него нет (ограничение
+карты v2; расширение карты — решение Neon).
 
 - Раньше слот определялся позицией прибора в списке и сдвигался при удалении прибора; с v1.0
   слот хранится в `instruments.modbus_slot` и не меняется в течение жизни прибора.
 - Демопрофиль: основной живой прибор — слот 0, симуляция `sim-NN` — слот `NN − 1` (как сейчас,
   по `grid_pos − 1`), реальные приборы — первый свободный слот ≥ 36.
 - Без демопрофиля: первый свободный слот ≥ 0 в порядке создания.
-- `ModbusTcpGateway.update_from_instruments` размещает прибор по `inst["modbus_slot"]`, а при
-  его отсутствии — по позиции в списке (прежнее поведение). Карту тегов Ignition Neon строит по
+- `ModbusTcpGateway.place_instruments` (ветка `next-gen/platform`) размещает прибор по
+  `inst["modbus_slot"]`; приборы без слота (симуляция стенда) занимают свободные слоты по порядку списка
+  (прежнее поведение). Слот удалённого прибора переходит в NaN / STALE.
+- **При объединении веток** в `update_from_instruments` Neon и в заполнении расширенного и прогнозного
+  блоков `enumerate(instruments)` заменяется на `place_instruments(instruments)`: иначе при удалении или
+  добавлении дополнительного прибора индексы сдвинутся и теги Ignition начнут читать чужой прибор. Карту тегов Ignition Neon строит по
   `GET /api/scada/modbus/registers`, где у каждой строки есть `instrument_id`, `hr_value`,
   `hr_status`, `hr_health`.
 
@@ -267,7 +290,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_instruments_primary ON instruments (source
 | `service.events.list(limit, cam_id)` | события из памяти |
 | `db.get_history(instrument_id, limit)` | последние отсчёты `readings` |
 | `db.get_trend(instrument_id, since, step, until)` | агрегаты по корзинам |
-| `db.get_instrument_series(instrument_id, since, until, valid_only=True)` | **новое**: `[{"ts", "value", "status_level", "calibration_rev"}]` для аналитики; для `sim-NN` — из `instrument_readings` |
+| `db.get_instrument_series(instrument_ids=None, *, since_iso, until_iso=None, max_per_instrument=360)` | реализация Neon (v1.1): `{instrument_id: [(unix_ts, value)]}` из `readings` и `instrument_readings`; основной агент своей версии не держит |
 | `dispatch.overview(instruments, events, stream_map)` | health score и сводка (используется Modbus) |
 
 ## 6. Обратная совместимость (проверяется тестами основного агента)
@@ -303,3 +326,4 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_instruments_primary ON instruments (source
 | Версия | Дата | Изменение |
 |---|---|---|
 | 1.0 | 2026-11-27 | первая фиксация |
+| 1.1 | 2026-11-27 | сверка с реализацией Neon: `gauge_slot`, карта Modbus v2 и общий индекс слота для всех блоков, фактические таблицы аналитики, сигнатура `get_instrument_series` Neon, телеметрия по приборам только для многоприборных источников |

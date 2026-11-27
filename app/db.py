@@ -58,6 +58,33 @@ CREATE TABLE IF NOT EXISTS cameras (
     created_at   TEXT NOT NULL
 );
 
+-- Логические приборы (SHARED_DATA_CONTRACT § 4.1): у источника (cameras) один основной прибор
+-- с id = cameras.id и сколько угодно дополнительных (Multi-Gauge).
+CREATE TABLE IF NOT EXISTS instruments (
+    id               TEXT PRIMARY KEY,
+    source_id        TEXT NOT NULL REFERENCES cameras(id) ON DELETE CASCADE,
+    is_primary       INTEGER NOT NULL DEFAULT 0,
+    name             TEXT NOT NULL,
+    code             TEXT,
+    tag              TEXT,
+    gauge_type       TEXT NOT NULL DEFAULT 'pressure',
+    unit             TEXT NOT NULL DEFAULT 'МПа',
+    roi              TEXT NOT NULL DEFAULT '{}',
+    calibration      TEXT NOT NULL DEFAULT '{}',
+    calibration_rev  INTEGER NOT NULL DEFAULT 0,
+    calibration_meta TEXT NOT NULL DEFAULT '{}',
+    thresholds       TEXT NOT NULL DEFAULT '{}',
+    modbus_slot      INTEGER UNIQUE,
+    gauge_slot       INTEGER NOT NULL DEFAULT 0,      -- номер циферблата в кадре источника: основной 0
+    enabled          INTEGER NOT NULL DEFAULT 1,
+    created_at       TEXT NOT NULL,
+    updated_at       TEXT NOT NULL
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_instruments_primary ON instruments (source_id) WHERE is_primary = 1;
+CREATE INDEX IF NOT EXISTS idx_instruments_source ON instruments (source_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_instruments_gauge_slot ON instruments (source_id, gauge_slot);
+
 CREATE TABLE IF NOT EXISTS readings (
     id           INTEGER PRIMARY KEY AUTOINCREMENT,
     camera_id    TEXT NOT NULL REFERENCES cameras(id) ON DELETE CASCADE,
@@ -247,6 +274,26 @@ async def init_db() -> None:
             await conn.execute("ALTER TABLE readings ADD COLUMN unit TEXT")
         if "run_id" not in cols:
             await conn.execute("ALTER TABLE readings ADD COLUMN run_id TEXT")
+        # Multi-Gauge (контракт § 4.2): ключ прибора строки истории
+        if "instrument_id" not in cols:
+            await conn.execute("ALTER TABLE readings ADD COLUMN instrument_id TEXT")
+        if "calibration_rev" not in cols:
+            await conn.execute("ALTER TABLE readings ADD COLUMN calibration_rev INTEGER")
+        await conn.execute("UPDATE readings SET instrument_id = camera_id WHERE instrument_id IS NULL")
+        await conn.execute("CREATE INDEX IF NOT EXISTS idx_readings_inst_ts ON readings (instrument_id, timestamp)")
+        cur = await conn.execute("PRAGMA table_info(events)")
+        ev_cols = {row["name"] for row in await cur.fetchall()}
+        if "instrument_id" not in ev_cols:
+            await conn.execute("ALTER TABLE events ADD COLUMN instrument_id TEXT")
+        if "source_id" not in ev_cols:
+            await conn.execute("ALTER TABLE events ADD COLUMN source_id TEXT")
+        await conn.execute("CREATE INDEX IF NOT EXISTS idx_events_inst_ts ON events (instrument_id, ts)")
+        # основной прибор для каждого источника, у которого его ещё нет (старая база)
+        cur = await conn.execute(
+            """SELECT c.* FROM cameras c LEFT JOIN instruments i ON i.id = c.id
+               WHERE i.id IS NULL ORDER BY c.created_at ASC""")
+        for cam in await cur.fetchall():
+            await _insert_primary_instrument(conn, dict(cam))
         # после перезапуска сервера ни один поток ещё не подключён
         await conn.execute("UPDATE cameras SET status = 'offline'")
         await conn.commit()
@@ -279,6 +326,203 @@ def _row_to_camera(row: aiosqlite.Row) -> dict[str, Any]:
     d["calibration"] = {**DEFAULT_CALIBRATION, **calib}
     d["thresholds"] = {**DEFAULT_THRESHOLDS, **thr}
     return d
+
+
+# ---------------------------------------------------------------------------
+# Репозиторий: instruments (Multi-Gauge, контракт § 4.1)
+# ---------------------------------------------------------------------------
+MODBUS_SLOTS = 200
+
+
+def _json_obj(raw: Any) -> dict[str, Any]:
+    if isinstance(raw, dict):
+        return raw
+    try:
+        v = json.loads(raw or "{}")
+    except (TypeError, json.JSONDecodeError):
+        return {}
+    return v if isinstance(v, dict) else {}
+
+
+def _row_to_instrument(row: aiosqlite.Row) -> dict[str, Any]:
+    d = dict(row)
+    d["roi"] = _json_obj(d.get("roi"))
+    d["calibration"] = {**DEFAULT_CALIBRATION, **_json_obj(d.get("calibration"))}
+    d["calibration_meta"] = _json_obj(d.get("calibration_meta"))
+    d["thresholds"] = {**DEFAULT_THRESHOLDS, **_json_obj(d.get("thresholds"))}
+    d["is_primary"] = bool(d["is_primary"])
+    d["enabled"] = bool(d["enabled"])
+    return d
+
+
+async def _allocate_modbus_slot(conn: aiosqlite.Connection, instrument_id: str) -> int | None:
+    """Постоянный слот Modbus (контракт § 5.3): демо — живой прибор 0, прочие ≥ 36; иначе первый свободный."""
+    cur = await conn.execute("SELECT modbus_slot FROM instruments WHERE modbus_slot IS NOT NULL")
+    used = {int(r["modbus_slot"]) for r in await cur.fetchall()}
+    if config.is_demo_mode():
+        if instrument_id == config.DEMO_LIVE_CAM_ID and 0 not in used:
+            return 0
+        start = config.DEMO_TOTAL_POSITIONS
+    else:
+        start = 0
+    for slot in range(start, MODBUS_SLOTS):
+        if slot not in used:
+            return slot
+    return None
+
+
+async def _next_gauge_slot(conn: aiosqlite.Connection, source_id: str) -> int:
+    """gauge_slot дополнительного прибора: наименьший свободный номер ≥ 1 на источнике (не переиспользуется
+    живыми приборами; совпадает с InstrumentIdentity.gauge_slot аналитики)."""
+    cur = await conn.execute("SELECT gauge_slot FROM instruments WHERE source_id = ?", (source_id,))
+    used = {int(r["gauge_slot"]) for r in await cur.fetchall()}
+    k = 1
+    while k in used:
+        k += 1
+    return k
+
+
+async def _insert_primary_instrument(conn: aiosqlite.Connection, cam: dict[str, Any]) -> None:
+    now = utcnow_iso()
+    calib = _json_obj(cam.get("calibration"))
+    thr = _json_obj(cam.get("thresholds"))
+    await conn.execute(
+        """INSERT OR IGNORE INTO instruments
+           (id, source_id, is_primary, name, gauge_type, unit, roi, calibration, calibration_rev,
+            calibration_meta, thresholds, modbus_slot, enabled, created_at, updated_at)
+           VALUES (?,?,1,?,?,?,?,?,0,?,?,?,1,?,?)""",
+        (cam["id"], cam["id"], cam["name"], cam.get("gauge_type") or "pressure", cam.get("unit") or "МПа",
+         json.dumps(calib.get("roi") or {}, ensure_ascii=False),
+         json.dumps(calib, ensure_ascii=False),
+         json.dumps({"source": "legacy", "status": "confirmed", "rev": 0}, ensure_ascii=False),
+         json.dumps(thr, ensure_ascii=False),
+         await _allocate_modbus_slot(conn, cam["id"]), cam.get("created_at") or now, now),
+    )
+
+
+async def list_instruments(source_id: str | None = None) -> list[dict[str, Any]]:
+    async with _lock:
+        conn = await _get_conn()
+        if source_id:
+            cur = await conn.execute(
+                "SELECT * FROM instruments WHERE source_id = ? ORDER BY is_primary DESC, created_at ASC",
+                (source_id,))
+        else:
+            cur = await conn.execute("SELECT * FROM instruments ORDER BY created_at ASC, is_primary DESC")
+        rows = await cur.fetchall()
+    return [_row_to_instrument(r) for r in rows]
+
+
+async def get_instrument(instrument_id: str) -> dict[str, Any] | None:
+    async with _lock:
+        conn = await _get_conn()
+        cur = await conn.execute("SELECT * FROM instruments WHERE id = ?", (instrument_id,))
+        row = await cur.fetchone()
+    return _row_to_instrument(row) if row else None
+
+
+async def create_instrument(
+    *, source_id: str, name: str, roi: dict[str, Any], gauge_type: str = "pressure", unit: str | None = None,
+    code: str | None = None, tag: str | None = None, calibration: dict | None = None,
+    thresholds: dict | None = None, calibration_meta: dict | None = None, instrument_id: str | None = None,
+) -> dict[str, Any]:
+    """Дополнительный прибор источника (основной создаётся вместе с камерой)."""
+    iid = instrument_id or new_uuid()
+    unit = unit or config.GAUGE_TYPES[gauge_type]["units"][0]
+    calib = {**DEFAULT_CALIBRATION, **(calibration or {})}
+    thr = {**DEFAULT_THRESHOLDS, **(thresholds or {})}
+    meta = {"source": "manual", "status": "confirmed", "rev": 0, **(calibration_meta or {})}
+    now = utcnow_iso()
+    async with _lock:
+        conn = await _get_conn()
+        await conn.execute(
+            """INSERT INTO instruments
+               (id, source_id, is_primary, name, code, tag, gauge_type, unit, roi, calibration, calibration_rev,
+                calibration_meta, thresholds, modbus_slot, gauge_slot, enabled, created_at, updated_at)
+               VALUES (?,?,0,?,?,?,?,?,?,?,0,?,?,?,?,1,?,?)""",
+            (iid, source_id, name, code, tag, gauge_type, unit, json.dumps(roi, ensure_ascii=False),
+             json.dumps(calib, ensure_ascii=False), json.dumps(meta, ensure_ascii=False),
+             json.dumps(thr, ensure_ascii=False), await _allocate_modbus_slot(conn, iid),
+             await _next_gauge_slot(conn, source_id), now, now),
+        )
+        await conn.commit()
+    return await get_instrument(iid)  # type: ignore[return-value]
+
+
+_INSTRUMENT_FIELDS = {"name", "code", "tag", "gauge_type", "unit", "roi", "calibration", "calibration_meta",
+                      "thresholds", "enabled"}
+
+
+def _scale_part(calib: dict[str, Any]) -> dict[str, Any]:
+    """Параметры шкалы без ROI: их изменение означает новую ревизию калибровки."""
+    full = {**DEFAULT_CALIBRATION, **(calib or {})}
+    return {k: v for k, v in full.items() if k != "roi"}
+
+
+async def _update_instrument_locked(conn: aiosqlite.Connection, instrument_id: str,
+                                    patch: dict[str, Any]) -> None:
+    cur = await conn.execute(
+        "SELECT calibration, calibration_rev, calibration_meta FROM instruments WHERE id = ?", (instrument_id,))
+    row = await cur.fetchone()
+    if row is None:
+        return
+    upd: dict[str, Any] = {k: v for k, v in patch.items() if k in _INSTRUMENT_FIELDS}
+    if "calibration" in upd and _scale_part(_json_obj(row["calibration"])) != _scale_part(upd["calibration"]):
+        rev = int(row["calibration_rev"] or 0) + 1
+        upd["calibration_rev"] = rev
+        # ручная правка шкалы без сведений об источнике считается подтверждённой инженером
+        base = upd.get("calibration_meta") or {"source": "manual", "status": "confirmed"}
+        upd["calibration_meta"] = {**_json_obj(row["calibration_meta"]), **base, "rev": rev}
+    if not upd:
+        return
+    for k in ("roi", "calibration", "calibration_meta", "thresholds"):
+        if k in upd:
+            upd[k] = json.dumps(upd[k] or {}, ensure_ascii=False)
+    if "enabled" in upd:
+        upd["enabled"] = 1 if upd["enabled"] else 0
+    upd["updated_at"] = utcnow_iso()
+    await conn.execute(f"UPDATE instruments SET {', '.join(f'{k} = ?' for k in upd)} WHERE id = ?",
+                       [*upd.values(), instrument_id])
+
+
+async def update_instrument(instrument_id: str, patch: dict[str, Any]) -> dict[str, Any] | None:
+    """Частичное обновление прибора; смена шкалы увеличивает calibration_rev. Основной прибор
+    синхронизируется с камерой (обратная совместимость /api/cameras)."""
+    async with _lock:
+        conn = await _get_conn()
+        await _update_instrument_locked(conn, instrument_id, patch)
+        cur = await conn.execute("SELECT is_primary, source_id, roi FROM instruments WHERE id = ?", (instrument_id,))
+        row = await cur.fetchone()
+        if row is not None and row["is_primary"]:
+            cam_patch = {k: patch[k] for k in ("name", "gauge_type", "unit", "thresholds") if k in patch}
+            if "calibration" in patch or "roi" in patch:
+                cur2 = await conn.execute("SELECT calibration FROM instruments WHERE id = ?", (instrument_id,))
+                calib = _json_obj((await cur2.fetchone())["calibration"])
+                roi = _json_obj(row["roi"])
+                cam_patch["calibration"] = {**calib, "roi": roi} if roi else {k: v for k, v in calib.items()
+                                                                              if k != "roi"}
+            sets = [f"{k} = ?" for k in cam_patch]
+            vals = [json.dumps(v or {}, ensure_ascii=False) if k in ("calibration", "thresholds") else v
+                    for k, v in cam_patch.items()]
+            if sets:
+                await conn.execute(f"UPDATE cameras SET {', '.join(sets)} WHERE id = ?",
+                                   [*vals, row["source_id"]])
+        await conn.commit()
+    return await get_instrument(instrument_id)
+
+
+async def delete_instrument(instrument_id: str) -> bool:
+    """Удаляет дополнительный прибор и его историю; основной удаляется только вместе с источником."""
+    async with _lock:
+        conn = await _get_conn()
+        cur = await conn.execute("SELECT is_primary FROM instruments WHERE id = ?", (instrument_id,))
+        row = await cur.fetchone()
+        if row is None or row["is_primary"]:
+            return False
+        await conn.execute("DELETE FROM readings WHERE instrument_id = ?", (instrument_id,))
+        await conn.execute("DELETE FROM instruments WHERE id = ?", (instrument_id,))
+        await conn.commit()
+        return True
 
 
 # ---------------------------------------------------------------------------
@@ -330,6 +574,10 @@ async def create_camera(
                 "offline", utcnow_iso(),
             ),
         )
+        await _insert_primary_instrument(conn, {
+            "id": cam_id, "name": name, "gauge_type": gauge_type, "unit": unit,
+            "calibration": calib, "thresholds": thr,
+        })
         await conn.commit()
     return await get_camera(cam_id)  # type: ignore[return-value]
 
@@ -354,9 +602,14 @@ async def update_camera(cam_id: str, patch: dict[str, Any]) -> dict[str, Any] | 
     if not sets:
         return await get_camera(cam_id)
     vals.append(cam_id)
+    inst_patch = {k: patch[k] for k in ("name", "gauge_type", "unit", "calibration", "thresholds") if k in patch}
+    if "calibration" in inst_patch:
+        inst_patch["roi"] = (inst_patch["calibration"] or {}).get("roi") or {}
     async with _lock:
         conn = await _get_conn()
         await conn.execute(f"UPDATE cameras SET {', '.join(sets)} WHERE id = ?", vals)
+        if inst_patch:
+            await _update_instrument_locked(conn, cam_id, inst_patch)
         await conn.commit()
     return await get_camera(cam_id)
 
@@ -398,7 +651,8 @@ def _clean_float(v: Any) -> float | None:
 
 
 async def insert_readings(rows: Iterable[tuple[Any, ...]]) -> None:
-    """Батч-запись отсчётов: (camera_id, timestamp, value, raw_angle, status_level[, unit, run_id])."""
+    """Батч-запись отсчётов: (camera_id, timestamp, value, raw_angle, status_level[, unit, run_id
+    [, instrument_id, calibration_rev]]); без instrument_id отсчёт принадлежит основному прибору."""
     norm_rows = []
     for r in rows:
         if len(r) == 5:
@@ -409,14 +663,17 @@ async def insert_readings(rows: Iterable[tuple[Any, ...]]) -> None:
             run_id = None
         else:
             cam_id, ts, val, ang, lv, unit, run_id = r[:7]
-        norm_rows.append((cam_id, ts, _clean_float(val), _clean_float(ang), lv, unit, run_id))
+        inst_id = r[7] if len(r) > 7 and r[7] else cam_id
+        cal_rev = r[8] if len(r) > 8 else None
+        norm_rows.append((cam_id, ts, _clean_float(val), _clean_float(ang), lv, unit, run_id, inst_id, cal_rev))
     if not norm_rows:
         return
     async with _lock:
         conn = await _get_conn()
         await conn.executemany(
-            """INSERT INTO readings (camera_id, timestamp, value, raw_angle, status_level, unit, run_id)
-               VALUES (?,?,?,?,?,?,?)""",
+            """INSERT INTO readings (camera_id, timestamp, value, raw_angle, status_level, unit, run_id,
+                                     instrument_id, calibration_rev)
+               VALUES (?,?,?,?,?,?,?,?,?)""",
             norm_rows,
         )
         await conn.commit()
@@ -425,8 +682,8 @@ async def insert_readings(rows: Iterable[tuple[Any, ...]]) -> None:
 async def get_history(camera_id: str, limit: int = config.HISTORY_DEFAULT_LIMIT,
                       *, since: str | None = None, until: str | None = None,
                       run_id: str | None = None) -> list[dict[str, Any]]:
-    """Последние `limit` достоверных отсчётов камеры в хронологическом порядке."""
-    clauses = ["camera_id = ?"]
+    """Последние `limit` отсчётов прибора (id основного прибора = id камеры) в хронологическом порядке."""
+    clauses = ["instrument_id = ?"]
     params: list[Any] = [camera_id]
     if run_id:
         clauses.append("run_id = ?")
@@ -444,7 +701,8 @@ async def get_history(camera_id: str, limit: int = config.HISTORY_DEFAULT_LIMIT,
     async with _lock:
         conn = await _get_conn()
         cur = await conn.execute(
-            f"""SELECT id, camera_id, timestamp, value, raw_angle, status_level, unit, run_id
+            f"""SELECT id, camera_id, instrument_id, timestamp, value, raw_angle, status_level, unit, run_id,
+                       calibration_rev
                 FROM readings WHERE {where_sql}
                 ORDER BY timestamp DESC, id DESC LIMIT ?""",
             params,
@@ -474,7 +732,7 @@ async def get_trend(camera_id: str, since: _dt.datetime, step_s: float,
                        MIN(value) AS vmin, MAX(value) AS vmax, AVG(value) AS vavg, COUNT(*) AS n,
                        MAX(CASE status_level WHEN 'alert' THEN 2 WHEN 'warning' THEN 1 ELSE 0 END) AS lvl
                 FROM readings
-                WHERE camera_id = :cam AND timestamp >= :since{where_until} AND value IS NOT NULL
+                WHERE instrument_id = :cam AND timestamp >= :since{where_until} AND value IS NOT NULL
                 GROUP BY b ORDER BY b""",
             q_params,
         )
@@ -651,7 +909,7 @@ async def get_demo_run(run_id: str) -> dict[str, Any] | None:
         cur = await conn.execute(
             """SELECT r.*,
                       (SELECT COUNT(*) FROM readings rd
-                       WHERE rd.camera_id = r.camera_id
+                       WHERE rd.instrument_id = r.camera_id
                          AND rd.value IS NOT NULL
                          AND (rd.run_id = r.id OR (rd.run_id IS NULL AND rd.timestamp >= r.started_at
                               AND (r.ended_at IS NULL OR rd.timestamp <= r.ended_at)))) AS readings_count
@@ -670,7 +928,7 @@ async def list_demo_runs(camera_id: str | None = None, limit: int = 30) -> list[
         cur = await conn.execute(
             f"""SELECT r.*,
                        (SELECT COUNT(*) FROM readings rd
-                        WHERE rd.camera_id = r.camera_id
+                        WHERE rd.instrument_id = r.camera_id
                           AND rd.value IS NOT NULL
                           AND (rd.run_id = r.id OR (rd.run_id IS NULL AND rd.timestamp >= r.started_at
                                AND (r.ended_at IS NULL OR rd.timestamp <= r.ended_at)))) AS readings_count
@@ -683,9 +941,10 @@ async def list_demo_runs(camera_id: str | None = None, limit: int = 30) -> list[
 
 
 async def clear_history(camera_id: str) -> None:
+    """Очищает историю прибора (для камеры — её основного прибора)."""
     async with _lock:
         conn = await _get_conn()
-        await conn.execute("DELETE FROM readings WHERE camera_id = ?", (camera_id,))
+        await conn.execute("DELETE FROM readings WHERE instrument_id = ?", (camera_id,))
         await conn.commit()
 
 
@@ -759,8 +1018,8 @@ async def get_period_reading_stats(
     where_sql = " AND ".join(clauses)
     sql = f"""
         WITH src AS (
-            SELECT camera_id AS cid, timestamp AS ts, value AS v, status_level AS lv, id AS rid, 0 AS tbl
-            FROM readings WHERE {where_sql}{id_clause.format(col="camera_id")}
+            SELECT instrument_id AS cid, timestamp AS ts, value AS v, status_level AS lv, id AS rid, 0 AS tbl
+            FROM readings WHERE {where_sql}{id_clause.format(col="instrument_id")}
             UNION ALL
             SELECT instrument_id, timestamp, value, status_level, id, 1
             FROM instrument_readings WHERE {where_sql}{id_clause.format(col="instrument_id")}
@@ -830,8 +1089,8 @@ async def save_event(ev: dict[str, Any], snapshot_blob: bytes | None = None) -> 
             """INSERT OR REPLACE INTO events
                (id, ts, kind, cam_id, cam_name, level, prev_level, value, unit,
                 setpoint, setpoint_value, text, has_frame, acked, acked_ts, acked_by,
-                ref_event_id, ref_ts, ref_level, duration_s, snapshot_blob)
-               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+                ref_event_id, ref_ts, ref_level, duration_s, snapshot_blob, instrument_id, source_id)
+               VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
             (
                 int(ev["id"]), ev["ts"], ev["kind"], ev.get("cam_id"), ev.get("cam_name"),
                 ev.get("level"), ev.get("prev_level"), _clean_float(ev.get("value")), ev.get("unit"),
@@ -840,6 +1099,7 @@ async def save_event(ev: dict[str, Any], snapshot_blob: bytes | None = None) -> 
                 1 if ev.get("acked") else 0, ev.get("acked_ts"), ev.get("acked_by"),
                 ev.get("ref_event_id"), ev.get("ref_ts"), ev.get("ref_level"),
                 _clean_float(ev.get("duration_s")), snapshot_blob,
+                ev.get("instrument_id"), ev.get("source_id"),
             ),
         )
         await conn.commit()
@@ -864,7 +1124,7 @@ async def load_persisted_events(limit: int = config.EVENTS_MAX) -> tuple[list[di
         cur = await conn.execute(
             """SELECT id, ts, kind, cam_id, cam_name, level, prev_level, value, unit,
                       setpoint, setpoint_value, text, has_frame, acked, acked_ts, acked_by,
-                      ref_event_id, ref_ts, ref_level, duration_s, snapshot_blob
+                      ref_event_id, ref_ts, ref_level, duration_s, snapshot_blob, instrument_id, source_id
                FROM events
                ORDER BY id DESC
                LIMIT ?""",
@@ -904,7 +1164,7 @@ async def list_events_in_period(
         cur = await conn.execute(
             f"""SELECT id, ts, kind, cam_id, cam_name, level, prev_level, value, unit,
                        setpoint, setpoint_value, text, has_frame, acked, acked_ts, acked_by,
-                       ref_event_id, ref_ts, ref_level, duration_s
+                       ref_event_id, ref_ts, ref_level, duration_s, instrument_id, source_id
                 FROM events
                 WHERE {' AND '.join(clauses)}
                 ORDER BY ts DESC, id DESC

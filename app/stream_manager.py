@@ -309,6 +309,7 @@ class AdaptiveFpsController:
         self.triggers_total: int = 0
         self.motion_wakeups_total: int = 0
         self._last_latency_ms: float = 0.0
+        self._prev_multi: dict[str, float] = {}  # прошлые значения приборов источника (update_multi)
 
     def check_motion_wakeup(self, frame: np.ndarray) -> bool:
         """
@@ -372,6 +373,39 @@ class AdaptiveFpsController:
             self.reason = "Стабильный режим — экономия Edge-ресурсов"
 
         return self.info()
+
+    def update_multi(self, readings: dict[str, tuple[float | None, float, str | None]], *,
+                     degraded: bool = False, process_ms: float | None = None) -> dict[str, Any]:
+        """Несколько приборов одного источника (Multi-Gauge): readings = {id: (value, span, level)}.
+
+        Скачок считается по каждому прибору относительно его собственного прошлого значения, поэтому
+        событие на одном приборе ускоряет весь источник, а показания разных приборов не сравниваются.
+        """
+        prev = self._prev_multi
+        worst: str | None = None
+        jump_key, jump_pct = None, 0.0
+        for key, (value, span, level) in readings.items():
+            if level == "alert" or (level == "warning" and worst != "alert"):
+                worst = level
+            if value is None or not math.isfinite(value):
+                continue
+            p_val = prev.get(key)
+            if p_val is not None and span > 1e-6:
+                j = abs(value - p_val) / span * 100.0
+                if j > jump_pct:
+                    jump_key, jump_pct = key, j
+            prev[key] = value
+        for key in list(prev):
+            if key not in readings:
+                del prev[key]
+        # общий путь update(): уровень, деградация и скачок в процентах шкалы (span = 100)
+        self._prev_value = 0.0
+        value = jump_pct if jump_pct >= config.ADAPTIVE_DELTA_PCT else 0.0
+        info = self.update(value=value, span=100.0, level=worst, degraded=degraded, process_ms=process_ms)
+        if jump_key is not None and jump_pct >= config.ADAPTIVE_DELTA_PCT and worst is None and not degraded:
+            self.reason = f"Скачок показания прибора ({jump_pct:.1f}% шкалы)"
+            info = self.info()
+        return info
 
     @property
     def interval(self) -> float:

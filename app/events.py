@@ -6,7 +6,10 @@ GaugeVision AI — журнал событий пульта.
     авария) со стоп-кадром распознавания в момент срабатывания;
   • link  — смена статуса видеопотока (в сети / переподключение / офлайн);
   • ack   — квитирование оператором;
-  • config — изменение калибровки, уставок или источника прибора.
+  • config — изменение калибровки, уставок или источника прибора;
+  • calibration — предложение, подтверждение или отклонение автокалибровки;
+  • instrument — прибор Multi-Gauge добавлен, удалён, потерян трекером или найден снова;
+  • prediction — предупреждение предиктивной аналитики (SHARED_DATA_CONTRACT § 3.2).
 
 Журнал живёт до перезапуска сервера; архив показаний остаётся в SQLite.
 """
@@ -21,7 +24,9 @@ from . import config
 from .db import utcnow_iso
 from .vision import _num
 
-EVENT_KINDS = ("alarm", "link", "ack", "config")
+EVENT_KINDS = ("alarm", "link", "ack", "config", "calibration", "instrument", "prediction")
+# служебные события, требующие квитирования оператором
+_ACK_TEXTS = {"instrument": ("track_lost", "track_ambiguous")}
 _LEVEL_RANK = {"normal": 0, "warning": 1, "alert": 2}
 
 
@@ -62,15 +67,16 @@ class EventLog:
             value: float | None = None, unit: str | None = None,
             setpoint: str | None = None, setpoint_value: float | None = None,
             text: str = "", snapshot: bytes | None = None,
-            ref_event_id: int | None = None) -> dict[str, Any]:
+            ref_event_id: int | None = None, instrument_id: str | None = None,
+            source_id: str | None = None) -> dict[str, Any]:
         if kind not in EVENT_KINDS:
             raise ValueError(f"неизвестный тип события: {kind}")
         with self._lock:
             ev_id = next(self._ids)
             ts = utcnow_iso()
             # срабатывание требует квитирования; возврат в норму и служебные события — нет
-            needs_ack = kind == "alarm" and _LEVEL_RANK.get(level or "normal", 0) > \
-                _LEVEL_RANK.get(prev_level or "normal", 0)
+            needs_ack = (kind == "alarm" and _LEVEL_RANK.get(level or "normal", 0) >
+                         _LEVEL_RANK.get(prev_level or "normal", 0)) or text in _ACK_TEXTS.get(kind, ())
 
             linked_id = ref_event_id
             linked_ts: str | None = None
@@ -113,6 +119,7 @@ class EventLog:
                 "acked": not needs_ack, "acked_ts": None, "acked_by": None,
                 "ref_event_id": linked_id, "ref_ts": linked_ts,
                 "ref_level": linked_level, "duration_s": duration_s,
+                "instrument_id": instrument_id, "source_id": source_id,
             }
             self._events.append(ev)
             if snapshot is not None:

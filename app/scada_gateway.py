@@ -109,6 +109,7 @@ class ModbusTcpGateway:
 
     SYSTEM_BASE = 900
     MAX_REGISTERS = 1024
+    MAX_SLOTS = 200
 
     def __init__(self) -> None:
         self._regs: list[int] = [0] * self.MAX_REGISTERS
@@ -119,6 +120,30 @@ class ModbusTcpGateway:
         self._active_clients: int = 0
         self._listening: bool = False
         self._last_error: str | None = None
+        self._used_slots: set[int] = set()
+
+    @classmethod
+    def place_instruments(cls, instruments: list[dict[str, Any]]) -> list[tuple[int, dict[str, Any]]]:
+        """Слот прибора (SHARED_DATA_CONTRACT § 5.3): постоянный modbus_slot из реестра; приборы без
+        слота (симуляция стенда) занимают свободные слоты по порядку списка, как раньше."""
+        placed: list[tuple[int, dict[str, Any]]] = []
+        used: set[int] = set()
+        rest: list[dict[str, Any]] = []
+        for inst in instruments:
+            slot = inst.get("modbus_slot")
+            if isinstance(slot, int) and 0 <= slot < cls.MAX_SLOTS and slot not in used:
+                placed.append((slot, inst))
+                used.add(slot)
+            else:
+                rest.append(inst)
+        free = (k for k in range(cls.MAX_SLOTS) if k not in used)
+        for inst in rest:
+            k = next(free, None)
+            if k is None:
+                break
+            placed.append((k, inst))
+        placed.sort(key=lambda t: t[0])
+        return placed
 
     def update_from_instruments(
         self,
@@ -132,7 +157,14 @@ class ModbusTcpGateway:
         rows: list[dict[str, Any]] = []
         crit_cnt = warn_cnt = stale_cnt = 0
 
-        for idx, inst in enumerate(instruments[:200]):
+        placed = self.place_instruments(instruments)
+        for slot in self._used_slots - {k for k, _ in placed}:
+            # прибор удалён: его слот больше не выдаёт последнее значение как достоверное
+            b = slot * 4
+            self._regs[b], self._regs[b + 1] = _IEEE754_QNAN_HI, _IEEE754_QNAN_LO
+            self._regs[b + 2], self._regs[b + 3] = 3, 0
+        self._used_slots = {k for k, _ in placed}
+        for idx, inst in placed:
             base = idx * 4
             rd = inst.get("reading") or {}
             raw_v = rd.get("value")
@@ -179,6 +211,7 @@ class ModbusTcpGateway:
 
             rows.append({
                 "instrument_id": inst["id"],
+                "modbus_slot": idx,
                 "code": inst.get("code") or inst["id"],
                 "name": inst.get("short_name") or inst.get("name") or "",
                 "unit": inst.get("unit") or "",
