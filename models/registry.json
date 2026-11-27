@@ -1,0 +1,72 @@
+{
+  "schema": "gv.model_registry/1",
+  "models": [
+    {
+      "model_id": "gauge_yolov8_legacy",
+      "architecture": "YOLOv8n",
+      "task": "detect",
+      "version": "3.0.0",
+      "filename": "gauge_yolov8.pt",
+      "format": "pt",
+      "sha256": "0bcc644b40023ec281464c9a1d5d0431718708d9caa4fc2ed677d1b470ea9e68",
+      "input_size": 640,
+      "classes": [
+        "Gauge",
+        "Needle"
+      ],
+      "license": "AGPL-3.0 (Ultralytics)",
+      "backends": [
+        "ultralytics_cpu",
+        "ultralytics_cuda"
+      ],
+      "trained_date": "2026-10-20",
+      "data_sources": "Analog-Gauge-Meter-1 (Colab/Roboflow, точный состав не зафиксирован)",
+      "notes": "Базовый детектор GaugeVision AI 3.0"
+    },
+    {
+      "model_id": "needle_keypoint_v31_pt",
+      "architecture": "NeedleKeypointNet",
+      "task": "needle_keypoint",
+      "version": "3.1.0",
+      "filename": "needle_keypoint_v31.pt",
+      "format": "pt",
+      "sha256": "1ab9e7e0540604f9b5fd871bdfe5ebb6c53959b75b2127463a092a8e671192fe",
+      "input_size": 160,
+      "classes": [
+        "center",
+        "tip",
+        "sin_cos",
+        "visibility"
+      ],
+      "license": "MIT / BSD-3-Clause (PyTorch)",
+      "backends": [
+        "pytorch_cpu"
+      ],
+      "trained_date": "2026-11-27",
+      "data_sources": "MeterFL dev (M2, M3; CC BY-SA 4.0) + GaugeVision Synthetic (MIT)",
+      "notes": "Компактная нейросеть ключевых точек и циклического угла стрелки"
+    },
+    {
+      "model_id": "needle_seg_v31_pt",
+      "architecture": "NeedleSegUNet",
+      "task": "needle_seg",
+      "version": "3.1.0",
+      "filename": "needle_seg_v31.pt",
+      "format": "pt",
+      "sha256": "ca570bd622507c0e9e92875bb1f417f4df5a162e18b1af82ab679c73ecd605ba",
+      "input_size": 160,
+      "classes": [
+        "background",
+        "ticks",
+        "pointer"
+      ],
+      "license": "MIT / BSD-3-Clause (PyTorch)",
+      "backends": [
+        "pytorch_cpu"
+      ],
+      "trained_date": "2026-11-27",
+      "data_sources": "MeterFL dev (M2, M3; CC BY-SA 4.0) + GaugeVision Synthetic (MIT)",
+      "notes": "Компактная U-Net сегментация стрелки и рисок + PCA/ODR"
+    }
+  ]
+}
