@@ -1,0 +1,10 @@
+{
+ "label": "final_v7",
+ "subset": "dev",
+ "unusable": false,
+ "n": 506,
+ "yolo": true,
+ "yolo_device": "CPU",
+ "code_root": "C:\\Hakatons\\GaugeVisionAIDesign DashBoard\\.claude\\worktrees\\next-gen",
+ "seconds": 123.0
+}

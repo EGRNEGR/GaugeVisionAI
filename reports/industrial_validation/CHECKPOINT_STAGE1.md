@@ -57,3 +57,11 @@
 - Python: `C:\C1\GaugeVS\.venv\Scripts\python.exe` (OpenCV, torch, ultralytics, pyarrow),
   запуск с `CUDA_VISIBLE_DEVICES=""`, `GAUGEVISION_DEVICE=cpu`.
 - Инструменты разметки: `tests/tools/crop_view.sh`, `tests/tools/add_mb_annotation.py`.
+
+## Закрытие этапа (2026-11-27)
+
+Доработка на dev завершена (v1–v7, коммит d6adca0), v7 заморожен и однократно проверен на
+окончательной выборке. Итоги и разбор — `CV_VALIDATION_REPORT.md`, результаты — `results/final_v7/`.
+REQ-CV-05 переведён в PARTIAL (`reports/next_generation/REQUIREMENTS_TRACEABILITY_MATRIX_NG.csv`).
+Следующее исправление (полярность стрелки по лучу, § 5 отчёта) допустимо проверять только на новом
+независимом наборе.
