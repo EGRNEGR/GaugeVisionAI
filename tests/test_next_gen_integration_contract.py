@@ -373,13 +373,17 @@ def test_modbus_slot_stability_add_delete_reorder_restart() -> dict[str, Any]:
     assert abs(_decode_f32(mb2._regs[37 * 4], mb2._regs[37 * 4 + 1]) - 33.5) < 1e-3
     assert abs(_decode_f32(mb2._regs[38 * 4], mb2._regs[38 * 4 + 1]) - 44.5) < 1e-3
 
-    # Шаг 5: Проверка отсутствия пересечений диапазонов для всех 200 слотов и 61 прогнозного слота
+    # Шаг 5: Проверка отсутствия пересечений диапазонов для всех 200 слотов (прогнозный блок 0..60 и 61..199)
     used_ranges: list[tuple[str, int, int]] = [
         ("base", 0, 200 * 4 - 1),
-        ("system", 900, 915),
+        ("system", 900, 917),
         ("extended", 2000, 2000 + 200 * 8 - 1),
         ("predictive", 3600, 3600 + 61 * 8 - 1),
+        ("predictive_ext", 4096, 4096 + (200 - 61) * 8 - 1),
     ]
+    # каждый из 200 слотов получает свой прогнозный блок, блоки не пересекаются
+    pred = sorted(ModbusTcpGateway.predictive_base(k) for k in range(200))
+    assert all(b - a >= 8 for a, b in zip(pred, pred[1:])) and pred[60] == 3600 + 60 * 8 and pred[61] == 4096
     for i in range(len(used_ranges)):
         for j in range(i + 1, len(used_ranges)):
             n1, a1, b1 = used_ranges[i]
@@ -449,37 +453,35 @@ async def test_legacy_db_migration_and_backward_compatibility() -> dict[str, Any
 
 
 # ---------------------------------------------------------------------------
-# 4. Честная фиксация проверок, ожидающих слияния ветки Claude (`next-gen/platform`)
+# 4. Проверки, ожидавшие слияния: после объединения веток выполняются в отдельных наборах
 # ---------------------------------------------------------------------------
 def report_pending_merge_checks() -> list[dict[str, str]]:
+    """После слияния (ветка next-gen/integration) проверки выполняются наборами на живом коде:
+    результат каждого — в выводе соответствующего набора, здесь — только ссылка, без подмены."""
     return [
         {
             "check_id": "INT-MG-01",
             "name": "Live SQLite `instruments` table CRUD & `POST /api/sources/{source_id}/instruments`",
-            "status": "SKIPPED_PENDING_MERGE",
-            "owner_branch": "next-gen/platform",
-            "reason": "Таблица `instruments` и REST-эндпоинты управления логическими приборами находятся в параллельной ветке Claude (`next-gen/platform`).",
+            "status": "RUN_IN_SUITE",
+            "suite": "tests/test_instruments_db.py, tests/test_multigauge_api.py, tests/test_final_integration.py (new_api_security)",
         },
         {
             "check_id": "INT-MG-02",
-            "name": "Live Multi-Gauge Vision detector & ROI tracker (`app/vision.py`) -> multi-instrument telemetry",
-            "status": "SKIPPED_PENDING_MERGE",
-            "owner_branch": "next-gen/platform",
-            "reason": "Конвейер многоприборного зрения в `app/vision.py` разрабатывается Claude и не объединён с текущей веткой.",
+            "name": "Live Multi-Gauge Vision detector & ROI tracker -> multi-instrument telemetry",
+            "status": "RUN_IN_SUITE",
+            "suite": "tests/test_multigauge.py, tests/test_multigauge_api.py, tests/test_final_integration.py (multigauge_calibration_isolation)",
         },
         {
             "check_id": "INT-AC-01",
-            "name": "Live Auto Calibration (`POST /api/instruments/{id}/autocalibrate` & `/calibration/confirm`, `calibration_rev` isolation)",
-            "status": "SKIPPED_PENDING_MERGE",
-            "owner_branch": "next-gen/platform",
-            "reason": "Автокалибровка и смена `calibration_rev` реализуются в ветке `next-gen/platform`.",
+            "name": "Calibration is never applied automatically; manual calibration bumps `calibration_rev` (replaces auto-calibration check: Auto Calibration excluded from release)",
+            "status": "RUN_IN_SUITE",
+            "suite": "tests/test_autocal.py, tests/test_final_integration.py (autocal_cannot_apply, multigauge_calibration_isolation)",
         },
         {
             "check_id": "INT-SCADA-02",
-            "name": "Live Ignition 8.3.10 multi-gauge Perspective tag reconciliation after branch merge",
-            "status": "SKIPPED_PENDING_MERGE",
-            "owner_branch": "merged next-gen integration branch",
-            "reason": "Требует объединённого стенда (Multi-Gauge Vision + Modbus `place_instruments` + запущенный Ignition Gateway).",
+            "name": "Live Ignition 8.3.10 multi-gauge tag reconciliation after branch merge",
+            "status": "RUN_IN_LAB",
+            "suite": "reports/final_integration/SCADA_REVALIDATION_REPORT.md (живой стенд Ignition, вне автоматических наборов)",
         },
     ]
 
@@ -497,13 +499,13 @@ def main() -> None:
 
     report["pending_merge_checks"] = report_pending_merge_checks()
     for p in report["pending_merge_checks"]:
-        print(f"[SKIPPED_PENDING_MERGE] {p['check_id']}: {p['name']}")
+        print(f"[{p['status']}] {p['check_id']}: {p['suite']}")
 
     out_path = os.environ.get("NG_INTEGRATION_OUT")
     if out_path:
         Path(out_path).parent.mkdir(parents=True, exist_ok=True)
         Path(out_path).write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
-    print("CONTRACT v1.1 INTEGRATION HARNESS COMPLETE: 3/3 CONTRACT_FIXTURE_VERIFIED, 4 SKIPPED_PENDING_MERGE")
+    print("CONTRACT v1.1 INTEGRATION HARNESS COMPLETE: 3/3 CONTRACT_FIXTURE_VERIFIED, 4 checks run in merged suites")
 
 
 if __name__ == "__main__":

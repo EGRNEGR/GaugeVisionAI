@@ -52,7 +52,12 @@ class PanelFeeder(threading.Thread):
     def run(self) -> None:
         while not self.stop_evt.is_set():
             frame, _ = panel_sim.render_panel(self.scene, occlude=set(self.occlude), noise_sigma=1.5, seed=self.k)
-            service.broker.publish(self.source_id, frame)
+            # кадр поступает тем же путём, что от смартфона по WebSocket: воркер отмечает свежесть потока
+            worker = service.streams.phone_worker(self.source_id)
+            if worker is not None:
+                worker.push_frame(frame)
+            else:
+                service.broker.publish(self.source_id, frame)
             self.k += 1
             time.sleep(0.16)
 

@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import datetime as _dt
 import hashlib
 import io
@@ -824,6 +825,33 @@ def _api_checks() -> None:
         @case("auto_spec_generation_lifecycle", "REQ-DA-09, DEF-20")
         def t_auto_spec() -> dict[str, Any]:
             svc = app_main.service
+            # Фоновый цикл arch-sync сам создаёт автодокументы по деградирующим приборам демо-стенда;
+            # на время проверки он останавливается, иначе проверка счёта триггеров зависит от гонки.
+            sync_task = next(t for t in svc._bg if t.get_name() == "arch-sync")  # type: ignore[attr-defined]
+            client.portal.call(_cancel_task, sync_task)
+            # исходное состояние проверки: без автодокументов, созданных фоновым циклом до её начала
+            client.portal.call(_clear_auto_specs, ("sim-12", "sim-02"))
+            try:
+                return _auto_spec_body(svc)
+            finally:
+                svc._bg.remove(sync_task)  # type: ignore[attr-defined]
+                svc._bg.append(client.portal.call(_start_sync, svc))  # type: ignore[attr-defined]
+
+        async def _cancel_task(task: Any) -> None:
+            task.cancel()
+            with contextlib.suppress(BaseException):
+                await task
+
+        async def _clear_auto_specs(ids: tuple[str, ...]) -> None:
+            async with db._lock:  # type: ignore[attr-defined]
+                conn = await db._get_conn()  # type: ignore[attr-defined]
+                await conn.execute(f"DELETE FROM auto_spec_triggers WHERE instrument_id IN ({','.join('?' * len(ids))})", ids)
+                await conn.commit()
+
+        async def _start_sync(svc: Any) -> Any:
+            return asyncio.create_task(svc._architecture_sync_loop(), name="arch-sync")
+
+        def _auto_spec_body(svc: Any) -> dict[str, Any]:
             disp = svc.dispatch.overview(svc.public_instruments(), svc.events.list(limit=300), svc.stream_telemetry_map())
             item = next(x for x in disp["instruments"] if x["id"] == "sim-12")
             forced = dict(item, critical_wear=True, health_score=31.0, root_cause="instrument_degradation")

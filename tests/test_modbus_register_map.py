@@ -10,7 +10,7 @@
      confidence_x1000, битовые флаги state_flags, last_valid_unix, last_valid_value.
   4. Режим «зависания» без обрыва TCP (set_sync_frozen): heartbeat перестаёт расти,
      TCP остаётся открытым и отвечает на FC 0x03/0x04.
-  5. Коды исключений Modbus TCP: 0x0B (чужой unit_id), 0x02 (выход за 4096),
+  5. Коды исключений Modbus TCP: 0x0B (чужой unit_id), 0x02 (выход за MAX_REGISTERS = 5208),
      0x03 (недопустимый count), 0x01 (запись FC 0x06 / 0x10 запрещена).
   6. Поведение при GAUGEVISION_MODBUS_ENABLED=0 (сервер не стартует).
 
@@ -285,13 +285,18 @@ def test_v1_backward_compat_and_v2_extended_map() -> None:
                 assert hb_resumed == [2]
 
                 # 6. Исключения Modbus:
-                # 6a. Граница карты: 4095 + 1 ок, 4096 -> 0x02, 4095 + 2 -> 0x02
-                ok_last = await _read_regs(reader, writer, 9, 1, 4095, 1)
-                assert ok_last == [0]
-                _, _, exc_oob1 = await _modbus_exchange(reader, writer, 10, 1, struct.pack(">BHH", 3, 4096, 1))
+                # 6a. Граница карты (MAX_REGISTERS = 5208 после продления прогнозного блока на слоты 61..199):
+                # последний адрес читается, MAX_REGISTERS -> 0x02, запрос через границу -> 0x02
+                last = ModbusTcpGateway.MAX_REGISTERS - 1
+                ok_last = await _read_regs(reader, writer, 9, 1, last, 1)
+                assert len(ok_last) == 1
+                _, _, exc_oob1 = await _modbus_exchange(reader, writer, 10, 1,
+                                                        struct.pack(">BHH", 3, ModbusTcpGateway.MAX_REGISTERS, 1))
                 assert exc_oob1 == bytes([0x83, 0x02]), f"Ожидалось 0x02, получено {exc_oob1.hex()}"
-                _, _, exc_oob2 = await _modbus_exchange(reader, writer, 11, 1, struct.pack(">BHH", 3, 4095, 2))
+                _, _, exc_oob2 = await _modbus_exchange(reader, writer, 11, 1, struct.pack(">BHH", 3, last, 2))
                 assert exc_oob2 == bytes([0x83, 0x02])
+                # прежняя граница v2 (4095/4096) теперь внутри карты: адреса 0..4095 не сдвинулись
+                assert len(await _read_regs(reader, writer, 14, 1, 4095, 2)) == 2
 
                 # 6b. Недопустимое число регистров (0 и 126) -> 0x03
                 _, _, exc_cnt0 = await _modbus_exchange(reader, writer, 12, 1, struct.pack(">BHH", 3, 0, 0))
