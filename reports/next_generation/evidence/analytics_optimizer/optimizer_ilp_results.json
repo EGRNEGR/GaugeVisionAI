@@ -1,0 +1,28 @@
+{
+  "bruteforce_verification": {
+    "random_instances_verified": 40,
+    "infeasible_instances": 0,
+    "exact_match_pct": 100.0,
+    "max_solve_time_ms": 0.18
+  },
+  "greedy_and_infeasible": {
+    "ilp_objective": 100.0,
+    "greedy_objective": 66.0,
+    "ilp_gain_pct": 51.52,
+    "infeasible_min_required_rub": 215000.0,
+    "infeasible_deficit_rub": 65000.0
+  },
+  "optical_and_predictive": {
+    "optical_excluded": true,
+    "risk_pts_low_pred": 84.86,
+    "risk_pts_high_pred": 166.24
+  },
+  "api_sqlite_spec_docx": {
+    "predictive_analyzed": 34,
+    "opt_selected_count": 4,
+    "opt_capex_rub": 336300,
+    "opt_risk_coverage_pct": 77.0,
+    "saved_plan_id": 1,
+    "docx_bytes": 135152
+  }
+}

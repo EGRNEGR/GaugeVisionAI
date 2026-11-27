@@ -1,0 +1,29 @@
+{
+  "linear_eta": {
+    "up_eta_warn_min": 40.0,
+    "up_eta_alert_min": 60.0,
+    "down_eta_warn_min": 20.0,
+    "down_eta_alert_min": 60.0
+  },
+  "monte_carlo_pi95": {
+    "mc_trials": 150,
+    "pi95_empirical_coverage": 0.92,
+    "width_30m": 5.978,
+    "width_120m": 13.374
+  },
+  "robust_and_anomalies": {
+    "robust_slope": 0.3,
+    "cusum_stat": 447.27,
+    "accel_z": 16.31,
+    "noise_mk_p": 0.33972,
+    "vol_ratio": 13.841
+  },
+  "multigauge_sqlite_modbus": {
+    "multigauge_slots": [
+      0,
+      1
+    ],
+    "snapshots_saved": 2,
+    "modbus_eta_alert_decoded": 62.5
+  }
+}
