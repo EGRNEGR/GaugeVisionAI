@@ -241,6 +241,9 @@ def optimize_modernization_budget(
     include_healthy: bool = False,
     economics_config: dict[str, Any] | None = None,
     include_frontier: bool = True,
+    time_limit_s: float = 2.0,
+    cancel_event: Any | None = None,
+    solver_backend: str = "auto",
 ) -> dict[str, Any]:
     """
     Решает задачу оптимального распределения бюджета модернизации КИПиА методом
@@ -326,12 +329,16 @@ def optimize_modernization_budget(
             )
         )
 
+    main_tl = max(0.05, min(15.0, float(time_limit_s)))
     sol = solve_binary_ilp(
         ilp_items,
         budget=float(budget_rub),
         max_items=max_items,
         min_per_group=min_per_group,
         max_per_group=max_per_group,
+        time_limit_s=main_tl,
+        cancel_event=cancel_event,
+        solver_backend=solver_backend,
     )
 
     by_id = {c["instrument_id"]: c for c in candidates}
@@ -367,7 +374,7 @@ def optimize_modernization_budget(
 
     # Сравнение с жадным базовым алгоритмом (только если ILP нашёл допустимое решение)
     greedy_comp: dict[str, Any] | None = None
-    if sol.status in ("optimal", "time_limit"):
+    if sol.has_feasible_solution and sol.status in ("optimal", "time_limit", "cancelled"):
         gr = solve_greedy_baseline(
             ilp_items,
             budget=float(budget_rub),
@@ -406,15 +413,19 @@ def optimize_modernization_budget(
         for frac in (0.20, 0.35, 0.50, 0.65, 0.80, 1.0):
             grid_set.add(int(round(total_all_capex * frac / 10_000.0) * 10_000))
         for b_pt in sorted(b for b in grid_set if b >= 0):
+            if cancel_event is not None and callable(getattr(cancel_event, "is_set", None)) and cancel_event.is_set():
+                break
             f_sol = solve_binary_ilp(
                 ilp_items,
                 budget=float(b_pt),
                 max_items=max_items,
                 min_per_group=min_per_group,
                 max_per_group=max_per_group,
-                time_limit_s=0.4,
+                time_limit_s=min(0.4, main_tl * 0.35),
+                cancel_event=cancel_event,
+                solver_backend=solver_backend,
             )
-            if f_sol.status in ("optimal", "time_limit"):
+            if f_sol.has_feasible_solution and f_sol.status in ("optimal", "time_limit"):
                 f_rows = [by_id[i] for i in f_sol.selected_ids if i in by_id]
                 f_cap = sum(int(r["capex_rub"]) for r in f_rows)
                 f_risk = round(sum(float(r["risk_reduction_points"]) for r in f_rows), 2)
