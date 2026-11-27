@@ -1,0 +1,254 @@
+{
+ "story": [
+  {
+   "scene": "0",
+   "on": [
+    "gv-st__pipe"
+   ]
+  },
+  {
+   "scene": "1",
+   "on": [
+    "gv-st__pipe",
+    "gv-st__cv"
+   ]
+  },
+  {
+   "scene": "2",
+   "on": [
+    "gv-st__panel",
+    "gv-st__tags"
+   ]
+  },
+  {
+   "scene": "3",
+   "on": [
+    "gv-st__tele"
+   ]
+  },
+  {
+   "scene": "4",
+   "on": [
+    "gv-st__tele",
+    "gv-st__scada"
+   ]
+  },
+  {
+   "scene": "5",
+   "on": [
+    "gv-st__analytics"
+   ]
+  },
+  {
+   "scene": "6",
+   "on": [
+    "gv-st__decision"
+   ]
+  },
+  {
+   "scene": "7",
+   "on": [
+    "gv-st__document"
+   ]
+  }
+ ],
+ "multigauge": [
+  {
+   "pressed": "1",
+   "valid": "100 %",
+   "real": "82,5 %",
+   "warn": false,
+   "spots": 0
+  },
+  {
+   "pressed": "4",
+   "valid": "100 %",
+   "real": "87,5 %",
+   "warn": false,
+   "spots": 0
+  },
+  {
+   "pressed": "16",
+   "valid": "100 %",
+   "real": "47,9 %",
+   "warn": true,
+   "spots": 0
+  },
+  {
+   "pressed": "8",
+   "valid": "100 %",
+   "real": "85,4 %",
+   "warn": false,
+   "spots": 8
+  }
+ ],
+ "mgCard": "PI-102",
+ "resilience": {
+  "during": {
+   "state": "down",
+   "q": "24"
+  },
+  "after": {
+   "state": "done",
+   "q": "0",
+   "cv": [
+    "49",
+    "46",
+    "46",
+    "0"
+   ]
+  }
+ },
+ "diag": "Причина",
+ "forecastDone": true,
+ "optimizer": [
+  {
+   "plan": "PI-101,PI-102,PI-104,PI-107",
+   "kpi": [
+    "оптимум",
+    "383 040 ₽",
+    "66 960 ₽",
+    "81 %",
+    "1 512 тыс. ₽",
+    "128"
+   ],
+   "doc": "383 040 ₽"
+  },
+  {
+   "plan": "PI-101,PI-102,PI-107",
+   "kpi": [
+    "оптимум",
+    "296 400 ₽",
+    "3 600 ₽",
+    "67 %",
+    "1 175 тыс. ₽",
+    "128"
+   ],
+   "doc": "296 400 ₽"
+  },
+  {
+   "plan": "PI-102,PI-104,PI-107",
+   "kpi": [
+    "оптимум",
+    "278 160 ₽",
+    "21 840 ₽",
+    "66 %",
+    "1 186 тыс. ₽",
+    "128"
+   ],
+   "doc": "278 160 ₽"
+  },
+  {
+   "plan": "",
+   "kpi": [
+    "дефицит",
+    "—",
+    "−4 880 ₽",
+    "—",
+    "—",
+    "128"
+   ],
+   "doc": "—"
+  },
+  {
+   "plan": "PI-101,PI-102,PI-103,PI-104,PI-105,PI-106,PI-107,PI-108",
+   "kpi": [
+    "оптимум",
+    "791 160 ₽",
+    "8 840 ₽",
+    "100 %",
+    "2 148 тыс. ₽",
+    "128"
+   ],
+   "doc": "791 160 ₽"
+  }
+ ],
+ "evo": [
+  false,
+  true,
+  false
+ ],
+ "eco": {
+  "saving": "50,25 млн ₽",
+  "rows": [
+   "Капитальные затраты52 440 000 ₽14 188 000 ₽",
+   "Цифровизация одной точки104 880 ₽28 376 ₽",
+   "Эксплуатация в год4 000 000 ₽1 600 000 ₽",
+   "Датчиков / камер500 / 0100 / 100"
+  ]
+ },
+ "showcase": [
+  {
+   "t": "",
+   "n": "",
+   "mode": "",
+   "header": "block"
+  },
+  {
+   "t": "",
+   "n": "",
+   "mode": "",
+   "header": "block"
+  },
+  {
+   "t": "",
+   "n": "",
+   "mode": "",
+   "header": "block"
+  },
+  {
+   "t": "",
+   "n": "",
+   "mode": "",
+   "header": "block"
+  },
+  {
+   "t": "",
+   "n": "",
+   "mode": "",
+   "header": "block"
+  },
+  {
+   "t": "",
+   "n": "",
+   "mode": "",
+   "header": "block"
+  },
+  {
+   "t": "",
+   "n": "",
+   "mode": "",
+   "header": "block"
+  },
+  {
+   "t": "",
+   "n": "",
+   "mode": "",
+   "header": "block"
+  },
+  {
+   "t": "",
+   "n": "",
+   "mode": "",
+   "header": "block"
+  },
+  {
+   "t": "",
+   "n": "",
+   "mode": "",
+   "header": "block"
+  },
+  {
+   "t": "",
+   "n": "",
+   "mode": "",
+   "header": "block"
+  }
+ ],
+ "showcaseRestart": "",
+ "showcaseExit": {
+  "attr": false,
+  "header": "block"
+ },
+ "errs": []
+}

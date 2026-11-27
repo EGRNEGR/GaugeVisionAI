@@ -1,0 +1,677 @@
+{
+ "name": "v2",
+ "url": "http://127.0.0.1:8702/",
+ "at": "2026-11-27T17:01:37.811Z",
+ "viewports": {
+  "1920x1080": {
+   "console": [],
+   "pageErrors": [],
+   "failed": [],
+   "loadMs": 991,
+   "scrollSteps": 43,
+   "metrics": {
+    "scrollHeight": 16236,
+    "scrollWidth": 1920,
+    "innerWidth": 1920,
+    "overflowX": false,
+    "title": "GaugeVision AI — стрелочные приборы ТЭЦ на пульте оператора"
+   },
+   "domains": {
+    "127.0.0.1:8702": 47
+   },
+   "byType": {
+    "document": 1,
+    "stylesheet": 10,
+    "script": 13,
+    "font": 19,
+    "image": 2,
+    "media": 1,
+    "other": 1
+   },
+   "bytes": 9289739,
+   "requestsCount": 47,
+   "largest": [
+    {
+     "url": "http://127.0.0.1:8702/assets/video/gauge_pullback.scrub.mp4",
+     "status": 206,
+     "type": "media",
+     "size": 8462136
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/img/boiler-hall.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 171807
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/img/poster.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 133211
+    },
+    {
+     "url": "http://127.0.0.1:8702/css/components.css",
+     "status": 200,
+     "type": "stylesheet",
+     "size": 36168
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/content.js",
+     "status": 200,
+     "type": "script",
+     "size": 34007
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/components/precision-dial.js",
+     "status": 200,
+     "type": "script",
+     "size": 23075
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/fonts/jetbrains-mono-latin-700.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 21908
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/fonts/jetbrains-mono-latin-500.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 21832
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/motion.js",
+     "status": 200,
+     "type": "script",
+     "size": 21498
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/components/pipeline-track.js",
+     "status": 200,
+     "type": "script",
+     "size": 21322
+    }
+   ]
+  },
+  "1440x900": {
+   "console": [],
+   "pageErrors": [],
+   "failed": [],
+   "loadMs": 746,
+   "scrollSteps": 26,
+   "metrics": {
+    "scrollHeight": 14749,
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "overflowX": false,
+    "title": "GaugeVision AI — стрелочные приборы ТЭЦ на пульте оператора"
+   },
+   "domains": {
+    "127.0.0.1:8702": 47
+   },
+   "byType": {
+    "document": 1,
+    "stylesheet": 10,
+    "script": 13,
+    "font": 19,
+    "image": 2,
+    "media": 1,
+    "other": 1
+   },
+   "bytes": 9289739,
+   "requestsCount": 47,
+   "largest": [
+    {
+     "url": "http://127.0.0.1:8702/assets/video/gauge_pullback.scrub.mp4",
+     "status": 206,
+     "type": "media",
+     "size": 8462136
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/img/boiler-hall.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 171807
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/img/poster.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 133211
+    },
+    {
+     "url": "http://127.0.0.1:8702/css/components.css",
+     "status": 200,
+     "type": "stylesheet",
+     "size": 36168
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/content.js",
+     "status": 200,
+     "type": "script",
+     "size": 34007
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/components/precision-dial.js",
+     "status": 200,
+     "type": "script",
+     "size": 23075
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/fonts/jetbrains-mono-latin-700.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 21908
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/fonts/jetbrains-mono-latin-500.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 21832
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/motion.js",
+     "status": 200,
+     "type": "script",
+     "size": 21498
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/components/pipeline-track.js",
+     "status": 200,
+     "type": "script",
+     "size": 21322
+    }
+   ]
+  },
+  "768x1024": {
+   "console": [],
+   "pageErrors": [],
+   "failed": [],
+   "loadMs": 875,
+   "scrollSteps": 26,
+   "metrics": {
+    "scrollHeight": 16480,
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "overflowX": false,
+    "title": "GaugeVision AI — стрелочные приборы ТЭЦ на пульте оператора"
+   },
+   "domains": {
+    "127.0.0.1:8702": 47
+   },
+   "byType": {
+    "document": 1,
+    "stylesheet": 10,
+    "script": 13,
+    "font": 19,
+    "image": 2,
+    "media": 1,
+    "other": 1
+   },
+   "bytes": 5233283,
+   "requestsCount": 47,
+   "largest": [
+    {
+     "url": "http://127.0.0.1:8702/assets/video/gauge_pullback.scrub-m.mp4",
+     "status": 206,
+     "type": "media",
+     "size": 4405680
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/img/boiler-hall.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 171807
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/img/poster.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 133211
+    },
+    {
+     "url": "http://127.0.0.1:8702/css/components.css",
+     "status": 200,
+     "type": "stylesheet",
+     "size": 36168
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/content.js",
+     "status": 200,
+     "type": "script",
+     "size": 34007
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/components/precision-dial.js",
+     "status": 200,
+     "type": "script",
+     "size": 23075
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/fonts/jetbrains-mono-latin-700.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 21908
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/fonts/jetbrains-mono-latin-500.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 21832
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/motion.js",
+     "status": 200,
+     "type": "script",
+     "size": 21498
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/components/pipeline-track.js",
+     "status": 200,
+     "type": "script",
+     "size": 21322
+    }
+   ]
+  },
+  "390x844": {
+   "console": [],
+   "pageErrors": [],
+   "failed": [],
+   "loadMs": 717,
+   "scrollSteps": 34,
+   "metrics": {
+    "scrollHeight": 17608,
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "overflowX": false,
+    "title": "GaugeVision AI — стрелочные приборы ТЭЦ на пульте оператора"
+   },
+   "domains": {
+    "127.0.0.1:8702": 47
+   },
+   "byType": {
+    "document": 1,
+    "stylesheet": 10,
+    "script": 13,
+    "font": 19,
+    "image": 2,
+    "media": 1,
+    "other": 1
+   },
+   "bytes": 5233283,
+   "requestsCount": 47,
+   "largest": [
+    {
+     "url": "http://127.0.0.1:8702/assets/video/gauge_pullback.scrub-m.mp4",
+     "status": 206,
+     "type": "media",
+     "size": 4405680
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/img/boiler-hall.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 171807
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/img/poster.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 133211
+    },
+    {
+     "url": "http://127.0.0.1:8702/css/components.css",
+     "status": 200,
+     "type": "stylesheet",
+     "size": 36168
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/content.js",
+     "status": 200,
+     "type": "script",
+     "size": 34007
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/components/precision-dial.js",
+     "status": 200,
+     "type": "script",
+     "size": 23075
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/fonts/jetbrains-mono-latin-700.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 21908
+    },
+    {
+     "url": "http://127.0.0.1:8702/assets/fonts/jetbrains-mono-latin-500.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 21832
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/motion.js",
+     "status": 200,
+     "type": "script",
+     "size": 21498
+    },
+    {
+     "url": "http://127.0.0.1:8702/js/components/pipeline-track.js",
+     "status": 200,
+     "type": "script",
+     "size": 21322
+    }
+   ]
+  }
+ },
+ "tokens": {
+  "--bg-canvas": "#090B0E",
+  "--bg-surface": "#0E1115",
+  "--bg-elevated": "#13171C",
+  "--border-hairline": "rgba(230, 234, 239, 0.07)",
+  "--border-strong": "rgba(230, 234, 239, 0.16)",
+  "--text-primary": "#E6EAEF",
+  "--text-muted": "#A1A9B4",
+  "--text-faint": "#8D95A0",
+  "--accent": "#FF5A1F",
+  "--accent-contrast": "#1A0802",
+  "--accent-soft": "rgba(255, 90, 31, 0.12)",
+  "--status-ok": "#6DBE8F",
+  "--status-warn": "#D9A54E",
+  "--status-alert": "#EE7462",
+  "--edge-light": "rgba(255, 255, 255, 0.16)",
+  "--glow-warm": "rgba(255, 90, 31, 0.09)",
+  "--glow-cool": "rgba(150, 178, 205, 0.06)",
+  "--surface-card": "linear-gradient(90deg, transparent, var(--edge-light) 50%, transparent) top / 100% 1px no-repeat, var(--bg-surface)",
+  "--bg-ambient": "radial-gradient(120% 75% at 85% 115%, rgba(255, 90, 31, 0.06), transparent 70%),\r\n    radial-gradient(70% 55% at 0% 0%, rgba(255, 90, 31, 0.05), transparent 70%),\r\n    linear-gradient(172deg, #090B0E 0%, #0C0B0D 45%, #150C08 100%)",
+  "--glow-cursor": "rgba(255, 138, 76, 0.16)",
+  "--glow-cursor-edge": "rgba(255, 110, 50, 0.05)",
+  "--font-sans": "'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif",
+  "--font-display": "var(--font-sans)",
+  "--weight-display": "700",
+  "--font-mono": "'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace",
+  "--font-chrome": "'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace",
+  "--ui-scale": "1",
+  "--chrome-u": "calc(1rem / var(--ui-scale))",
+  "--fs-2xs": "0.75rem",
+  "--fs-xs": "0.8125rem",
+  "--fs-s": "0.9375rem",
+  "--fs-m": "1.0625rem",
+  "--fs-l": "1.1875rem",
+  "--fs-xl": "clamp(1.375rem, 1.1rem + 0.9vw, 1.75rem)",
+  "--fs-2xl": "clamp(1.875rem, 1.2rem + 2.2vw, 3rem)",
+  "--fs-3xl": "clamp(2.25rem, 1.3rem + 3.6vw, 4.25rem)",
+  "--fs-display": "clamp(2.5rem, 1.1rem + 5.2vw, 6rem)",
+  "--lh-tight": "1.1",
+  "--lh-snug": "1.25",
+  "--lh-body": "1.55",
+  "--tracking-display": "-0.025em",
+  "--tracking-head": "-0.01em",
+  "--tracking-caps": "0.08em",
+  "--space-1": "0.25rem",
+  "--space-2": "0.5rem",
+  "--space-3": "0.75rem",
+  "--space-4": "1rem",
+  "--space-5": "1.5rem",
+  "--space-6": "2rem",
+  "--space-7": "3rem",
+  "--space-8": "5rem",
+  "--section-pad": "clamp(4rem, 1.5rem + 6.5vw, 7rem)",
+  "--container": "90rem",
+  "--gutter": "clamp(1rem, 0.5rem + 2.5vw, 3rem)",
+  "--measure": "68ch",
+  "--rail": "11rem",
+  "--header-h": "4rem",
+  "--telemetry-h": "1.75rem",
+  "--radius-s": "0.25rem",
+  "--radius-m": "0.5rem",
+  "--radius-l": "0.75rem",
+  "--ease-out": "cubic-bezier(0.16, 1, 0.3, 1)",
+  "--ease-in-out": "cubic-bezier(0.65, 0, 0.35, 1)",
+  "--dur-fast": "160ms",
+  "--dur-med": "320ms",
+  "--dur-slow": "600ms",
+  "--dur-xslow": "1000ms",
+  "--dur-crawl": "1400ms",
+  "--tap": "calc(2.75 * var(--chrome-u))",
+  "--focus-ring": "0 0 0 0.125rem var(--bg-canvas), 0 0 0 0.25rem var(--accent)",
+  "--pin-top": "calc(var(--header-h) + var(--telemetry-h))",
+  "--tweaks-clearance": "0rem"
+ },
+ "fonts": [
+  "Manrope 400 normal",
+  "Manrope 400 normal",
+  "Manrope 400 normal",
+  "Manrope 400 normal",
+  "Manrope 500 normal",
+  "Manrope 500 normal",
+  "Manrope 700 normal",
+  "Manrope 700 normal",
+  "Manrope 700 normal",
+  "Manrope 800 normal",
+  "Manrope 800 normal",
+  "JetBrains Mono 400 normal",
+  "JetBrains Mono 400 normal",
+  "JetBrains Mono 400 normal",
+  "JetBrains Mono 500 normal",
+  "JetBrains Mono 500 normal",
+  "JetBrains Mono 500 normal",
+  "JetBrains Mono 700 normal",
+  "JetBrains Mono 700 normal"
+ ],
+ "typography": {
+  "h1": [
+   {
+    "tag": "H1",
+    "text": "Стрелочные приборы ТЭЦ — на пульте оператора",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "105.6px",
+    "weight": "700",
+    "lh": "116.16px",
+    "ls": "-2.64px",
+    "color": "rgb(230, 234, 239)"
+   }
+  ],
+  "h2": [
+   {
+    "tag": "H2",
+    "text": "От угла θ к МПа",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "52.8px",
+    "weight": "700",
+    "lh": "58.08px",
+    "ls": "-1.32px",
+    "color": "rgb(230, 234, 239)"
+   },
+   {
+    "tag": "H2",
+    "text": "Четыре шага от кадра к значению",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "52.8px",
+    "weight": "700",
+    "lh": "58.08px",
+    "ls": "-1.32px",
+    "color": "rgb(230, 234, 239)"
+   },
+   {
+    "tag": "H2",
+    "text": "Замеры с условиями стенда",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "74.8px",
+    "weight": "700",
+    "lh": "82.28px",
+    "ls": "-1.87px",
+    "color": "rgb(230, 234, 239)"
+   },
+   {
+    "tag": "H2",
+    "text": "Журнал обходчика → пульт оператора",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "74.8px",
+    "weight": "700",
+    "lh": "82.28px",
+    "ls": "-1.87px",
+    "color": "rgb(230, 234, 239)"
+   },
+   {
+    "tag": "H2",
+    "text": "Один сервер, локальный контур",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "74.8px",
+    "weight": "700",
+    "lh": "82.28px",
+    "ls": "-1.87px",
+    "color": "rgb(230, 234, 239)"
+   },
+   {
+    "tag": "H2",
+    "text": "Компромиссы и ограничения среды",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "74.8px",
+    "weight": "700",
+    "lh": "82.28px",
+    "ls": "-1.87px",
+    "color": "rgb(230, 234, 239)"
+   }
+  ],
+  "h3": [
+   {
+    "tag": "H3",
+    "text": "Локализация: CLAHE + YOLOv8n",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "20.9px",
+    "weight": "700",
+    "lh": "26.125px",
+    "ls": "-0.209px",
+    "color": "rgb(230, 234, 239)"
+   },
+   {
+    "tag": "H3",
+    "text": "Эллипс → круг: аффинная коррекция",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "20.9px",
+    "weight": "700",
+    "lh": "26.125px",
+    "ls": "-0.209px",
+    "color": "rgb(230, 234, 239)"
+   },
+   {
+    "tag": "H3",
+    "text": "Угол θ: радиальный момент + HoughLinesP",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "20.9px",
+    "weight": "700",
+    "lh": "26.125px",
+    "ls": "-0.209px",
+    "color": "rgb(230, 234, 239)"
+   },
+   {
+    "tag": "H3",
+    "text": "Сглаживание EMA α = 0,25",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "20.9px",
+    "weight": "700",
+    "lh": "26.125px",
+    "ls": "-0.209px",
+    "color": "rgb(230, 234, 239)"
+   },
+   {
+    "tag": "H3",
+    "text": "Точность",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "20.9px",
+    "weight": "700",
+    "lh": "26.125px",
+    "ls": "-0.209px",
+    "color": "rgb(230, 234, 239)"
+   },
+   {
+    "tag": "H3",
+    "text": "Скорость",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "20.9px",
+    "weight": "700",
+    "lh": "26.125px",
+    "ls": "-0.209px",
+    "color": "rgb(230, 234, 239)"
+   }
+  ],
+  "p": [
+   {
+    "tag": "P",
+    "text": "Камера считывает показания КИПиА без врезки и останова, без интернета.",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "20.9px",
+    "weight": "400",
+    "lh": "32.395px",
+    "ls": "normal",
+    "color": "rgb(161, 169, 180)"
+   },
+   {
+    "tag": "P",
+    "text": "МАНОМЕТР, ШКАЛА 0–10 МПА",
+    "font": "\"JetBrains Mono\", ui-monospace, \"Cascadia Mono\", Consolas, m",
+    "size": "14.3px",
+    "weight": "400",
+    "lh": "22.165px",
+    "ls": "1.144px",
+    "color": "rgb(141, 149, 160)"
+   },
+   {
+    "tag": "P",
+    "text": "4,39\nМПа",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "18.7px",
+    "weight": "400",
+    "lh": "28.985px",
+    "ls": "normal",
+    "color": "rgb(230, 234, 239)"
+   },
+   {
+    "tag": "P",
+    "text": "V = Vmin + ((θ − θmin) mod 360) / span · (Vmax − Vmin)",
+    "font": "\"JetBrains Mono\", ui-monospace, \"Cascadia Mono\", Consolas, m",
+    "size": "14.3px",
+    "weight": "400",
+    "lh": "22.165px",
+    "ls": "normal",
+    "color": "rgb(161, 169, 180)"
+   },
+   {
+    "tag": "P",
+    "text": "((253,4° − 135°) mod 360) / 270 · 10 = 4,39",
+    "font": "\"JetBrains Mono\", ui-monospace, \"Cascadia Mono\", Consolas, m",
+    "size": "14.3px",
+    "weight": "400",
+    "lh": "22.165px",
+    "ls": "normal",
+    "color": "rgb(230, 234, 239)"
+   },
+   {
+    "tag": "P",
+    "text": "Калибровка по двум точкам: θmin 135° → 0, θmax 45° → 10 МПа, по часовой",
+    "font": "Manrope, system-ui, -apple-system, \"Segoe UI\", sans-serif",
+    "size": "16.5px",
+    "weight": "400",
+    "lh": "23.925px",
+    "ls": "normal",
+    "color": "rgb(161, 169, 180)"
+   }
+  ]
+ },
+ "sections": [
+  {
+   "idx": 0,
+   "tag": "DIV",
+   "id": "",
+   "cls": "gv-page",
+   "top": 0,
+   "h": 16236,
+   "heading": "Стрелочные приборы ТЭЦ — на пульте оператора"
+  }
+ ],
+ "text": "К содержанию\nGaugeVision AI\nСуть\nПоказание\nКонвейер\nЗамеры\nБыло → Стало\nАрхитектура\nОграничения\nGitHub\n(откроется в новой вкладке)\n01 / 08 · 000 %\nСУТЬ\nСтрелочные приборы ТЭЦ — на пульте оператора\n\nКамера считывает показания КИПиА без врезки и останова, без интернета.\n\nОт угла θ к МПа\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n0\n20\n40\n60\n80\n100\nМПа\nбар\n\nМАНОМЕТР, ШКАЛА 0–10 МПА\n\n4,39\nМПа\n\nБАР\n43,9\nУГОЛ Θ\n253,4°\nЗОНА УСТАВОК\nНОРМА\n\nV = Vmin + ((θ − θmin) mod 360) / span · (Vmax − Vmin)\n\n((253,4° − 135°) mod 360) / 270 · 10 = 4,39\n\nКалибровка по двум точкам: θmin 135° → 0, θmax 45° → 10 МПа, по часовой\n\nВедите курсором по шкале; клик фиксирует, ← → двигают\n\nЧетыре шага от кадра к значению\n01\nЛокализация\n02\nЭллипс → круг\n03\nУгол θ\n04\nСглаживание\ngauge\n01\nЛокализация: CLAHE + YOLOv8n\nCLAHE clip 3,0 · 8×8\nROI = YOLOv8n(кадр)\nYOLO_IMGSZ\n640\nYOLO_CONF\n0,35\nУстройство\nCUDA FP16 или CPU\n\n7,2\nмс/кадр GPU\n29 мс/кадр CPU\n\n02\nЭллипс → круг: аффинная коррекция\nM = T(S/2)·R(φ)·diag(R/a, R/b)·R(−φ)·T(−c)\nDIAL_SIZE\n640 px\nИнтерполяция\nINTER_LINEAR\nНаклон на стенде\nдо ≈ 41°\nθ\n03\nУгол θ: радиальный момент + HoughLinesP\nθ = atan2(y₁−y₀, x₁−x₀)\nV = Vmin + ((θ−θmin) mod 360)/span·(Vmax−Vmin)\nГистограмма\nшаг 1°, ± 4°\nМаски\nBlack-Hat / Top-Hat 31×31\nHough ↔ момент\n≤ 12°\nVₜ\nV̄ₜ\n04\nСглаживание EMA α = 0,25\nV̄ₜ = α·Vₜ + (1−α)·V̄ₜ₋₁\nEMA_ALPHA\n0,25\nMIN_NEEDLE_CONFIDENCE\n0,25\n\n≈ 90 %\nскачка за 8 кадров\nоценка по формуле, не замер\n\nКОНВЕЙЕР ЦЕЛИКОМ\n30–100\nмс/кадр\n\n04\nЗамеры с условиями стенда\nТочность\n\nЗАМЕР\n\nМаксимальная ошибка шкалы\n0,38\n0,38 %, замер\n%\n28 сцен стенда, средняя ошибка 0,11 %\nmAP₅₀ детектора\n90,1\n90,1 %, замер\n%\nYOLOv8n, 25 эпох, валидация обучения\nRecall Gauge / Precision Needle\n1,00 / 1,00\n1,00 / 1,00, замер\nвалидация обучения\nСкорость\n\nЗАМЕР\n\nИнференс YOLOv8n на GPU\n7,2\n7,2 мс/кадр, замер\nмс/кадр\nRTX 5060 Laptop, FP16, кадр 1280×720\nПолный конвейер\n30–100\n30–100 мс/кадр, замер\nмс/кадр\nлокализация, нормализация, стрелка, EMA\nПоток со смартфона\n3–4\n3–4 к/с, замер\nк/с\nWebP, 1280 px\nИнференс YOLOv8n на CPU\n29\n29 мс/кадр, замер\nмс/кадр\nFP32, без видеокарты\nМасштаб\n\nЗАМЕР\nРАСЧЁТ\n\n25 камер на одном ноутбуке\n100\n100 к/с, замер\nк/с\nЗАМЕР\nстенд команды: RTX 5060 Laptop 8 GB, 16 GB RAM, 4 к/с на камеру, загрузка GPU 72 %\n50 камер\n200\n200 к/с, расчёт\nк/с\nРАСЧЁТ\nрасчёт: RTX 4070 Ti Super 16 GB, узел ≈ 230–260 тыс. ₽\n100 камер\n400\n400 к/с, расчёт\nк/с\nРАСЧЁТ\nрасчёт: RTX 4090 24 GB, узел ≈ 580–680 тыс. ₽\n\nСтенд: синтетические приборы, наклон ≈ 41°. Скриптов воспроизведения замеров в репозитории нет.\n\n05\nЖурнал обходчика → пульт оператора\nБыло: обход раз в смену\nПоказания — раз в смену, в журнал\nОтклонение между обходами незаметно\nДиспетчер видит запись с задержкой\nСмарт-датчик: барьеры, кабели, проект, останов котла\n\n300 000\n300 000\n₽ на точку\n\nзамена на смарт-датчик, оценка команды\n\nСтало: GaugeVision AI\nКамера снаружи контура: без врезки и останова\n3 обработки в секунду на камеру\nПятизонные уставки, сирена, квитирование\nАрхив SQLite и CSV с метками ISO 8601 UTC\n\n33 000\n33 000\n₽ на точку\n\nПО и камера «Рубитек», оценка команды\n\n−89 %\n−89 %\nзатрат на точку\n\nОценка команды: 26,7 млн ₽ на 100 приборах. Нужен пилот.\n\nСмена 12 ч\n\nИЛЛЮСТРАТИВНЫЙ СЦЕНАРИЙ\n\nБыло\nСтало\nОбход\nОбход\nОтклонение\nОбнаружено\n0 ч\n12 ч\n\nОтклонение заметят на следующем обходе\n\n06\nОдин сервер, локальный контур\n\nЛокальный контур: HTTPS / WSS, без исходящих запросов в интернет\n\nИсточники видео\nRTSP / NVR\nИсточники видео\nHTTP / MJPEG\nИсточники видео\nUSB\nИсточники видео\nСмартфон\nИсточники видео\nONVIF\nСервер\nstreamer.py\nСервер\nvision.py\nСлужебные модули\ndiscovery.py\nСервер\nmain.py\nСлужебные модули\ncert_gen.py\nПульт\nПульт оператора\nАрхив\ndb.py\n\nНаведите на узел или перейдите к нему клавишей Tab — подсветятся связи\n\nСТЕК\nPython\n3.12\nFastAPI\n≥ 0.110, async\nUvicorn\n≥ 0.29, только HTTPS\naiosqlite\n≥ 0.20\nOpenCV\n≥ 4.9\nNumPy\n≥ 1.26\nUltralytics YOLOv8n\n≥ 8.1\nPyTorch\nCUDA FP16 или CPU\ncryptography\n≥ 42\nqrcode\n≥ 7.4\nChart.js\nлокально, без CDN\nHTML / CSS / JS\nбез фреймворков\n07\nКомпромиссы и ограничения среды\nКомпромиссы\n\nВЫБРАЛИ → ПЛАТИМ\n\n01\nВЫБРАЛИ\nYOLOv8n только для поиска корпуса\n→\nПЛАТИМ\nСтрелку ищет геометрия OpenCV, не нейросеть\n02\nВЫБРАЛИ\nАффинная нормализация эллипса\n→\nПЛАТИМ\nПроверено до ≈ 41°; сильные наклоны — в Roadmap 02\n03\nВЫБРАЛИ\nEMA α = 0,25 гасит вибрацию\n→\nПЛАТИМ\nПоказание догоняет скачок за несколько кадров\n04\nВЫБРАЛИ\n3 обработки в секунду на камеру\n→\nПЛАТИМ\nМониторинг, не видеопоток: броски короче трети секунды не видны\n05\nВЫБРАЛИ\nПорог уверенности 0,25 и удержание значения\n→\nПЛАТИМ\nПри грязном стекле пульт держит последнее достоверное значение; автоалерта нет\n06\nВЫБРАЛИ\nСамоподписанный сертификат, локальный контур\n→\nПЛАТИМ\nБраузер раз предупреждает о сертификате на каждом новом устройстве\n07\nВЫБРАЛИ\nSQLite и CSV вместо интеграции со SCADA\n→\nПЛАТИМ\nСвязи с АСУ ТП нет: Modbus TCP и OPC UA — в Roadmap 02\nОграничения среды цеха\nВсе\n5\nреализовано\n3\nчастично\n2\nУСЛОВИЕ\nРИСК\nОТВЕТ В КОДЕ\nБлики, тени, копоть\nреализовано\nРИСК\nОшибки выделения шкалы и стрелки\nОТВЕТ В КОДЕ\nCLAHE при поиске циферблата; Black-Hat / Top-Hat 31×31; Otsu по кольцу; фонарь смартфона\nОГОВОРКА\nОтдельной обработки копоти в коде нет\nВибрация\nреализовано\nРИСК\nДрожание показаний\nОТВЕТ В КОДЕ\nEMA α = 0,25; смещение ROI меньше 5 % оси игнорируется\nСъёмка под углом\nчастично\nРИСК\nИскажение геометрии шкалы\nОТВЕТ В КОДЕ\nАффинная нормализация в круг 640 px; на стенде — до ≈ 41°\nОГОВОРКА\nСильные наклоны — в Roadmap 02\nЗагрязнение стекла\nчастично\nРИСК\nПадение достоверности\nОТВЕТ В КОДЕ\nПорог 0,25: недостоверный кадр не пишется; после 3 промахов — новый поиск\nОГОВОРКА\nАвтоалерт — в плане\nОбрыв сети или камеры\nреализовано\nРИСК\nПотеря телеметрии\nОТВЕТ В КОДЕ\nПереподключение 1 → 15 с, после 8 неудач — «офлайн». Смартфон без кадров: 6 с — «переподключение», 30 с — «офлайн»\n\nНе проверено в поле\n\nНелинейные шкалы, многострелочные приборы, работа на станции. Испытания — только стенд.\n\nRoadmap\n\n01\nMVP\nреализовано\n\n6 классов приборов\nYOLOv8n на CUDA\nсмартфон по QR-коду\nуставки, сирена и экспорт в CSV\n\n02\nСвязь со SCADA\nв плане\n\nModbus TCP и OPC UA\nполевой пилот на станции\nполная гомография\nнелинейные шкалы и многоточечная калибровка\n\n03\nМасштаб цеха\nв плане\n\nPTZ-камеры с пресетами обхода: одна камера на десятки приборов\nнательные регистраторы обходчиков\n08\nКод и README — на GitHub\nКод на GitHub\ngithub.com/EGRNEGR/GaugeVisionAI\n(откроется в новой вкладке)\n\nТРЕК №3 · УМНОЕ ПРОИЗВОДСТВО\n\n© 2026 EGRNEGR. Все права защищены. Код опубликован только для ознакомления.\n\nGaugeVision AI v1.0.0\nПроприетарная лицензия\n(откроется в новой вкладке)",
+ "middleDots": 12,
+ "domNodes": 1130,
+ "animations": []
+}

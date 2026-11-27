@@ -1,0 +1,789 @@
+{
+ "name": "published",
+ "url": "https://gaugevs.tilda.ws/",
+ "at": "2026-11-27T17:01:38.145Z",
+ "viewports": {
+  "1920x1080": {
+   "console": [],
+   "pageErrors": [],
+   "failed": [],
+   "loadMs": 4785,
+   "scrollSteps": 52,
+   "metrics": {
+    "scrollHeight": 19341,
+    "scrollWidth": 1920,
+    "innerWidth": 1920,
+    "overflowX": false,
+    "title": "GaugeVision AI: прибор пишет журнал сам"
+   },
+   "domains": {
+    "gaugevs.tilda.ws": 1,
+    "fonts.googleapis.com": 1,
+    "static.tildacdn.pub": 13,
+    "neo.tildaapi.com": 1,
+    "cdn.jsdelivr.net": 12,
+    "static.tildacdn.com": 1,
+    "stat.tildaapi.com": 1
+   },
+   "byType": {
+    "document": 1,
+    "stylesheet": 4,
+    "script": 8,
+    "image": 3,
+    "font": 11,
+    "media": 1,
+    "other": 1,
+    "xhr": 1
+   },
+   "bytes": 12317695,
+   "requestsCount": 30,
+   "largest": [
+    {
+     "url": "https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@10d8029c2e5089afccb1dd4d4609e12ea458bb9d/site/assets/video/shift.scrub.mp4",
+     "status": 206,
+     "type": "media",
+     "size": 11588164
+    },
+    {
+     "url": "https://static.tildacdn.pub/tila3262-6464-4261-b833-306634363339/shift-before.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 206347
+    },
+    {
+     "url": "https://static.tildacdn.pub/tila6461-3464-4163-b633-396133623335/shift-after.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 191935
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-latin-wght-italic.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 41408
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans-extra-condensed@5.3.0/files/sofia-sans-extra-condensed-latin-wght-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 40520
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-latin-wght-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 40372
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/martian-mono@5.3.0/files/martian-mono-latin-standard-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 38492
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource/bad-script@5.3.0/files/bad-script-latin-400-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 34708
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource/bad-script@5.3.0/files/bad-script-cyrillic-400-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 25804
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-cyrillic-wght-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 25568
+    }
+   ]
+  },
+  "1440x900": {
+   "console": [],
+   "pageErrors": [],
+   "failed": [],
+   "loadMs": 4639,
+   "scrollSteps": 32,
+   "metrics": {
+    "scrollHeight": 17676,
+    "scrollWidth": 1440,
+    "innerWidth": 1440,
+    "overflowX": false,
+    "title": "GaugeVision AI: прибор пишет журнал сам"
+   },
+   "domains": {
+    "gaugevs.tilda.ws": 1,
+    "fonts.googleapis.com": 1,
+    "static.tildacdn.pub": 13,
+    "neo.tildaapi.com": 1,
+    "cdn.jsdelivr.net": 12,
+    "stat.tildaapi.com": 1
+   },
+   "byType": {
+    "document": 1,
+    "stylesheet": 4,
+    "script": 7,
+    "image": 3,
+    "font": 11,
+    "media": 1,
+    "other": 1,
+    "xhr": 1
+   },
+   "bytes": 12317695,
+   "requestsCount": 29,
+   "largest": [
+    {
+     "url": "https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@10d8029c2e5089afccb1dd4d4609e12ea458bb9d/site/assets/video/shift.scrub.mp4",
+     "status": 206,
+     "type": "media",
+     "size": 11588164
+    },
+    {
+     "url": "https://static.tildacdn.pub/tila3262-6464-4261-b833-306634363339/shift-before.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 206347
+    },
+    {
+     "url": "https://static.tildacdn.pub/tila6461-3464-4163-b633-396133623335/shift-after.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 191935
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-latin-wght-italic.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 41408
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans-extra-condensed@5.3.0/files/sofia-sans-extra-condensed-latin-wght-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 40520
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-latin-wght-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 40372
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/martian-mono@5.3.0/files/martian-mono-latin-standard-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 38492
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource/bad-script@5.3.0/files/bad-script-latin-400-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 34708
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource/bad-script@5.3.0/files/bad-script-cyrillic-400-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 25804
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-cyrillic-wght-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 25568
+    }
+   ]
+  },
+  "768x1024": {
+   "console": [],
+   "pageErrors": [],
+   "failed": [],
+   "loadMs": 4340,
+   "scrollSteps": 28,
+   "metrics": {
+    "scrollHeight": 17987,
+    "scrollWidth": 768,
+    "innerWidth": 768,
+    "overflowX": false,
+    "title": "GaugeVision AI: прибор пишет журнал сам"
+   },
+   "domains": {
+    "gaugevs.tilda.ws": 1,
+    "fonts.googleapis.com": 1,
+    "neo.tildaapi.com": 1,
+    "static.tildacdn.pub": 13,
+    "cdn.jsdelivr.net": 12,
+    "stat.tildaapi.com": 1
+   },
+   "byType": {
+    "document": 1,
+    "stylesheet": 4,
+    "script": 7,
+    "image": 3,
+    "font": 11,
+    "media": 1,
+    "other": 1,
+    "xhr": 1
+   },
+   "bytes": 6148861,
+   "requestsCount": 29,
+   "largest": [
+    {
+     "url": "https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@10d8029c2e5089afccb1dd4d4609e12ea458bb9d/site/assets/video/shift.scrub-m.mp4",
+     "status": 206,
+     "type": "media",
+     "size": 5419330
+    },
+    {
+     "url": "https://static.tildacdn.pub/tila3262-6464-4261-b833-306634363339/shift-before.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 206347
+    },
+    {
+     "url": "https://static.tildacdn.pub/tila6461-3464-4163-b633-396133623335/shift-after.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 191935
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-latin-wght-italic.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 41408
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans-extra-condensed@5.3.0/files/sofia-sans-extra-condensed-latin-wght-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 40520
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-latin-wght-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 40372
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/martian-mono@5.3.0/files/martian-mono-latin-standard-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 38492
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource/bad-script@5.3.0/files/bad-script-latin-400-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 34708
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource/bad-script@5.3.0/files/bad-script-cyrillic-400-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 25804
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-cyrillic-wght-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 25568
+    }
+   ]
+  },
+  "390x844": {
+   "console": [],
+   "pageErrors": [],
+   "failed": [],
+   "loadMs": 5200,
+   "scrollSteps": 37,
+   "metrics": {
+    "scrollHeight": 19549,
+    "scrollWidth": 390,
+    "innerWidth": 390,
+    "overflowX": false,
+    "title": "GaugeVision AI: прибор пишет журнал сам"
+   },
+   "domains": {
+    "gaugevs.tilda.ws": 1,
+    "fonts.googleapis.com": 1,
+    "static.tildacdn.pub": 13,
+    "neo.tildaapi.com": 1,
+    "cdn.jsdelivr.net": 12,
+    "stat.tildaapi.com": 1
+   },
+   "byType": {
+    "document": 1,
+    "stylesheet": 4,
+    "script": 7,
+    "image": 3,
+    "font": 11,
+    "media": 1,
+    "other": 1,
+    "xhr": 1
+   },
+   "bytes": 6148861,
+   "requestsCount": 29,
+   "largest": [
+    {
+     "url": "https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@10d8029c2e5089afccb1dd4d4609e12ea458bb9d/site/assets/video/shift.scrub-m.mp4",
+     "status": 206,
+     "type": "media",
+     "size": 5419330
+    },
+    {
+     "url": "https://static.tildacdn.pub/tila3262-6464-4261-b833-306634363339/shift-before.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 206347
+    },
+    {
+     "url": "https://static.tildacdn.pub/tila6461-3464-4163-b633-396133623335/shift-after.jpg",
+     "status": 200,
+     "type": "image",
+     "size": 191935
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-latin-wght-italic.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 41408
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans-extra-condensed@5.3.0/files/sofia-sans-extra-condensed-latin-wght-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 40520
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-latin-wght-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 40372
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/martian-mono@5.3.0/files/martian-mono-latin-standard-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 38492
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource/bad-script@5.3.0/files/bad-script-latin-400-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 34708
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource/bad-script@5.3.0/files/bad-script-cyrillic-400-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 25804
+    },
+    {
+     "url": "https://cdn.jsdelivr.net/npm/@fontsource-variable/sofia-sans@5.3.0/files/sofia-sans-cyrillic-wght-normal.woff2",
+     "status": 200,
+     "type": "font",
+     "size": 25568
+    }
+   ]
+  }
+ },
+ "tokens": {
+  "--ui-scale": "1",
+  "--paper": "#EEF0EE",
+  "--paper-deep": "#E2E6E4",
+  "--paper-lift": "#F1F2EC",
+  "--rule": "rgba(66, 104, 150, 0.16)",
+  "--rule-strong": "rgba(66, 104, 150, 0.42)",
+  "--grid": "rgba(66, 104, 150, 0.1)",
+  "--ink": "#17191C",
+  "--ink-press": "#0B0C0D",
+  "--ink-2": "#454B53",
+  "--ink-3": "#5C626A",
+  "--violet": "#3A2C9C",
+  "--red": "#B8321C",
+  "--ok": "#1D6640",
+  "--warn": "#7E5300",
+  "--marker": "#EBD45A",
+  "--plate": "#141617",
+  "--plate-ink": "#E9EBE4",
+  "--plate-ink-2": "#A9AFA6",
+  "--plate-red": "#F06A4E",
+  "--font-display": "'Sofia Sans Extra Condensed', 'Sofia Sans', 'Arial Narrow', sans-serif",
+  "--font-sans": "'Sofia Sans', 'Segoe UI', sans-serif",
+  "--font-mono": "'Martian Mono', 'Sofia Sans', ui-monospace, monospace",
+  "--font-hand": "'Bad Script', 'Segoe Script', cursive",
+  "--fs-2xs": "0.75rem",
+  "--fs-xs": "0.875rem",
+  "--fs-s": "1rem",
+  "--fs-m": "1.125rem",
+  "--fs-l": "1.375rem",
+  "--fs-xl": "1.75rem",
+  "--fs-2xl": "2.5rem",
+  "--fs-h2": "clamp(3.25rem, 1.6rem + 5.2vw, 7rem)",
+  "--fs-h1": "clamp(4rem, 1.2rem + 8.4vw, 10.5rem)",
+  "--fs-figure": "clamp(2.25rem, 1.4rem + 2.6vw, 4rem)",
+  "--lh-display": "0.84",
+  "--lh-text": "1.5",
+  "--tracking-display": "-0.01em",
+  "--tracking-caps": "0.08em",
+  "--s1": "0.5rem",
+  "--s2": "1rem",
+  "--s3": "1.5rem",
+  "--s4": "2rem",
+  "--s5": "2.5rem",
+  "--s6": "3rem",
+  "--s8": "4rem",
+  "--s10": "5rem",
+  "--s12": "6rem",
+  "--s16": "8rem",
+  "--s20": "10rem",
+  "--row": "2rem",
+  "--margin": "clamp(4rem, 1rem + 7vw, 9rem)",
+  "--tabs": "3.5rem",
+  "--gutter": "clamp(1rem, 0.5rem + 1.2vw, 2rem)",
+  "--sheet-pad": "clamp(6rem, 3rem + 8vw, 12rem)",
+  "--hair": "1px",
+  "--ease-out": "cubic-bezier(0.16, 1, 0.3, 1)",
+  "--ease-in-out": "cubic-bezier(0.65, 0, 0.35, 1)",
+  "--dur-fast": "160ms",
+  "--dur-med": "320ms",
+  "--dur-slow": "700ms",
+  "--dur-write": "1100ms"
+ },
+ "fonts": [
+  "Sofia Sans Extra Condensed 100 900 normal",
+  "Sofia Sans Extra Condensed 100 900 normal",
+  "Sofia Sans 100 900 normal",
+  "Sofia Sans 100 900 normal",
+  "Sofia Sans 100 900 normal",
+  "Sofia Sans 100 900 italic",
+  "Sofia Sans 100 900 italic",
+  "Martian Mono 100 800 normal",
+  "Martian Mono 100 800 normal",
+  "Bad Script 400 normal",
+  "Bad Script 400 normal"
+ ],
+ "typography": {
+  "h1": [
+   {
+    "tag": "H1",
+    "text": "Прибор пишет\nжурнал сам",
+    "font": "\"Sofia Sans Extra Condensed\", \"Sofia Sans\", \"Arial Narrow\", ",
+    "size": "168px",
+    "weight": "900",
+    "lh": "137.76px",
+    "ls": "-1.68px",
+    "color": "rgb(23, 25, 28)"
+   }
+  ],
+  "h2": [
+   {
+    "tag": "H2",
+    "text": "Двенадцать часов против трети секунды",
+    "font": "\"Sofia Sans Extra Condensed\", \"Sofia Sans\", \"Arial Narrow\", ",
+    "size": "112px",
+    "weight": "850",
+    "lh": "94.08px",
+    "ls": "-1.12px",
+    "color": "rgb(23, 25, 28)"
+   },
+   {
+    "tag": "H2",
+    "text": "От угла θ\nк мегапаскалям",
+    "font": "\"Sofia Sans Extra Condensed\", \"Sofia Sans\", \"Arial Narrow\", ",
+    "size": "112px",
+    "weight": "850",
+    "lh": "94.08px",
+    "ls": "-1.12px",
+    "color": "rgb(23, 25, 28)"
+   },
+   {
+    "tag": "H2",
+    "text": "Четыре операции над одним кадром",
+    "font": "\"Sofia Sans Extra Condensed\", \"Sofia Sans\", \"Arial Narrow\", ",
+    "size": "112px",
+    "weight": "850",
+    "lh": "94.08px",
+    "ls": "-1.12px",
+    "color": "rgb(23, 25, 28)"
+   },
+   {
+    "tag": "H2",
+    "text": "Протокол испытаний",
+    "font": "\"Sofia Sans Extra Condensed\", \"Sofia Sans\", \"Arial Narrow\", ",
+    "size": "112px",
+    "weight": "850",
+    "lh": "94.08px",
+    "ls": "-1.12px",
+    "color": "rgb(23, 25, 28)"
+   },
+   {
+    "tag": "H2",
+    "text": "Один сервер в локальном контуре",
+    "font": "\"Sofia Sans Extra Condensed\", \"Sofia Sans\", \"Arial Narrow\", ",
+    "size": "112px",
+    "weight": "850",
+    "lh": "94.08px",
+    "ls": "-1.12px",
+    "color": "rgb(23, 25, 28)"
+   },
+   {
+    "tag": "H2",
+    "text": "Компромиссы, ограничения и план",
+    "font": "\"Sofia Sans Extra Condensed\", \"Sofia Sans\", \"Arial Narrow\", ",
+    "size": "112px",
+    "weight": "850",
+    "lh": "94.08px",
+    "ls": "-1.12px",
+    "color": "rgb(23, 25, 28)"
+   }
+  ],
+  "h3": [
+   {
+    "tag": "H3",
+    "text": "Было",
+    "font": "\"Bad Script\", \"Segoe Script\", cursive",
+    "size": "40px",
+    "weight": "400",
+    "lh": "40px",
+    "ls": "normal",
+    "color": "rgb(58, 44, 156)"
+   },
+   {
+    "tag": "H3",
+    "text": "Стало",
+    "font": "\"Sofia Sans Extra Condensed\", \"Sofia Sans\", \"Arial Narrow\", ",
+    "size": "40px",
+    "weight": "850",
+    "lh": "40px",
+    "ls": "normal",
+    "color": "rgb(23, 25, 28)"
+   },
+   {
+    "tag": "H3",
+    "text": "CLAHE + YOLOv8n",
+    "font": "\"Sofia Sans\", \"Segoe UI\", sans-serif",
+    "size": "18px",
+    "weight": "700",
+    "lh": "23.4px",
+    "ls": "normal",
+    "color": "rgb(23, 25, 28)"
+   },
+   {
+    "tag": "H3",
+    "text": "аффинная коррекция",
+    "font": "\"Sofia Sans\", \"Segoe UI\", sans-serif",
+    "size": "18px",
+    "weight": "700",
+    "lh": "23.4px",
+    "ls": "normal",
+    "color": "rgb(23, 25, 28)"
+   },
+   {
+    "tag": "H3",
+    "text": "радиальный момент + HoughLinesP",
+    "font": "\"Sofia Sans\", \"Segoe UI\", sans-serif",
+    "size": "18px",
+    "weight": "700",
+    "lh": "23.4px",
+    "ls": "normal",
+    "color": "rgb(23, 25, 28)"
+   },
+   {
+    "tag": "H3",
+    "text": "EMA α = 0,25",
+    "font": "\"Sofia Sans\", \"Segoe UI\", sans-serif",
+    "size": "18px",
+    "weight": "700",
+    "lh": "23.4px",
+    "ls": "normal",
+    "color": "rgb(23, 25, 28)"
+   }
+  ],
+  "p": [
+   {
+    "tag": "P",
+    "text": "Потяните стрелку, и показание ляжет строкой в журнал",
+    "font": "\"Sofia Sans\", \"Segoe UI\", sans-serif",
+    "size": "14px",
+    "weight": "400",
+    "lh": "19.6px",
+    "ls": "normal",
+    "color": "rgb(169, 175, 166)"
+   },
+   {
+    "tag": "P",
+    "text": "Камера снимает стрелку КИПиА снаружи контура: без врезки, останова и интернета.",
+    "font": "\"Sofia Sans\", \"Segoe UI\", sans-serif",
+    "size": "22px",
+    "weight": "400",
+    "lh": "29.92px",
+    "ls": "normal",
+    "color": "rgb(69, 75, 83)"
+   },
+   {
+    "tag": "P",
+    "text": "Демонстрация: строки считает калибровка из кода для манометра на 0–10 МПа. 3 обр",
+    "font": "\"Sofia Sans\", \"Segoe UI\", sans-serif",
+    "size": "14px",
+    "weight": "400",
+    "lh": "21px",
+    "ls": "normal",
+    "color": "rgb(92, 98, 106)"
+   },
+   {
+    "tag": "P",
+    "text": "",
+    "font": "\"Sofia Sans\", \"Segoe UI\", sans-serif",
+    "size": "18px",
+    "weight": "400",
+    "lh": "27px",
+    "ls": "normal",
+    "color": "rgb(23, 25, 28)"
+   },
+   {
+    "tag": "P",
+    "text": "По оценке команды, до 60 % приборов ТЭЦ не подключены к АСУ ТП, и их показания з",
+    "font": "\"Sofia Sans\", \"Segoe UI\", sans-serif",
+    "size": "28px",
+    "weight": "500",
+    "lh": "36.4px",
+    "ls": "normal",
+    "color": "rgb(69, 75, 83)"
+   },
+   {
+    "tag": "P",
+    "text": "Было: обход раз в смену, показание пишут в журнал от руки",
+    "font": "\"Sofia Sans Extra Condensed\", \"Sofia Sans\", \"Arial Narrow\", ",
+    "size": "40px",
+    "weight": "800",
+    "lh": "40px",
+    "ls": "normal",
+    "color": "rgb(233, 235, 228)"
+   }
+  ]
+ },
+ "sections": [
+  {
+   "idx": 0,
+   "tag": "DIV",
+   "id": "rec6098997001",
+   "cls": "r t-rec",
+   "top": 64,
+   "h": 940,
+   "heading": "Прибор пишет\nжурнал сам"
+  },
+  {
+   "idx": 1,
+   "tag": "DIV",
+   "id": "rec6098999001",
+   "cls": "r t-rec",
+   "top": 1004,
+   "h": 4798,
+   "heading": "Двенадцать часов против трети секунды"
+  },
+  {
+   "idx": 2,
+   "tag": "DIV",
+   "id": "rec6099000201",
+   "cls": "r t-rec",
+   "top": 5801,
+   "h": 1411,
+   "heading": "От угла θ\nк мегапаскалям"
+  },
+  {
+   "idx": 3,
+   "tag": "DIV",
+   "id": "rec6099000401",
+   "cls": "r t-rec",
+   "top": 7212,
+   "h": 4337,
+   "heading": "Четыре операции над одним кадром"
+  },
+  {
+   "idx": 4,
+   "tag": "DIV",
+   "id": "rec6099003001",
+   "cls": "r t-rec",
+   "top": 11549,
+   "h": 1720,
+   "heading": "Протокол испытаний"
+  },
+  {
+   "idx": 5,
+   "tag": "DIV",
+   "id": "rec6099003701",
+   "cls": "r t-rec",
+   "top": 13270,
+   "h": 2173,
+   "heading": "Один сервер в локальном контуре"
+  },
+  {
+   "idx": 6,
+   "tag": "DIV",
+   "id": "rec6099004101",
+   "cls": "r t-rec",
+   "top": 15442,
+   "h": 2551,
+   "heading": "Компромиссы, ограничения и план"
+  },
+  {
+   "idx": 7,
+   "tag": "DIV",
+   "id": "rec6099004701",
+   "cls": "r t-rec",
+   "top": 17994,
+   "h": 1167,
+   "heading": "Журнал открыт на GitHub"
+  }
+ ],
+ "text": "К содержанию\nGaugeVision AI\nЖУРНАЛ ОБХОДА И ПОКАЗАНИЙ КИП, КОТЕЛЬНЫЙ ЦЕХ\nGitHub\n(откроется в новой вкладке)\n01\nЖурнал\n02\nСмена\n03\nПоказание\n04\nКонвейер\n05\nПротокол\n06\nСхема\n07\nЗамечания\n08\nGitHub\n01\nСМЕНА ИДЁТ\n20:01\nПрибор пишет\nжурнал сам\nКАДР КАМЕРЫ\nМН-1\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\nМПа\nθ\n163,4°\nV\n4,39 МПа\n\nПотяните стрелку, и показание ляжет строкой в журнал\n\nКамера снимает стрелку КИПиА снаружи контура: без врезки, останова и интернета.\n\nКОД НА GITHUB\n(ОТКРОЕТСЯ В НОВОЙ ВКЛАДКЕ)\nПРОВЕРИТЬ МЕХАНИЗМ\nВРЕМЯ\nПРИБОР\nПОКАЗАНИЕ, МПА\nЗАПИСАЛ\n08:00\nМН-1\n4,4\nобходчик\n08:00:00,333\nМН-1\n4,39\nкамера\n08:00:00,667\nМН-1\n4,39\nкамера\n08:00:01,000\nМН-1\n4,39\nкамера\n08:00:01,333\nМН-1\n4,39\nкамера\n08:00:01,667\nМН-1\n4,39\nкамера\n08:00:02,000\nМН-1\n4,39\nкамера\n08:00:02,333\nМН-1\n4,43\nкамера\n08:00:02,667\nМН-1\n4,41\nкамера\n08:00:03,000\nМН-1\n4,41\nкамера\n08:00:03,333\nМН-1\n4,41\nкамера\n08:00:03,667\nМН-1\n4,40\nкамера\n08:00:04,000\nМН-1\n4,39\nкамера\n08:00:04,333\nМН-1\n4,39\nкамера\n08:00:04,667\nМН-1\n4,39\nкамера\n08:00:05,000\nМН-1\n4,39\nкамера\n08:00:05,333\nМН-1\n4,39\nкамера\n08:00:05,667\nМН-1\n4,39\nкамера\n08:00:06,000\nМН-1\n4,39\nкамера\n08:00:06,333\nМН-1\n4,38\nкамера\n08:00:06,667\nМН-1\n4,39\nкамера\n08:00:07,000\nМН-1\n4,39\nкамера\n08:00:07,333\nМН-1\n4,38\nкамера\n08:00:07,667\nМН-1\n4,38\nкамера\n08:00:08,000\nМН-1\n4,39\nкамера\n08:00:08,333\nМН-1\n4,39\nкамера\n08:00:08,667\nМН-1\n4,38\nкамера\n08:00:09,000\nМН-1\n4,38\nкамера\n\nДемонстрация: строки считает калибровка из кода для манометра на 0–10 МПа. 3 обработки в секунду на камеру.\n\n02\nБЫЛО И СТАЛО\n20:01\nДвенадцать часов против трети секунды\n\nПо оценке команды, до 60 % приборов ТЭЦ не подключены к АСУ ТП, и их показания знает только журнал обхода.\n\nБыло: обход раз в смену, показание пишут в журнал от руки\n\nСтало: камера на поручне читает стрелку вместо обходчика\n\nИЛЛЮСТРАТИВНЫЙ СЦЕНАРИЙ\nПеретащите отклонение по смене или выберите час стрелками\n\n0 ч\n3 ч\n6 ч\n9 ч\n12 ч\nОбходчик\nОбход\nОбход\nКамера\nОтклонение примерно в 5 часов\n\nОБХОДЧИК ЗАМЕТИТ ЧЕРЕЗ\n7 ч 00 мин\n\nКАМЕРА УВИДИТ НА СЛЕДУЮЩЕМ КАДРЕ, ЧЕРЕЗ\n⅓ с\n\nОДНА СЕКУНДА СМЕНЫ: ТРИ КАДРА КАМЕРЫ\n\nПо формуле EMA показание догонит ≈ 90 % скачка за 8 кадров; это оценка, а не замер\n\nОЦЕНКА КОМАНДЫ\n\n−89 %\nзатрат на точку\n\n26,7 млн ₽ на 100 приборах. Подтвердить оценку должен пилот.\n\nБыло\nзамена на смарт-датчик, оценка команды\n\n300 000 ₽ на точку\n\nСтало\nПО и камера «Рубитек», оценка команды\n\n33 000 ₽ на точку\n\nБыло\nПоказания записывают в журнал раз в смену\nОтклонение между обходами незаметно\nДиспетчер видит запись с задержкой\nСмарт-датчик: барьеры, кабели, проект, останов котла\nСтало\nКамера снаружи контура: без врезки и останова\n3 обработки в секунду на камеру\nПятизонные уставки, сирена, квитирование\nАрхив SQLite и CSV с метками ISO 8601 UTC\n03\nКАЛИБРОВКА\n20:01\nОт угла θ\nк мегапаскалям\n\nКамера измеряет только угол стрелки, а в мегапаскали его переводит двухточечная калибровка шкалы.\n\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\nМПа\nθmin 45° → 0\nθmax 315° → 10\nрабочий сектор шкалы 270°\nМанометр, шкала 0–10 МПа. Калибровка по двум точкам: θmin 45° → 0, θmax 315° → 10 МПа по часовой; отсчёт 0° от стрелки вниз\n\n4,39\nМПа\n\n43,9 бар\nТО ЖЕ В БАРАХ\nЗОНА УСТАВОК\nНОРМА\nФОРМУЛА ИЗ APP/VISION.PY\nV = Vmin + ((θ − θmin) mod 360) / span · (Vmax − Vmin)\nV=Vmin+\n(θ−θmin) mod 360\nspan\n·(Vmax−Vmin)\nПОДСТАНОВКА\nV = 0 + ((163,4° − 45°) mod 360) / 270 · (10 − 0) = 4,39\nV=0+\n(163,4°−45°) mod 360\n270\n·(10−0)=4,39\nУГОЛ СТРЕЛКИ Θ\n163,4°\n(θ − θmin) mod 360 =\n(θ−θmin) mod 360=\n118,4°\nПОКАЗАНИЕ ПРИБОРА, МПА\n\nВедите курсором по шкале; клик фиксирует, ← → двигают\n\nЗАПИСАТЬ В ЖУРНАЛ\n\n04\nОБРАБОТКА КАДРА\n20:01\nЧетыре операции над одним кадром\n\nЛокализация, нормализация, угол стрелки и сглаживание: путь от кадра до значения занимает 30–100 мс.\n\n01\nЛокализация\n02\nЭллипс → круг\n03\nУгол θ\n04\nСглаживание\nEMA α = 0,25\nEMA(t) = α·V(t) + (1 − α)·EMA(t − 1)\nEMA(t)=α·V(t)+(1−α)·EMA(t−1)\nEMA_ALPHA\n0,25\nMIN_NEEDLE_CONFIDENCE\n0,25\n\nЗАДЕРЖКА\n≈ 90 % скачка за 8 кадров\nоценка по формуле, не замер\n\nКОНВЕЙЕР ЦЕЛИКОМ\n30–100 мс/кадр\nлокализация, нормализация, стрелка, EMA\n\ngauge, conf ≥ 0,35\nэллипс циферблата\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\nθ = 163,4°\nHoughLinesP\n640 × 640\nгистограмма момента, шаг 1°\nEMA α = 0,25\nсырые отсчёты\n≈ 90 % за 8 кадров\nСхема кадра: прибор, снятый под углом\n\n04. Сырые отсчёты с вибрацией и кривая EMA\n\n05\nПРОТОКОЛ\n20:02\nПротокол испытаний\n\nУ каждой цифры указаны стенд, железо и выборка, а расчёт подписан расчётом и не выдаётся за замер.\n\nПротокол испытаний\n№\tПОКАЗАТЕЛЬ\tУСЛОВИЯ ЗАМЕРА\tЗНАЧЕНИЕ\tВИД\nТочность\n01\tМаксимальная ошибка шкалы\t28 сцен стенда, средняя ошибка 0,11 %\t0,38%\tЗАМЕР\n02\tmAP₅₀ детектора\tYOLOv8n, 25 эпох, валидация обучения\t90,1%\tЗАМЕР\n03\tRecall Gauge / Precision Needle\tвалидация обучения\t\n1,00\n1,00\n\tЗАМЕР\nСкорость\n04\tИнференс YOLOv8n на GPU\tRTX 5060 Laptop, FP16, кадр 1280×720\t7,2мс/кадр\tЗАМЕР\n05\tПолный конвейер\tлокализация, нормализация, стрелка, EMA\t30–100мс/кадр\tЗАМЕР\n06\tПоток со смартфона\tWebP, 1280 px\t3–4к/с\tЗАМЕР\n07\tИнференс YOLOv8n на CPU\tFP32, без видеокарты\t29мс/кадр\tЗАМЕР\nМасштабк/с, шкала 0–400\n08\t25 камер на одном ноутбуке\tстенд команды: RTX 5060 Laptop 8 GB, 16 GB RAM, 4 к/с на камеру, загрузка GPU 72 %\t100к/с\n\tЗАМЕР\n09\t50 камер\tрасчёт: RTX 4070 Ti Super 16 GB, узел ≈ 230–260 тыс. ₽\t200к/с\n\tРАСЧЁТ\n10\t100 камер\tрасчёт: RTX 4090 24 GB, узел ≈ 580–680 тыс. ₽\t400к/с\n\tРАСЧЁТ\n06\nСХЕМА СОЕДИНЕНИЙ\n20:02\nОдин сервер в локальном контуре\n\nЗахват, распознавание, архив и пульт работают на одном сервере без единого исходящего запроса в интернет.\n\nЛокальный контур: HTTPS / WSS, без исходящих запросов в интернет\nRTSP\nHTTP\nUSB\nWSS\nWS-Discovery\nнайденные камеры\nпоследний кадр\nзначение, θ,уверенность\nWSS и MJPEG\nзапись раз в 1 с\nистория и CSV\nTLS\nRTSP / NVR\nИСТОЧНИКИ ВИДЕО\nHTTP / MJPEG\nИСТОЧНИКИ ВИДЕО\nUSB\nИСТОЧНИКИ ВИДЕО\nСмартфон\nИСТОЧНИКИ ВИДЕО\nONVIF\nИСТОЧНИКИ ВИДЕО\nstreamer.py\nСЕРВЕР\ndiscovery.py\nСЛУЖЕБНЫЕ МОДУЛИ\nvision.py\nСЕРВЕР\nmain.py\nСЕРВЕР\ncert_gen.py\nСЛУЖЕБНЫЕ МОДУЛИ\nПульт оператора\nПУЛЬТ\ndb.py\nАРХИВ\n\nНаведите на узел или выберите его стрелками, чтобы подсветить путь сигнала\n\nСпецификация\nПОЗ.\tКОМПОНЕНТ\tВЕРСИЯ\n1\tPython\t3.12\n2\tFastAPI\t≥ 0.110, async\n3\tUvicorn\t≥ 0.29, только HTTPS\n4\taiosqlite\t≥ 0.20\n5\tOpenCV\t≥ 4.9\n6\tNumPy\t≥ 1.26\n7\tUltralytics YOLOv8n\t≥ 8.1\n8\tPyTorch\tCUDA FP16 или CPU\n9\tcryptography\t≥ 42\n10\tqrcode\t≥ 7.4\n11\tChart.js\tлокально, без CDN\n12\tHTML / CSS / JS\tбез фреймворков\n07\nЗАМЕЧАНИЯ\n20:02\nКомпромиссы, ограничения и план\n\nОграничения стоят рядом с возможностями: что сделано, что сделано частично и что пока только в плане.\n\nКомпромиссы\n\nВЫБРАЛИ → ПЛАТИМ\n\nВЫБРАЛИ\nПЛАТИМ\n01\nВыбрали:\nYOLOv8n только для поиска корпуса\nПлатим:\nСтрелку ищет геометрия OpenCV, не нейросеть\n02\nВыбрали:\nАффинная нормализация эллипса\nПлатим:\nПроверено до ≈ 41°, сильные наклоны запланированы в Roadmap 02\n03\nВыбрали:\nEMA α = 0,25 гасит вибрацию\nПлатим:\nПоказание догоняет скачок за несколько кадров\n04\nВыбрали:\n3 обработки в секунду на камеру\nПлатим:\nМониторинг, не видеопоток: броски короче трети секунды не видны\n05\nВыбрали:\nПорог уверенности 0,25 и удержание значения\nПлатим:\nПри грязном стекле пульт держит последнее достоверное значение; автоалерта нет\n06\nВыбрали:\nСамоподписанный сертификат, локальный контур\nПлатим:\nБраузер раз предупреждает о сертификате на каждом новом устройстве\n07\nВыбрали:\nSQLite и CSV вместо интеграции со SCADA\nПлатим:\nСвязи с АСУ ТП нет: Modbus TCP и OPC UA запланированы в Roadmap 02\nОграничения среды цеха\nВсе\n5\nреализовано\n3\nчастично\n2\nОграничения среды цеха\nУСЛОВИЕ\tРИСК\tОТВЕТ В КОДЕ\n\nБлики, тени, копоть\nРЕАЛИЗОВАНО\tОшибки выделения шкалы и стрелки\tCLAHE при поиске циферблата; Black-Hat / Top-Hat 31×31; Otsu по кольцу; фонарь смартфона\nОтдельной обработки копоти в коде нет\n\n\nВибрация\nРЕАЛИЗОВАНО\tДрожание показаний\tEMA α = 0,25; смещение ROI меньше 5 % оси игнорируется\n\nСъёмка под углом\nЧАСТИЧНО\tИскажение геометрии шкалы\tАффинная нормализация в круг 640 px, проверена при наклоне до ≈ 41°\nСильные наклоны запланированы в Roadmap 02\n\n\nЗагрязнение стекла\nЧАСТИЧНО\tПадение достоверности\tПорог 0,25: недостоверный кадр не пишется, а после 3 промахов прибор ищется заново\nАвтоалерт запланирован\n\n\nОбрыв сети или камеры\nРЕАЛИЗОВАНО\tПотеря телеметрии\tПереподключение 1 → 15 с, после 8 неудач статус «офлайн». Смартфон без кадров через 6 с получает «переподключение», через 30 с «офлайн»\nНе проверено в поле\n\nНелинейные шкалы, многострелочные приборы, работа на станции. Испытания пока проходили только на стенде.\n\nПлан\n\n01\nMVP\nРЕАЛИЗОВАНО\n\n6 классов приборов\nYOLOv8n на CUDA\nсмартфон по QR-коду\nуставки, сирена и экспорт в CSV\n\n02\nСвязь со SCADA\nВ ПЛАНЕ\n\nModbus TCP и OPC UA\nполевой пилот на станции\nполная гомография\nнелинейные шкалы и многоточечная калибровка\n\n03\nМасштаб цеха\nВ ПЛАНЕ\n\nPTZ-камеры с пресетами обхода: одна камера на десятки приборов\nнательные регистраторы обходчиков\n08\nСДАЧА СМЕНЫ\n20:02\nЖурнал открыт на GitHub\nСМЕНУ СДАЛ\nобходчик\nСМЕНУ ПРИНЯЛ\nGAUGEVISION AI\n27.11.2026, 20:02\n\nКод, README с условиями замеров и историю коммитов можно посмотреть в репозитории.\n\nКОД НА GITHUB\ngithub.com/EGRNEGR/GaugeVisionAI\n(ОТКРОЕТСЯ В НОВОЙ ВКЛАДКЕ)\nПроприетарная лицензия\n(откроется в новой вкладке)\n© 2026 EGRNEGR. Все права защищены. Код опубликован только для ознакомления\nТрек №3, Умное производство\nGaugeVision AI v1.0.0, Проприетарная лицензия\n(откроется в новой вкладке)\nMade on\t\tTilda",
+ "middleDots": 8,
+ "domNodes": 1828,
+ "animations": [
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-row-in",
+  "gv-stamp",
+  "gv-ops-in",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp",
+  "gv-stamp"
+ ]
+}
