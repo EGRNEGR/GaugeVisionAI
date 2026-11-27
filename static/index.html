@@ -251,6 +251,15 @@
             <span class="stat-unit" id="stCvUnit"></span>
           </div>
           <div class="stat-sub" id="stCvSub">Канал К1-Р01 (МТП-160)</div>
+          <div class="stat-sub" id="stCvProfileWrap" style="margin-top:4px;display:flex;align-items:center;gap:6px">
+            <label for="selVisionProfile" style="font-size:11px;opacity:.8">Профиль CV:</label>
+            <select id="selVisionProfile" class="select-sm" style="font-size:11px;padding:1px 6px;height:22px">
+              <option value="legacy">Legacy (v3.0)</option>
+              <option value="eco">Eco (OpenCV v2)</option>
+              <option value="balanced">Balanced (Seg + CV)</option>
+              <option value="precision">Precision (Kpt + Seg + CV)</option>
+            </select>
+          </div>
         </div>
 
         <div class="stat-cell">

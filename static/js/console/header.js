@@ -67,8 +67,30 @@ function renderStationStats(summary) {
     ? 'Котлы К-1 + К-2 (острый пар)'
     : 'Нет свежих данных расходомеров';
 
-  // 3. Средняя достоверность распознавания CV (YOLOv8n)
-  $('#stCvModel').textContent = station.yoloActive ? 'YOLOv8n' : 'OpenCV';
+  // 3. Средняя достоверность распознавания CV (Vision Engine 3.1)
+  const ve = state.meta?.vision_engine;
+  const profLabel = ve?.profile ? `${station.yoloActive ? 'YOLOv8n' : 'OpenCV'} (${ve.profile})` : (station.yoloActive ? 'YOLOv8n' : 'OpenCV');
+  $('#stCvModel').textContent = profLabel;
+  const selProf = $('#selVisionProfile');
+  if (selProf && ve?.profile && selProf.value !== ve.profile) {
+    selProf.value = ve.profile;
+  }
+  if (selProf && !selProf.dataset.bound) {
+    selProf.dataset.bound = '1';
+    selProf.addEventListener('change', async () => {
+      try {
+        const res = await api('/api/vision/profile', {
+          method: 'POST',
+          body: JSON.stringify({ profile: selProf.value }),
+        });
+        if (state.meta) state.meta.vision_engine = res;
+        toast(`Профиль CV переключён: ${res.profile_label || res.profile}`, 'ok');
+      } catch (err) {
+        toast(`Ошибка смены профиля CV: ${err?.message || err}`, 'err');
+        if (ve?.profile) selProf.value = ve.profile;
+      }
+    });
+  }
   if (station.cvConfidencePct !== null) {
     $('#stCvVal').textContent = fmt(station.cvConfidencePct, 1);
     $('#stCvUnit').textContent = '%';

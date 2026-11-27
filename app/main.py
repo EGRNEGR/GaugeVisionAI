@@ -1481,6 +1481,9 @@ class GaugeService(MultiGaugeServiceMixin):
             "dial_found": r.dial_found,
             "dial_source": r.dial_source,
             "method": r.debug.get("needle_method"),
+            "vision_engine": r.debug.get("vision_engine") or config.VISION_ENGINE_VERSION,
+            "vision_profile": r.debug.get("vision_profile") or vision.get_vision_profile(),
+            "needle_ms": r.debug.get("needle_ms"),
             "process_ms": r.process_ms,
             "geom": r.debug.get("geom"),
             "last_valid_ts": last_valid_ts,
@@ -2103,6 +2106,7 @@ async def api_meta(request: Request) -> dict[str, Any]:
         "phone_fps": config.PHONE_CAPTURE_FPS,
         "yolo": vision.yolo_available(),
         "yolo_device": vision.yolo_device(),
+        "vision_engine": vision.vision_engine_status(),
         "cert_sha256": fingerprint,
         "dashboards": service.hub.count,
         "uptime_s": int(time.time() - service.started_at),
@@ -2125,7 +2129,41 @@ async def api_health() -> dict[str, Any]:
     for cam_id in service.cameras:
         st = service.streams.status_of(cam_id)
         counts[st] = counts.get(st, 0) + 1
-    return {"ok": True, "cameras": len(service.cameras), "status": counts, "loop_lag_ms": service.loop_lag_summary()}
+    return {
+        "ok": True,
+        "cameras": len(service.cameras),
+        "status": counts,
+        "vision_profile": vision.get_vision_profile(),
+        "loop_lag_ms": service.loop_lag_summary(),
+    }
+
+
+class VisionProfileRequest(BaseModel):
+    profile: Literal["legacy", "eco", "balanced", "precision"]
+
+
+@app.get("/api/vision/status")
+async def api_vision_status(_user: dict[str, Any] = Depends(auth.require_role("operator"))) -> dict[str, Any]:
+    return vision.vision_engine_status()
+
+
+@app.get("/api/vision/models")
+async def api_vision_models(_user: dict[str, Any] = Depends(auth.require_role("operator"))) -> dict[str, Any]:
+    from .vision_engine.registry import get_registry
+    return {"models": get_registry().list_models()}
+
+
+@app.post("/api/vision/profile")
+async def api_vision_set_profile(
+    body: VisionProfileRequest,
+    _user: dict[str, Any] = Depends(auth.require_role("engineer")),
+) -> dict[str, Any]:
+    prev = vision.get_vision_profile()
+    active = vision.set_vision_profile(body.profile)
+    if active != prev:
+        service.emit("config", cam_id=None, cam_name="Vision Engine",
+                     text=f"vision_profile:{prev}->{active}")
+    return vision.vision_engine_status()
 
 
 @app.get("/api/cert.pem", include_in_schema=False)

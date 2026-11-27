@@ -125,6 +125,11 @@ YOLO_DEVICE: str = os.environ.get("GAUGEVISION_DEVICE", "auto")
 YOLO_IMGSZ: int = 640
 YOLO_CONF: float = 0.35
 
+# GaugeVision AI 3.1 — Next Generation Vision Engine
+VISION_ENGINE_VERSION: str = "3.1.0"
+# Профиль CV: "legacy" | "eco" | "balanced" | "precision"
+VISION_PROFILE: str = os.environ.get("GAUGEVISION_VISION_PROFILE", "legacy").strip().lower()
+
 CERT_FILE: Path = CERTS_DIR / "cert.pem"
 KEY_FILE: Path = CERTS_DIR / "key.pem"
 

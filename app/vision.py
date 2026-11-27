@@ -128,6 +128,73 @@ def yolo_device() -> str | None:
     return _YOLO_DEVICE_NAME if _load_yolo() is not None else None
 
 
+# ---------------------------------------------------------------------------
+# GaugeVision AI 3.1 — Vision Engine (профили, реестр, нейросети и Fusion)
+# ---------------------------------------------------------------------------
+_VE_LOCK = threading.Lock()
+_VE_PROFILE: str = config.VISION_PROFILE
+_VE_KPT = None
+_VE_SEG = None
+_VE_CV2 = None
+_VE_FUSION_BAL = None
+_VE_FUSION_PREC = None
+
+
+def get_vision_profile() -> str:
+    return _VE_PROFILE
+
+
+def set_vision_profile(profile_name: str) -> str:
+    global _VE_PROFILE
+    from .vision_engine.profiles import VISION_PROFILES
+    key = (profile_name or "legacy").strip().lower()
+    if key not in VISION_PROFILES:
+        raise ValueError(f"Неизвестный профиль Vision Engine: {profile_name}")
+    with _VE_LOCK:
+        _VE_PROFILE = key
+    logger.info("Активный профиль Vision Engine переключён на: %s", key)
+    return key
+
+
+def _get_ve_estimators():
+    global _VE_KPT, _VE_SEG, _VE_CV2, _VE_FUSION_BAL, _VE_FUSION_PREC
+    with _VE_LOCK:
+        if _VE_CV2 is None:
+            from .vision_engine.estimators import (
+                FusionNeedleEstimator,
+                NeuralKeypointEstimator,
+                NeuralSegEstimator,
+                OpenCVNeedleV2,
+            )
+            _VE_KPT = NeuralKeypointEstimator()
+            _VE_SEG = NeuralSegEstimator()
+            _VE_CV2 = OpenCVNeedleV2()
+            _VE_FUSION_BAL = FusionNeedleEstimator(kpt=_VE_KPT, seg=_VE_SEG, max_disagree_deg=14.0, min_neural_conf=0.45)
+            _VE_FUSION_PREC = FusionNeedleEstimator(kpt=_VE_KPT, seg=_VE_SEG, max_disagree_deg=12.0, min_neural_conf=0.50)
+        return _VE_KPT, _VE_SEG, _VE_CV2, _VE_FUSION_BAL, _VE_FUSION_PREC
+
+
+def vision_engine_status() -> dict[str, Any]:
+    from .vision_engine.profiles import VISION_PROFILES, get_profile_config
+    from .vision_engine.registry import get_registry
+    prof = get_profile_config(_VE_PROFILE)
+    return {
+        "engine_version": config.VISION_ENGINE_VERSION,
+        "profile": prof.name,
+        "profile_label": prof.label,
+        "profile_description": prof.description,
+        "detector": prof.detector,
+        "needle_mode": prof.needle_mode,
+        "yolo_available": yolo_available(),
+        "device": yolo_device() or "CPU",
+        "available_profiles": [
+            {"name": p.name, "label": p.label, "description": p.description, "needle_mode": p.needle_mode}
+            for p in VISION_PROFILES.values()
+        ],
+        "models": get_registry().list_models(),
+    }
+
+
 def yolo_gauge_boxes(frame_bgr: np.ndarray) -> list[tuple[int, int, int, int, float]] | None:
     """Все приборы кадра за один проход YOLO: [(x, y, w, h, conf)] по убыванию площади.
 
@@ -1268,13 +1335,40 @@ class GaugePipeline:
                 reading_scale = {"gap": round(gap, 3), "coverage": round(coverage, 3), "coherence": round(coherence, 3)}
                 if gap >= SCALE_GAP_MAX or coverage < SCALE_COVERAGE_MIN or coherence < SCALE_COHERENCE_MIN:
                     suitable, invalid_reason = False, "scale_not_visible"
-            needle = (estimate_needle(dial, arc) if suitable
-                      else NeedleResult(None, None, 0.0, "rejected"))
+            active_profile = get_vision_profile()
+            ve_diag: dict[str, Any] | None = None
+            needle_ms: float | None = None
+            if suitable:
+                if active_profile == "legacy":
+                    needle = estimate_needle(dial, arc)
+                else:
+                    kpt_e, seg_e, cv2_e, fus_bal, fus_prec = _get_ve_estimators()
+                    if active_profile == "eco":
+                        det = cv2_e.estimate(dial, arc)
+                    elif active_profile == "balanced":
+                        det = fus_bal.estimate(dial, arc, use_kpt=False, use_seg=True, use_opencv=True)
+                    else:  # precision
+                        det = fus_prec.estimate(dial, arc, use_kpt=True, use_seg=True, use_opencv=True)
+                    ve_diag = det.diagnostics
+                    needle_ms = det.infer_ms
+                    if det.valid and det.angle_deg is not None:
+                        tip_int = (int(round(det.tip_px[0])), int(round(det.tip_px[1]))) if det.tip_px else None
+                        needle = NeedleResult(det.angle_deg, tip_int, det.confidence, det.method)
+                    else:
+                        needle = NeedleResult(None, None, det.confidence, det.method)
+                        if det.reject_reason:
+                            invalid_reason = invalid_reason or det.reject_reason
+            else:
+                needle = NeedleResult(None, None, 0.0, "rejected")
 
             reading = GaugeReading(dial_found=roi.source != "frame", dial_source=roi.source)
             reading.needle_confidence = round(float(needle.confidence), 3)
             reading.debug = {
+                "vision_engine": config.VISION_ENGINE_VERSION,
+                "vision_profile": active_profile,
                 "needle_method": needle.method,
+                "needle_ms": needle_ms,
+                "fusion_diagnostics": ve_diag,
                 "roi": roi.to_json(),
                 "dial_suitable": suitable,
                 "dial_quality": dial_quality,
