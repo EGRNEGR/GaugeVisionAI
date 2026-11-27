@@ -1,0 +1,10 @@
+{
+ "label": "baseline",
+ "subset": "arc",
+ "unusable": false,
+ "n": 41,
+ "yolo": true,
+ "yolo_device": "CPU",
+ "code_root": "C:\\Users\\Egoru\\.claude\\jobs\\a4312617\\tmp\\baseline_code",
+ "seconds": 48.4
+}
