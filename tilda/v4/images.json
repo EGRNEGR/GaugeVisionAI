@@ -1,0 +1,92 @@
+{
+ "boiler-hall.jpg": {
+  "url": "https://static.tildacdn.com/tila6436-3633-4365-b964-363837643062/boiler-hall.jpg",
+  "ok": true,
+  "bytes": 171807
+ },
+ "hmi-dispatch.jpg": {
+  "url": "https://static.tildacdn.com/tila3533-6532-4865-b964-376231613964/hmi-dispatch.jpg",
+  "ok": true,
+  "bytes": 229590
+ },
+ "hmi-optimizer.jpg": {
+  "url": "https://static.tildacdn.com/tila6133-3361-4564-b235-383339636331/hmi-optimizer.jpg",
+  "ok": true,
+  "bytes": 105954
+ },
+ "hmi-panel.jpg": {
+  "url": "https://static.tildacdn.com/tila3439-3865-4237-b266-663538666332/hmi-panel.jpg",
+  "ok": true,
+  "bytes": 140174
+ },
+ "hmi-predictive.jpg": {
+  "url": "https://static.tildacdn.com/tila6233-3561-4336-a335-303637363365/hmi-predictive.jpg",
+  "ok": true,
+  "bytes": 116153
+ },
+ "hmi-spec.jpg": {
+  "url": "https://static.tildacdn.com/tila6332-3238-4639-a661-336430396537/hmi-spec.jpg",
+  "ok": true,
+  "bytes": 216827
+ },
+ "mg-01.jpg": {
+  "url": "https://static.tildacdn.com/tila6663-3337-4230-b661-343263353938/mg-01.jpg",
+  "ok": true,
+  "bytes": 40811
+ },
+ "mg-02.jpg": {
+  "url": "https://static.tildacdn.com/tila6663-6664-4738-a538-353764343331/mg-02.jpg",
+  "ok": true,
+  "bytes": 51463
+ },
+ "mg-04.jpg": {
+  "url": "https://static.tildacdn.com/tila6139-6432-4964-a566-386563626239/mg-04.jpg",
+  "ok": true,
+  "bytes": 69556
+ },
+ "mg-08.jpg": {
+  "url": "https://static.tildacdn.com/tila6134-3236-4634-b861-363936343266/mg-08.jpg",
+  "ok": true,
+  "bytes": 111465
+ },
+ "mg-16.jpg": {
+  "url": "https://static.tildacdn.com/tila6336-3461-4666-b538-346437623738/mg-16.jpg",
+  "ok": true,
+  "bytes": 146790
+ },
+ "poster.jpg": {
+  "url": "https://static.tildacdn.com/tila3464-6266-4235-b237-653335396137/poster.jpg",
+  "ok": true,
+  "bytes": 133211
+ },
+ "problem-after.jpg": {
+  "url": "https://static.tildacdn.com/tila6564-6639-4532-b963-333836653262/problem-after.jpg",
+  "ok": true,
+  "bytes": 131449
+ },
+ "problem-before.jpg": {
+  "url": "https://static.tildacdn.com/tila3034-3335-4165-b436-633238343361/problem-before.jpg",
+  "ok": true,
+  "bytes": 141618
+ },
+ "scada-perspective.jpg": {
+  "url": "https://static.tildacdn.com/tila6337-6638-4332-b730-313734613533/scada-perspective.jpg",
+  "ok": true,
+  "bytes": 172980
+ },
+ "v1-dashboard.jpg": {
+  "url": "https://static.tildacdn.com/tila6638-3335-4238-b561-663036346535/v1-dashboard.jpg",
+  "ok": true,
+  "bytes": 220255
+ },
+ "v2-monitor.jpg": {
+  "url": "https://static.tildacdn.com/tila3739-6435-4335-a432-653735383230/v2-monitor.jpg",
+  "ok": true,
+  "bytes": 272311
+ },
+ "v3-monitor.jpg": {
+  "url": "https://static.tildacdn.com/tila3133-3165-4463-a133-336235323462/v3-monitor.jpg",
+  "ok": true,
+  "bytes": 275936
+ }
+}

@@ -1,0 +1,94 @@
+{
+  "head": {
+    "file": "head.html",
+    "bytes": 16676,
+    "md5": "61fe8016bcdcb22cd40388f316b34b15"
+  },
+  "blocks": [
+    {
+      "file": "blocks/01.html",
+      "bytes": 30902,
+      "md5": "3cde26113d9602585c8a6f814b08c253",
+      "items": [
+        "css#1"
+      ]
+    },
+    {
+      "file": "blocks/02.html",
+      "bytes": 30861,
+      "md5": "598ad8b8b65e2201bad3bc77f7981f62",
+      "items": [
+        "css#2"
+      ]
+    },
+    {
+      "file": "blocks/03.html",
+      "bytes": 25913,
+      "md5": "32c3d9c2c99e6414230875e443757bd1",
+      "items": [
+        "css#3"
+      ]
+    },
+    {
+      "file": "blocks/04.html",
+      "bytes": 27282,
+      "md5": "0ae990ea8b7d9676eca46f8e1cc7a6d9",
+      "items": [
+        "content:src,panel,hero,forecast,catalog,fleet,meta,nav,labels,heroSection,problem,story,multigauge,resilience,scada,diagnostics,forecastSection"
+      ]
+    },
+    {
+      "file": "blocks/05.html",
+      "bytes": 32441,
+      "md5": "81aaba7b3b9b4d24f85b18cf7f13548d",
+      "items": [
+        "content:optimizerSection,documentSection,evolution,economics,evidence,readiness,final,showcase",
+        "content:typo",
+        "js/util.js",
+        "js/motion.js"
+      ]
+    },
+    {
+      "file": "blocks/06.html",
+      "bytes": 32315,
+      "md5": "7668fc48051efefb4f42793fc11c866a",
+      "items": [
+        "js/components/kit.js",
+        "js/components/draw.js",
+        "js/optimizer-core.js",
+        "js/components/hero.js",
+        "js/components/problem.js",
+        "js/components/story.js"
+      ]
+    },
+    {
+      "file": "blocks/07.html",
+      "bytes": 31071,
+      "md5": "54e9f31197d974ff947dfe05d31d52d1",
+      "items": [
+        "js/components/multigauge.js",
+        "js/components/resilience.js",
+        "js/components/scada.js",
+        "js/components/diagnostics.js",
+        "js/components/forecast.js",
+        "js/components/optimizer.js",
+        "js/components/document.js",
+        "js/components/evolution.js"
+      ]
+    },
+    {
+      "file": "blocks/08.html",
+      "bytes": 26982,
+      "md5": "2c7e6b9dba16626174a4e9525e9d70cb",
+      "items": [
+        "markup",
+        "js/components/economics.js",
+        "js/components/evidence.js",
+        "js/components/readiness.js",
+        "js/tweaks.js",
+        "js/showcase.js",
+        "js/page.js"
+      ]
+    }
+  ]
+}

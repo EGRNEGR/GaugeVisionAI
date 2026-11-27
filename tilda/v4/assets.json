@@ -1,0 +1,29 @@
+{
+  "note": {
+    "images": "CDN Tilda (upload_image по адресу jsDelivr), md5 совпадает с site/v4/assets/img",
+    "video": "jsDelivr по коммиту ветки redesign/website-v4: видео через MCP не загружается",
+    "fonts": "jsDelivr по тому же коммиту: те же файлы, что site/v4/assets/fonts"
+  },
+  "commit": "b5d88b7",
+  "cdn": "https://cdn.jsdelivr.net/gh/EGRNEGR/GaugeVisionAI@b5d88b7/site/v4/assets/",
+  "img": {
+    "boiler-hall.jpg": "https://static.tildacdn.com/tila6436-3633-4365-b964-363837643062/boiler-hall.jpg",
+    "hmi-dispatch.jpg": "https://static.tildacdn.com/tila3533-6532-4865-b964-376231613964/hmi-dispatch.jpg",
+    "hmi-optimizer.jpg": "https://static.tildacdn.com/tila6133-3361-4564-b235-383339636331/hmi-optimizer.jpg",
+    "hmi-panel.jpg": "https://static.tildacdn.com/tila3439-3865-4237-b266-663538666332/hmi-panel.jpg",
+    "hmi-predictive.jpg": "https://static.tildacdn.com/tila6233-3561-4336-a335-303637363365/hmi-predictive.jpg",
+    "hmi-spec.jpg": "https://static.tildacdn.com/tila6332-3238-4639-a661-336430396537/hmi-spec.jpg",
+    "mg-01.jpg": "https://static.tildacdn.com/tila6663-3337-4230-b661-343263353938/mg-01.jpg",
+    "mg-02.jpg": "https://static.tildacdn.com/tila6663-6664-4738-a538-353764343331/mg-02.jpg",
+    "mg-04.jpg": "https://static.tildacdn.com/tila6139-6432-4964-a566-386563626239/mg-04.jpg",
+    "mg-08.jpg": "https://static.tildacdn.com/tila6134-3236-4634-b861-363936343266/mg-08.jpg",
+    "mg-16.jpg": "https://static.tildacdn.com/tila6336-3461-4666-b538-346437623738/mg-16.jpg",
+    "poster.jpg": "https://static.tildacdn.com/tila3464-6266-4235-b237-653335396137/poster.jpg",
+    "problem-after.jpg": "https://static.tildacdn.com/tila6564-6639-4532-b963-333836653262/problem-after.jpg",
+    "problem-before.jpg": "https://static.tildacdn.com/tila3034-3335-4165-b436-633238343361/problem-before.jpg",
+    "scada-perspective.jpg": "https://static.tildacdn.com/tila6337-6638-4332-b730-313734613533/scada-perspective.jpg",
+    "v1-dashboard.jpg": "https://static.tildacdn.com/tila6638-3335-4238-b561-663036346535/v1-dashboard.jpg",
+    "v2-monitor.jpg": "https://static.tildacdn.com/tila3739-6435-4335-a432-653735383230/v2-monitor.jpg",
+    "v3-monitor.jpg": "https://static.tildacdn.com/tila3133-3165-4463-a133-336235323462/v3-monitor.jpg"
+  }
+}
