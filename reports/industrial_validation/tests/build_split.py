@@ -45,6 +45,35 @@ FINAL_MODELS = {"M1", "M4", "M6"}
 DEV_MODELS = {"M2", "M3", "M5"}
 
 
+_UNIT_ALIASES = {
+    "kg/cm^2": "kg/cm²", "kgf/cm²": "kg/cm²", "kgf/cm^2": "kg/cm²", "kilogram per square centimeter": "kg/cm²",
+    "lbs/in^2": "psi", "lbs/in²": "psi", "pound per square inch": "psi", "pounds per square inch": "psi",
+    "kilopascal": "kpa", "megapascal": "mpa", "мпа": "mpa", "кпа": "kpa", "бар": "bar",
+}
+
+
+def _unit_key(u: str | None) -> str:
+    k = (u or "").strip().lower()
+    return _UNIT_ALIASES.get(k, k)
+
+
+def mb_interval_for_unit(rec: dict, unit: str | None) -> list[float] | None:
+    """Эталонный интервал MeasureBench в единице калибровки шкалы.
+
+    interval_matching — единственный интервал; multi_interval_matching — интервал той шкалы
+    двухшкального прибора, единица которой совпадает с единицей калибровки (иначе эталона нет).
+    """
+    kw = rec["kw"]
+    if rec["evaluator"] == "interval_matching":
+        return kw.get("interval")
+    if rec["evaluator"] == "multi_interval_matching" and unit:
+        want = _unit_key(unit)
+        for iv, names in zip(kw.get("intervals") or [], kw.get("units") or []):
+            if any(_unit_key(n) == want for n in names):
+                return iv
+    return None
+
+
 def sha256(p: Path) -> str:
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
@@ -55,11 +84,23 @@ def main() -> int:
     ap.add_argument("--measurebench", required=True)
     ap.add_argument("--labels", required=True)
     ap.add_argument("--mb-annotations", required=True)
+    ap.add_argument("--mfl-scales", required=True, help="data/meterfl_mb_scales.json")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
     labels = json.loads(Path(args.labels).read_text(encoding="utf-8"))
     mb = cv_gt.load_measurebench(Path(args.measurebench))
     gts = cv_gt.load_meterfl(Path(args.meterfl))
+    mfl = json.loads(Path(args.mfl_scales).read_text(encoding="utf-8"))
+    for g in gts:
+        o = mfl["items"].get(g.file)
+        if o and g.scale_min is None:
+            if o.get("swap"):
+                g.first_tick, g.last_tick = g.last_tick, g.first_tick
+                if g.frac_lin is not None:
+                    g.frac_lin = 1.0 - g.frac_lin
+            g.scale_min, g.scale_max, g.unit = o["v_first"], o["v_last"], o.get("unit")
+            g.flags.extend(o.get("tags") or [])
+        g.flags.extend(mfl.get("test_tags", {}).get(g.file, []))
     items = []
     hashes = {}
     for g in gts:
@@ -76,11 +117,10 @@ def main() -> int:
             role = "final" if model in FINAL_MODELS else "dev"
             group = model
         qid = Path(g.file).stem if g.source == "MeasureBench" else None
-        interval = None
-        if qid and qid in mb and mb[qid]["evaluator"] == "interval_matching":
-            interval = mb[qid]["kw"].get("interval")
+        interval = mb_interval_for_unit(mb[qid], g.unit) if qid and qid in mb else None
         excl = [f for f in g.flags if f in ("too_few_ticks", "no_pointer", "center_fit_failed", "endpoints_failed")]
         rec = g.to_json()
+        rec["tags"] = [f for f in g.flags if f in ("arc_panel_meter", "nonlinear_scale", "homemade", "rendered_display", "short_arc")]
         rec.update(role=role, model=model, group=group, cluster=cl, sha256=sha256(g.path),
                    mb_interval=interval, mb_units=(mb[qid]["kw"].get("units") if qid in mb else None),
                    excluded=excl or None, calibration_source="meterfl_tick_polygons")
@@ -102,7 +142,7 @@ def main() -> int:
             excl.append(f"near_duplicate_of:{dup[0]}")
         if r["sha256"] in hashes:
             excl.append(f"exact_duplicate_of:{hashes[r['sha256']]}")
-        interval = r["kw"].get("interval") if r["evaluator"] == "interval_matching" else None
+        interval = mb_interval_for_unit(r, a.get("unit"))
         items.append({
             "dataset": "MeasureBench", "file": r["file"], "width": r["width"], "height": r["height"],
             "client": r["image_type"], "side": None, "source": (r.get("meta_info") or {}).get("source"),
@@ -120,8 +160,11 @@ def main() -> int:
             (ann["items"].get(Path(r["file"]).stem) or {}).get("gt_interval"))
         r["gt_type"] = ("human_reading" if r.get("reading_gt") is not None
                         else "mb_interval" if human else "mask_proxy")
-        r["primary"] = bool(r["role"] == "final" and human and not r.get("excluded"))
-    roles = {"primary": sum(1 for r in items if r["primary"])}
+        tags = set(r.get("tags") or [])
+        r["scope"] = "arc_panel" if tags & {"arc_panel_meter", "homemade"} else "round_dial"
+        r["primary"] = bool(r["role"] == "final" and human and not r.get("excluded") and r["scope"] == "round_dial")
+        r["arc_scope_eval"] = bool(r["role"] == "final" and human and not r.get("excluded") and r["scope"] == "arc_panel")
+    roles = {"primary": sum(1 for r in items if r["primary"]), "arc_scope": sum(1 for r in items if r["arc_scope_eval"])}
     for r in items:
         if not r.get("excluded"):
             roles.setdefault(r["role"], 0)

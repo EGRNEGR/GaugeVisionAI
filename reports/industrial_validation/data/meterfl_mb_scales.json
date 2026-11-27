@@ -1,0 +1,444 @@
+{
+ "note": "Значения крайних делений для снимков MeasureBench из MeterFL без раздела readings/ (прочитаны по снимкам с отмеченными крайними делениями). swap=1: на короткой дуге центр по делениям восстанавливается с неверной стороны и порядок крайних делений перевёрнут; первое деление — то, что соответствует началу шкалы.",
+ "items": {
+  "ammeter_10.png": {
+   "v_first": 0,
+   "v_last": 1500,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_11.png": {
+   "v_first": 0,
+   "v_last": 3,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_12.png": {
+   "v_first": 0,
+   "v_last": 5,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_13.png": {
+   "v_first": -50,
+   "v_last": 50,
+   "unit": "mA",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_17.png": {
+   "v_first": 0,
+   "v_last": 1000,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_20.png": {
+   "v_first": 0,
+   "v_last": 1500,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_3.png": {
+   "v_first": 0,
+   "v_last": 50,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_4.png": {
+   "v_first": 0,
+   "v_last": 40,
+   "unit": "kA",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_51.png": {
+   "v_first": 0,
+   "v_last": 20,
+   "unit": "A",
+   "tags": [],
+   "swap": false
+  },
+  "ammeter_64.png": {
+   "v_first": -5,
+   "v_last": 5,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_7.png": {
+   "v_first": 0,
+   "v_last": 3,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_9.png": {
+   "v_first": 0,
+   "v_last": 100,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_33.png": {
+   "v_first": 0,
+   "v_last": 300,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_89.png": {
+   "v_first": 0,
+   "v_last": 15,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": true
+  },
+  "ammeter_21.png": {
+   "v_first": 0,
+   "v_last": 3,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_23.png": {
+   "v_first": 0,
+   "v_last": 100,
+   "unit": "mA",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_29.png": {
+   "v_first": 0,
+   "v_last": 30,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_32.png": {
+   "v_first": 0,
+   "v_last": 100,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_34.png": {
+   "v_first": 0,
+   "v_last": 2,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": true
+  },
+  "ammeter_37.png": {
+   "v_first": 0,
+   "v_last": 50,
+   "unit": "µA",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_41.png": {
+   "v_first": 0,
+   "v_last": 2,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter",
+    "nonlinear_scale"
+   ],
+   "swap": false
+  },
+  "ammeter_47.png": {
+   "v_first": 0,
+   "v_last": 20,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter",
+    "nonlinear_scale"
+   ],
+   "swap": false
+  },
+  "ammeter_5.png": {
+   "v_first": 0,
+   "v_last": 3000,
+   "unit": "A",
+   "tags": [],
+   "swap": false
+  },
+  "ammeter_63.png": {
+   "v_first": -5,
+   "v_last": 5,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_75.png": {
+   "v_first": 0,
+   "v_last": 15,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_79.png": {
+   "v_first": 0,
+   "v_last": 0.5,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter",
+    "homemade"
+   ],
+   "swap": true
+  },
+  "ammeter_87.png": {
+   "v_first": 0,
+   "v_last": 100,
+   "unit": "mA",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_88.png": {
+   "v_first": 0,
+   "v_last": 100,
+   "unit": "µA",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_94.png": {
+   "v_first": 0,
+   "v_last": 10,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "ammeter_95.png": {
+   "v_first": 0,
+   "v_last": 50,
+   "unit": "A",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "pressure_gauge_67.png": {
+   "v_first": 0,
+   "v_last": 0.2,
+   "unit": "MPa",
+   "tags": [],
+   "swap": false
+  },
+  "pressure_gauge_71.png": {
+   "v_first": 0,
+   "v_last": 60,
+   "unit": "psi",
+   "tags": [],
+   "swap": false
+  },
+  "pressure_gauge_18.png": {
+   "v_first": 0,
+   "v_last": 200,
+   "unit": "psi",
+   "tags": [],
+   "swap": false
+  },
+  "sphygmomanometer_11.png": {
+   "v_first": 20,
+   "v_last": 300,
+   "unit": "mmHg",
+   "tags": [],
+   "swap": false
+  },
+  "sphygmomanometer_15.png": {
+   "v_first": 0,
+   "v_last": 300,
+   "unit": "mmHg",
+   "tags": [],
+   "swap": false
+  },
+  "sphygmomanometer_19.png": {
+   "v_first": 20,
+   "v_last": 300,
+   "unit": "mmHg",
+   "tags": [],
+   "swap": false
+  },
+  "sphygmomanometer_4.png": {
+   "v_first": 20,
+   "v_last": 300,
+   "unit": "mmHg",
+   "tags": [],
+   "swap": false
+  },
+  "sphygmomanometer_9.png": {
+   "v_first": 20,
+   "v_last": 300,
+   "unit": "mmHg",
+   "tags": [],
+   "swap": false
+  },
+  "tachometer_16.png": {
+   "v_first": 0,
+   "v_last": 8000,
+   "unit": "rpm",
+   "tags": [],
+   "swap": false
+  },
+  "tachometer_4.png": {
+   "v_first": 0,
+   "v_last": 8000,
+   "unit": "rpm",
+   "tags": [],
+   "swap": false
+  },
+  "tachometer_64.png": {
+   "v_first": 0,
+   "v_last": 8000,
+   "unit": "rpm",
+   "tags": [],
+   "swap": false
+  },
+  "tachometer_67.png": {
+   "v_first": 0,
+   "v_last": 8000,
+   "unit": "rpm",
+   "tags": [],
+   "swap": false
+  },
+  "voltmeter_102.png": {
+   "v_first": 0,
+   "v_last": 500,
+   "unit": "V",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": true
+  },
+  "voltmeter_13.png": {
+   "v_first": 0,
+   "v_last": 150,
+   "unit": "mV",
+   "tags": [],
+   "swap": false
+  },
+  "voltmeter_35.png": {
+   "v_first": 0,
+   "v_last": 50,
+   "unit": "V",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "voltmeter_66.png": {
+   "v_first": 0,
+   "v_last": 6,
+   "unit": "V",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "voltmeter_78.png": {
+   "v_first": 0,
+   "v_last": 100,
+   "unit": "V",
+   "tags": [
+    "arc_panel_meter"
+   ],
+   "swap": false
+  },
+  "voltmeter_95.png": {
+   "v_first": 0,
+   "v_last": 250,
+   "unit": "V",
+   "tags": [
+    "arc_panel_meter",
+    "nonlinear_scale"
+   ],
+   "swap": false
+  }
+ },
+ "test_tags": {
+  "ammeter_19.png": [
+   "arc_panel_meter"
+  ],
+  "ammeter_6.png": [
+   "arc_panel_meter"
+  ],
+  "ammeter_73.png": [
+   "arc_panel_meter"
+  ],
+  "ammeter_2.png": [
+   "arc_panel_meter"
+  ],
+  "ammeter_53.png": [
+   "arc_panel_meter"
+  ],
+  "ammeter_71.png": [
+   "arc_panel_meter"
+  ],
+  "ammeter_82.png": [
+   "arc_panel_meter"
+  ],
+  "voltmeter_57.png": [
+   "arc_panel_meter"
+  ],
+  "voltmeter_103.png": [
+   "arc_panel_meter",
+   "nonlinear_scale"
+  ],
+  "tachometer_54.png": [
+   "rendered_display"
+  ]
+ }
+}

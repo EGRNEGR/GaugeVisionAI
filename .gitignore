@@ -8,6 +8,8 @@ venv/
 # Runtime data: TLS keys and readings database are generated locally
 certs/
 data/
+# Разметка и состав выборок валидации — не runtime-данные, публикуются
+!reports/industrial_validation/data/
 *.db
 *.db-journal
 *.pem
@@ -15,6 +17,7 @@ data/
 
 # Exports and logs
 *.csv
+!reports/**/REQUIREMENTS_TRACEABILITY_MATRIX*.csv
 *.log
 
 # IDE / OS
