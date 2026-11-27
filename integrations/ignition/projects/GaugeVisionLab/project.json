@@ -1,0 +1,7 @@
+{
+  "title": "GaugeVision — пульт",
+  "description": "Лабораторная интеграция GaugeVision AI с Ignition 8.3 по Modbus TCP (read-only)",
+  "enabled": true,
+  "inheritable": false,
+  "parent": ""
+}

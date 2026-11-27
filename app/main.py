@@ -49,8 +49,11 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, field_validator
 
 from . import __app_name__, __version__, auth, config, db, demo, discovery, vision
+from .contracts import default_passport_for_instrument, resolve_instrument_identity
 from .dispatch_analyzer import DispatchAnalyzer
 from .events import EventLog, crossed_setpoint
+from .modernization_optimizer import OBJECTIVE_META, optimize_modernization_budget
+from .predictive_analytics import PredictiveAnalyzer
 from .scada_gateway import ScadaGateway
 from .security import (
     install_log_redaction,
@@ -262,6 +265,11 @@ class OutageToggleRequest(BaseModel):
     reason: str = Field("Симуляция обрыва канала АСУ ТП", max_length=200)
 
 
+class ModbusFreezeRequest(BaseModel):
+    frozen: bool
+    reason: str = Field("Стендовая проверка зависания heartbeat без обрыва TCP", max_length=200)
+
+
 class DegradeRequest(BaseModel):
     stream_id: str = Field(..., min_length=1, max_length=120)
     mode: Literal["freeze", "steam", "low_light", "glare", "packet_loss", "offline", "partial_occlusion", "recover", "none"]
@@ -300,6 +308,101 @@ class SpecGenerateRequest(BaseModel):
     contractor: str | None = Field(None, max_length=200)
     doc_number: str | None = Field(None, max_length=80)
     economics_config: EconomicsConfigModel | None = None
+    selected_instrument_ids: list[str] | None = None
+    optimization_plan_id: int | None = None
+    optimization_budget_rub: int | None = Field(None, ge=0, le=500_000_000)
+    optimization_objective: Literal["weighted_utility", "max_risk_reduction", "max_net_effect"] = "weighted_utility"
+
+
+class PassportUpdateRequest(BaseModel):
+    criticality_class: Literal[1, 2, 3] | None = None
+    criticality_weight: float | None = Field(None, ge=0.2, le=5.0)
+    hazardous_zone: bool | None = None
+    mandatory_regulation: bool | None = None
+    install_year: int | None = Field(None, ge=1950, le=2100)
+    verification_due_date: str | None = Field(None, max_length=32)
+    custom_capex_rub: int | None = Field(None, ge=0, le=50_000_000)
+    custom_downtime_risk_rub_yr: int | None = Field(None, ge=0, le=100_000_000)
+    notes: str | None = Field(None, max_length=500)
+
+    @field_validator("criticality_weight")
+    @classmethod
+    def _finite_weight(cls, v: float | None) -> float | None:
+        if v is not None and not math.isfinite(v):
+            raise ValueError("criticality_weight должен быть конечным числом")
+        return v
+
+    @field_validator("verification_due_date")
+    @classmethod
+    def _valid_iso_date(cls, v: str | None) -> str | None:
+        if v is None or v == "":
+            return None
+        try:
+            _dt.date.fromisoformat(v.strip())
+        except ValueError as exc:
+            raise ValueError("verification_due_date должен быть в формате YYYY-MM-DD") from exc
+        return v.strip()
+
+
+class OptimizerSolveRequest(BaseModel):
+    budget_rub: int = Field(500_000, ge=0, le=500_000_000)
+    objective: Literal["weighted_utility", "max_risk_reduction", "max_net_effect"] = "weighted_utility"
+    alpha_risk: float = Field(0.65, ge=0.0, le=1.0)
+    beta_economics: float = Field(0.35, ge=0.0, le=1.0)
+    max_items: int | None = Field(None, ge=1, le=1000)
+    group: str = Field("all", max_length=120)
+    min_per_group: dict[str, int] | None = None
+    max_per_group: dict[str, int] | None = None
+    mandatory_ids: list[str] | None = Field(None, max_length=250)
+    excluded_ids: list[str] | None = Field(None, max_length=250)
+    dependencies: dict[str, list[str]] | None = None
+    auto_mandatory_critical: bool = False
+    include_healthy: bool = False
+    window_min: float = Field(60.0, ge=5.0, le=1440.0)
+    horizon_min: float = Field(60.0, ge=5.0, le=720.0)
+    include_frontier: bool = True
+    time_limit_s: float = Field(2.0, ge=0.05, le=5.0)
+    economics_config: EconomicsConfigModel | None = None
+
+    @field_validator("alpha_risk", "beta_economics", "window_min", "horizon_min", "time_limit_s")
+    @classmethod
+    def _finite_opt_floats(cls, v: float) -> float:
+        if not math.isfinite(v):
+            raise ValueError("числовой параметр оптимизатора должен быть конечным")
+        return v
+
+    @field_validator("min_per_group", "max_per_group")
+    @classmethod
+    def _bounded_group_quotas(cls, v: dict[str, int] | None) -> dict[str, int] | None:
+        if v is None:
+            return None
+        if len(v) > 50:
+            raise ValueError("слишком много групп в ограничениях квот (макс. 50)")
+        out: dict[str, int] = {}
+        for k, cnt in v.items():
+            if not k or len(k) > 120:
+                raise ValueError("некорректное имя группы в квотах")
+            iv = int(cnt)
+            if iv < 0 or iv > 1000:
+                raise ValueError(f"квота группы «{k}» должна быть в диапазоне 0..1000")
+            out[k] = iv
+        return out
+
+    @field_validator("dependencies")
+    @classmethod
+    def _bounded_dependencies(cls, v: dict[str, list[str]] | None) -> dict[str, list[str]] | None:
+        if v is None:
+            return None
+        if len(v) > 250:
+            raise ValueError("слишком много правил зависимостей (макс. 250)")
+        for k, reqs in v.items():
+            if len(k) > 120 or len(reqs) > 20 or any(len(r) > 120 for r in reqs):
+                raise ValueError("превышен допустимый размер графа зависимостей")
+        return v
+
+
+class OptimizerPlanSaveRequest(OptimizerSolveRequest):
+    name: str = Field(..., min_length=1, max_length=160)
 
 
 def _validate_unit(gauge_type: str, unit: str | None) -> str:
@@ -396,12 +499,19 @@ class GaugeService(MultiGaugeServiceMixin):
         self.store_forward = StoreAndForwardBuffer()
         self.scada = ScadaGateway()
         self.dispatch = DispatchAnalyzer()
+        self.predictive = PredictiveAnalyzer()
+        self._last_predictive_overview: dict[str, Any] | None = None
+        self._predictive_cache: dict[tuple[float, float, int], tuple[float, dict[str, Any]]] = {}
+        self._predictive_cache_ttl_s: float = 5.0
         self._sse_clients: set[asyncio.Queue[str]] = set()
         self.bench_channels: dict[str, dict[str, Any]] = {}
         self.bench_last: dict[str, dict[str, Any]] = {}
         self._bench_tasks: dict[str, asyncio.Task] = {}
         self.executor = ThreadPoolExecutor(max_workers=config.VISION_EXECUTOR_WORKERS,
                                            thread_name_prefix="vision")
+        self.analytics_executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="analytics")
+        self._optimizer_sem: asyncio.Semaphore | None = None
+        self._active_opt_cancels: dict[str, Any] = {}
         self.cameras: dict[str, dict[str, Any]] = {}
         self.pipelines: dict[str, vision.GaugePipeline] = {}
         self.last: dict[str, dict[str, Any]] = {}
@@ -829,6 +939,137 @@ class GaugeService(MultiGaugeServiceMixin):
                     error=str(exc)[:300],
                 )
 
+    async def collect_predictive_series(
+        self,
+        instruments: list[dict[str, Any]],
+        *,
+        window_min: float = 60.0,
+        now_unix: float | None = None,
+    ) -> dict[str, list[tuple[float, float]]]:
+        """
+        Собирает реальные временные ряды `(t_unix, value)` для прогнозной аналитики:
+          1. Архив SQLite (`readings` + `instrument_readings` по `COALESCE(instrument_id, camera_id)`).
+          2. Живое скользящее окно `DispatchAnalyzer` (последние не сброшенные в БД точки).
+          3. Для стендовых симулируемых приборов в демопрофиле (только если в SQLite ещё не
+             накопилось 6 точек после свежего старта) — 15-минутный расчётный профиль симулятора.
+             Для живых камер никогда не подставляются синтетические данные.
+        """
+        now = float(time.time() if now_unix is None else now_unix)
+        since_dt = _dt.datetime.fromtimestamp(now - max(5.0, float(window_min)) * 60.0, tz=_dt.timezone.utc)
+        until_dt = _dt.datetime.fromtimestamp(now + 10.0, tz=_dt.timezone.utc)
+        ids = [resolve_instrument_identity(inst).instrument_id for inst in instruments]
+        db_series = await db.get_instrument_series(
+            ids,
+            since_iso=since_dt.isoformat(timespec="milliseconds"),
+            until_iso=until_dt.isoformat(timespec="milliseconds"),
+            max_per_instrument=300,
+        )
+        out: dict[str, list[tuple[float, float]]] = {}
+        for inst in instruments:
+            ident = resolve_instrument_identity(inst)
+            iid = ident.instrument_id
+            pts: list[tuple[float, float]] = list(db_series.get(iid) or [])
+            mem_pts = [(p[0], p[1]) for p in self.dispatch._series.get(iid, ()) if p[0] >= since_dt.timestamp()]
+            if mem_pts:
+                pts.extend(mem_pts)
+            # Если стендовый симулятор только что запущен и в SQLite/RAM ещё нет 6 точек — берём его историю
+            if ident.source_kind == "simulated" and config.is_demo_mode():
+                span_ok = len(pts) >= 6 and (max(p[0] for p in pts) - min(p[0] for p in pts)) >= 30.0
+                if not span_ok:
+                    sim_rows = self.sim_adapter.history_rows(iid, limit=60, window_s=min(900.0, window_min * 60.0))
+                    for r in sim_rows:
+                        try:
+                            t_r = _dt.datetime.fromisoformat(str(r["timestamp_iso8601"]).replace("Z", "+00:00")).timestamp()
+                            v_r = float(r["value"])
+                            if math.isfinite(v_r):
+                                pts.append((t_r, v_r))
+                        except (TypeError, ValueError, KeyError):
+                            continue
+            out[iid] = pts
+        return out
+
+    async def compute_predictive_overview(
+        self,
+        *,
+        instruments: list[dict[str, Any]] | None = None,
+        window_min: float = 60.0,
+        horizon_min: float = 60.0,
+        persist: bool = False,
+        use_cache: bool = True,
+    ) -> dict[str, Any]:
+        insts = instruments if instruments is not None else self.public_instruments()
+        cache_key = (round(float(window_min), 1), round(float(horizon_min), 1), len(insts))
+        now_m = time.monotonic()
+        if use_cache and not persist:
+            cached = self._predictive_cache.get(cache_key)
+            if cached is not None and (now_m - cached[0]) <= self._predictive_cache_ttl_s:
+                return cached[1]
+        now = time.time()
+        series_map = await self.collect_predictive_series(insts, window_min=window_min, now_unix=now)
+        loop = asyncio.get_running_loop()
+        ov = await loop.run_in_executor(
+            self.analytics_executor,
+            lambda: self.predictive.overview(
+                insts, series_map, window_min=window_min, horizon_min=horizon_min, now_unix=now
+            ),
+        )
+        self._last_predictive_overview = ov
+        self._predictive_cache[cache_key] = (time.monotonic(), ov)
+        if len(self._predictive_cache) > 16:
+            oldest_k = min(self._predictive_cache, key=lambda k: self._predictive_cache[k][0])
+            self._predictive_cache.pop(oldest_k, None)
+        if persist and ov.get("instruments"):
+            await db.save_predictive_snapshots(ov["instruments"])
+        return ov
+
+    async def run_optimizer_nonblocking(self, **kwargs: Any) -> dict[str, Any]:
+        """
+        Выполняет 0-1 ILP оптимизацию в выделенном пуле потоков с ограничением
+        конкурентности (защита от CPU DoS) и кооперативной отменой, не блокируя
+        asyncio event loop мониторинга, телеметрии и Modbus TCP.
+        """
+        import threading as _threading
+
+        if self._optimizer_sem is None:
+            self._optimizer_sem = asyncio.Semaphore(2)
+        try:
+            await asyncio.wait_for(self._optimizer_sem.acquire(), timeout=2.5)
+        except asyncio.TimeoutError as exc:
+            raise HTTPException(
+                429,
+                "Оптимизатор занят обработкой параллельных расчётов. Повторите запрос через несколько секунд.",
+            ) from exc
+
+        cancel_ev = _threading.Event()
+        job_id = db.new_uuid()
+        self._active_opt_cancels[job_id] = cancel_ev
+        loop = asyncio.get_running_loop()
+        try:
+            return await loop.run_in_executor(
+                self.analytics_executor,
+                lambda: optimize_modernization_budget(**kwargs, cancel_event=cancel_ev),
+            )
+        except asyncio.CancelledError:
+            cancel_ev.set()
+            raise
+        finally:
+            cancel_ev.set()
+            self._active_opt_cancels.pop(job_id, None)
+            self._optimizer_sem.release()
+
+    async def get_merged_passports(self, instruments: list[dict[str, Any]] | None = None) -> dict[str, dict[str, Any]]:
+        insts = instruments if instruments is not None else self.public_instruments()
+        stored = await db.list_passports()
+        merged: dict[str, dict[str, Any]] = {}
+        for inst in insts:
+            ident = resolve_instrument_identity(inst)
+            base = default_passport_for_instrument(inst)
+            if ident.instrument_id in stored:
+                merged[ident.instrument_id] = {**base, **stored[ident.instrument_id]}
+            else:
+                merged[ident.instrument_id] = base
+        return merged
+
     async def _architecture_sync_loop(self) -> None:
         """Периодическая синхронизация Modbus TCP, Store-and-Forward и аналитики треков 1 и 2."""
         tick_n = 0
@@ -841,10 +1082,24 @@ class GaugeService(MultiGaugeServiceMixin):
                 st_map = self.stream_telemetry_map()
                 disp = self.dispatch.overview(instruments, events, st_map)
                 health_by_id = {x["id"]: x["health_score"] for x in disp["instruments"]}
+                # Раз в 10 с обновляем прогнозные регистры Modbus, раз в 30 с — сохраняем снапшоты в SQLite
+                if tick_n == 1 or tick_n % 5 == 0:
+                    pred_ov = await self.compute_predictive_overview(
+                        instruments=instruments,
+                        window_min=60.0,
+                        horizon_min=60.0,
+                        persist=(tick_n % 15 == 0),
+                    )
+                else:
+                    pred_ov = self._last_predictive_overview
+                pred_by_id = {
+                    x["instrument_id"]: x for x in (pred_ov or {}).get("instruments") or []
+                }
                 sf_pending = await self.store_forward.pending_count()
                 self.scada.modbus.update_from_instruments(
                     instruments,
                     health_by_id=health_by_id,
+                    predictive_by_id=pred_by_id,
                     sf_pending=sf_pending,
                     outage_active=self.store_forward.outage_active,
                 )
@@ -853,15 +1108,23 @@ class GaugeService(MultiGaugeServiceMixin):
                 # Каждые 2 с кладём телеметрический пакет в Store-and-Forward (при обрыве — копится на диске!)
                 crit_codes = [x["code"] for x in disp["instruments"] if x["level"] == "alert"]
                 warn_codes = [x["code"] for x in disp["instruments"] if x["level"] == "warning"]
+                pred_imminent = [
+                    x["code"] for x in pred_by_id.values()
+                    if x.get("status") == "ok" and (
+                        (x.get("eta_alert_min") is not None and float(x["eta_alert_min"]) <= 30.0)
+                        or float(x.get("anomaly_score") or 0.0) >= 60.0
+                    )
+                ]
                 await self.store_forward.enqueue(
                     channel_id="ktc-telemetry" if (tick_n % 2 == 0) else config.DEMO_LIVE_CAM_ID,
                     payload_type="telemetry",
-                    severity="alert" if crit_codes else ("warning" if warn_codes else "info"),
+                    severity="alert" if crit_codes else ("warning" if (warn_codes or pred_imminent) else "info"),
                     payload={
                         "avg_health_score": disp["summary"]["avg_health_score"],
                         "critical_count": len(crit_codes),
                         "warning_count": len(warn_codes),
                         "critical_codes": crit_codes[:6],
+                        "predictive_imminent_codes": pred_imminent[:6],
                         "scenario": self.sim_adapter.scenario if config.is_demo_mode() else "live",
                     },
                 )
@@ -2769,22 +3032,41 @@ async def api_scada_status(
     return service.scada.status()
 
 
+@app.post("/api/architecture/modbus/freeze")
+async def api_architecture_modbus_freeze(
+    req: ModbusFreezeRequest,
+    request: Request,
+    user: dict[str, Any] = Depends(auth.require_role("admin")),
+) -> dict[str, Any]:
+    if not auth.is_fault_injection_allowed():
+        raise HTTPException(403, "Симуляция зависания Modbus отключена вне демонстрационного/стендового профиля")
+    frozen = service.scada.modbus.set_sync_frozen(req.frozen)
+    await db.log_audit(username=user["username"], role=user["role"], action="FAULT_MODBUS_FREEZE",
+                       target=f"frozen={frozen}", status_code=200, ip=request.client.host if request.client else None)
+    return {"ok": True, "sync_frozen": frozen, "modbus": service.scada.modbus.status()}
+
+
 @app.get("/api/scada/modbus/registers")
 async def api_scada_modbus_registers(
     limit: int = Query(36, ge=1, le=100),
     _user: dict[str, Any] = Depends(auth.require_role("operator")),
 ) -> dict[str, Any]:
-    instruments = service.public_instruments()
-    events = service.events.list(limit=300)
-    disp = service.dispatch.overview(instruments, events, service.stream_telemetry_map())
-    health_by_id = {x["id"]: x["health_score"] for x in disp["instruments"]}
-    sf_pending = await service.store_forward.pending_count()
-    service.scada.modbus.update_from_instruments(
-        instruments,
-        health_by_id=health_by_id,
-        sf_pending=sf_pending,
-        outage_active=service.store_forward.outage_active,
-    )
+    if not service.scada.modbus.sync_frozen:
+        instruments = service.public_instruments()
+        events = service.events.list(limit=300)
+        disp = service.dispatch.overview(instruments, events, service.stream_telemetry_map())
+        health_by_id = {x["id"]: x["health_score"] for x in disp["instruments"]}
+        sf_pending = await service.store_forward.pending_count()
+        service.scada.modbus.update_from_instruments(
+            instruments,
+            health_by_id=health_by_id,
+            predictive_by_id={
+                x["instrument_id"]: x for x in (service._last_predictive_overview or {}).get("instruments") or []
+            },
+            sf_pending=sf_pending,
+            outage_active=service.store_forward.outage_active,
+            advance_heartbeat=(service.scada.modbus.heartbeat == 0),
+        )
     return service.scada.modbus.registers_snapshot(limit=limit)
 
 
@@ -2827,6 +3109,22 @@ async def api_dispatch_overview(
     events = service.events.list(limit=500)
     ov = service.dispatch.overview(instruments, events, service.stream_telemetry_map())
     ov["auto_spec_triggers"] = await db.list_auto_spec_triggers(limit=30)
+    pred = service._last_predictive_overview or await service.compute_predictive_overview(instruments=instruments)
+    pred_by_id = {x["instrument_id"]: x for x in (pred or {}).get("instruments") or []}
+    for item in ov["instruments"]:
+        pr = pred_by_id.get(item["id"])
+        if pr:
+            item["predictive"] = {
+                "status": pr["status"],
+                "trend_class": pr["trend_class"],
+                "trend_short": (pr.get("trend_meta") or {}).get("short"),
+                "eta_warning_min": pr["eta_warning_min"],
+                "eta_alert_min": pr["eta_alert_min"],
+                "breach_prob_alert_horizon": pr["breach_prob_alert_horizon"],
+                "anomaly_score": pr["anomaly_score"],
+                "forecast_confidence": pr["forecast_confidence"],
+            }
+    ov["predictive_summary"] = (pred or {}).get("summary")
     return ov
 
 
@@ -2841,11 +3139,205 @@ async def api_dispatch_instrument(
         raise HTTPException(404, "Прибор не найден")
     events = service.events.list(limit=500)
     item = service.dispatch.analyze_instrument(target, events, service.stream_telemetry_map().get(inst_id))
+    series_map = await service.collect_predictive_series([target], window_min=60.0)
+    pred = service.predictive.analyze_series(target, series_map.get(inst_id, []), window_min=60.0, horizon_min=60.0)
     return {
         **item,
         "rate_series": item.get("rate_series") or service.dispatch.rate_series_for(inst_id, item.get("sparkline") or []),
         "evidence_url": f"/api/dispatch/evidence/{inst_id}/frame.jpg",
+        "predictive": pred,
     }
+
+
+# ---------------------------------------------------------------------------
+# Этапы Roadmap: Predictive Analytics и Modernization Optimizer (0-1 ILP)
+# ---------------------------------------------------------------------------
+@app.get("/api/predictive/overview")
+async def api_predictive_overview(
+    window_min: float = Query(60.0, ge=5.0, le=1440.0),
+    horizon_min: float = Query(60.0, ge=5.0, le=720.0),
+    persist: bool = Query(False),
+    _user: dict[str, Any] = Depends(auth.require_role("operator")),
+) -> dict[str, Any]:
+    await service._flush_db()
+    return await service.compute_predictive_overview(
+        window_min=window_min,
+        horizon_min=horizon_min,
+        persist=persist,
+    )
+
+
+@app.get("/api/predictive/instrument/{inst_id}")
+async def api_predictive_instrument(
+    inst_id: str,
+    window_min: float = Query(60.0, ge=5.0, le=1440.0),
+    horizon_min: float = Query(60.0, ge=5.0, le=720.0),
+    _user: dict[str, Any] = Depends(auth.require_role("operator")),
+) -> dict[str, Any]:
+    await service._flush_db()
+    instruments = service.public_instruments()
+    target = next((x for x in instruments if resolve_instrument_identity(x).instrument_id == inst_id), None)
+    if target is None:
+        raise HTTPException(404, "Прибор не найден")
+    now = time.time()
+    series_map = await service.collect_predictive_series([target], window_min=window_min, now_unix=now)
+    pts = series_map.get(inst_id, [])
+    pred = service.predictive.analyze_series(target, pts, window_min=window_min, horizon_min=horizon_min, now_unix=now)
+    # Отдаём очищенную историю (до 120 точек) для построения совмещённого графика «факт + прогноз + ДИ»
+    pts_sorted = sorted(pts, key=lambda p: p[0])
+    if len(pts_sorted) > 120:
+        step = (len(pts_sorted) - 1) / 119.0
+        pts_sorted = [pts_sorted[int(round(i * step))] for i in range(120)]
+    t_ref = pts_sorted[-1][0] if pts_sorted else now
+    pred["history_points"] = [
+        {
+            "t_rel_min": round((t - t_ref) / 60.0, 2),
+            "ts": _dt.datetime.fromtimestamp(t, tz=_dt.timezone.utc).isoformat(timespec="seconds"),
+            "value": round(v, 4),
+        }
+        for t, v in pts_sorted
+    ]
+    pred["snapshots_history"] = await db.list_predictive_snapshots(inst_id, limit=24)
+    return pred
+
+
+@app.get("/api/predictive/history/{inst_id}")
+async def api_predictive_history(
+    inst_id: str,
+    limit: int = Query(30, ge=1, le=200),
+    _user: dict[str, Any] = Depends(auth.require_role("operator")),
+) -> list[dict[str, Any]]:
+    if not inst_id or len(inst_id) > 120 or any(ord(ch) < 32 for ch in inst_id):
+        raise HTTPException(422, "Некорректный идентификатор прибора")
+    instruments = service.public_instruments()
+    known_ids = {resolve_instrument_identity(x).instrument_id for x in instruments}
+    rows = await db.list_predictive_snapshots(inst_id, limit=limit)
+    if inst_id not in known_ids and not rows:
+        raise HTTPException(404, "Прибор не найден")
+    return rows
+
+
+@app.get("/api/passports")
+async def api_passports_list(
+    _user: dict[str, Any] = Depends(auth.require_role("operator")),
+) -> list[dict[str, Any]]:
+    merged = await service.get_merged_passports()
+    return sorted(merged.values(), key=lambda p: (int(p.get("criticality_class") or 2), str(p.get("code") or "")))
+
+
+@app.patch("/api/passports/{inst_id}")
+async def api_passport_update(
+    inst_id: str,
+    body: PassportUpdateRequest,
+    request: Request,
+    user: dict[str, Any] = Depends(auth.require_role("engineer")),
+) -> dict[str, Any]:
+    instruments = service.public_instruments()
+    target = next((x for x in instruments if resolve_instrument_identity(x).instrument_id == inst_id), None)
+    if target is None:
+        raise HTTPException(404, "Прибор не найден")
+    merged = await service.get_merged_passports([target])
+    cur = dict(merged[inst_id])
+    patch = body.model_dump(exclude_unset=True)
+    for k, v in patch.items():
+        cur[k] = v
+    if "criticality_class" in patch and "criticality_weight" not in patch:
+        cur["criticality_weight"] = {1: 1.55, 2: 1.15, 3: 0.85}.get(int(cur["criticality_class"]), 1.15)
+    saved = await db.upsert_passport(cur)
+    await db.log_audit(
+        username=user["username"], role=user["role"], action="PASSPORT_UPDATE",
+        target=inst_id, status_code=200, ip=request.client.host if request.client else None,
+    )
+    return saved
+
+
+@app.post("/api/optimizer/solve")
+async def api_optimizer_solve(
+    req: OptimizerSolveRequest,
+    request: Request,
+    user: dict[str, Any] = Depends(auth.require_role("engineer")),
+) -> dict[str, Any]:
+    await service._flush_db()
+    instruments = service.public_instruments()
+    events = service.events.list(limit=500)
+    loop = asyncio.get_running_loop()
+    disp = await loop.run_in_executor(
+        service.analytics_executor,
+        lambda: service.dispatch.overview(instruments, events, service.stream_telemetry_map()),
+    )
+    pred = await service.compute_predictive_overview(
+        instruments=instruments,
+        window_min=req.window_min,
+        horizon_min=req.horizon_min,
+    )
+    passports = await service.get_merged_passports(instruments)
+    try:
+        res = await service.run_optimizer_nonblocking(
+            dispatch_overview=disp,
+            predictive_overview=pred,
+            passports_by_id=passports,
+            budget_rub=req.budget_rub,
+            objective=req.objective,
+            alpha_risk=req.alpha_risk,
+            beta_economics=req.beta_economics,
+            max_items=req.max_items,
+            group_filter=req.group,
+            min_per_group=req.min_per_group,
+            max_per_group=req.max_per_group,
+            mandatory_ids=req.mandatory_ids,
+            excluded_ids=req.excluded_ids,
+            dependencies=req.dependencies,
+            auto_mandatory_critical=req.auto_mandatory_critical,
+            include_healthy=req.include_healthy,
+            economics_config=req.economics_config.model_dump(exclude_none=True) if req.economics_config else None,
+            include_frontier=req.include_frontier,
+            time_limit_s=req.time_limit_s,
+        )
+    except ValueError as exc:
+        raise HTTPException(422, str(exc)) from exc
+    await db.log_audit(
+        username=user["username"], role=user["role"], action="OPTIMIZER_SOLVE",
+        target=f"budget={req.budget_rub}:{req.objective}:{res.get('status')}",
+        status_code=200, ip=request.client.host if request.client else None,
+    )
+    return res
+
+
+@app.post("/api/optimizer/plans")
+async def api_optimizer_plan_save(
+    req: OptimizerPlanSaveRequest,
+    request: Request,
+    user: dict[str, Any] = Depends(auth.require_role("engineer")),
+) -> dict[str, Any]:
+    result = await api_optimizer_solve(req, request=request, user=user)
+    if result.get("status") == "infeasible":
+        raise HTTPException(422, (result.get("solver") or {}).get("infeasibility_reason") or "План несовместим с ограничениями")
+    saved = await db.save_modernization_plan(name=req.name, created_by=user["username"], result=result)
+    await db.log_audit(
+        username=user["username"], role=user["role"], action="OPTIMIZER_PLAN_SAVE",
+        target=f"plan#{saved['id']}:{req.budget_rub}", status_code=200,
+        ip=request.client.host if request.client else None,
+    )
+    return saved
+
+
+@app.get("/api/optimizer/plans")
+async def api_optimizer_plans_list(
+    limit: int = Query(30, ge=1, le=200),
+    _user: dict[str, Any] = Depends(auth.require_role("operator")),
+) -> list[dict[str, Any]]:
+    return await db.list_modernization_plans(limit=limit)
+
+
+@app.get("/api/optimizer/plans/{plan_id}")
+async def api_optimizer_plan_get(
+    plan_id: int,
+    _user: dict[str, Any] = Depends(auth.require_role("operator")),
+) -> dict[str, Any]:
+    plan = await db.get_modernization_plan(plan_id)
+    if plan is None:
+        raise HTTPException(404, "План модернизации не найден")
+    return plan
 
 
 @app.get("/api/dispatch/incidents")
@@ -2981,6 +3473,39 @@ async def _load_period_history_and_events(period: str) -> tuple[dict[str, dict[s
     return hstats, merged_evs, now_utc
 
 
+async def _resolve_spec_optimization(
+    req: SpecGenerateRequest,
+    instruments: list[dict[str, Any]],
+    disp: dict[str, Any],
+    pred: dict[str, Any] | None,
+) -> tuple[dict[str, Any] | None, list[str] | None]:
+    opt_res: dict[str, Any] | None = None
+    sel_ids: list[str] | None = req.selected_instrument_ids
+    if req.optimization_plan_id is not None:
+        plan = await db.get_modernization_plan(req.optimization_plan_id)
+        if plan is None:
+            raise HTTPException(404, "Указанный план оптимизации модернизации не найден")
+        opt_res = plan.get("result") or None
+        sel_ids = plan.get("selected_ids") or []
+    elif req.optimization_budget_rub is not None:
+        passports = await service.get_merged_passports(instruments)
+        opt_res = await service.run_optimizer_nonblocking(
+            dispatch_overview=disp,
+            predictive_overview=pred,
+            passports_by_id=passports,
+            budget_rub=req.optimization_budget_rub,
+            objective=req.optimization_objective,
+            group_filter=req.group,
+            economics_config=req.economics_config.model_dump(exclude_none=True) if req.economics_config else None,
+            include_frontier=False,
+            time_limit_s=2.0,
+        )
+        if opt_res.get("status") == "infeasible":
+            raise HTTPException(422, (opt_res.get("solver") or {}).get("infeasibility_reason") or "Бюджет недостаточен")
+        sel_ids = [x["instrument_id"] for x in opt_res.get("selected") or []]
+    return opt_res, sel_ids
+
+
 @app.post("/api/specs/preview")
 async def api_specs_preview(
     req: SpecGenerateRequest,
@@ -2989,6 +3514,8 @@ async def api_specs_preview(
     instruments = service.public_instruments()
     hstats, events, now_utc = await _load_period_history_and_events(req.period)
     disp = service.dispatch.overview(instruments, events, service.stream_telemetry_map())
+    pred = service._last_predictive_overview or await service.compute_predictive_overview(instruments=instruments)
+    opt_res, sel_ids = await _resolve_spec_optimization(req, instruments, disp, pred)
     try:
         bundle = await generate_spec_bundle(
             dispatch_overview=disp,
@@ -2997,10 +3524,16 @@ async def api_specs_preview(
             period=req.period,
             group_filter=req.group,
             instrument_id=req.instrument_id,
-            requisites=req.model_dump(exclude_none=True, exclude={"economics_config"}),
+            requisites=req.model_dump(
+                exclude_none=True,
+                exclude={"economics_config", "selected_instrument_ids", "optimization_plan_id", "optimization_budget_rub", "optimization_objective"},
+            ),
             mode=req.mode,
             history_stats=hstats,
             economics_config=req.economics_config.model_dump(exclude_none=True) if req.economics_config else None,
+            predictive_overview=pred,
+            optimization_result=opt_res,
+            selected_instrument_ids=sel_ids,
             strict_scope=True,
             now_utc=now_utc,
         )
@@ -3021,6 +3554,7 @@ async def api_specs_preview(
         "defective_count": len(bundle["defective_items"]),
         "tz_count": len(bundle["tz_items"]),
         "economics": bundle["economics"],
+        "optimization_applied": opt_res is not None or sel_ids is not None,
         "markdown": bundle["markdown"],
     }
 
@@ -3034,6 +3568,8 @@ async def api_specs_generate(
     instruments = service.public_instruments()
     hstats, events, now_utc = await _load_period_history_and_events(req.period)
     disp = service.dispatch.overview(instruments, events, service.stream_telemetry_map())
+    pred = service._last_predictive_overview or await service.compute_predictive_overview(instruments=instruments)
+    opt_res, sel_ids = await _resolve_spec_optimization(req, instruments, disp, pred)
     snaps = _collect_snapshots_by_inst(events)
     try:
         bundle = await generate_spec_bundle(
@@ -3043,10 +3579,16 @@ async def api_specs_generate(
             period=req.period,
             group_filter=req.group,
             instrument_id=req.instrument_id,
-            requisites=req.model_dump(exclude_none=True, exclude={"economics_config"}),
+            requisites=req.model_dump(
+                exclude_none=True,
+                exclude={"economics_config", "selected_instrument_ids", "optimization_plan_id", "optimization_budget_rub", "optimization_objective"},
+            ),
             mode=req.mode,
             history_stats=hstats,
             economics_config=req.economics_config.model_dump(exclude_none=True) if req.economics_config else None,
+            predictive_overview=pred,
+            optimization_result=opt_res,
+            selected_instrument_ids=sel_ids,
             strict_scope=True,
             now_utc=now_utc,
         )

@@ -1,0 +1,5 @@
+instruments,dispatch_ms,predictive_ms,predictive_per_inst_ms,predictive_cpu_ms,predictive_peak_ram_kb,opt_candidates,opt_no_frontier_ms,opt_no_frontier_status,opt_no_frontier_gap_pct,opt_with_frontier_ms,opt_peak_ram_kb,spec_and_docx_ms,docx_kb,process_rss_mb
+36,1.08,286.5,7.958,281.25,1406.6,11,4.55,optimal,0.0,1.97,42.4,31.76,131.2,69.4
+100,2.7,717.07,7.171,703.12,1081.0,24,8.84,optimal,0.0,2.61,84.6,19.91,139.3,72.9
+500,14.52,3664.45,7.329,3640.62,4929.1,118,43.06,optimal,0.0,596.84,398.6,60.0,175.8,88.0
+1000,23.43,7373.07,7.373,7312.5,9910.0,383,898.23,time_limit,0.0094,1612.03,1289.9,114.73,230.4,111.1

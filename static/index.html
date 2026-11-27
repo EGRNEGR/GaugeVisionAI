@@ -656,6 +656,147 @@
         </div>
       </div>
 
+      <!-- Прогнозная аналитика (Predictive Analytics): ETA до уставок, ДИ 80%/95%, CUSUM и Манн-Кендалл -->
+      <section class="block" id="predictiveSection" aria-label="Прогнозная аналитика уставок и аномальных трендов">
+        <header>
+          <span>Прогнозная аналитика (время достижения уставок, неопределённость и аномальные тренды)</span>
+          <div class="disp-filters">
+            <label class="field-inline">
+              <span>Окно:</span>
+              <select class="input sm" id="predWindowSel" aria-label="Окно анализа тренда">
+                <option value="15">15 мин</option>
+                <option value="60" selected>60 мин</option>
+                <option value="180">3 ч</option>
+              </select>
+            </label>
+            <label class="field-inline">
+              <span>Горизонт:</span>
+              <select class="input sm" id="predHorizonSel" aria-label="Горизонт прогноза">
+                <option value="30">30 мин</option>
+                <option value="60" selected>60 мин</option>
+                <option value="120">120 мин</option>
+              </select>
+            </label>
+            <button class="btn sm" type="button" id="btnPredRefresh">Обновить прогноз</button>
+          </div>
+        </header>
+        <div class="body pred-body">
+          <div class="pred-kpi-strip">
+            <div class="disp-kpi"><span>Риск пробоя аварии</span><strong class="mono" id="predImminentCnt">0</strong></div>
+            <div class="disp-kpi"><span>Аномальных трендов</span><strong class="mono" id="predAnomCnt">0</strong></div>
+            <div class="disp-kpi"><span>Ближайший ETA</span><strong class="mono" id="predNearestEta">—</strong></div>
+            <div class="disp-kpi"><span>Ср. уверенность</span><strong class="mono" id="predAvgConf">—</strong></div>
+          </div>
+
+          <div class="pred-split-grid">
+            <div class="pred-table-scroll">
+              <table class="ev-tbl disp-tbl" id="predTable">
+                <thead>
+                  <tr>
+                    <th>Код</th><th>Прибор</th><th>Тренд</th><th>Прогноз (+H)</th>
+                    <th>ETA пред.</th><th>ETA авар.</th><th>Вер-ть</th><th>Аномал.</th>
+                  </tr>
+                </thead>
+                <tbody id="predTableBody">
+                  <tr><td colspan="8" class="arch-empty">Расчёт прогнозной аналитики…</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pred-detail-col">
+              <div class="pred-detail-head">
+                <strong id="predDetailTitle">Выберите прибор для просмотра прогноза и доверительного интервала</strong>
+                <span class="mono" id="predDetailMeta"></span>
+              </div>
+              <canvas id="predForecastCanvas" class="pred-canvas" aria-label="График прогноза параметра с 80% и 95% доверительными интервалами"></canvas>
+              <div class="disp-penalties mono" id="predDetailStats">Ожидание данных прогноза…</div>
+              <ul class="pred-anom-list" id="predAnomaliesList"></ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Математический оптимизатор бюджета модернизации (0-1 ILP Branch-and-Bound) -->
+      <section class="block" id="optimizerSection" aria-label="Оптимизатор бюджета модернизации КИПиА">
+        <header>
+          <span>Математический оптимизатор бюджета модернизации КИПиА (0-1 ILP)</span>
+          <div class="disp-filters">
+            <span class="mono" id="optSolverBadge">—</span>
+            <button class="btn sm" type="button" id="btnOptSavePlan">Сохранить план в БД</button>
+            <button class="btn sm primary" type="button" id="btnOptApplyToSpec">Передать в конструктор ТЗ</button>
+          </div>
+        </header>
+        <div class="body opt-body">
+          <form class="opt-controls" id="optForm" autocomplete="off">
+            <label class="field">
+              <span>Бюджет CAPEX, ₽</span>
+              <input class="input sm mono" id="optBudgetInput" type="number" min="0" max="500000000" step="10000" value="500000">
+            </label>
+            <div class="opt-presets" role="group" aria-label="Быстрые пресеты бюджета">
+              <button class="btn sm" type="button" data-opt-budget="250000">250 тыс.</button>
+              <button class="btn sm" type="button" data-opt-budget="500000">500 тыс.</button>
+              <button class="btn sm" type="button" data-opt-budget="800000">800 тыс.</button>
+              <button class="btn sm" type="button" data-opt-budget="1200000">1,2 млн</button>
+            </div>
+            <label class="field">
+              <span>Целевая функция</span>
+              <select class="input sm" id="optObjectiveSel">
+                <option value="weighted_utility" selected>Сбалансированный оптимум (риск + эффект)</option>
+                <option value="max_risk_reduction">Макс. снижение технологического риска</option>
+                <option value="max_net_effect">Макс. чистый годовой эффект (₽/год)</option>
+              </select>
+            </label>
+            <label class="field opt-max-field">
+              <span>Лимит поз.</span>
+              <input class="input sm mono" id="optMaxItems" type="number" min="1" max="50" placeholder="Без лим.">
+            </label>
+            <label class="chk opt-chk"><input type="checkbox" id="optAutoMandatory" checked>Обязат. критические (&lt;50%)</label>
+            <label class="chk opt-chk"><input type="checkbox" id="optIncludeHealthy">Включая штатные</label>
+            <button class="btn primary sm" type="button" id="btnOptSolve">Рассчитать оптимум (ILP)</button>
+          </form>
+
+          <div class="arch-outage-banner" id="optInfeasibleBanner" data-tone="alert" hidden role="alert"></div>
+
+          <div class="opt-kpi-strip" id="optKpiStrip">
+            <div class="disp-kpi"><span>Выбрано позиций</span><strong class="mono" id="optKpiCount">—</strong></div>
+            <div class="disp-kpi"><span>Использовано CAPEX</span><strong class="mono" id="optKpiCapex">—</strong></div>
+            <div class="disp-kpi"><span>Покрытие риска</span><strong class="mono" id="optKpiRisk">—</strong></div>
+            <div class="disp-kpi"><span>Чистый эффект / окупаем.</span><strong class="mono" id="optKpiEffect">—</strong></div>
+            <div class="disp-kpi"><span>Выигрыш ILP vs жадный</span><strong class="mono" id="optKpiGain">—</strong></div>
+          </div>
+
+          <div class="opt-split-grid">
+            <div class="opt-table-scroll">
+              <table class="ev-tbl disp-tbl" id="optTable">
+                <thead>
+                  <tr>
+                    <th>Обяз.</th><th>Искл.</th><th>Код</th><th>Прибор и класс</th>
+                    <th>HS / Прогноз</th><th>CAPEX</th><th>Эффект/год</th><th>Риск</th><th>Статус</th>
+                  </tr>
+                </thead>
+                <tbody id="optCandidatesBody">
+                  <tr><td colspan="9" class="arch-empty">Нажмите «Рассчитать оптимум (ILP)» для подбора портфеля модернизации.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="opt-side-col">
+              <div class="pred-detail-head">
+                <strong>Кривая Парето (бюджет → покрытие риска и эффект)</strong>
+                <span class="mono hint" id="optFrontierMeta"></span>
+              </div>
+              <canvas id="optFrontierCanvas" class="opt-canvas" aria-label="Кривая Парето зависимости покрытия риска от бюджета"></canvas>
+              <div class="opt-plans-box">
+                <div class="opt-plans-head"><span>Сохранённые планы модернизации (SQLite)</span><span class="mono hint" id="optPlansCnt">0</span></div>
+                <ul class="opt-plans-list" id="optPlansList">
+                  <li class="arch-empty">Сохранённых планов пока нет.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Лента инцидентов с доказательными стоп-кадрами -->
       <section class="block">
         <header>
@@ -749,7 +890,9 @@
               </button>
               <button class="btn" type="button" id="btnSpecDownloadMd">Скачать .md</button>
               <button class="btn" type="button" id="btnSpecRefresh">Обновить предпросмотр</button>
+              <button class="btn sm" type="button" id="btnSpecClearOpt" hidden>Сбросить фильтр ILP</button>
             </div>
+            <div class="mono hint" id="specOptNote" hidden></div>
           </form>
 
           <div class="spec-preview-col">

@@ -1,0 +1,220 @@
+{
+  "started_at": "2026-11-27T07:54:36.235+00:00",
+  "scenarios": {
+    "nominal": {
+      "ok": true,
+      "transition_s": 0.0,
+      "ign_active_critical": {
+        "tagpath": "gaugevision/system/activecritical",
+        "int": 0,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766080868
+      },
+      "ign_active_warning": {
+        "tagpath": "gaugevision/system/activewarning",
+        "int": 0,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766091633
+      },
+      "ign_stale_channels": {
+        "tagpath": "gaugevision/system/stalechannels",
+        "int": 1,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766091633
+      },
+      "ign_k1_t01_status": {
+        "tagpath": "gaugevision/instruments/p02_k1_t01/status",
+        "int": 0,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766080864
+      },
+      "ign_k1_t01_value": {
+        "tagpath": "gaugevision/instruments/p02_k1_t01/value",
+        "int": null,
+        "float": 539.27001953125,
+        "quality": 192,
+        "t_stamp_ms": 1795766087865
+      },
+      "ign_k1_r01_isnodata": {
+        "tagpath": "gaugevision/instruments/p01_k1_r01/isnodata",
+        "int": 1,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766089632
+      },
+      "screenshot": "scada_02_nominal.png"
+    },
+    "cascade": {
+      "ok": true,
+      "transition_s": 4.59,
+      "ign_active_critical": {
+        "tagpath": "gaugevision/system/activecritical",
+        "int": 4,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766095871
+      },
+      "ign_active_warning": {
+        "tagpath": "gaugevision/system/activewarning",
+        "int": 4,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766106768
+      },
+      "ign_stale_channels": {
+        "tagpath": "gaugevision/system/stalechannels",
+        "int": 3,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766106768
+      },
+      "ign_k1_t01_status": {
+        "tagpath": "gaugevision/instruments/p02_k1_t01/status",
+        "int": 2,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766095864
+      },
+      "ign_k1_t01_value": {
+        "tagpath": "gaugevision/instruments/p02_k1_t01/value",
+        "int": null,
+        "float": 572.5999755859375,
+        "quality": 192,
+        "t_stamp_ms": 1795766103878
+      },
+      "ign_sn1_t02_isnodata": {
+        "tagpath": "gaugevision/instruments/p22_sn1_t02/isnodata",
+        "int": 1,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766096349
+      },
+      "ign_sn1_t02_status": {
+        "tagpath": "gaugevision/instruments/p22_sn1_t02/status",
+        "int": 3,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766106768
+      },
+      "screenshot": "scada_03_cascade_alarms.png"
+    },
+    "store_and_forward_outage": {
+      "ok": true,
+      "outage_detect_s": 4.08,
+      "queue_growth_s": 3.83,
+      "ign_sf_pending_peak": {
+        "tagpath": "gaugevision/system/sfqueuepending",
+        "int": 3,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766117885
+      },
+      "ign_outage_flag_on": {
+        "tagpath": "gaugevision/system/outageflag",
+        "int": 1,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766113890
+      },
+      "recovery_flag_s": 3.83,
+      "recovery_queue_zero_s": 0.0,
+      "ign_sf_pending_after": {
+        "tagpath": "gaugevision/system/sfqueuepending",
+        "int": 0,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766129880
+      },
+      "screenshot": "scada_04_sf_outage.png"
+    },
+    "heartbeat_freeze_no_tcp_drop": {
+      "ok": true,
+      "detect_stale_s": 10.2,
+      "recover_fresh_s": 3.69,
+      "link_stayed_connected": true,
+      "hb_before": {
+        "tagpath": "gaugevision/system/heartbeat",
+        "int": 24,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766129880
+      },
+      "hb_during_freeze": {
+        "tagpath": "gaugevision/system/heartbeat",
+        "int": 25,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766137420
+      },
+      "hb_after": {
+        "tagpath": "gaugevision/system/heartbeat",
+        "int": 26,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766151872
+      },
+      "ign_datastale_on": {
+        "tagpath": "gaugevision/system/datastale",
+        "int": 1,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766140718
+      },
+      "ign_datastale_off": {
+        "tagpath": "gaugevision/system/datastale",
+        "int": 0,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766152849
+      },
+      "screenshot": "scada_05_heartbeat_stale.png"
+    },
+    "tcp_drop_and_auto_reconnect": {
+      "ok": true,
+      "killed_at": "2026-11-27T07:55:55.058+00:00",
+      "detect_link_lost_s": 1.84,
+      "detect_bad_quality_s": 0.0,
+      "ign_link_down": {
+        "tagpath": "gaugevision/system/linkconnected",
+        "int": 0,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766155154
+      },
+      "ign_k1_t01_during_outage": {
+        "tagpath": "gaugevision/instruments/p02_k1_t01/value",
+        "int": null,
+        "float": 569.0499877929688,
+        "quality": 0,
+        "t_stamp_ms": 1795766155154
+      },
+      "restarted_at": "2026-11-27T07:56:19.101+00:00",
+      "gv_boot_s": 5.05,
+      "reconnect_after_gv_ready_s": 0.02,
+      "reconnect_total_from_start_s": 5.06,
+      "ign_link_up": {
+        "tagpath": "gaugevision/system/linkconnected",
+        "int": 1,
+        "float": null,
+        "quality": 192,
+        "t_stamp_ms": 1795766182797
+      },
+      "ign_k1_t01_after_recovery": {
+        "tagpath": "gaugevision/instruments/p02_k1_t01/value",
+        "int": null,
+        "float": 569.22998046875,
+        "quality": 192,
+        "t_stamp_ms": 1795766189360
+      },
+      "gv_k1_t01_after_recovery": 570.98,
+      "screenshot_lost": "scada_06_link_lost.png",
+      "screenshot_devices_lost": "ign_01_device_disconnected.png",
+      "screenshot_recovered": "scada_07_recovered.png"
+    }
+  },
+  "finished_at": "2026-11-27T07:56:34.561+00:00"
+}

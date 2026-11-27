@@ -1,0 +1,9 @@
+{
+  "pages": {
+    "/": {
+      "title": "GaugeVision — пульт",
+      "viewPath": "GaugeVision/Main"
+    }
+  },
+  "sharedDocks": {}
+}

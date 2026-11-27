@@ -1,0 +1,66 @@
+{
+  "url": "https://127.0.0.1:8448/",
+  "checks": {
+    "auth_login": {
+      "ok": true,
+      "label": "engineer (Инженер)"
+    },
+    "predictive_panel": {
+      "ok": true,
+      "rows": 36,
+      "canvas_60m": {
+        "ok": true,
+        "width": 778,
+        "height": 198,
+        "nonBgSamples": 2938
+      },
+      "canvas_120m": {
+        "ok": true,
+        "width": 778,
+        "height": 198,
+        "nonBgSamples": 2985
+      },
+      "middle_dot_count": 0
+    },
+    "optimizer_optimal": {
+      "ok": true,
+      "solver_badge": "OPTIMAL (gap 0,00%, 0,0 мс)",
+      "kpi_count": "4 из 7",
+      "kpi_capex": "336,3 т.₽ (96%)",
+      "kpi_risk": "75,4% (564 б.)",
+      "frontier_canvas": {
+        "ok": true,
+        "width": 714,
+        "height": 174,
+        "nonBgSamples": 1686
+      },
+      "saved_plans_count": 1
+    },
+    "optimizer_infeasible": {
+      "ok": true,
+      "solver_badge": "INFEASIBLE (дефицит бюджета)",
+      "banner_visible": true,
+      "banner_text": "Бюджет 50 000 ₽ недостаточен для покрытия 1 обязательных мероприятий (требуется минимум 86 640 ₽, дефицит 36 640 ₽)."
+    },
+    "spec_from_optimal": {
+      "ok": true,
+      "note": "Активен оптимальный портфель ILP: 4 поз., бюджет 350 тыс. ₽",
+      "docx_filename": "ТЗ-КИП-20261127-01_Дефектная_ведомость_и_ТЗ.docx",
+      "docx_bytes": 132336
+    },
+    "responsive_1280x720": {
+      "ok": true,
+      "horizontal_overflow_px": 0
+    }
+  },
+  "screenshots": [
+    "e2e_01_predictive_panel_1920x1080.png",
+    "e2e_02_optimizer_optimal_1920x1080.png",
+    "e2e_03_optimizer_infeasible_1920x1080.png",
+    "e2e_04_spec_from_optimal_plan_1920x1080.png",
+    "e2e_05_analytics_optimizer_1280x720.png"
+  ],
+  "console_errors": [],
+  "page_errors": [],
+  "all_ok": true
+}

@@ -11,9 +11,17 @@ GaugeVision AI — генератор корпоративных докумен�
 from __future__ import annotations
 
 import io
+import re
 import struct
 import zipfile
-from xml.sax.saxutils import escape as xml_escape
+from xml.sax.saxutils import escape as _raw_xml_escape
+
+_XML_CTRL_RE = re.compile(r"[\x00-\x08\x0b\x0c\x0e-\x1f]")
+
+
+def xml_escape(text: str) -> str:
+    """Экранирует спецсимволы XML и удаляет недопустимые в XML 1.0 управляющие байты."""
+    return _raw_xml_escape(_XML_CTRL_RE.sub("", str(text)))
 
 W_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
 R_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships"

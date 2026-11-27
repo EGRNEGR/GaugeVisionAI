@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import asyncio
 import base64
+import datetime as _dt
 import hashlib
 import json
 import logging
@@ -91,47 +92,120 @@ class IdempotentReceiverLedger:
 # ---------------------------------------------------------------------------
 # Pure-Python Modbus TCP Register Map & Async Server (FC 0x03 / 0x04)
 # ---------------------------------------------------------------------------
+# Битовые флаги расширенного блока приборов (ext + 2, uint16):
+FLAG_CAMERA_ONLINE = 1 << 0        # 0x0001 — источник/камера на связи
+FLAG_DIAL_DETECTED = 1 << 1        # 0x0002 — циферблат/шкала обнаружены (или валидный источник)
+FLAG_READING_VALID = 1 << 2        # 0x0004 — текущее показание достоверно
+FLAG_CALIBRATION_SET = 1 << 3      # 0x0008 — задана невырожденная калибровка шкалы
+FLAG_IS_SIMULATED = 1 << 4         # 0x0010 — симулируемый канал демо-пульта (0 = живая камера CV)
+FLAG_CONFIDENCE_AVAIL = 1 << 5     # 0x0020 — в кадре доступна численная уверенность CV
+FLAG_READING_STALE = 1 << 6        # 0x0040 — статус показания STALE (нет свежих данных)
+FLAG_ALARM_ACTIVE = 1 << 7         # 0x0080 — активное отклонение WARNING или CRITICAL
+
+
+def _parse_iso_unix(ts: Any) -> int | None:
+    if not ts or not isinstance(ts, str):
+        return None
+    try:
+        dt = _dt.datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=_dt.timezone.utc)
+        val = int(dt.timestamp())
+        return max(0, min(0xFFFFFFFF, val))
+    except ValueError:
+        return None
+
+
+def _pack_u32_words(val: int) -> tuple[int, int]:
+    clamped = max(0, min(0xFFFFFFFF, int(val)))
+    return (clamped >> 16) & 0xFFFF, clamped & 0xFFFF
+
+
+def _pack_f32_words(val: float | None) -> tuple[int, int]:
+    if val is None or not math.isfinite(val):
+        return _IEEE754_QNAN_HI, _IEEE754_QNAN_LO
+    hi, lo = struct.unpack(">HH", struct.pack(">f", float(val)))
+    return hi, lo
+
+
 class ModbusTcpGateway:
     """
-    Карта Holding-регистров (40001+) для стыковки со SCADA (Ignition / MasterSCADA):
-      Для каждого прибора (индекс idx = 0..199, базовый адрес addr = idx * 4):
-        addr + 0, addr + 1 : IEEE-754 float32 (big-endian) — текущее значение (0x7FC00000 NaN при STALE/невалидном)
-        addr + 2           : uint16 — статус (0=OK, 1=WARNING, 2=CRITICAL, 3=STALE)
-        addr + 3           : uint16 — Health Score × 10 (0..1000)
-      Системный диагностический блок (базовый адрес 900 -> HR 40901+):
-        900 : всего приборов
-        901 : активных аварий (CRITICAL)
-        902 : активных предупреждений (WARNING)
-        903 : каналов без данных (STALE)
-        904 : записей в локальной очереди Store-and-Forward
-        905 : флаг обрыва канала АСУ ТП (0=связь ок, 1=буферизация)
+    Карта Holding-регистров (адреса 0-based; в 1-based нотации 40001 + addr)
+    для стыковки со SCADA (Ignition / MasterSCADA) в режиме только на чтение (FC 0x03/0x04).
+
+    Полная обратная совместимость с v1 (адреса 0..799 и 900..905 не изменяются):
+      1. Базовый блок приборов (idx = 0..199, база addr = idx * 4, адреса 0..799 / HR 40001..40800):
+         addr + 0, addr + 1 : IEEE-754 float32 (big-endian, старшее слово первым) — текущее
+                              значение (quiet NaN 0x7FC00000 при STALE / недостоверном отсчёте)
+         addr + 2           : uint16 — статус (0=OK, 1=WARNING, 2=CRITICAL, 3=STALE)
+         addr + 3           : uint16 — Health Score × 10 (0..1000)
+
+      2. Системный диагностический блок (база SYSTEM_BASE = 900, HR 40901+):
+         900 (HR 40901) : всего приборов (uint16)
+         901 (HR 40902) : активных аварий CRITICAL (uint16)
+         902 (HR 40903) : активных предупреждений WARNING (uint16)
+         903 (HR 40904) : каналов без данных STALE (uint16)
+         904 (HR 40905) : записей в локальной очереди Store-and-Forward (uint16)
+         905 (HR 40906) : флаг обрыва канала АСУ ТП (0=связь ок, 1=буферизация)
+         --- расширение v2 ---
+         906 (HR 40907) : heartbeat — счётчик циклов синхронизации (uint16, 0..65535 -> 0)
+         907..908       : unix-время последней синхронизации UTC (uint32 big-endian, сек)
+         909 (HR 40910) : версия карты регистров (uint16 = 2)
+         910 (HR 40911) : базовый адрес расширенного блока приборов (uint16 = 2000)
+         911 (HR 40912) : шаг расширенного блока на один прибор (uint16 = 8)
+
+      3. Расширенный блок приборов v2 (idx = 0..199, база ext = 2000 + idx * 8, адреса 2000..3599):
+         ext + 0        : возраст показания в секундах (uint16 с насыщением 0..65535; 65535 = нет данных)
+         ext + 1        : уверенность распознавания CV × 1000 (uint16, 0..1000; 0 если недоступна)
+         ext + 2        : битовые флаги состояния (uint16, см. FLAG_* выше)
+         ext + 3..4     : unix-время последнего достоверного показания UTC (uint32 big-endian; 0 = не было)
+         ext + 5..6     : последнее достоверное значение (IEEE-754 float32 big-endian; NaN если не было)
+         ext + 7        : резерв (uint16 = 0)
     """
 
     SYSTEM_BASE = 900
-    MAX_REGISTERS = 1024
+    EXTENDED_BASE = 2000
+    EXTENDED_STRIDE = 8
+    PREDICTIVE_BASE = 3600
+    PREDICTIVE_STRIDE = 8
+    PREDICTIVE_MAX_INSTRUMENTS = 61  # 3600..4087 (4095 остаётся свободным, MAX_REGISTERS=4096 сохраняется)
     MAX_SLOTS = 200
+    MAX_REGISTERS = 4096
+    REGISTER_MAP_VERSION = 2
+    MAX_CLIENTS = 32
+    CLIENT_IDLE_TIMEOUT_S = 300.0
 
     def __init__(self) -> None:
         self._regs: list[int] = [0] * self.MAX_REGISTERS
         self._meta_rows: list[dict[str, Any]] = []
+        self._used_slots: set[int] = set()
         self._server: asyncio.AbstractServer | None = None
         self._requests_served: int = 0
         self._rejected_unit_ids: int = 0
+        self._rejected_clients: int = 0
         self._active_clients: int = 0
         self._listening: bool = False
         self._last_error: str | None = None
-        self._used_slots: set[int] = set()
+        self._heartbeat: int = 0
+        self._last_sync_unix: int = 0
+        self._sync_frozen: bool = False
+        # Инициализируем самоописывающие константы карты v2 + прогнозного блока сразу при создании шлюза
+        self._regs[self.SYSTEM_BASE + 9] = self.REGISTER_MAP_VERSION
+        self._regs[self.SYSTEM_BASE + 10] = self.EXTENDED_BASE
+        self._regs[self.SYSTEM_BASE + 11] = self.EXTENDED_STRIDE
+        self._regs[self.SYSTEM_BASE + 14] = self.PREDICTIVE_BASE
+        self._regs[self.SYSTEM_BASE + 15] = self.PREDICTIVE_STRIDE
 
     @classmethod
     def place_instruments(cls, instruments: list[dict[str, Any]]) -> list[tuple[int, dict[str, Any]]]:
-        """Слот прибора (SHARED_DATA_CONTRACT § 5.3): постоянный modbus_slot из реестра; приборы без
-        слота (симуляция стенда) занимают свободные слоты по порядку списка, как раньше."""
+        """Слот прибора (SHARED_DATA_CONTRACT v1.1 § 5.3): постоянный `modbus_slot` из реестра;
+        приборы без слота (симуляция стенда) занимают свободные слоты по порядку списка."""
         placed: list[tuple[int, dict[str, Any]]] = []
         used: set[int] = set()
         rest: list[dict[str, Any]] = []
         for inst in instruments:
             slot = inst.get("modbus_slot")
-            if isinstance(slot, int) and 0 <= slot < cls.MAX_SLOTS and slot not in used:
+            if isinstance(slot, int) and not isinstance(slot, bool) and 0 <= slot < cls.MAX_SLOTS and slot not in used:
                 placed.append((slot, inst))
                 used.add(slot)
             else:
@@ -145,27 +219,82 @@ class ModbusTcpGateway:
         placed.sort(key=lambda t: t[0])
         return placed
 
+    def _clear_slot(self, slot: int) -> None:
+        """Переводит освободившийся слот удалённого прибора в состояние NaN / STALE во всех 3 блоках."""
+        base = slot * 4
+        self._regs[base] = _IEEE754_QNAN_HI
+        self._regs[base + 1] = _IEEE754_QNAN_LO
+        self._regs[base + 2] = 3  # STALE
+        self._regs[base + 3] = 0
+
+        ext = self.EXTENDED_BASE + slot * self.EXTENDED_STRIDE
+        self._regs[ext + 0] = 65535
+        self._regs[ext + 1] = 0
+        self._regs[ext + 2] = FLAG_READING_STALE
+        self._regs[ext + 3] = 0
+        self._regs[ext + 4] = 0
+        self._regs[ext + 5] = _IEEE754_QNAN_HI
+        self._regs[ext + 6] = _IEEE754_QNAN_LO
+        self._regs[ext + 7] = 0
+
+        if slot < self.PREDICTIVE_MAX_INSTRUMENTS:
+            p_base = self.PREDICTIVE_BASE + slot * self.PREDICTIVE_STRIDE
+            self._regs[p_base + 0] = _IEEE754_QNAN_HI
+            self._regs[p_base + 1] = _IEEE754_QNAN_LO
+            self._regs[p_base + 2] = _IEEE754_QNAN_HI
+            self._regs[p_base + 3] = _IEEE754_QNAN_LO
+            self._regs[p_base + 4] = 0
+            self._regs[p_base + 5] = 0
+            self._regs[p_base + 6] = 6  # insufficient_data
+            self._regs[p_base + 7] = 0
+
+    @property
+    def heartbeat(self) -> int:
+        return self._heartbeat
+
+    @property
+    def sync_frozen(self) -> bool:
+        return self._sync_frozen
+
+    def set_sync_frozen(self, frozen: bool) -> bool:
+        """
+        Приостанавливает обновление регистров и heartbeat при сохранении TCP-соединения
+        (для проверки обнаружения «зависания» без обрыва сокета на стенде).
+        """
+        self._sync_frozen = bool(frozen)
+        return self._sync_frozen
+
     def update_from_instruments(
         self,
         instruments: list[dict[str, Any]],
         *,
         health_by_id: dict[str, float] | None = None,
+        predictive_by_id: dict[str, dict[str, Any]] | None = None,
         sf_pending: int = 0,
         outage_active: bool = False,
+        advance_heartbeat: bool = True,
+        now_unix: float | None = None,
     ) -> None:
+        if self._sync_frozen:
+            return
+        now_s = float(time.time() if now_unix is None else now_unix)
+        now_u32 = max(0, min(0xFFFFFFFF, int(now_s)))
         hmap = health_by_id or {}
+        pmap = predictive_by_id or {}
         rows: list[dict[str, Any]] = []
         crit_cnt = warn_cnt = stale_cnt = 0
+        pred_anom_cnt = pred_imminent_cnt = 0
 
         placed = self.place_instruments(instruments)
-        for slot in self._used_slots - {k for k, _ in placed}:
-            # прибор удалён: его слот больше не выдаёт последнее значение как достоверное
-            b = slot * 4
-            self._regs[b], self._regs[b + 1] = _IEEE754_QNAN_HI, _IEEE754_QNAN_LO
-            self._regs[b + 2], self._regs[b + 3] = 3, 0
-        self._used_slots = {k for k, _ in placed}
+        active_slots = {k for k, _ in placed}
+        for removed_slot in self._used_slots - active_slots:
+            self._clear_slot(removed_slot)
+        self._used_slots = active_slots
+
         for idx, inst in placed:
             base = idx * 4
+            ext = self.EXTENDED_BASE + idx * self.EXTENDED_STRIDE
+            inst_key = str(inst.get("instrument_id") or inst["id"])
             rd = inst.get("reading") or {}
             raw_v = rd.get("value")
             valid = bool(rd.get("valid")) and raw_v is not None
@@ -189,7 +318,7 @@ class ModbusTcpGateway:
             elif code == 3:
                 stale_cnt += 1
 
-            raw_hs = hmap.get(inst["id"], 100.0 if code == 0 else (72.0 if code == 1 else 42.0))
+            raw_hs = hmap.get(inst_key, hmap.get(inst["id"], 100.0 if code == 0 else (72.0 if code == 1 else 42.0)))
             try:
                 hs = float(raw_hs)
                 if not math.isfinite(hs):
@@ -199,7 +328,7 @@ class ModbusTcpGateway:
             hs_u16 = max(0, min(1000, int(round(hs * 10.0))))
 
             if valid and val is not None:
-                hi, lo = struct.unpack(">HH", struct.pack(">f", val))
+                hi, lo = _pack_f32_words(val)
             else:
                 # IEEE-754 quiet NaN (0x7FC00000): исключает путаницу невалидного датчика с нулевым значением 0.0
                 hi, lo = _IEEE754_QNAN_HI, _IEEE754_QNAN_LO
@@ -209,22 +338,162 @@ class ModbusTcpGateway:
             self._regs[base + 2] = code
             self._regs[base + 3] = hs_u16
 
+            # Расширенный блок прибора (v2): возраст, уверенность, флаги, время/значение последнего валидного отсчёта
+            last_valid_unix = _parse_iso_unix(rd.get("last_valid_ts"))
+            if last_valid_unix is None and valid:
+                last_valid_unix = _parse_iso_unix(rd.get("ts")) or now_u32
+            last_valid_unix_u32 = last_valid_unix if last_valid_unix is not None else 0
+
+            raw_age = rd.get("age_s")
+            if raw_age is None:
+                raw_age = inst.get("reading_age_s")
+            age_s_val: float | None = None
+            if raw_age is not None:
+                try:
+                    af = float(raw_age)
+                    if math.isfinite(af) and af >= 0.0:
+                        age_s_val = af
+                except (TypeError, ValueError):
+                    age_s_val = None
+            if age_s_val is None:
+                if valid:
+                    age_s_val = max(0.0, now_s - float(last_valid_unix_u32)) if last_valid_unix_u32 > 0 else 0.0
+                elif last_valid_unix_u32 > 0:
+                    age_s_val = max(0.0, now_s - float(last_valid_unix_u32))
+            age_u16 = 65535 if age_s_val is None else max(0, min(65535, int(round(age_s_val))))
+
+            raw_conf = rd.get("confidence")
+            conf_avail = False
+            conf_val: float | None = None
+            if raw_conf is not None:
+                try:
+                    cf = float(raw_conf)
+                    if math.isfinite(cf):
+                        conf_avail = True
+                        conf_val = max(0.0, min(1.0, cf))
+                except (TypeError, ValueError):
+                    conf_avail = False
+            conf_u16 = int(round(conf_val * 1000.0)) if conf_val is not None else 0
+
+            cal = inst.get("calibration") or {}
+            cal_set = False
+            try:
+                v_min = cal.get("v_min")
+                v_max = cal.get("v_max")
+                if v_min is not None and v_max is not None and float(v_min) != float(v_max):
+                    cal_set = True
+            except (TypeError, ValueError):
+                cal_set = False
+
+            cam_online = (inst.get("status") == "online") or (inst.get("conn_state") in ("connected", "simulated"))
+            if "dial_detected" in rd:
+                dial_det = bool(rd.get("dial_detected"))
+            else:
+                dial_det = bool(valid or (rd.get("angle") is not None))
+            is_sim = inst.get("source_kind") == "simulated" or inst.get("type") == "simulated"
+
+            flags = 0
+            if cam_online:
+                flags |= FLAG_CAMERA_ONLINE
+            if dial_det:
+                flags |= FLAG_DIAL_DETECTED
+            if valid:
+                flags |= FLAG_READING_VALID
+            if cal_set:
+                flags |= FLAG_CALIBRATION_SET
+            if is_sim:
+                flags |= FLAG_IS_SIMULATED
+            if conf_avail:
+                flags |= FLAG_CONFIDENCE_AVAIL
+            if code == 3:
+                flags |= FLAG_READING_STALE
+            if code in (1, 2):
+                flags |= FLAG_ALARM_ACTIVE
+
+            last_valid_v: float | None = val if valid else None
+            if last_valid_v is None and rd.get("last_valid_value") is not None:
+                try:
+                    lvf = float(rd.get("last_valid_value"))
+                    if math.isfinite(lvf):
+                        last_valid_v = lvf
+                except (TypeError, ValueError):
+                    last_valid_v = None
+
+            ts_hi, ts_lo = _pack_u32_words(last_valid_unix_u32)
+            lv_hi, lv_lo = _pack_f32_words(last_valid_v)
+
+            self._regs[ext + 0] = age_u16
+            self._regs[ext + 1] = conf_u16
+            self._regs[ext + 2] = flags
+            self._regs[ext + 3] = ts_hi
+            self._regs[ext + 4] = ts_lo
+            self._regs[ext + 5] = lv_hi
+            self._regs[ext + 6] = lv_lo
+            self._regs[ext + 7] = 0
+
+            # Прогнозный блок прибора (3600 + idx*8, обратно совместимо в рамках 0..4095)
+            pinfo = pmap.get(inst_key) or pmap.get(inst["id"]) or {}
+            eta_alert = pinfo.get("eta_alert_min")
+            eta_warn = pinfo.get("eta_warning_min")
+            prob_alert = float(pinfo.get("breach_prob_alert_horizon") or 0.0)
+            anom_score = float(pinfo.get("anomaly_score") or 0.0)
+            trend_code = int((pinfo.get("trend_meta") or {}).get("code_num", 6))
+            pred_conf = float(pinfo.get("forecast_confidence") or 0.0)
+            if anom_score >= 45.0:
+                pred_anom_cnt += 1
+            if prob_alert >= 0.5 or (eta_alert is not None and float(eta_alert) <= 60.0):
+                pred_imminent_cnt += 1
+
+            p_base = self.PREDICTIVE_BASE + idx * self.PREDICTIVE_STRIDE
+            if idx < self.PREDICTIVE_MAX_INSTRUMENTS:
+                ea_hi, ea_lo = _pack_f32_words(None if eta_alert is None else float(eta_alert))
+                ew_hi, ew_lo = _pack_f32_words(None if eta_warn is None else float(eta_warn))
+                self._regs[p_base + 0] = ea_hi
+                self._regs[p_base + 1] = ea_lo
+                self._regs[p_base + 2] = ew_hi
+                self._regs[p_base + 3] = ew_lo
+                self._regs[p_base + 4] = max(0, min(1000, int(round(prob_alert * 1000.0))))
+                self._regs[p_base + 5] = max(0, min(1000, int(round(anom_score * 10.0))))
+                self._regs[p_base + 6] = max(0, min(15, trend_code))
+                self._regs[p_base + 7] = max(0, min(1000, int(round(pred_conf * 1000.0))))
+
             rows.append({
-                "instrument_id": inst["id"],
+                "instrument_id": inst_key,
                 "modbus_slot": idx,
-                "code": inst.get("code") or inst["id"],
+                "code": inst.get("code") or inst_key,
                 "name": inst.get("short_name") or inst.get("name") or "",
                 "unit": inst.get("unit") or "",
                 "hr_value": 40001 + base,
                 "hr_status": 40001 + base + 2,
                 "hr_health": 40001 + base + 3,
+                "hr_ext_base": 40001 + ext,
+                "hr_pred_base": (40001 + p_base) if idx < self.PREDICTIVE_MAX_INSTRUMENTS else None,
                 "value": round(val, 4) if (valid and val is not None) else None,
                 "ieee754_nan": not valid,
                 "raw_hi": hi,
                 "raw_lo": lo,
                 "status_code": code,
                 "health_score": round(hs, 1),
+                "reading_age_s": None if age_u16 == 65535 else age_u16,
+                "confidence": round(conf_val, 3) if conf_val is not None else None,
+                "confidence_x1000": conf_u16,
+                "state_flags": flags,
+                "last_valid_unix": last_valid_unix_u32,
+                "last_valid_value": round(last_valid_v, 4) if last_valid_v is not None else None,
+                "eta_alert_min": eta_alert,
+                "eta_warning_min": eta_warn,
+                "breach_prob_alert": round(prob_alert, 4),
+                "anomaly_score": round(anom_score, 1),
+                "trend_code": trend_code,
             })
+
+        if advance_heartbeat:
+            self._heartbeat = (self._heartbeat + 1) & 0xFFFF
+            self._last_sync_unix = now_u32
+        elif self._last_sync_unix == 0:
+            self._last_sync_unix = now_u32
+
+        sync_hi, sync_lo = _pack_u32_words(self._last_sync_unix)
 
         self._regs[self.SYSTEM_BASE + 0] = min(65535, len(instruments))
         self._regs[self.SYSTEM_BASE + 1] = min(65535, crit_cnt)
@@ -232,6 +501,16 @@ class ModbusTcpGateway:
         self._regs[self.SYSTEM_BASE + 3] = min(65535, stale_cnt)
         self._regs[self.SYSTEM_BASE + 4] = min(65535, max(0, int(sf_pending)))
         self._regs[self.SYSTEM_BASE + 5] = 1 if outage_active else 0
+        self._regs[self.SYSTEM_BASE + 6] = self._heartbeat
+        self._regs[self.SYSTEM_BASE + 7] = sync_hi
+        self._regs[self.SYSTEM_BASE + 8] = sync_lo
+        self._regs[self.SYSTEM_BASE + 9] = self.REGISTER_MAP_VERSION
+        self._regs[self.SYSTEM_BASE + 10] = self.EXTENDED_BASE
+        self._regs[self.SYSTEM_BASE + 11] = self.EXTENDED_STRIDE
+        self._regs[self.SYSTEM_BASE + 12] = min(65535, pred_anom_cnt)
+        self._regs[self.SYSTEM_BASE + 13] = min(65535, pred_imminent_cnt)
+        self._regs[self.SYSTEM_BASE + 14] = self.PREDICTIVE_BASE
+        self._regs[self.SYSTEM_BASE + 15] = self.PREDICTIVE_STRIDE
         self._meta_rows = rows
 
     async def start(self) -> None:
@@ -258,14 +537,22 @@ class ModbusTcpGateway:
         self._listening = False
 
     async def _handle_client(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
+        if self._active_clients >= self.MAX_CLIENTS:
+            self._rejected_clients += 1
+            writer.close()
+            try:
+                await writer.wait_closed()
+            except Exception:
+                pass
+            return
         self._active_clients += 1
         try:
             while True:
-                mbap = await reader.readexactly(7)
+                mbap = await asyncio.wait_for(reader.readexactly(7), timeout=self.CLIENT_IDLE_TIMEOUT_S)
                 tx_id, proto_id, length, unit_id = struct.unpack(">HHHB", mbap)
                 if proto_id != 0 or length < 2 or length > 256:
                     break
-                pdu = await reader.readexactly(length - 1)
+                pdu = await asyncio.wait_for(reader.readexactly(length - 1), timeout=10.0)
                 fc = pdu[0]
                 # Строгая проверка Unit ID (DEF-13): чужой unit_id отклоняется кодом 0x0B
                 if unit_id != config.MODBUS_UNIT_ID:
@@ -290,7 +577,7 @@ class ModbusTcpGateway:
                 resp_mbap = struct.pack(">HHHB", tx_id, 0, len(resp_pdu) + 1, unit_id)
                 writer.write(resp_mbap + resp_pdu)
                 await writer.drain()
-        except (asyncio.IncompleteReadError, ConnectionResetError, BrokenPipeError):
+        except (asyncio.IncompleteReadError, asyncio.TimeoutError, ConnectionResetError, BrokenPipeError):
             pass
         finally:
             self._active_clients = max(0, self._active_clients - 1)
@@ -307,15 +594,21 @@ class ModbusTcpGateway:
             "host": config.MODBUS_HOST,
             "port": config.MODBUS_PORT,
             "unit_id": config.MODBUS_UNIT_ID,
-            "registers_mapped": len(self._meta_rows) * 4 + 6,
+            "register_map_version": self.REGISTER_MAP_VERSION,
+            "max_registers": self.MAX_REGISTERS,
+            "registers_mapped": len(self._meta_rows) * (4 + self.EXTENDED_STRIDE) + 12,
             "requests_served": self._requests_served,
             "rejected_unit_ids": self._rejected_unit_ids,
             "active_clients": self._active_clients,
+            "heartbeat": self._heartbeat,
+            "last_sync_unix": self._last_sync_unix,
+            "sync_frozen": self._sync_frozen,
             "stale_encoding": "IEEE-754 NaN (0x7FC00000)",
             "last_error": self._last_error,
         }
 
     def registers_snapshot(self, limit: int = 36) -> dict[str, Any]:
+        sync_u32 = (self._regs[self.SYSTEM_BASE + 7] << 16) | self._regs[self.SYSTEM_BASE + 8]
         return {
             "status": self.status(),
             "system": {
@@ -325,6 +618,15 @@ class ModbusTcpGateway:
                 "HR40904_stale_channels": self._regs[self.SYSTEM_BASE + 3],
                 "HR40905_sf_queue_pending": self._regs[self.SYSTEM_BASE + 4],
                 "HR40906_outage_flag": self._regs[self.SYSTEM_BASE + 5],
+                "HR40907_heartbeat": self._regs[self.SYSTEM_BASE + 6],
+                "HR40908_last_sync_unix": sync_u32,
+                "HR40910_register_map_version": self._regs[self.SYSTEM_BASE + 9],
+                "HR40911_extended_base": self._regs[self.SYSTEM_BASE + 10],
+                "HR40912_extended_stride": self._regs[self.SYSTEM_BASE + 11],
+                "HR40913_predictive_anomalies": self._regs[self.SYSTEM_BASE + 12],
+                "HR40914_predictive_imminent_alerts": self._regs[self.SYSTEM_BASE + 13],
+                "HR40915_predictive_base": self._regs[self.SYSTEM_BASE + 14],
+                "HR40916_predictive_stride": self._regs[self.SYSTEM_BASE + 15],
             },
             "instruments": self._meta_rows[:limit],
         }

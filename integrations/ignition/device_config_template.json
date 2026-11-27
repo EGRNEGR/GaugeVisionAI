@@ -1,0 +1,49 @@
+{
+  "name": "GaugeVisionModbus",
+  "collection": "core",
+  "enabled": true,
+  "description": "GaugeVision AI Modbus TCP Gateway (read-only laboratory loop 127.0.0.1:15020, Unit ID 1)",
+  "config": {
+    "profile": {
+      "type": "ModbusTcp"
+    },
+    "settings": {
+      "connectivity": {
+        "hostname": "127.0.0.1",
+        "port": 15020,
+        "localAddress": "127.0.0.1",
+        "communicationTimeout": 2000
+      },
+      "requestOptimization": {
+        "maxHoldingRegistersPerRequest": 120,
+        "maxHoldingRegistersPerWriteRequest": 1,
+        "maxInputRegistersPerRequest": 120,
+        "maxCoilsPerRequest": 2000,
+        "maxDiscreteInputsPerRequest": 2000,
+        "concurrentRequests": 1,
+        "spanGaps": true
+      },
+      "writeRequests": {
+        "writeMultipleRegistersRequestAllowed": false,
+        "forceMultipleRegisterWritesEnabled": false,
+        "writeMultipleCoilsRequestAllowed": false
+      },
+      "readRequests": {
+        "readMultipleRegistersRequestAllowed": true,
+        "readMultipleCoilsAllowed": true,
+        "readMultipleDiscreteInputsAllowed": true
+      },
+      "advanced": {
+        "reconnectAfterConsecutiveTimeouts": true,
+        "reverseWordOrder": false,
+        "zeroBasedAddressing": true,
+        "maxRetryCount": 1
+      },
+      "stringHandling": {
+        "reverseByteOrder": false,
+        "rightJustifyStrings": false,
+        "readRawStrings": false
+      }
+    }
+  }
+}

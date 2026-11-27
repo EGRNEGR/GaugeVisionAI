@@ -1,0 +1,53 @@
+{
+  "multigauge_contract_pipeline_to_docx": {
+    "status": "CONTRACT_FIXTURE_VERIFIED",
+    "instruments_on_one_camera": 3,
+    "modbus_slots": [
+      0,
+      36,
+      37
+    ],
+    "inst1_eta_alert_min": 60.0,
+    "opt_status": "optimal",
+    "docx_bytes": 39688
+  },
+  "modbus_slot_stability": {
+    "status": "CONTRACT_FIXTURE_VERIFIED",
+    "deleted_slot_36_cleared": true,
+    "register_overlaps": 0
+  },
+  "legacy_db_migration": {
+    "status": "CONTRACT_FIXTURE_VERIFIED",
+    "legacy_rows_preserved": 21
+  },
+  "pending_merge_checks": [
+    {
+      "check_id": "INT-MG-01",
+      "name": "Live SQLite `instruments` table CRUD & `POST /api/sources/{source_id}/instruments`",
+      "status": "SKIPPED_PENDING_MERGE",
+      "owner_branch": "next-gen/platform",
+      "reason": "Таблица `instruments` и REST-эндпоинты управления логическими приборами находятся в параллельной ветке Claude (`next-gen/platform`)."
+    },
+    {
+      "check_id": "INT-MG-02",
+      "name": "Live Multi-Gauge Vision detector & ROI tracker (`app/vision.py`) -> multi-instrument telemetry",
+      "status": "SKIPPED_PENDING_MERGE",
+      "owner_branch": "next-gen/platform",
+      "reason": "Конвейер многоприборного зрения в `app/vision.py` разрабатывается Claude и не объединён с текущей веткой."
+    },
+    {
+      "check_id": "INT-AC-01",
+      "name": "Live Auto Calibration (`POST /api/instruments/{id}/autocalibrate` & `/calibration/confirm`, `calibration_rev` isolation)",
+      "status": "SKIPPED_PENDING_MERGE",
+      "owner_branch": "next-gen/platform",
+      "reason": "Автокалибровка и смена `calibration_rev` реализуются в ветке `next-gen/platform`."
+    },
+    {
+      "check_id": "INT-SCADA-02",
+      "name": "Live Ignition 8.3.10 multi-gauge Perspective tag reconciliation after branch merge",
+      "status": "SKIPPED_PENDING_MERGE",
+      "owner_branch": "merged next-gen integration branch",
+      "reason": "Требует объединённого стенда (Multi-Gauge Vision + Modbus `place_instruments` + запущенный Ignition Gateway)."
+    }
+  ]
+}
