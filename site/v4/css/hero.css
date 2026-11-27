@@ -23,7 +23,7 @@
 .gv-hero__scrim {
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(5, 7, 11, 0.9) 0%, rgba(5, 7, 11, 0.55) 38%, rgba(5, 7, 11, 0) 62%),
+    linear-gradient(90deg, rgba(5, 7, 11, 0.94) 0%, rgba(5, 7, 11, 0.86) 38%, rgba(5, 7, 11, 0.5) 55%, rgba(5, 7, 11, 0) 72%),
     linear-gradient(0deg, rgba(5, 7, 11, 0.95) 0%, rgba(5, 7, 11, 0) 32%),
     linear-gradient(180deg, rgba(5, 7, 11, 0.6) 0%, rgba(5, 7, 11, 0) 22%);
   opacity: 0.55;
@@ -66,6 +66,7 @@
 .gv-hero__copy { display: grid; gap: var(--space-5); justify-items: start; max-width: 54rem; will-change: transform, opacity; }
 
 .gv-hero__kicker {
+  text-shadow: 0 1px 10px rgba(5, 7, 11, 0.9);
   display: inline-flex;
   align-items: center;
   gap: var(--space-3);
@@ -90,7 +91,7 @@
 .gv-hero__title-line { display: block; animation: gv-rise var(--dur-crawl) var(--ease-out) both; animation-delay: calc(120ms + var(--i) * 140ms); }
 .gv-hero__title-line + .gv-hero__title-line { color: var(--accent-strong); }
 
-.gv-hero__line { max-width: 44ch; font-size: var(--fs-l); line-height: 1.5; color: var(--text-muted); animation: gv-rise var(--dur-crawl) var(--ease-out) 420ms both; }
+.gv-hero__line { max-width: 44ch; font-size: var(--fs-l); line-height: 1.5; color: var(--text-primary); text-shadow: 0 1px 14px rgba(5, 7, 11, 0.9); animation: gv-rise var(--dur-crawl) var(--ease-out) 420ms both; }
 .gv-hero__ctas { display: flex; flex-wrap: wrap; gap: var(--space-3); animation: gv-rise var(--dur-crawl) var(--ease-out) 560ms both; }
 .gv-hero__ctas .gv-btn--ghost { background: rgba(5, 7, 11, 0.5); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 
@@ -173,7 +174,7 @@
   .gv-cvp { position: absolute; top: calc(var(--header-h) + var(--telemetry-h) + var(--space-4)); right: var(--gutter); width: 15rem; padding: var(--space-3); }
   .gv-cvp__reads { grid-template-columns: 1fr 1fr; gap: var(--space-2); }
   .gv-hero__scroll { display: none; }
-  .gv-hero__scrim { background: linear-gradient(0deg, rgba(5, 7, 11, 0.96) 0%, rgba(5, 7, 11, 0.5) 45%, rgba(5, 7, 11, 0.2) 70%), linear-gradient(180deg, rgba(5, 7, 11, 0.7), transparent 30%); }
+  .gv-hero__scrim { background: linear-gradient(0deg, rgba(5, 7, 11, 0.96) 0%, rgba(5, 7, 11, 0.9) 55%, rgba(5, 7, 11, 0.5) 76%, rgba(5, 7, 11, 0.15) 90%), linear-gradient(180deg, rgba(5, 7, 11, 0.7), transparent 30%); }
 }
 
 @media (max-width: 560px) {

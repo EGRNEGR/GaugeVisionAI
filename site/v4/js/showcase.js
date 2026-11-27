@@ -40,7 +40,7 @@
 
     /* На проекторе 16:9 заголовок секции и живая демонстрация не помещаются вместе: шаг прокручивает
        к самой демонстрации и центрирует её в области над пультом; высокий блок прижимается к верху */
-    var FOCUS = { multigauge: '.gv-mg', resilience: '.gv-sf__sim', forecast: '.gv-fcw', optimizer: '.gv-opt', document: '.gv-docw' };
+    var FOCUS = { multigauge: '.gv-mg', scada: '.gv-scada__grid', resilience: '.gv-sf__sim', forecast: '.gv-fcw', optimizer: '.gv-opt', document: '.gv-docw' };
     function section(id) { return document.getElementById(id); }
     function scrollTo(id) {
       var sec = section(id);

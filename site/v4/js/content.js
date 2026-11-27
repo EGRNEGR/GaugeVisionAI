@@ -165,7 +165,7 @@
         src: 'assets/video/gauge_pullback.scrub.mp4',
         srcMobile: 'assets/video/gauge_pullback.scrub-m.mp4',
         poster: 'assets/img/poster.jpg',
-        label: 'Камера отъезжает от манометра в котельной; поверх — разметка компьютерного зрения'
+        label: 'Иллюстративный ролик: камера отъезжает от манометра в котельной'
       },
       hud: [
         { at: 0.0, code: '01', text: 'Кадр камеры' },
@@ -523,12 +523,13 @@
     showcase: {
       title: 'GaugeVision AI 3.0 — демонстрация',
       hint: '→ далее, ← назад, P пауза, R заново, F полный экран, Esc выход',
-      modes: { sim: 'Симуляция', illustration: 'Иллюстрация', record: 'Снимок приложения', real: 'Реальное приложение', evidence: 'Доказательство испытаний' },
+      modes: { sim: 'Симуляция', illustration: 'Иллюстрация', record: 'Запись приложения', real: 'Снимок реального приложения', evidence: 'Доказательство испытаний' },
       steps: [
         { target: 'hero', progress: 0.45, mode: 'illustration', title: 'Обычный стрелочный прибор', text: 'Камера смотрит на манометр снаружи — без врезки в процесс и останова.' },
         { target: 'story', scene: 1, mode: 'sim', title: 'Компьютерное зрение', text: 'Нейросеть находит прибор, геометрия выпрямляет циферблат, угол стрелки по калибровке становится числом.' },
         { target: 'multigauge', count: 8, mode: 'evidence', title: 'Один прибор — целый щит', text: 'Восемь приборов на кадре: у каждого свой код и канал.' },
         { target: 'story', scene: 3, mode: 'sim', title: 'Данные в системе мониторинга', text: 'Каждый прибор — отдельный поток значений со статусом достоверности.' },
+        { target: 'scada', mode: 'real', title: 'Данные в Ignition SCADA', text: 'Ignition 8.3.10 Perspective получает показания GaugeVision по Modbus TCP: 19 из 19 этапов сквозного испытания. Лабораторный стенд.' },
         { target: 'resilience', action: 'cut', mode: 'sim', title: 'Связь потеряна', text: 'Распознавание продолжается, сообщения копятся в очереди.' },
         { target: 'resilience', action: 'hold', mode: 'sim', title: 'Очередь растёт', text: 'Ни одно показание не теряется.' },
         { target: 'resilience', action: 'restore', mode: 'sim', title: 'Связь восстановлена', text: 'Очередь досылается в исходном порядке. В испытании: 10 309 из 10 309.' },
