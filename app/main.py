@@ -1919,6 +1919,27 @@ async def _validation_error_handler(request: Request, exc: RequestValidationErro
 
 @app.middleware("http")
 async def _security_headers(request: Request, call_next):  # type: ignore[no-untyped-def]
+    # Защита от исчерпания памяти: ограничение размера тела HTTP-запроса (10 МБ)
+    cl_raw = request.headers.get("content-length")
+    if cl_raw:
+        try:
+            if int(cl_raw) > 10 * 1024 * 1024:
+                return JSONResponse({"detail": "Размер тела запроса превышает допустимый лимит (10 МБ)"}, status_code=413)
+        except ValueError:
+            return JSONResponse({"detail": "Некорректный заголовок Content-Length"}, status_code=400)
+    # Дополнительная CSRF-проверка Origin для изменяющих запросов с cookie-сессией (defense-in-depth к SameSite=Strict)
+    if request.method in ("POST", "PUT", "PATCH", "DELETE") and request.cookies.get(auth.SESSION_COOKIE_NAME):
+        origin_hdr = (request.headers.get("origin") or "").strip()
+        if origin_hdr:
+            from urllib.parse import urlsplit as _urlsplit
+            host_hdr = (request.headers.get("host") or "").strip().lower()
+            try:
+                ohost = (_urlsplit(origin_hdr).netloc or "").lower()
+            except ValueError:
+                ohost = ""
+            allowed_cors = {o.strip().lower() for o in config.CORS_ORIGINS.split(",") if o.strip()}
+            if ohost != host_hdr and origin_hdr.lower() not in allowed_cors:
+                return JSONResponse({"detail": "Отклонено политикой CSRF (несовпадение Origin)"}, status_code=403)
     response = await call_next(request)
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
     response.headers.setdefault("Referrer-Policy", "no-referrer")
@@ -2156,6 +2177,7 @@ async def api_vision_models(_user: dict[str, Any] = Depends(auth.require_role("o
 @app.post("/api/vision/profile")
 async def api_vision_set_profile(
     body: VisionProfileRequest,
+    request: Request,
     _user: dict[str, Any] = Depends(auth.require_role("engineer")),
 ) -> dict[str, Any]:
     prev = vision.get_vision_profile()
@@ -2163,6 +2185,14 @@ async def api_vision_set_profile(
     if active != prev:
         service.emit("config", cam_id=None, cam_name="Vision Engine",
                      text=f"vision_profile:{prev}->{active}")
+        await db.log_audit(
+            username=_user.get("username"),
+            role=_user.get("role"),
+            action="SET_VISION_PROFILE",
+            target=f"{prev}->{active}",
+            status_code=200,
+            ip=request.client.host if request.client else None,
+        )
     return vision.vision_engine_status()
 
 

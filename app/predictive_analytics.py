@@ -165,6 +165,52 @@ def _robust_recent_level(y: np.ndarray, *, alpha: float = 0.28) -> float:
     return float(level)
 
 
+def _robust_damped_holt(
+    x: np.ndarray,
+    y: np.ndarray,
+    *,
+    alpha: float = 0.30,
+    beta: float = 0.12,
+    phi: float = 0.88,
+) -> tuple[float, float, float]:
+    """
+    Робастное двойное экспоненциальное сглаживание Хольта с затуханием тренда
+    (Huber-клиппинг одиночных выбросов CV > 3.5 * MAD).
+    Возвращает (level_now, slope_per_min, damp_tau_min).
+    """
+    n = len(y)
+    if n < 3:
+        return float(y[-1]) if n else 0.0, 0.0, 10.0
+    dt_arr = np.diff(x)
+    pos_dt = dt_arr[dt_arr > 1e-4]
+    dt_med = float(np.median(pos_dt)) if len(pos_dt) else 1.0
+
+    med = float(np.median(y))
+    mad = float(np.median(np.abs(y - med))) * 1.4826
+    iqr_clip = float(np.percentile(y, 90) - np.percentile(y, 10)) * 0.75
+    clip_lim = max(3.5 * mad, iqr_clip, 1e-6)
+
+    level = float(np.median(y[:3]))
+    trend = float(np.median(np.diff(y[: min(6, n)]))) if n >= 4 else float(y[1] - y[0])
+    trend = max(-clip_lim * 0.5, min(clip_lim * 0.5, trend))
+
+    for val in y[1:]:
+        pred = level + phi * trend
+        vf = float(val)
+        err = vf - pred
+        if abs(err) > clip_lim:
+            vf = pred + math.copysign(clip_lim * 0.45, err)
+        prev_l = level
+        level = alpha * vf + (1.0 - alpha) * pred
+        trend = beta * (level - prev_l) + (1.0 - beta) * phi * trend
+
+    # Преобразуем дискретный затухающий шаг phi в эквивалентную непрерывную постоянную времени tau:
+    # sum_{k=1..h/dt} phi^k ≈ (phi / (1 - phi)) * (1 - exp(-h / tau)), где tau = -dt / ln(phi)
+    slope_per_min = (phi * trend) / max(dt_med, 1e-4)
+    damp_tau_min = max(2.0, -dt_med / math.log(max(0.50, min(0.99, phi))))
+    return float(level), float(slope_per_min), float(damp_tau_min)
+
+
 def _h_effective(h: float, damp_tau: float | None) -> float:
     """Непрерывное экспоненциальное затухание тренда: h_eff(h) = tau * (1 - exp(-h / tau))."""
     if damp_tau is None or damp_tau <= 0.0 or h <= 0.0:
@@ -568,18 +614,24 @@ class PredictiveAnalyzer:
             slope = slope_raw
             damp_tau: float | None = None
             slope_shrink = 1.0
+            holt_fast: tuple[float, float, float] | None = None
         else:
-            # Робастный актуальный уровень процесса (устраняет лаг WLS после смены режима)
-            recent_lvl = _robust_recent_level(y, alpha=0.28)
-            anchor_w = max(0.0, min(0.85, 0.85 * (1.0 - r2_w)))
-            b0 = (1.0 - anchor_w) * b0_raw + anchor_w * recent_lvl
+            # Робастный локальный затухающий Хольт (быстро отслеживает смену режима и
+            # приближение к уставке, не перелетая на длинных горизонтах)
+            holt_lvl, holt_slope, holt_tau = _robust_damped_holt(x, y, alpha=0.28, beta=0.08, phi=0.85)
+            # Быстрый локальный Хольт для раннего обнаружения пробоя уставок (ETA / breach_prob)
+            holt_fast = _robust_damped_holt(x, y, alpha=0.30, beta=0.12, phi=0.88)
+            anchor_w = max(0.0, min(0.88, 0.88 * (1.0 - r2_w)))
+            b0 = (1.0 - anchor_w) * b0_raw + anchor_w * holt_lvl
 
-            # Эмпирико-байесовское сжатие слабозначимого наклона (защита от ложных срабатываний на шуме)
+            # Эмпирико-байесовское сжатие глобального наклона + умеренный локальный импульс Хольта
             slope_shrink = (t_slope_ac * t_slope_ac) / (t_slope_ac * t_slope_ac + 3.0)
-            slope = slope_raw * slope_shrink * (0.35 + 0.65 * r2_w)
-            # Константа затухания тренда: плавный переход к асимптоте на длинных горизонтах
+            global_slope = slope_raw * slope_shrink * (0.35 + 0.65 * r2_w)
+            local_w = max(0.25, min(0.58, 0.58 * (1.0 - r2_w)))
+            slope = (1.0 - local_w) * global_slope + local_w * holt_slope
+            # Константа затухания тренда согласована с локальным затуханием Хольта
             span_min_eff = max(5.0, actual_span_s / 60.0)
-            damp_tau = max(5.0, span_min_eff * (0.18 + 0.50 * r2_w))
+            damp_tau = max(3.5, min(span_min_eff * (0.20 + 0.50 * r2_w), holt_tau * 1.05))
 
         # 3. Ускорение тренда (сравнение ранней и поздней половин окна)
         mid = len(x) // 2
@@ -741,6 +793,17 @@ class PredictiveAnalyzer:
                     if 0.0 < raw_eta <= self.MAX_ETA_MIN:
                         eta_med = round(raw_eta, 2)
 
+            # Дополнительная локальная оценка ETA по быстрому затухающему Хольту (нелинейный режим):
+            # позволяет вовремя фиксировать нарастающий дрейф к уставке без перелёта на длинных горизонтах
+            if holt_fast is not None:
+                hf_lvl, hf_slope, hf_tau = holt_fast
+                if (direction * hf_slope) > max(span * 1e-6, 1e-9):
+                    need_hf = (tval - hf_lvl) / hf_slope
+                    if 0.0 < need_hf < hf_tau * 0.9999:
+                        hf_eta = -hf_tau * math.log(1.0 - need_hf / hf_tau)
+                        if 0.0 < hf_eta <= self.MAX_ETA_MIN:
+                            eta_med = round(min(eta_med, hf_eta) if eta_med is not None else hf_eta, 2)
+
             # Пессимистичная (ранняя) граница — пересечение внешней границы 95% ДИ в сторону уставки
             eta_early = _solve_bound_crossing(
                 b0=b0, slope=slope, se_resid=se_resid_eff, inv_sum_w=inv_neff,
@@ -830,12 +893,25 @@ class PredictiveAnalyzer:
         anomalies: list[dict[str, Any]] = []
         score = 0.0
 
-        if mk["significant"] and slope_pct_min >= 0.03:
+        # Локальный сдвиг уровня (последние 20% окна vs первые 60% окна) — снижает FNR на резких отказах
+        recent_shift_z = 0.0
+        if len(y) >= 12:
+            n_base = max(6, int(len(y) * 0.60))
+            n_rec = max(3, int(len(y) * 0.20))
+            y_base = y[:n_base]
+            y_rec = y[-n_rec:]
+            med_b = float(np.median(y_base))
+            mad_b = float(np.median(np.abs(y_base - med_b))) * 1.4826
+            sd_b = float(np.std(y_base, ddof=1)) if len(y_base) > 1 else 0.0
+            sig_b = max(mad_b, sd_b, span * 0.015, 1e-6)
+            recent_shift_z = abs(float(np.median(y_rec)) - med_b) / sig_b
+
+        if mk["significant"] and slope_pct_min >= 0.14 and (abs(mk["z"]) >= 2.80 or slope_pct_min >= 0.30):
             anomalies.append({
                 "code": "mann_kendall_drift",
                 "severity": "warning" if slope_pct_min < 0.35 else "alert",
                 "metric": f"Z_mk={mk['z']:+.2f}, p={mk['p_value']:.4f}, наклон={slope:+.4f} {ident.unit}/мин",
-                "threshold": "|Z_mk| >= 1.96, p < 0.05",
+                "threshold": "|Z_mk| >= 2.80 (p < 0.005) или наклон >= 0.30%/мин",
                 "description": (
                     f"Статистически значимый {'восходящий' if slope > 0 else 'нисходящий'} дрейф "
                     f"({slope:+.3f} {ident.unit}/мин, критерий Манна-Кендалла p={mk['p_value']:.4f})."
@@ -856,13 +932,13 @@ class PredictiveAnalyzer:
             })
             score += min(35.0, (cusum["max_stat"] - cusum["threshold"] + 2.0) * 6.0)
 
-        accel_sig = abs(accel_z) >= 2.5 and (abs(accel_per_min2) / span * 100.0) >= 0.003 and (slope * accel_per_min2 > 0)
+        accel_sig = abs(accel_z) >= 2.8 and (abs(accel_per_min2) / span * 100.0) >= 0.005 and (slope * accel_per_min2 > 0)
         if accel_sig:
             anomalies.append({
                 "code": "accelerating_drift",
                 "severity": "alert",
                 "metric": f"d²V/dt²={accel_per_min2:+.4f} {ident.unit}/мин², z={accel_z:+.2f}",
-                "threshold": "|z_accel| >= 2.2",
+                "threshold": "|z_accel| >= 2.8",
                 "description": (
                     f"Ускорение тренда в сторону отклонения (z={accel_z:+.2f}, "
                     f"ускорение {accel_per_min2:+.4f} {ident.unit}/мин²)."
@@ -870,12 +946,12 @@ class PredictiveAnalyzer:
             })
             score += min(28.0, abs(accel_z) * 8.0)
 
-        if vol_ratio >= 2.1 and (std_recent / span * 100.0) >= 0.5:
+        if vol_ratio >= 2.3 and (std_recent / span * 100.0) >= 0.7:
             anomalies.append({
                 "code": "volatility_surge",
                 "severity": "warning",
                 "metric": f"vol_ratio={vol_ratio:.2f}×, σ_recent={std_recent:.3f} {ident.unit}",
-                "threshold": "vol_ratio >= 2.1×",
+                "threshold": "vol_ratio >= 2.3×",
                 "description": (
                     f"Аномальный рост колебаний / дребезга во второй половине окна "
                     f"(дисперсия выросла в {vol_ratio:.2f} раза)."
@@ -883,12 +959,14 @@ class PredictiveAnalyzer:
             })
             score += min(22.0, (vol_ratio - 1.5) * 12.0)
 
-        if outliers["count"] >= 2 or outliers["max_abs_mz"] >= 5.0:
+        # Требуем, чтобы резкие выбросы не были единичным старым артефактом
+        recent_outliers = _mad_outliers(y[-max(8, len(y) // 3):], z_limit=3.8)
+        if (outliers["count"] >= 3 and outliers["max_abs_mz"] >= 4.5) or (recent_outliers["count"] >= 2 and recent_outliers["max_abs_mz"] >= 5.5):
             anomalies.append({
                 "code": "mad_outliers",
                 "severity": "warning",
                 "metric": f"выбросов={outliers['count']}, max|Mz|={outliers['max_abs_mz']:.2f}",
-                "threshold": "|Mz| > 3.5",
+                "threshold": "|Mz| > 4.5 (≥3 точек) или свежие выбросы |Mz| > 5.5",
                 "description": (
                     f"Выявлены резкие выбросы в ряде показаний ({outliers['count']} точек, "
                     f"макс. модифицированный Z-score {outliers['max_abs_mz']:.2f})."

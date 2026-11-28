@@ -421,7 +421,12 @@ class FusionNeedleEstimator:
         s = float(dial_bgr.shape[0])
 
         r_kpt = self.kpt.estimate(dial_bgr) if (use_kpt and self.kpt is not None) else None
-        c_norm = (r_kpt.center_px[0] / s, r_kpt.center_px[1] / s) if (r_kpt and r_kpt.center_px) else (0.5, 0.5)
+        # Используем геометрический центр (0.5, 0.5) для SegUNet, если kpt смещён > 10%
+        c_norm = (0.5, 0.5)
+        if r_kpt and r_kpt.center_px:
+            kx, ky = r_kpt.center_px[0] / s, r_kpt.center_px[1] / s
+            if math.hypot(kx - 0.5, ky - 0.5) <= 0.10:
+                c_norm = (0.5 * kx + 0.25, 0.5 * ky + 0.25)
         r_seg = self.seg.estimate(dial_bgr, center_norm=c_norm) if (use_seg and self.seg is not None) else None
         r_cv = estimate_needle_opencv_v2(dial_bgr, allowed) if use_opencv else None
 
@@ -451,22 +456,22 @@ class FusionNeedleEstimator:
         s_ok = r_seg is not None and r_seg.valid and in_allowed(r_seg.angle_deg)
         c_ok = r_cv is not None and r_cv.valid and in_allowed(r_cv.angle_deg)
 
-        # Случай 1: kpt + seg согласны (главный нейросетевой консенсус!)
+        # Случай 1: kpt + seg согласны (главный нейросетевой консенсус; приоритет у SegUNet!)
         if k_ok and s_ok:
             d_ks = ang_diff(r_kpt.angle_deg, r_seg.angle_deg)
             diag["diff_kpt_seg_deg"] = round(d_ks, 2)
             if d_ks <= self.max_disagree_deg:
-                angles = [r_kpt.angle_deg, r_seg.angle_deg]
-                weights = [0.55 * max(r_kpt.confidence, 0.1), 0.45 * max(r_seg.confidence, 0.1)]
-                tag = "fusion/kpt+seg"
-                if c_ok and ang_diff(r_cv.angle_deg, r_kpt.angle_deg) <= self.max_disagree_deg:
+                angles = [r_seg.angle_deg, r_kpt.angle_deg]
+                weights = [0.75 * max(r_seg.confidence, 0.15), 0.25 * max(r_kpt.confidence, 0.10)]
+                tag = "fusion/seg+kpt"
+                if c_ok and ang_diff(r_cv.angle_deg, r_seg.angle_deg) <= self.max_disagree_deg:
                     angles.append(r_cv.angle_deg)
-                    weights.append(0.25 * max(r_cv.confidence, 0.1))
-                    tag = "fusion/kpt+seg+cv"
+                    weights.append(0.30 * max(r_cv.confidence, 0.10))
+                    tag = "fusion/seg+kpt+cv"
                 ang = circular_weighted_mean(angles, weights)
-                conf = min(1.0, 0.55 * r_kpt.confidence + 0.35 * r_seg.confidence + 0.15)
+                conf = min(1.0, 0.55 * r_seg.confidence + 0.30 * r_kpt.confidence + 0.18)
                 return DetailedNeedleEstimate(
-                    angle_deg=round(ang, 2), center_px=r_kpt.center_px, tip_px=r_kpt.tip_px or r_seg.tip_px,
+                    angle_deg=round(ang, 2), center_px=r_seg.center_px, tip_px=r_seg.tip_px or r_kpt.tip_px,
                     confidence=round(conf, 4), visibility=r_kpt.visibility, method=tag, valid=True,
                     infer_ms=round((time.perf_counter() - t0) * 1000.0, 2), diagnostics=diag,
                 )
@@ -476,28 +481,28 @@ class FusionNeedleEstimator:
                 d_sc = ang_diff(r_seg.angle_deg, r_cv.angle_deg)
                 diag["diff_kpt_cv_deg"] = round(d_kc, 2)
                 diag["diff_seg_cv_deg"] = round(d_sc, 2)
-                if d_kc <= self.max_disagree_deg and d_kc < d_sc:
-                    ang = circular_weighted_mean([r_kpt.angle_deg, r_cv.angle_deg], [0.7, 0.3])
-                    return DetailedNeedleEstimate(
-                        angle_deg=round(ang, 2), center_px=r_kpt.center_px, tip_px=r_kpt.tip_px,
-                        confidence=round(min(1.0, 0.7 * r_kpt.confidence + 0.3 * r_cv.confidence), 4),
-                        visibility=r_kpt.visibility, method="fusion/kpt+cv_tiebreak", valid=True,
-                        infer_ms=round((time.perf_counter() - t0) * 1000.0, 2), diagnostics=diag,
-                    )
-                if d_sc <= self.max_disagree_deg and d_sc < d_kc:
-                    ang = circular_weighted_mean([r_seg.angle_deg, r_cv.angle_deg], [0.7, 0.3])
+                if d_sc <= self.max_disagree_deg and d_sc <= d_kc:
+                    ang = circular_weighted_mean([r_seg.angle_deg, r_cv.angle_deg], [0.70, 0.30])
                     return DetailedNeedleEstimate(
                         angle_deg=round(ang, 2), center_px=r_seg.center_px, tip_px=r_seg.tip_px,
                         confidence=round(min(1.0, 0.7 * r_seg.confidence + 0.3 * r_cv.confidence), 4),
                         visibility=r_kpt.visibility, method="fusion/seg+cv_tiebreak", valid=True,
                         infer_ms=round((time.perf_counter() - t0) * 1000.0, 2), diagnostics=diag,
                     )
-            # Никто не согласен: принимаем только при очень высокой внутренней уверенности kpt, иначе отказ!
-            if r_kpt.confidence >= 0.78 and r_kpt.diagnostics.get("internal_diff_deg", 99.0) <= 8.0:
+                if d_kc <= self.max_disagree_deg and d_kc < d_sc:
+                    ang = circular_weighted_mean([r_kpt.angle_deg, r_cv.angle_deg], [0.65, 0.35])
+                    return DetailedNeedleEstimate(
+                        angle_deg=round(ang, 2), center_px=r_kpt.center_px, tip_px=r_kpt.tip_px,
+                        confidence=round(min(1.0, 0.65 * r_kpt.confidence + 0.35 * r_cv.confidence), 4),
+                        visibility=r_kpt.visibility, method="fusion/kpt+cv_tiebreak", valid=True,
+                        infer_ms=round((time.perf_counter() - t0) * 1000.0, 2), diagnostics=diag,
+                    )
+            # Никто не согласен: доверяем только исключительно уверенной пиксельной сегментации
+            if r_seg.confidence >= 0.78 and float(r_seg.diagnostics.get("elongation", 0.0)) >= 0.86:
                 return DetailedNeedleEstimate(
-                    angle_deg=r_kpt.angle_deg, center_px=r_kpt.center_px, tip_px=r_kpt.tip_px,
-                    confidence=round(r_kpt.confidence * 0.85, 4), visibility=r_kpt.visibility,
-                    method="fusion/kpt_high_conf", valid=True,
+                    angle_deg=r_seg.angle_deg, center_px=r_seg.center_px, tip_px=r_seg.tip_px,
+                    confidence=round(r_seg.confidence * 0.85, 4), visibility=r_kpt.visibility,
+                    method="fusion/seg_high_conf", valid=True,
                     infer_ms=round((time.perf_counter() - t0) * 1000.0, 2), diagnostics=diag,
                 )
             return DetailedNeedleEstimate(

@@ -93,6 +93,15 @@ def _load_yolo():
                 _YOLO = False
             else:
                 try:
+                    # Проверка целостности весов детектора по SHA-256 через ModelRegistry (ML Security)
+                    from .vision_engine.registry import get_registry
+                    reg = get_registry()
+                    if reg.get("gauge_yolov8_legacy") is not None and weights.resolve() == (config.MODELS_DIR / "gauge_yolov8.pt").resolve():
+                        ver_p, ver_err = reg.verify_and_resolve("gauge_yolov8_legacy")
+                        if ver_p is None:
+                            logger.error("Загрузка YOLOv8 заблокирована проверкой целостности: %s", ver_err)
+                            _YOLO = False
+                            return None
                     import os as _os
                     if "YOLO_CONFIG_DIR" not in _os.environ:
                         cfg_dir = config.DATA_DIR / ".ultralytics"
@@ -504,7 +513,11 @@ def assess_dial_suitability(dial_bgr: np.ndarray) -> tuple[bool, str | None, flo
     """
     if dial_bgr is None or dial_bgr.size == 0:
         return False, "empty_dial", 0.0
-    gray = cv2.cvtColor(dial_bgr, cv2.COLOR_BGR2GRAY)
+    if dial_bgr.ndim < 2 or min(dial_bgr.shape[:2]) < 32:
+        return False, "empty_dial", 0.0
+    gray = cv2.cvtColor(dial_bgr, cv2.COLOR_BGR2GRAY) if dial_bgr.ndim == 3 else dial_bgr
+    if gray.shape[:2] != (_SIZE, _SIZE):
+        gray = cv2.resize(gray, (_SIZE, _SIZE), interpolation=cv2.INTER_AREA)
     h, w = gray.shape[:2]
     cy, cx = h // 2, w // 2
     inside = _RR < (_SIZE * 0.43)
@@ -1285,7 +1298,12 @@ class GaugePipeline:
                 or self._frames_since_detect >= config.REDETECT_EVERY_N_FRAMES
                 or self._miss_streak >= 3)
         if need:
-            found = detect_dial(frame)
+            if _VE_PROFILE != "legacy":
+                from .vision_engine.detector import detect_dial_v31
+                _, seg_e, _, _, _ = _get_ve_estimators()
+                found = detect_dial_v31(frame, seg_est=seg_e if _VE_PROFILE in ("balanced", "precision") else None)
+            else:
+                found = detect_dial(frame)
             self._frames_since_detect = 0
             if found is not None:
                 if self.roi is not None and self.roi.source != "frame":

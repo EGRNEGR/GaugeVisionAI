@@ -124,12 +124,14 @@ class ModelRegistry:
             return None, f"unsafe_model_path:{exc}"
         if not p.is_file():
             return None, f"model_file_missing:{rec.filename}"
-        if rec.sha256:
-            actual = hashlib.sha256(p.read_bytes()).hexdigest().lower()
-            if actual != rec.sha256:
-                logger.error("Нарушена целостность весов %s: ожидался SHA-256 %s, получен %s",
-                             rec.filename, rec.sha256[:12], actual[:12])
-                return None, f"model_sha256_mismatch:{rec.model_id}"
+        if not rec.sha256 or len(rec.sha256) != 64:
+            logger.error("Отсутствует или некорректен SHA-256 в реестре для модели %s", rec.model_id)
+            return None, f"model_sha256_missing:{rec.model_id}"
+        actual = hashlib.sha256(p.read_bytes()).hexdigest().lower()
+        if actual != rec.sha256:
+            logger.error("Нарушена целостность весов %s: ожидался SHA-256 %s, получен %s",
+                         rec.filename, rec.sha256[:12], actual[:12])
+            return None, f"model_sha256_mismatch:{rec.model_id}"
         return p, None
 
 

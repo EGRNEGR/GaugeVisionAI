@@ -299,6 +299,9 @@ async def _get_conn() -> aiosqlite.Connection:
         await _conn.execute("PRAGMA journal_mode=WAL")
         await _conn.execute("PRAGMA synchronous=NORMAL")
         await _conn.execute("PRAGMA foreign_keys=ON")
+        await _conn.execute("PRAGMA busy_timeout=5000")
+        await _conn.execute("PRAGMA temp_store=MEMORY")
+        await _conn.execute("PRAGMA cache_size=-16000")
     return _conn
 
 
@@ -1018,8 +1021,9 @@ async def prune_history(keep_days: int = 90) -> int:
         conn = await _get_conn()
         cur = await conn.execute("DELETE FROM readings WHERE timestamp < ?", (cutoff,))
         cur2 = await conn.execute("DELETE FROM instrument_readings WHERE timestamp < ?", (cutoff,))
+        cur3 = await conn.execute("DELETE FROM predictive_snapshots WHERE computed_at < ?", (cutoff,))
         await conn.commit()
-        return (cur.rowcount or 0) + (cur2.rowcount or 0)
+        return (cur.rowcount or 0) + (cur2.rowcount or 0) + (cur3.rowcount or 0)
 
 
 async def insert_instrument_readings(rows: Iterable[tuple[Any, ...]]) -> int:
