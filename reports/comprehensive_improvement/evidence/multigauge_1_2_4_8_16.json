@@ -1,0 +1,150 @@
+{
+  "legacy": {
+    "1": {
+      "total_ms": 163.6,
+      "per_gauge_ms": 163.6,
+      "fps_est": 6.11,
+      "valid_n": 1,
+      "mae_pct": 0.16
+    },
+    "2": {
+      "total_ms": 299.7,
+      "per_gauge_ms": 149.9,
+      "fps_est": 3.34,
+      "valid_n": 2,
+      "mae_pct": 0.43
+    },
+    "4": {
+      "total_ms": 512.6,
+      "per_gauge_ms": 128.2,
+      "fps_est": 1.95,
+      "valid_n": 3,
+      "mae_pct": 0.6
+    },
+    "8": {
+      "total_ms": 1227.0,
+      "per_gauge_ms": 153.4,
+      "fps_est": 0.81,
+      "valid_n": 8,
+      "mae_pct": 0.25
+    },
+    "16": {
+      "total_ms": 2359.6,
+      "per_gauge_ms": 147.5,
+      "fps_est": 0.42,
+      "valid_n": 16,
+      "mae_pct": 0.22
+    }
+  },
+  "eco": {
+    "1": {
+      "total_ms": 151.8,
+      "per_gauge_ms": 151.8,
+      "fps_est": 6.59,
+      "valid_n": 1,
+      "mae_pct": 0.16
+    },
+    "2": {
+      "total_ms": 312.9,
+      "per_gauge_ms": 156.4,
+      "fps_est": 3.2,
+      "valid_n": 2,
+      "mae_pct": 0.43
+    },
+    "4": {
+      "total_ms": 550.7,
+      "per_gauge_ms": 137.7,
+      "fps_est": 1.82,
+      "valid_n": 3,
+      "mae_pct": 0.6
+    },
+    "8": {
+      "total_ms": 1390.7,
+      "per_gauge_ms": 173.8,
+      "fps_est": 0.72,
+      "valid_n": 8,
+      "mae_pct": 0.25
+    },
+    "16": {
+      "total_ms": 2855.3,
+      "per_gauge_ms": 178.5,
+      "fps_est": 0.35,
+      "valid_n": 16,
+      "mae_pct": 0.22
+    }
+  },
+  "balanced": {
+    "1": {
+      "total_ms": 582.5,
+      "per_gauge_ms": 582.5,
+      "fps_est": 1.72,
+      "valid_n": 1,
+      "mae_pct": 0.01
+    },
+    "2": {
+      "total_ms": 1022.2,
+      "per_gauge_ms": 511.1,
+      "fps_est": 0.98,
+      "valid_n": 2,
+      "mae_pct": 0.14
+    },
+    "4": {
+      "total_ms": 1880.9,
+      "per_gauge_ms": 470.2,
+      "fps_est": 0.53,
+      "valid_n": 3,
+      "mae_pct": 0.26
+    },
+    "8": {
+      "total_ms": 4744.0,
+      "per_gauge_ms": 593.0,
+      "fps_est": 0.21,
+      "valid_n": 8,
+      "mae_pct": 0.17
+    },
+    "16": {
+      "total_ms": 11521.5,
+      "per_gauge_ms": 720.1,
+      "fps_est": 0.09,
+      "valid_n": 16,
+      "mae_pct": 0.17
+    }
+  },
+  "precision": {
+    "1": {
+      "total_ms": 918.0,
+      "per_gauge_ms": 918.0,
+      "fps_est": 1.09,
+      "valid_n": 1,
+      "mae_pct": 0.4
+    },
+    "2": {
+      "total_ms": 2047.8,
+      "per_gauge_ms": 1023.9,
+      "fps_est": 0.49,
+      "valid_n": 2,
+      "mae_pct": 0.33
+    },
+    "4": {
+      "total_ms": 1875.2,
+      "per_gauge_ms": 468.8,
+      "fps_est": 0.53,
+      "valid_n": 3,
+      "mae_pct": 0.26
+    },
+    "8": {
+      "total_ms": 5346.3,
+      "per_gauge_ms": 668.3,
+      "fps_est": 0.19,
+      "valid_n": 8,
+      "mae_pct": 0.43
+    },
+    "16": {
+      "total_ms": 11018.7,
+      "per_gauge_ms": 688.7,
+      "fps_est": 0.09,
+      "valid_n": 16,
+      "mae_pct": 0.36
+    }
+  }
+}

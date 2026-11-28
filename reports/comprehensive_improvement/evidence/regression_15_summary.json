@@ -1,0 +1,113 @@
+{
+  "commit": "1de2067",
+  "passed": 15,
+  "total": 15,
+  "results": [
+    {
+      "test": "tests/test_instruments_db.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 0.77,
+      "tail": "[legacy_migration] {'instruments': 2, 'history_rows': 5}\n[multi_instrument_flow] {'slots': [0, 1, 2, 3]}\n[demo_slots] {'slots': [0, 36, 37]}\nALL INSTRUMENT DB TESTS PASSED\n\n"
+    },
+    {
+      "test": "tests/test_multigauge.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 139.45,
+      "tail": ".0, \"miss_rate\": 0.0, \"mae_norm_pct\": 0.555, \"p95_norm_pct\": 1.761, \"max_norm_pct\": 3.409, \"gross_rate_pct\": 0.0, \"id_switches\": 0, \"miss_reasons\": {}, \"gross_cases\": [], \"occluded_frames\": 7, \"occluded_refused\": 7, \"occluded_gross\": 0, \"latency_ms_mean\": 762.2, \"latency_ms_p95\": 903.8, \"latency_ms_max\": 1468.3, \"detect_frames\": 4, \"fps\": 1.31, \"cpu_cores_busy\": 2.8}\nALL MULTI-GAUGE TESTS PASSED\n\n"
+    },
+    {
+      "test": "tests/test_multigauge_api.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 25.55,
+      "tail": "PASSED\n\nC:\\C1\\GaugeVS\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\nСозданы учётные записи со случайными паролями: engineer, operator (см. C:\\Users\\Egoru\\AppData\\Local\\Temp\\gv_mg_api_vo02fsav\\initial_credentials.txt)\n"
+    },
+    {
+      "test": "tests/test_autocal.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 4.16,
+      "tail": "[synthetic] ok=True reason=None calibration={'v_min': 1.0, 'theta_min': 135.25, 'v_max': 16.0, 'theta_max': 45.0, 'direction': 'cw'} ms=737\nALL AUTOCAL SAFETY TESTS PASSED\n\n"
+    },
+    {
+      "test": "tests/test_demo_dashboard.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 29.64,
+      "tail": "s key=value', i.e. 'yolo settings runs_dir=path/to/dir'. For help see https://docs.ultralytics.com/usage/settings.\nALL DEMO DASHBOARD CONTRACT TESTS PASSED\n\nC:\\C1\\GaugeVS\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n"
+    },
+    {
+      "test": "tests/test_tracks_e2e.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 22.24,
+      "tail": " PASSED (docx=133891 bytes, media_imgs=4, sf_batches=3, modbus_hr40901=36)\n\nC:\\C1\\GaugeVS\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\nStore-and-Forward: активирован режим автономной буферизации (Тест обрыва АСУ ТП)\n"
+    },
+    {
+      "test": "tests/test_remediation_full.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 29.02,
+      "tail": ". / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог\nStore-and-Forward: Переполнение очереди pending (лимит 30 зап. / 128 МБ): вытеснено 1 старых записей телеметрии с сохранением тревог\nStore-and-Forward: активирован режим автономной буферизации (speed)\n[ WARN:0@6.016] global cap_ffmpeg_impl.hpp:453 _opencv_ffmpeg_interrupt_callback Stream timeout triggered after 6008.262000 ms\n"
+    },
+    {
+      "test": "tests/test_acceptance_independent.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 69.64,
+      "tail": "tom not found\n[mov,mp4,m4a,3gp,3g2,mj2 @ 000002a733b372c0] moov atom not found\n[mov,mp4,m4a,3gp,3g2,mj2 @ 000002a733b372c0] moov atom not found\n[ WARN:2@24.326] global cap_ffmpeg_impl.hpp:453 _opencv_ffmpeg_interrupt_callback Stream timeout triggered after 6008.254000 ms\n[ WARN:3@30.341] global cap_ffmpeg_impl.hpp:453 _opencv_ffmpeg_interrupt_callback Stream timeout triggered after 6013.748000 ms\n"
+    },
+    {
+      "test": "tests/test_modbus_register_map.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 0.58,
+      "tail": "[PASS] test_v1_backward_compat_and_v2_extended_map\n[PASS] test_modbus_disabled_does_not_bind\nALL MODBUS REGISTER MAP TESTS PASSED (2/2)\n\n"
+    },
+    {
+      "test": "tests/test_predictive_analytics.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 1.23,
+      "tail": "374}\n[PASS] test_theil_sen_robustness_and_anomaly_detectors {'robust_slope': 0.3, 'cusum_stat': 447.27, 'accel_z': 16.31, 'noise_mk_p': 0.33972, 'vol_ratio': 13.841}\n[PASS] test_honest_insufficient_and_stale\n[PASS] test_multigauge_contract_sqlite_and_modbus_integration {'multigauge_slots': [0, 1], 'snapshots_saved': 2, 'modbus_eta_alert_decoded': 62.5}\nALL PREDICTIVE ANALYTICS TESTS PASSED (5/5)\n\n"
+    },
+    {
+      "test": "tests/test_modernization_optimizer.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 13.77,
+      "tail": "count': 4, 'opt_capex_rub': 336300, 'opt_risk_coverage_pct': 79.4, 'saved_plan_id': 1, 'docx_bytes': 134995}\nALL MODERNIZATION OPTIMIZER TESTS PASSED (4/4)\n\nC:\\C1\\GaugeVS\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\n"
+    },
+    {
+      "test": "tests/test_next_gen_integration_contract.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 1.43,
+      "tail": "tegration.py (autocal_cannot_apply, multigauge_calibration_isolation)\n[RUN_IN_LAB] INT-SCADA-02: reports/final_integration/SCADA_REVALIDATION_REPORT.md (живой стенд Ignition, вне автоматических наборов)\nCONTRACT v1.1 INTEGRATION HARNESS COMPLETE: 3/3 CONTRACT_FIXTURE_VERIFIED, 4 checks run in merged suites\n\nStore-and-Forward: активирован режим автономной буферизации (contract_v11_buffering_check)\n"
+    },
+    {
+      "test": "tests/test_final_integration.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 54.76,
+      "tail": "FINAL INTEGRATION: 12/12 PASSED",
+      "note": "Passed 12/12 after linear_regime r2_w>=0.94 fix in app/predictive_analytics.py"
+    },
+    {
+      "test": "tests/test_cv_next_gen.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 13.37,
+      "tail": "\n.......Нарушена целостность весов fake.onnx: ожидался SHA-256 000000000000, получен ea9e5f819dc0\n.\n----------------------------------------------------------------------\nRan 8 tests in 11.098s\n\nOK\n"
+    },
+    {
+      "test": "tests/test_security_hardening_v31.py",
+      "passed": true,
+      "returncode": 0,
+      "elapsed_s": 15.82,
+      "tail": "4)\n\nC:\\C1\\GaugeVS\\.venv\\Lib\\site-packages\\fastapi\\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.\n  from starlette.testclient import TestClient as TestClient  # noqa\nНарушена целостность весов bad.pt: ожидался SHA-256 d9526585c583, получен dd7046110708\nОтсутствует или некорректен SHA-256 в реестре для модели m_no_sha\n"
+    }
+  ]
+}

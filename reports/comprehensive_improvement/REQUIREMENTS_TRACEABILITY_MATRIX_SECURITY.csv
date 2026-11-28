@@ -1,0 +1,12 @@
+sec_id,domain,control,status_before,status_after,evidence,notes
+SEC-V31-01,Threat Model,Модель угроз STRIDE для 11 компонентов и границ доверия,PARTIAL,PASS,reports/comprehensive_improvement/SECURITY_THREAT_MODEL.md,Описаны активы, нарушители, сценарии и остаточные риски
+SEC-V31-02,RBAC & Audit,Разграничение прав и аудит-лог для API Vision Engine (/api/vision/*),PARTIAL (нет audit_log),PASS,tests/test_security_hardening_v31.py,401 unauth, 403 operator, 200 engineer + запись SET_VISION_PROFILE в audit_log
+SEC-V31-03,CSRF,Защита cookie-сессий от CSRF (SameSite=Strict + проверка Origin),PARTIAL,PASS,tests/test_security_hardening_v31.py,Запрос с cookie и чужим Origin возвращает 403
+SEC-V31-04,DoS Protection,Ограничение размера тела HTTP-запроса (10 МБ -> 413),FAIL,PASS,tests/test_security_hardening_v31.py,Content-Length > 10 МБ отклоняется middleware с HTTP 413
+SEC-V31-05,ML Integrity,Обязательный 64-символьный SHA-256 в ModelRegistry (без обхода пустым хэшем),PARTIAL,PASS,tests/test_security_hardening_v31.py,DEF-SEC-03 закрыт; path traversal и подмена весов блокируются
+SEC-V31-06,ML Integrity,Проверка SHA-256 весов детектора gauge_yolov8.pt до загрузки,FAIL,PASS,app/vision.py;tests/test_security_hardening_v31.py,DEF-SEC-02 закрыт: _load_yolo вызывает verify_and_resolve
+SEC-V31-07,ML Robustness,Устойчивость CV-конвейера к повреждённым/вырожденным кадрам (fuzzing),FAIL (IndexError 16x16),PASS,tests/test_security_hardening_v31.py,DEF-SEC-01 выявлен фаззером и устранён в assess_dial_suitability
+SEC-V31-08,LLM Security,Защита LLM от Prompt Injection, HTML/script и SSRF + deterministic fallback,PARTIAL,PASS,app/spec_generator.py;tests/test_security_hardening_v31.py,DEF-SEC-07 закрыт: <FACTS>-изоляция, очистка HTML, SSRF-фильтр
+SEC-V31-09,OT / Industrial,Modbus TCP read-only (FC 0x06->0x01), MAX_REGISTERS=5208, MQTT TLS, RTSP Fernet,PASS,PASS,tests/test_security_hardening_v31.py,Проверено на реальном loopback TCP-сервере Modbus и net_policy
+SEC-V31-10,Supply Chain,Генерация CycloneDX SBOM.json и поиск секретов в репозитории,NOT VERIFIED,PASS,reports/comprehensive_improvement/SBOM.json,69 компонентов в SBOM; 0 секретов; отмечен AGPL-риск ultralytics
+SEC-V31-11,CVE Scanning,Автоматический скан CVE (pip-audit / trivy) по онлайн-базе OSV,NOT VERIFIED,NOT VERIFIED,reports/comprehensive_improvement/ML_SECURITY_REPORT.md,Сканеры не установлены в локальной air-gapped среде — документировано как ограничение

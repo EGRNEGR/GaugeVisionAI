@@ -606,6 +606,7 @@ class PredictiveAnalyzer:
         linear_regime = bool(
             (t_slope_ac >= 2.5 and rho1_resid < 0.35)
             or (r2_w >= 0.88 and rho1_resid < 0.50)
+            or (r2_w >= 0.94)
             or (use_robust and rob_sigma <= max(abs(slope_ts) * max(actual_span_s / 60.0, 1.0) * 0.08, se_floor * 5.0))
         )
 

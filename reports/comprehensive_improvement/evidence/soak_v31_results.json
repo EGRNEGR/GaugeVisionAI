@@ -1,0 +1,542 @@
+{
+  "commit": "1de2067",
+  "profile": "balanced",
+  "duration_s": 152.5,
+  "duration_min": 2.54,
+  "samples_n": 15,
+  "cpu_pct": {
+    "p50": 0.0,
+    "p95": 0.0,
+    "max": 0.0
+  },
+  "rss_mb": {
+    "start": 839.8,
+    "peak": 968.4,
+    "end": 926.9
+  },
+  "db_kb": {
+    "start": 748.2,
+    "end": 4451.5
+  },
+  "health_api_ms": {
+    "n": 151,
+    "errors": 0,
+    "p50": 4.48,
+    "p95": 10.27,
+    "p99": 11.99,
+    "max": 40.78
+  },
+  "loop_lag_ms": {
+    "p95_median": 22.0,
+    "p95_max": 22.5,
+    "abs_max": 180.6
+  },
+  "modbus_tcp": {
+    "ok": 15,
+    "errors": 0
+  },
+  "predictive_api": {
+    "ok": 4,
+    "errors": 0,
+    "p50_ms": 318.03,
+    "max_ms": 414.69
+  },
+  "optimizer_api": {
+    "ok": 0,
+    "errors": 2,
+    "p50_ms": null,
+    "max_ms": null
+  },
+  "specs_docx_api": {
+    "ok": 2,
+    "errors": 0,
+    "p50_ms": 78.78,
+    "max_ms": 247.93
+  },
+  "fault_injections_outage": 1,
+  "store_forward": {
+    "edge_node": "edge-ktc-01",
+    "sync_state": "CONNECTED",
+    "outage_active": false,
+    "outage_since": null,
+    "outage_reason": null,
+    "link_down": false,
+    "delivery_fail_streak": 0,
+    "pending_count": 0,
+    "pending_alarms": 0,
+    "pending_bytes": 0,
+    "pending_kb": 0.0,
+    "pending_mb": 0.0,
+    "delivered_total": 91,
+    "last_seq_id": 91,
+    "buffered_during_outage": 0,
+    "queue_overflow": false,
+    "overflow_reason": null,
+    "evicted_total": 0,
+    "rejected_overflow_total": 0,
+    "max_queue_rows": 25000,
+    "max_pending_mb": 128.0,
+    "disk_free_mb": 80579.4,
+    "max_retries": 0,
+    "last_sync_at": "2026-11-28T12:16:12.787+00:00",
+    "last_batch_size": 2,
+    "db_size_mb": 3.289,
+    "journal_mode": "wal",
+    "wal_mode": true,
+    "batch_size": 40,
+    "recent_batches": [
+      {
+        "batch_id": "batch-1795868093-c03dc5",
+        "started_at": "2026-11-28T12:14:53.351+00:00",
+        "completed_at": "2026-11-28T12:14:53.353+00:00",
+        "items_count": 2,
+        "bytes_sent": 619,
+        "frames_sent": 0,
+        "target": "SCADA / MQTT / Central",
+        "status": "delivered"
+      },
+      {
+        "batch_id": "batch-1795868083-e46219",
+        "started_at": "2026-11-28T12:14:43.711+00:00",
+        "completed_at": "2026-11-28T12:14:43.711+00:00",
+        "items_count": 2,
+        "bytes_sent": 634,
+        "frames_sent": 0,
+        "target": "SCADA / MQTT / Central",
+        "status": "delivered"
+      },
+      {
+        "batch_id": "batch-1795868062-d4a5a9",
+        "started_at": "2026-11-28T12:14:22.199+00:00",
+        "completed_at": "2026-11-28T12:14:22.201+00:00",
+        "items_count": 6,
+        "bytes_sent": 2366,
+        "frames_sent": 0,
+        "target": "SCADA / MQTT / Central",
+        "status": "delivered"
+      },
+      {
+        "batch_id": "batch-1795868031-c6d627",
+        "started_at": "2026-11-28T12:13:51.034+00:00",
+        "completed_at": "2026-11-28T12:13:51.035+00:00",
+        "items_count": 4,
+        "bytes_sent": 1522,
+        "frames_sent": 0,
+        "target": "SCADA / MQTT / Central",
+        "status": "delivered"
+      },
+      {
+        "batch_id": "batch-1795868021-a21019",
+        "started_at": "2026-11-28T12:13:41.419+00:00",
+        "completed_at": "2026-11-28T12:13:41.419+00:00",
+        "items_count": 1,
+        "bytes_sent": 471,
+        "frames_sent": 0,
+        "target": "SCADA / MQTT / Central",
+        "status": "delivered"
+      },
+      {
+        "batch_id": "batch-1795868021-8317e1",
+        "started_at": "2026-11-28T12:13:41.411+00:00",
+        "completed_at": "2026-11-28T12:13:41.411+00:00",
+        "items_count": 1,
+        "bytes_sent": 477,
+        "frames_sent": 0,
+        "target": "SCADA / MQTT / Central",
+        "status": "delivered"
+      },
+      {
+        "batch_id": "batch-1795868021-231add",
+        "started_at": "2026-11-28T12:13:41.358+00:00",
+        "completed_at": "2026-11-28T12:13:41.358+00:00",
+        "items_count": 6,
+        "bytes_sent": 2780,
+        "frames_sent": 0,
+        "target": "SCADA / MQTT / Central",
+        "status": "delivered"
+      }
+    ],
+    "recent_items": [
+      {
+        "seq_id": 91,
+        "event_uuid": "caf536ab-2d12-424e-82cb-dcdd6b13beae",
+        "channel_id": "demo-mtp160-steam",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:16:12.783+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:16:12.787+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 90,
+        "event_uuid": "fd240859-1c91-4ae8-b63b-639045d0ccbe",
+        "channel_id": "ktc-telemetry",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:16:10.770+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:16:10.772+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 89,
+        "event_uuid": "f1801511-4f6c-4c1f-b6c3-3219cacf0417",
+        "channel_id": "demo-mtp160-steam",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:16:08.754+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:16:08.757+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 88,
+        "event_uuid": "6e52981c-3f72-440c-a884-38abba2fb91e",
+        "channel_id": "ktc-telemetry",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:16:06.724+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:16:06.731+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 87,
+        "event_uuid": "2bb485b0-ac78-42e6-8835-0d4a254afc0a",
+        "channel_id": "demo-mtp160-steam",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:16:04.400+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:16:04.404+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 86,
+        "event_uuid": "614c66b3-160d-443b-9d64-629012da653e",
+        "channel_id": "ktc-telemetry",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:16:02.375+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:16:02.378+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 85,
+        "event_uuid": "334920ba-9db4-442f-aa6f-e4e4e7d831e7",
+        "channel_id": "demo-mtp160-steam",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:16:00.358+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:16:00.361+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 84,
+        "event_uuid": "f19a0ffd-0e13-4380-b803-5712dfeed2a5",
+        "channel_id": "ktc-telemetry",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:58.327+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:58.331+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 83,
+        "event_uuid": "92b3f941-4026-45c8-a44d-2ce851ca5f41",
+        "channel_id": "demo-mtp160-steam",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:56.292+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:56.296+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 82,
+        "event_uuid": "37a616ef-3d59-414f-be48-0bd26962188b",
+        "channel_id": "ktc-telemetry",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:53.751+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:53.754+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 81,
+        "event_uuid": "79ddfe88-961f-4a11-bdd2-4ccf5db3155d",
+        "channel_id": "demo-mtp160-steam",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:51.734+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:51.738+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 80,
+        "event_uuid": "73041691-bf9f-4ec0-9e46-bc1da35e4fa6",
+        "channel_id": "ktc-telemetry",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:49.707+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:49.710+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 79,
+        "event_uuid": "e6c6d2aa-6b7e-4986-9de1-929267477e43",
+        "channel_id": "demo-mtp160-steam",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:47.684+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:47.688+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 78,
+        "event_uuid": "550a4528-7373-41e9-a1a3-4547882858f7",
+        "channel_id": "ktc-telemetry",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:45.664+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:45.667+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 77,
+        "event_uuid": "c9efcc97-758c-4bdb-812b-c135fe78dcaf",
+        "channel_id": "demo-mtp160-steam",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:43.358+00:00",
+        "size_bytes": 203,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:43.369+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 76,
+        "event_uuid": "9a111161-31fc-4102-80ae-0e6d7e97bd7f",
+        "channel_id": "ktc-telemetry",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:41.351+00:00",
+        "size_bytes": 203,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:41.355+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 75,
+        "event_uuid": "2a46d79d-6507-47ad-93db-283e076ba48b",
+        "channel_id": "demo-mtp160-steam",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:39.322+00:00",
+        "size_bytes": 203,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:39.326+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 74,
+        "event_uuid": "3aa8807a-67bd-4460-ba0b-49605564ffa8",
+        "channel_id": "ktc-telemetry",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:37.284+00:00",
+        "size_bytes": 203,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:37.288+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 73,
+        "event_uuid": "16e027e5-78b3-4580-9ba4-b94f1b392ac0",
+        "channel_id": "demo-mtp160-steam",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:35.258+00:00",
+        "size_bytes": 203,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:35.261+00:00",
+        "has_frame": 0
+      },
+      {
+        "seq_id": 72,
+        "event_uuid": "03d86a00-6c85-4bf6-8517-ccaca4c54f22",
+        "channel_id": "ktc-telemetry",
+        "payload_type": "telemetry",
+        "severity": "alert",
+        "created_at": "2026-11-28T12:15:32.953+00:00",
+        "size_bytes": 191,
+        "status": "sent",
+        "retry_count": 0,
+        "batch_id": "live",
+        "sent_at": "2026-11-28T12:15:32.959+00:00",
+        "has_frame": 0
+      }
+    ]
+  },
+  "server_tracebacks": 0,
+  "server_errors": 0,
+  "samples_tail": [
+    {
+      "t_s": 30.2,
+      "cpu_pct": 0.0,
+      "rss_mb": 941.7,
+      "db_kb": 1428.1,
+      "loop_lag_p95_ms": 17.3,
+      "loop_lag_max_ms": 31.0
+    },
+    {
+      "t_s": 40.3,
+      "cpu_pct": 0.0,
+      "rss_mb": 929.9,
+      "db_kb": 1742.0,
+      "loop_lag_p95_ms": 22.4,
+      "loop_lag_max_ms": 31.0
+    },
+    {
+      "t_s": 50.4,
+      "cpu_pct": 0.0,
+      "rss_mb": 940.3,
+      "db_kb": 2071.9,
+      "loop_lag_p95_ms": 18.0,
+      "loop_lag_max_ms": 31.0
+    },
+    {
+      "t_s": 60.5,
+      "cpu_pct": 0.0,
+      "rss_mb": 927.7,
+      "db_kb": 2325.4,
+      "loop_lag_p95_ms": 22.1,
+      "loop_lag_max_ms": 31.0
+    },
+    {
+      "t_s": 71.1,
+      "cpu_pct": 0.0,
+      "rss_mb": 930.2,
+      "db_kb": 2699.5,
+      "loop_lag_p95_ms": 22.1,
+      "loop_lag_max_ms": 32.4
+    },
+    {
+      "t_s": 81.1,
+      "cpu_pct": 0.0,
+      "rss_mb": 931.6,
+      "db_kb": 3021.4,
+      "loop_lag_p95_ms": 22.1,
+      "loop_lag_max_ms": 34.5
+    },
+    {
+      "t_s": 91.2,
+      "cpu_pct": 0.0,
+      "rss_mb": 931.3,
+      "db_kb": 3307.1,
+      "loop_lag_p95_ms": 21.2,
+      "loop_lag_max_ms": 34.5
+    },
+    {
+      "t_s": 101.7,
+      "cpu_pct": 0.0,
+      "rss_mb": 940.2,
+      "db_kb": 3588.7,
+      "loop_lag_p95_ms": 22.1,
+      "loop_lag_max_ms": 34.5
+    },
+    {
+      "t_s": 111.8,
+      "cpu_pct": 0.0,
+      "rss_mb": 935.5,
+      "db_kb": 3882.4,
+      "loop_lag_p95_ms": 22.1,
+      "loop_lag_max_ms": 34.5
+    },
+    {
+      "t_s": 121.8,
+      "cpu_pct": 0.0,
+      "rss_mb": 968.4,
+      "db_kb": 4451.5,
+      "loop_lag_p95_ms": 22.0,
+      "loop_lag_max_ms": 34.5
+    },
+    {
+      "t_s": 132.3,
+      "cpu_pct": 0.0,
+      "rss_mb": 936.5,
+      "db_kb": 4451.5,
+      "loop_lag_p95_ms": 22.0,
+      "loop_lag_max_ms": 34.5
+    },
+    {
+      "t_s": 142.4,
+      "cpu_pct": 0.0,
+      "rss_mb": 926.9,
+      "db_kb": 4451.5,
+      "loop_lag_p95_ms": 22.0,
+      "loop_lag_max_ms": 180.6
+    }
+  ]
+}

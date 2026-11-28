@@ -31,6 +31,17 @@
 
 **Статус:** инженерный прототип. Это не сертифицированное средство измерений и не система противоаварийной защиты. Готовность по уровням, результаты испытаний и ограничения — в [`reports/final_integration/`](reports/final_integration/): [итоговое заключение](reports/final_integration/FINAL_ACCEPTANCE_REPORT.md), [ограничения](reports/final_integration/KNOWN_LIMITATIONS.md), [примечания к выпуску](reports/final_integration/RELEASE_NOTES.md).
 
+## Версия 3.1 — Next Generation Vision Engine и комплексное усиление (`research/cv-next-gen`)
+
+Исследовательская ветка `research/cv-next-gen` развивает GaugeVision AI 3.0 без нарушения обратной совместимости (режим `legacy` сохранён по умолчанию):
+
+- **Модульный Vision Engine (`app/vision_engine/`):** 4 профиля (`legacy`, `eco`, `balanced`, `precision`) с переключением через `POST /api/vision/profile` (RBAC `engineer` + `audit_log`) и в пульте оператора.
+- **Коммерчески чистые нейросети стрелки (MIT / BSD-3):** `NeedleSegUNet` (320 КБ, 6,6 мс CPU/кроп, MAE 1,93° на невидимом физическом приборе `M5`) и `NeedleKeypointNet` (557 КБ) + улучшенная геометрия `OpenCVNeedleV2` и `FusionNeedleEstimator` (снижение грубых ошибок на `M1` с 77 до 6 — в 12,8×, корректный отказ на непригодных кадрах **99,33 %**).
+- **Каскадный локализатор `detect_dial_v31`:** повышение локализации на `MeasureBench misc` с 55,74 % до **63,93 %** (+8,2 п.п.) без GPU-переобучения; подготовлен и проверен автономный пакет `training_package_3090/` для обучения полнокадровых `YOLO26s` / `RF-DETR` на Linux RTX 3090 24 ГБ.
+- **Прогнозная аналитика v3.2:** робастный локальный затухающий Хольт — на `LOCKED TEST` (82 реальных промышленных ряда) полнота прогноза пробоя уставки на `H = 30` выросла с 4,65 % до **7,98 %** (×1,72), точность с 66,4 % до **77,2 %**, медианная ошибка ETA снижена на **43 %**, FAR детектора аномалий снижен с 36,1 % до **33,8 %**.
+- **Безопасность и надёжность:** обязательный 64-символьный SHA-256 в `ModelRegistry` для всех моделей (включая `gauge_yolov8.pt`), защита HTTP от DoS (10 МБ → 413) и CSRF (`Origin`), изоляция данных LLM (`<FACTS>`), CycloneDX `SBOM.json` (69 компонентов), `PRAGMA busy_timeout=5000` и ротация `predictive_snapshots`.
+- **Отчёты и доказательства:** [`reports/cv_next_gen/`](reports/cv_next_gen/) и [`reports/comprehensive_improvement/`](reports/comprehensive_improvement/).
+
 ## Содержание
 
 - [Версия 3.0](#версия-30)
